@@ -16,7 +16,7 @@ export const useConversationStore = defineStore('conversation', {
 
   getters: {
     activeConversation: (state): Conversation | undefined => {
-      return state.conversations.find(c => c.id === state.activeConversationId)
+      return state.conversations.find((c) => c.id === state.activeConversationId)
     },
 
     conversationList: (state): Conversation[] => {
@@ -43,7 +43,7 @@ export const useConversationStore = defineStore('conversation', {
     },
 
     deleteConversation(id: string) {
-      const index = this.conversations.findIndex(c => c.id === id)
+      const index = this.conversations.findIndex((c) => c.id === id)
       if (index > -1) {
         this.conversations.splice(index, 1)
         if (this.activeConversationId === id) {
@@ -53,7 +53,7 @@ export const useConversationStore = defineStore('conversation', {
     },
 
     addMessage(conversationId: string, message: Omit<Message, 'id' | 'timestamp'>) {
-      const conversation = this.conversations.find(c => c.id === conversationId)
+      const conversation = this.conversations.find((c) => c.id === conversationId)
       if (conversation) {
         conversation.messages.push({
           ...message,
@@ -69,7 +69,7 @@ export const useConversationStore = defineStore('conversation', {
     },
 
     updateConversationTitle(id: string, title: string) {
-      const conversation = this.conversations.find(c => c.id === id)
+      const conversation = this.conversations.find((c) => c.id === id)
       if (conversation) {
         conversation.title = title
         conversation.updatedAt = Date.now()

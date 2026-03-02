@@ -4,7 +4,13 @@
       <h1 class="page-title">Skills管理</h1>
       <button class="create-btn">
         <svg viewBox="0 0 24 24" fill="none">
-          <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path
+            d="M12 5V19M5 12H19"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
         </svg>
         <span>创建Skill</span>
       </button>
@@ -49,196 +55,196 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { Skill } from '@/types'
+  import { ref } from 'vue'
+  import type { Skill } from '@/types'
 
-const skills = ref<Skill[]>([
-  {
-    id: '1',
-    name: '数据分析Skill',
-    description: '数据分析能力',
-    type: '分析',
-    status: 'active',
-    config: {},
-    createdAt: Date.now(),
-    updatedAt: Date.now()
-  },
-  {
-    id: '2',
-    name: '文档处理Skill',
-    description: '文档处理能力',
-    type: '处理',
-    status: 'active',
-    config: {},
-    createdAt: Date.now(),
-    updatedAt: Date.now()
-  },
-  {
-    id: '3',
-    name: 'API调用Skill',
-    description: 'API调用能力',
-    type: '调用',
-    status: 'inactive',
-    config: {},
-    createdAt: Date.now(),
-    updatedAt: Date.now()
-  }
-])
+  const skills = ref<Skill[]>([
+    {
+      id: '1',
+      name: '数据分析Skill',
+      description: '数据分析能力',
+      type: '分析',
+      status: 'active',
+      config: {},
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    },
+    {
+      id: '2',
+      name: '文档处理Skill',
+      description: '文档处理能力',
+      type: '处理',
+      status: 'active',
+      config: {},
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    },
+    {
+      id: '3',
+      name: 'API调用Skill',
+      description: 'API调用能力',
+      type: '调用',
+      status: 'inactive',
+      config: {},
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    }
+  ])
 </script>
 
 <style scoped lang="scss">
-.resource-management {
-  height: 100%;
-  padding: $spacing-xl;
-  overflow-y: auto;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $spacing-xl;
-}
-
-.page-title {
-  font-size: $font-size-3xl;
-  font-weight: $font-weight-bold;
-  color: $text-primary;
-}
-
-.create-btn {
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
-  padding: $spacing-sm $spacing-lg;
-  background: linear-gradient(135deg, $primary-color, $primary-dark);
-  border-radius: $border-radius-md;
-  color: $text-primary;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  cursor: pointer;
-  transition: all $transition-base ease;
-
-  svg {
-    width: 20px;
-    height: 20px;
+  .resource-management {
+    height: 100%;
+    padding: $spacing-xl;
+    overflow-y: auto;
   }
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
-  }
-}
-
-.filter-bar {
-  display: flex;
-  gap: $spacing-md;
-  margin-bottom: $spacing-lg;
-}
-
-.search-input {
-  flex: 1;
-  max-width: 400px;
-  padding: $spacing-sm $spacing-md;
-  background: $bg-secondary;
-  border: 1px solid $bg-elevated;
-  border-radius: $border-radius-md;
-  color: $text-primary;
-  font-size: $font-size-sm;
-
-  &::placeholder {
-    color: $text-tertiary;
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-xl;
   }
 
-  &:focus {
-    border-color: $primary-color;
+  .page-title {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    color: $text-primary;
   }
-}
 
-.filter-select {
-  padding: $spacing-sm $spacing-md;
-  background: $bg-secondary;
-  border: 1px solid $bg-elevated;
-  border-radius: $border-radius-md;
-  color: $text-primary;
-  font-size: $font-size-sm;
-  cursor: pointer;
+  .create-btn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-sm $spacing-lg;
+    background: linear-gradient(135deg, $primary-color, $primary-dark);
+    border-radius: $border-radius-md;
+    color: $text-primary;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: all $transition-base ease;
 
-  &:focus {
-    border-color: $primary-color;
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+    }
   }
-}
 
-.resource-table {
-  background: $bg-secondary;
-  border: 1px solid $bg-elevated;
-  border-radius: $border-radius-lg;
-  overflow: hidden;
-}
+  .filter-bar {
+    display: flex;
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
+  }
 
-.table-header {
-  background: $bg-tertiary;
-  border-bottom: 1px solid $bg-elevated;
-}
+  .search-input {
+    flex: 1;
+    max-width: 400px;
+    padding: $spacing-sm $spacing-md;
+    background: $bg-secondary;
+    border: 1px solid $bg-elevated;
+    border-radius: $border-radius-md;
+    color: $text-primary;
+    font-size: $font-size-sm;
 
-.table-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: $spacing-md;
-  padding: $spacing-md $spacing-lg;
-  align-items: center;
+    &::placeholder {
+      color: $text-tertiary;
+    }
 
-  &:not(:last-child) {
+    &:focus {
+      border-color: $primary-color;
+    }
+  }
+
+  .filter-select {
+    padding: $spacing-sm $spacing-md;
+    background: $bg-secondary;
+    border: 1px solid $bg-elevated;
+    border-radius: $border-radius-md;
+    color: $text-primary;
+    font-size: $font-size-sm;
+    cursor: pointer;
+
+    &:focus {
+      border-color: $primary-color;
+    }
+  }
+
+  .resource-table {
+    background: $bg-secondary;
+    border: 1px solid $bg-elevated;
+    border-radius: $border-radius-lg;
+    overflow: hidden;
+  }
+
+  .table-header {
+    background: $bg-tertiary;
     border-bottom: 1px solid $bg-elevated;
   }
-}
 
-.table-body .table-row {
-  transition: background $transition-base ease;
+  .table-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: $spacing-md;
+    padding: $spacing-md $spacing-lg;
+    align-items: center;
 
-  &:hover {
-    background: $bg-tertiary;
-  }
-}
-
-.table-cell {
-  font-size: $font-size-sm;
-  color: $text-primary;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: $spacing-xs $spacing-sm;
-  border-radius: $border-radius-full;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
-
-  &--active {
-    background: rgba(16, 185, 129, 0.1);
-    color: $success;
+    &:not(:last-child) {
+      border-bottom: 1px solid $bg-elevated;
+    }
   }
 
-  &--inactive {
-    background: rgba(107, 113, 148, 0.1);
-    color: $text-tertiary;
-  }
-}
+  .table-body .table-row {
+    transition: background $transition-base ease;
 
-.table-action {
-  padding: $spacing-xs $spacing-sm;
-  background: transparent;
-  color: $text-secondary;
-  font-size: $font-size-xs;
-  cursor: pointer;
-  transition: color $transition-base ease;
-  margin-right: $spacing-sm;
-
-  &:hover {
-    color: $primary-color;
+    &:hover {
+      background: $bg-tertiary;
+    }
   }
 
-  &--danger:hover {
-    color: $error;
+  .table-cell {
+    font-size: $font-size-sm;
+    color: $text-primary;
   }
-}
+
+  .status-badge {
+    display: inline-block;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $border-radius-full;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+
+    &--active {
+      background: rgba(16, 185, 129, 0.1);
+      color: $success;
+    }
+
+    &--inactive {
+      background: rgba(107, 113, 148, 0.1);
+      color: $text-tertiary;
+    }
+  }
+
+  .table-action {
+    padding: $spacing-xs $spacing-sm;
+    background: transparent;
+    color: $text-secondary;
+    font-size: $font-size-xs;
+    cursor: pointer;
+    transition: color $transition-base ease;
+    margin-right: $spacing-sm;
+
+    &:hover {
+      color: $primary-color;
+    }
+
+    &--danger:hover {
+      color: $error;
+    }
+  }
 </style>
