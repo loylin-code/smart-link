@@ -1,0 +1,200 @@
+// 页面过渡动画
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.3s ease;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+// 路由切换动画
+.route-enter-active,
+.route-leave-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.route-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.route-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+// 淡入淡出
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+// 滑入滑出
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-enter-from {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.slide-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+// 缩放
+.scale-enter-active,
+.scale-leave-active {
+  transition: all 0.3s ease;
+}
+
+.scale-enter-from,
+.scale-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+// 列表动画
+.list-item {
+  animation: slideIn 0.3s ease forwards;
+  opacity: 0;
+
+  @for $i from 1 through 10 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.05}s;
+    }
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// 骨架屏动画
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    $bg-tertiary 25%,
+    $bg-elevated 50%,
+    $bg-tertiary 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// 加载旋转
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid $bg-tertiary;
+  border-top-color: $primary-color;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 发光效果
+.glow-effect {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.3),
+                0 0 20px rgba(0, 212, 255, 0.2);
+  }
+  to {
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.5),
+                0 0 40px rgba(0, 212, 255, 0.3);
+  }
+}
+
+// 脉冲效果
+.pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// 弹跳
+.bounce {
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-5%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+// 涟漪效果
+.ripple {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  &:active::after {
+    width: 300px;
+    height: 300px;
+  }
+}

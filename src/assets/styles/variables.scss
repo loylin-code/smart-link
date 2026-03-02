@@ -1,0 +1,88 @@
+// 主色调 - 科技蓝
+$primary-color: #00D4FF;
+$primary-light: #4DE8FF;
+$primary-dark: #00A8CC;
+
+// 辅助色 - 紫色系
+$secondary-color: #7C3AED;
+$secondary-light: #A78BFA;
+$secondary-dark: #5B21B6;
+
+// 背景色系
+$bg-primary: #0A0E27;
+$bg-secondary: #151B3D;
+$bg-tertiary: #1E2447;
+$bg-elevated: #252B4E;
+
+// 文字色系
+$text-primary: #FFFFFF;
+$text-secondary: #B4B9D4;
+$text-tertiary: #6B7194;
+$text-disabled: #3D4266;
+
+// 功能色
+$success: #10B981;
+$warning: #F59E0B;
+$error: #EF4444;
+$info: #3B82F6;
+
+// 发光效果色
+$glow-primary: rgba(0, 212, 255, 0.5);
+$glow-secondary: rgba(124, 58, 237, 0.5);
+
+// 间距系统
+$spacing-unit: 4px;
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-2xl: 48px;
+$spacing-3xl: 64px;
+
+// 字体系统
+$font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-base: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+$font-size-2xl: 24px;
+$font-size-3xl: 30px;
+$font-size-4xl: 36px;
+
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// 圆角系统
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+$border-radius-xl: 16px;
+$border-radius-2xl: 24px;
+$border-radius-full: 9999px;
+
+// 阴影系统
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+$shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.25);
+
+// 发光阴影
+$glow-shadow-primary: 0 0 20px rgba(0, 212, 255, 0.3);
+$glow-shadow-secondary: 0 0 20px rgba(124, 58, 237, 0.3);
+$glow-shadow-success: 0 0 20px rgba(16, 185, 129, 0.3);
+
+// 过渡时间
+$transition-fast: 0.15s;
+$transition-base: 0.3s;
+$transition-slow: 0.5s;
+
+// 布局尺寸
+$header-height: 60px;
+$sidebar-width: 240px;
+$sidebar-collapsed-width: 64px;
+$console-height: 200px;
