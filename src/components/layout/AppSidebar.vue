@@ -162,8 +162,8 @@
 
   const menuItems = [
     {
-      path: '/app/conversation',
-      title: '对话',
+      path: '/app/explore',
+      title: '探索',
       icon: ChatIcon
     },
     {

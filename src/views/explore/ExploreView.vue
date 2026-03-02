@@ -1,8 +1,8 @@
 <template>
-  <div class="conversation-view">
-    <div class="conversation-sidebar">
+  <div class="explore-view">
+    <div class="explore-sidebar">
       <div class="sidebar-header">
-        <button class="new-conversation-btn" @click="createNewConversation">
+        <button class="new-explore-btn" @click="createNewExplore">
           <svg viewBox="0 0 24 24" fill="none">
             <path
               d="M12 5V19M5 12H19"
@@ -16,15 +16,15 @@
         </button>
       </div>
 
-      <div class="conversation-list">
+      <div class="explore-list">
         <div
-          v-for="conv in conversations"
-          :key="conv.id"
-          class="conversation-item"
-          :class="{ 'conversation-item--active': activeConversationId === conv.id }"
-          @click="selectConversation(conv.id)"
+          v-for="exp in explores"
+          :key="exp.id"
+          class="explore-item"
+          :class="{ 'explore-item--active': activeExploreId === exp.id }"
+          @click="selectExplore(exp.id)"
         >
-          <div class="conversation-icon">
+          <div class="explore-icon">
             <svg viewBox="0 0 24 24" fill="none">
               <path
                 d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"
@@ -35,11 +35,11 @@
               />
             </svg>
           </div>
-          <div class="conversation-info">
-            <div class="conversation-title">{{ conv.title }}</div>
-            <div class="conversation-time">{{ formatTime(conv.updatedAt) }}</div>
+          <div class="explore-info">
+            <div class="explore-title">{{ exp.title }}</div>
+            <div class="explore-time">{{ formatTime(exp.updatedAt) }}</div>
           </div>
-          <button class="conversation-delete" @click.stop="deleteConversation(conv.id)">
+          <button class="explore-delete" @click.stop="deleteExplore(exp.id)">
             <svg viewBox="0 0 24 24" fill="none">
               <path
                 d="M18 6L6 18M6 6L18 18"
@@ -54,11 +54,11 @@
       </div>
     </div>
 
-    <div class="conversation-main">
-      <div v-if="activeConversation" class="conversation-content">
+    <div class="explore-main">
+      <div v-if="activeExplore" class="explore-content">
         <div class="message-list">
           <div
-            v-for="message in activeConversation.messages"
+            v-for="message in activeExplore.messages"
             :key="message.id"
             class="message-item"
             :class="`message-item--${message.role}`"
@@ -142,39 +142,38 @@
 
 <script setup lang="ts">
   import { ref, computed } from 'vue'
-  import { useConversationStore } from '@/store'
+  import { useExploreStore } from '@/store'
 
-  const conversationStore = useConversationStore()
+  const exploreStore = useExploreStore()
 
   const inputMessage = ref('')
 
-  const conversations = computed(() => conversationStore.conversationList)
-  const activeConversationId = computed(() => conversationStore.activeConversationId)
-  const activeConversation = computed(() => conversationStore.activeConversation)
+  const explores = computed(() => exploreStore.exploreList)
+  const activeExploreId = computed(() => exploreStore.activeExploreId)
+  const activeExplore = computed(() => exploreStore.activeExplore)
 
-  const createNewConversation = () => {
-    conversationStore.createConversation()
+  const createNewExplore = () => {
+    exploreStore.createExplore()
   }
 
-  const selectConversation = (id: string) => {
-    conversationStore.setActiveConversation(id)
+  const selectExplore = (id: string) => {
+    exploreStore.setActiveExplore(id)
   }
 
-  const deleteConversation = (id: string) => {
-    conversationStore.deleteConversation(id)
+  const deleteExplore = (id: string) => {
+    exploreStore.deleteExplore(id)
   }
 
   const sendMessage = () => {
-    if (!inputMessage.value.trim() || !activeConversationId.value) return
+    if (!inputMessage.value.trim() || !activeExploreId.value) return
 
-    conversationStore.addMessage(activeConversationId.value, {
+    exploreStore.addMessage(activeExploreId.value, {
       role: 'user',
       content: inputMessage.value
     })
 
-    // 模拟AI回复
     setTimeout(() => {
-      conversationStore.addMessage(activeConversationId.value!, {
+      exploreStore.addMessage(activeExploreId.value!, {
         role: 'assistant',
         content: '这是一个模拟的AI回复。在实际应用中，这里会调用后端API获取真实的AI响应。'
       })
@@ -197,13 +196,13 @@
 </script>
 
 <style scoped lang="scss">
-  .conversation-view {
+  .explore-view {
     height: 100%;
     display: flex;
     background: $bg-primary;
   }
 
-  .conversation-sidebar {
+  .explore-sidebar {
     width: 300px;
     background: $bg-secondary;
     border-right: 1px solid $bg-elevated;
@@ -216,7 +215,7 @@
     border-bottom: 1px solid $bg-elevated;
   }
 
-  .new-conversation-btn {
+  .new-explore-btn {
     width: 100%;
     display: flex;
     align-items: center;
@@ -242,13 +241,13 @@
     }
   }
 
-  .conversation-list {
+  .explore-list {
     flex: 1;
     overflow-y: auto;
     padding: $spacing-sm;
   }
 
-  .conversation-item {
+  .explore-item {
     display: flex;
     align-items: center;
     gap: $spacing-sm;
@@ -261,7 +260,7 @@
     &:hover {
       background: $bg-tertiary;
 
-      .conversation-delete {
+      .explore-delete {
         opacity: 1;
       }
     }
@@ -269,13 +268,13 @@
     &--active {
       background: rgba(0, 212, 255, 0.1);
 
-      .conversation-icon {
+      .explore-icon {
         color: $primary-color;
       }
     }
   }
 
-  .conversation-icon {
+  .explore-icon {
     width: 40px;
     height: 40px;
     background: $bg-tertiary;
@@ -292,12 +291,12 @@
     }
   }
 
-  .conversation-info {
+  .explore-info {
     flex: 1;
     min-width: 0;
   }
 
-  .conversation-title {
+  .explore-title {
     font-size: $font-size-sm;
     color: $text-primary;
     font-weight: $font-weight-medium;
@@ -306,13 +305,13 @@
     text-overflow: ellipsis;
   }
 
-  .conversation-time {
+  .explore-time {
     font-size: $font-size-xs;
     color: $text-tertiary;
     margin-top: 2px;
   }
 
-  .conversation-delete {
+  .explore-delete {
     width: 24px;
     height: 24px;
     display: flex;
@@ -334,14 +333,14 @@
     }
   }
 
-  .conversation-main {
+  .explore-main {
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow: hidden;
   }
 
-  .conversation-content {
+  .explore-content {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -361,9 +360,15 @@
     animation: slideIn 0.3s ease;
 
     &--user {
+      flex-direction: row-reverse;
+
       .message-content {
         background: linear-gradient(135deg, $primary-color, $primary-dark);
         color: $text-primary;
+      }
+
+      .message-header {
+        flex-direction: row-reverse;
       }
     }
 

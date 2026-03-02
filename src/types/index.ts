@@ -91,11 +91,11 @@ export interface Component {
 }
 
 // 路由元信息类型
-export interface RouteMeta {
+export type RouteMeta = {
   title: string
   icon?: string
   hidden?: boolean
-}
+} & Record<string, unknown>
 
 // 控制台日志类型
 export interface ConsoleLog {

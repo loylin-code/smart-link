@@ -13,14 +13,14 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/app',
     component: () => import('@/components/layout/AppLayout.vue'),
-    redirect: '/app/conversation',
+    redirect: '/app/explore',
     children: [
       {
-        path: 'conversation',
-        name: 'Conversation',
-        component: () => import('@/views/conversation/ConversationView.vue'),
+        path: 'explore',
+        name: 'Explore',
+        component: () => import('@/views/explore/ExploreView.vue'),
         meta: {
-          title: '对话',
+          title: '探索',
           icon: 'chat'
         } as RouteMeta
       },
@@ -107,7 +107,7 @@ const routes: RouteRecordRaw[] = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-  scrollBehavior(to, from, savedPosition) {
+  scrollBehavior(_to, _from, savedPosition) {
     if (savedPosition) {
       return savedPosition
     } else {
@@ -117,7 +117,7 @@ const router = createRouter({
 })
 
 // 路由守卫
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   // 设置页面标题
   const title = to.meta.title as string
   if (title) {

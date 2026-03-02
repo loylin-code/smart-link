@@ -63,7 +63,7 @@
   const particleCanvas = ref<HTMLCanvasElement>()
 
   const handleStart = () => {
-    router.push('/app/conversation')
+    router.push('/app/explore')
   }
 
   const handleOpenClaw = () => {
