@@ -168,11 +168,12 @@
       width: 32px;
       height: 32px;
       border-radius: $border-radius-full;
-      background: linear-gradient(135deg, $primary-color, $secondary-color);
+      background: $bg-tertiary;
+      border: 1px solid $border-color-base;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: $text-primary;
+      color: $primary-color;
 
       svg {
         width: 20px;
@@ -189,21 +190,21 @@
 
   @keyframes glow {
     from {
-      filter: drop-shadow(0 0 5px rgba(0, 212, 255, 0.3));
+      filter: drop-shadow(0 0 3px rgba(24, 144, 255, 0.2));
     }
     to {
-      filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.6));
+      filter: drop-shadow(0 0 6px rgba(24, 144, 255, 0.4));
     }
   }
 
   @keyframes eyeGlow {
     from {
       fill: $primary-color;
-      filter: drop-shadow(0 0 2px rgba(0, 212, 255, 0.5));
+      filter: drop-shadow(0 0 1px rgba(24, 144, 255, 0.3));
     }
     to {
       fill: $primary-light;
-      filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.8));
+      filter: drop-shadow(0 0 3px rgba(24, 144, 255, 0.5));
     }
   }
 </style>

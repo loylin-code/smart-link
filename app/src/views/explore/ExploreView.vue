@@ -226,9 +226,10 @@
     justify-content: center;
     gap: $spacing-sm;
     padding: $spacing-sm $spacing-md;
-    background: linear-gradient(135deg, $primary-color, $primary-dark);
+    background: $primary-color;
+    border: 1px solid $primary-color;
     border-radius: $border-radius-md;
-    color: $text-primary;
+    color: #fff;
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
     cursor: pointer;
@@ -240,8 +241,8 @@
     }
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+      background: $primary-light;
+      border-color: $primary-light;
     }
   }
 
@@ -257,12 +258,14 @@
     gap: $spacing-sm;
     padding: $spacing-sm $spacing-md;
     border-radius: $border-radius-md;
+    border: 1px solid transparent;
     cursor: pointer;
     transition: all $transition-base ease;
     margin-bottom: $spacing-xs;
 
     &:hover {
       background: $bg-tertiary;
+      border-color: $border-color-light;
 
       .explore-delete {
         opacity: 1;
@@ -270,7 +273,8 @@
     }
 
     &--active {
-      background: rgba(0, 212, 255, 0.1);
+      background: rgba(24, 144, 255, 0.1);
+      border: 1px solid rgba(24, 144, 255, 0.3);
 
       .explore-icon {
         color: $primary-color;
@@ -282,6 +286,7 @@
     width: 40px;
     height: 40px;
     background: $bg-tertiary;
+    border: 1px solid $border-color-light;
     border-radius: $border-radius-md;
     display: flex;
     align-items: center;
@@ -332,7 +337,7 @@
     }
 
     &:hover {
-      background: rgba(239, 68, 68, 0.1);
+      background: rgba(245, 108, 108, 0.1);
       color: $error;
     }
   }
@@ -367,8 +372,8 @@
       flex-direction: row-reverse;
 
       .message-content {
-        background: linear-gradient(135deg, $primary-color, $primary-dark);
-        color: $text-primary;
+        background: $primary-color;
+        color: #fff;
       }
 
       .message-header {
@@ -379,6 +384,7 @@
     &--assistant {
       .message-content {
         background: $bg-tertiary;
+        border: 1px solid $border-color-light;
         color: $text-primary;
       }
     }
@@ -403,13 +409,13 @@
   }
 
   .user-avatar {
-    background: linear-gradient(135deg, $secondary-color, $secondary-dark);
-    color: $text-primary;
+    background: $secondary-color;
+    color: #fff;
   }
 
   .assistant-avatar {
-    background: linear-gradient(135deg, $primary-color, $primary-dark);
-    color: $text-primary;
+    background: $primary-color;
+    color: #fff;
   }
 
   .message-content {
@@ -450,14 +456,14 @@
     display: flex;
     gap: $spacing-sm;
     background: $bg-secondary;
-    border: 1px solid $bg-elevated;
+    border: 1px solid $border-color-base;
     border-radius: $border-radius-lg;
     padding: $spacing-sm;
     transition: all $transition-base ease;
 
     &:focus-within {
       border-color: $primary-color;
-      box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
     }
   }
 
@@ -477,12 +483,13 @@
   .send-button {
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, $primary-color, $primary-dark);
+    background: $primary-color;
+    border: 1px solid $primary-color;
     border-radius: $border-radius-md;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: $text-primary;
+    color: #fff;
     cursor: pointer;
     transition: all $transition-base ease;
 
@@ -492,8 +499,8 @@
     }
 
     &:hover:not(:disabled) {
-      transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+      background: $primary-light;
+      border-color: $primary-light;
     }
 
     &:disabled {

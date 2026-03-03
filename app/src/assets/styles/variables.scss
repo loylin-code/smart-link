@@ -1,34 +1,39 @@
-// 主色调 - 科技蓝
-$primary-color: #00d4ff;
-$primary-light: #4de8ff;
-$primary-dark: #00a8cc;
+// 主色调 - 蓝色
+$primary-color: #1890ff;
+$primary-light: #40a9ff;
+$primary-dark: #096dd9;
 
 // 辅助色 - 紫色系
-$secondary-color: #7c3aed;
-$secondary-light: #a78bfa;
-$secondary-dark: #5b21b6;
+$secondary-color: #722ed1;
+$secondary-light: #9254de;
+$secondary-dark: #531dab;
 
-// 背景色系
-$bg-primary: #0a0e27;
-$bg-secondary: #151b3d;
-$bg-tertiary: #1e2447;
-$bg-elevated: #252b4e;
+// 背景色系 - 白色为主
+$bg-primary: #ffffff;
+$bg-secondary: #f5f7fa;
+$bg-tertiary: #ebeef5;
+$bg-elevated: #e4e7ed;
 
 // 文字色系
-$text-primary: #ffffff;
-$text-secondary: #b4b9d4;
-$text-tertiary: #6b7194;
-$text-disabled: #3d4266;
+$text-primary: #303133;
+$text-secondary: #606266;
+$text-tertiary: #909399;
+$text-disabled: #c0c4cc;
 
 // 功能色
-$success: #10b981;
-$warning: #f59e0b;
-$error: #ef4444;
-$info: #3b82f6;
+$success: #67c23a;
+$warning: #e6a23c;
+$error: #f56c6c;
+$info: #909399;
+
+// 边框色
+$border-color-base: #dcdfe6;
+$border-color-light: #e4e7ed;
+$border-color-lighter: #ebeef5;
 
 // 发光效果色
-$glow-primary: rgba(0, 212, 255, 0.5);
-$glow-secondary: rgba(124, 58, 237, 0.5);
+$glow-primary: rgba(24, 144, 255, 0.2);
+$glow-secondary: rgba(114, 46, 209, 0.2);
 
 // 间距系统
 $spacing-unit: 4px;
@@ -66,15 +71,15 @@ $border-radius-2xl: 24px;
 $border-radius-full: 9999px;
 
 // 阴影系统
-$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
-$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
-$shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.25);
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
+$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+$shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.12);
 
 // 发光阴影
-$glow-shadow-primary: 0 0 20px rgba(0, 212, 255, 0.3);
-$glow-shadow-secondary: 0 0 20px rgba(124, 58, 237, 0.3);
-$glow-shadow-success: 0 0 20px rgba(16, 185, 129, 0.3);
+$glow-shadow-primary: 0 2px 8px rgba(24, 144, 255, 0.15);
+$glow-shadow-secondary: 0 2px 8px rgba(114, 46, 209, 0.15);
+$glow-shadow-success: 0 2px 8px rgba(103, 194, 58, 0.15);
 
 // 过渡时间
 $transition-fast: 0.15s;

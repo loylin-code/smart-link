@@ -176,9 +176,10 @@
     align-items: center;
     gap: $spacing-sm;
     padding: $spacing-sm $spacing-lg;
-    background: linear-gradient(135deg, $primary-color, $primary-dark);
+    background: $primary-color;
+    border: 1px solid $primary-color;
     border-radius: $border-radius-md;
-    color: $text-primary;
+    color: #fff;
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
     cursor: pointer;
@@ -190,8 +191,8 @@
     }
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+      background: $primary-light;
+      border-color: $primary-light;
     }
   }
 
@@ -203,28 +204,27 @@
 
   .app-card {
     background: $bg-secondary;
-    border: 1px solid $bg-elevated;
+    border: 1px solid $border-color-light;
     border-radius: $border-radius-lg;
     padding: $spacing-lg;
     transition: all $transition-base ease;
 
     &:hover {
       transform: translateY(-4px);
-      border-color: rgba(0, 212, 255, 0.3);
-      box-shadow:
-        0 8px 24px rgba(0, 0, 0, 0.3),
-        0 0 20px rgba(0, 212, 255, 0.2);
+      border-color: rgba(24, 144, 255, 0.3);
+      box-shadow: $shadow-md;
     }
 
     &__icon {
       width: 60px;
       height: 60px;
-      background: linear-gradient(135deg, $primary-color, $secondary-color);
+      background: $bg-tertiary;
+      border: 1px solid $border-color-base;
       border-radius: $border-radius-lg;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: $text-primary;
+      color: $primary-color;
       margin-bottom: $spacing-md;
 
       svg {
@@ -258,7 +258,7 @@
       display: flex;
       gap: $spacing-sm;
       padding-top: $spacing-md;
-      border-top: 1px solid $bg-elevated;
+      border-top: 1px solid $border-color-light;
     }
   }
 
@@ -269,7 +269,6 @@
 
     &--active {
       background: $success;
-      box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
     }
 
     &--inactive {
@@ -290,6 +289,7 @@
     gap: $spacing-xs;
     padding: $spacing-xs $spacing-sm;
     background: $bg-tertiary;
+    border: 1px solid $border-color-light;
     border-radius: $border-radius-sm;
     color: $text-secondary;
     font-size: $font-size-xs;
@@ -302,12 +302,12 @@
     }
 
     &:hover {
-      background: rgba(0, 212, 255, 0.1);
+      border-color: $primary-color;
       color: $primary-color;
     }
 
     &--danger:hover {
-      background: rgba(239, 68, 68, 0.1);
+      border-color: $error;
       color: $error;
     }
   }

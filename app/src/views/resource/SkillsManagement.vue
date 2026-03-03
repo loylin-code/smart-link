@@ -117,9 +117,10 @@
     align-items: center;
     gap: $spacing-sm;
     padding: $spacing-sm $spacing-lg;
-    background: linear-gradient(135deg, $primary-color, $primary-dark);
+    background: $primary-color;
+    border: 1px solid $primary-color;
     border-radius: $border-radius-md;
-    color: $text-primary;
+    color: #fff;
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
     cursor: pointer;
@@ -131,8 +132,8 @@
     }
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+      background: $primary-light;
+      border-color: $primary-light;
     }
   }
 
@@ -147,7 +148,7 @@
     max-width: 400px;
     padding: $spacing-sm $spacing-md;
     background: $bg-secondary;
-    border: 1px solid $bg-elevated;
+    border: 1px solid $border-color-base;
     border-radius: $border-radius-md;
     color: $text-primary;
     font-size: $font-size-sm;
@@ -164,7 +165,7 @@
   .filter-select {
     padding: $spacing-sm $spacing-md;
     background: $bg-secondary;
-    border: 1px solid $bg-elevated;
+    border: 1px solid $border-color-base;
     border-radius: $border-radius-md;
     color: $text-primary;
     font-size: $font-size-sm;
@@ -177,14 +178,14 @@
 
   .resource-table {
     background: $bg-secondary;
-    border: 1px solid $bg-elevated;
+    border: 1px solid $border-color-light;
     border-radius: $border-radius-lg;
     overflow: hidden;
   }
 
   .table-header {
     background: $bg-tertiary;
-    border-bottom: 1px solid $bg-elevated;
+    border-bottom: 1px solid $border-color-light;
   }
 
   .table-row {
@@ -195,7 +196,7 @@
     align-items: center;
 
     &:not(:last-child) {
-      border-bottom: 1px solid $bg-elevated;
+      border-bottom: 1px solid $border-color-light;
     }
   }
 

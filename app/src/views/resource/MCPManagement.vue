@@ -65,9 +65,10 @@
     align-items: center;
     gap: $spacing-sm;
     padding: $spacing-sm $spacing-lg;
-    background: linear-gradient(135deg, $primary-color, $primary-dark);
+    background: $primary-color;
+    border: 1px solid $primary-color;
     border-radius: $border-radius-md;
-    color: $text-primary;
+    color: #fff;
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
     cursor: pointer;
@@ -79,8 +80,8 @@
     }
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+      background: $primary-light;
+      border-color: $primary-light;
     }
   }
 

@@ -68,7 +68,7 @@
     justify-content: space-between;
     align-items: center;
     padding: $spacing-lg $spacing-xl;
-    border-bottom: 1px solid $bg-elevated;
+    border-bottom: 1px solid $border-color-light;
   }
 
   .page-title {
@@ -85,7 +85,7 @@
   .action-btn {
     padding: $spacing-sm $spacing-lg;
     background: $bg-tertiary;
-    border: 1px solid $bg-elevated;
+    border: 1px solid $border-color-base;
     border-radius: $border-radius-md;
     color: $text-primary;
     font-size: $font-size-sm;
@@ -97,11 +97,13 @@
     }
 
     &--primary {
-      background: linear-gradient(135deg, $primary-color, $primary-dark);
-      border: none;
+      background: $primary-color;
+      border-color: $primary-color;
+      color: #fff;
 
       &:hover {
-        box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+        background: $primary-light;
+        border-color: $primary-light;
       }
     }
   }
@@ -115,7 +117,7 @@
   .component-library {
     width: 240px;
     background: $bg-secondary;
-    border-right: 1px solid $bg-elevated;
+    border-right: 1px solid $border-color-light;
     padding: $spacing-md;
   }
 
@@ -138,14 +140,14 @@
     gap: $spacing-sm;
     padding: $spacing-sm $spacing-md;
     background: $bg-tertiary;
-    border: 1px solid $bg-elevated;
+    border: 1px solid $border-color-light;
     border-radius: $border-radius-md;
     cursor: pointer;
     transition: all $transition-base ease;
 
     &:hover {
       border-color: $primary-color;
-      background: rgba(0, 212, 255, 0.1);
+      color: $primary-color;
     }
   }
 
