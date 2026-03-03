@@ -35,7 +35,7 @@
 <script setup lang="ts"></script>
 
 <style scoped lang="scss">
-  @import '@/assets/styles/variables.scss';
+  @use '@/assets/styles/variables.scss' as *;
 
   .resource-management {
     height: 100%;

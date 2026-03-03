@@ -1,7 +1,7 @@
 <template>
   <header class="app-header">
     <div class="app-header__left">
-      <div class="app-header__logo">
+      <router-link to="/" class="app-header__logo">
         <div class="logo-icon">
           <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect
@@ -47,7 +47,7 @@
           </svg>
         </div>
         <span class="logo-text">SmartLink</span>
-      </div>
+      </router-link>
       <div class="app-header__breadcrumb">
         <span class="breadcrumb-item">{{ currentTitle }}</span>
       </div>
@@ -105,6 +105,7 @@
       display: flex;
       align-items: center;
       gap: $spacing-sm;
+      text-decoration: none;
 
       .logo-icon {
         width: 32px;
