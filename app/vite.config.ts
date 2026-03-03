@@ -6,7 +6,11 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src')
+      '@': resolve(__dirname, 'src'),
+      '@smart-link/shared': resolve(__dirname, '../packages/shared/src'),
+      '@smart-link/ui': resolve(__dirname, '../packages/ui/src'),
+      '@smart-link/hooks': resolve(__dirname, '../packages/hooks/src'),
+      '@smart-link/core': resolve(__dirname, '../packages/core/src')
     }
   },
   css: {
