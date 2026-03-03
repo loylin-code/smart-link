@@ -60,28 +60,22 @@
       </svg>
       <p>暂无匹配的组件</p>
     </div>
-
-    <SlDrawer v-model="drawerVisible" :title="currentComponent?.name || '组件详情'" size="640px">
-      <ComponentDetail v-if="currentComponent" :component="currentComponent" />
-    </SlDrawer>
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, computed } from 'vue'
+  import { useRouter } from 'vue-router'
   import { COMPONENT_META_LIST, COMPONENT_CATEGORIES } from '@smart-link/shared'
   import type { ComponentMeta } from '@smart-link/shared'
-  import { SlDrawer } from '@smart-link/ui'
   import ComponentCard from '@/components/component/ComponentCard.vue'
-  import ComponentDetail from '@/components/component/ComponentDetail.vue'
 
+  const router = useRouter()
   const componentList = COMPONENT_META_LIST
   const categories = COMPONENT_CATEGORIES
 
   const activeCategory = ref('all')
   const searchKeyword = ref('')
-  const drawerVisible = ref(false)
-  const currentComponent = ref<ComponentMeta | null>(null)
 
   const filteredComponents = computed(() => {
     let result = componentList
@@ -108,8 +102,7 @@
   }
 
   const openDetail = (component: ComponentMeta) => {
-    currentComponent.value = component
-    drawerVisible.value = true
+    router.push(`/app/resource/components/${component.type}`)
   }
 </script>
 

@@ -89,6 +89,16 @@ const routes: RouteRecordRaw[] = [
               title: '前端组件管理',
               icon: 'component'
             } as RouteMeta
+          },
+          {
+            path: 'components/:type',
+            name: 'ComponentDetail',
+            component: () => import('@/views/resource/ComponentDetailPage.vue'),
+            meta: {
+              title: '组件详情',
+              icon: 'component',
+              hidden: true
+            } as RouteMeta
           }
         ]
       }

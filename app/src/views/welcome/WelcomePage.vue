@@ -118,7 +118,7 @@
       draw() {
         ctx!.beginPath()
         ctx!.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
-        ctx!.fillStyle = 'rgba(0, 212, 255, 0.5)'
+        ctx!.fillStyle = 'rgba(24, 144, 255, 0.4)'
         ctx!.fill()
       }
     }
@@ -150,7 +150,7 @@
             ctx!.beginPath()
             ctx!.moveTo(p1.x, p1.y)
             ctx!.lineTo(p2.x, p2.y)
-            ctx!.strokeStyle = `rgba(0, 212, 255, ${0.2 * (1 - dist / 120)})`
+            ctx!.strokeStyle = `rgba(24, 144, 255, ${0.15 * (1 - dist / 120)})`
             ctx!.stroke()
           }
         })
@@ -172,7 +172,7 @@
   .welcome-page {
     width: 100%;
     height: 100vh;
-    background: linear-gradient(135deg, #0a0e27 0%, #151b3d 100%);
+    background: linear-gradient(135deg, #f0f5ff 0%, #e6f7ff 50%, #ffffff 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -232,7 +232,7 @@
     .logo-text {
       font-size: 56px;
       font-weight: 700;
-      background: linear-gradient(135deg, #1890ff 0%, #722ed1 100%);
+      background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -242,14 +242,14 @@
 
   .welcome-slogan {
     font-size: 24px;
-    color: #ffffff;
+    color: #303133;
     margin-bottom: 8px;
     font-weight: 600;
   }
 
   .welcome-description {
     font-size: 18px;
-    color: #b4b9d4;
+    color: #606266;
     margin-bottom: 48px;
   }
 
@@ -328,7 +328,7 @@
     justify-content: center;
     padding: 12px 32px;
     background: transparent;
-    border: 1px solid rgba(24, 144, 255, 0.4);
+    border: 1px solid rgba(24, 144, 255, 0.5);
     border-radius: 999px;
     color: #1890ff;
     font-size: 14px;
@@ -337,10 +337,10 @@
     transition: all 0.3s ease;
 
     &:hover {
-      background: rgba(24, 144, 255, 0.1);
+      background: rgba(24, 144, 255, 0.08);
       border-color: #1890ff;
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(24, 144, 255, 0.2);
+      box-shadow: 0 4px 12px rgba(24, 144, 255, 0.15);
     }
 
     &:active {
@@ -357,7 +357,7 @@
 
     .footer-text {
       font-size: 14px;
-      color: #6b7194;
+      color: #909399;
     }
   }
 

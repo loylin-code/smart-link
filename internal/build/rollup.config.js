@@ -4,9 +4,16 @@ import typescript from 'rollup-plugin-typescript2'
 import postcss from 'rollup-plugin-postcss'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
-import { resolve } from 'path'
+import { resolve, dirname } from 'path'
+import { fileURLToPath } from 'url'
+import fs from 'fs'
 
-const input = resolve(__dirname, '../packages/*/src/index.ts')
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const pkgPath = process.cwd()
+const pkgJson = JSON.parse(fs.readFileSync(resolve(pkgPath, 'package.json'), 'utf-8'))
+
+const input = resolve(pkgPath, 'src/index.ts')
+const tsconfig = resolve(pkgPath, 'tsconfig.json')
 
 export default defineConfig({
   input,
@@ -35,7 +42,7 @@ export default defineConfig({
       target: 'browser'
     }),
     typescript({
-      tsconfig: resolve(__dirname, '../tsconfig.base.json'),
+      tsconfig,
       useTsconfigDeclarationDir: true
     }),
     postcss({

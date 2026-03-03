@@ -67,7 +67,7 @@
   const isFocused = ref(false)
 
   const displayLabel = computed(() => {
-    const option = props.options.find((o) => o.value === props.modelValue)
+    const option = props.options.find((o: Option) => o.value === props.modelValue)
     return option?.label || ''
   })
 

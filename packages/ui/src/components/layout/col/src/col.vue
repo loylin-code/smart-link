@@ -1,5 +1,5 @@
 <template>
-  <div class="sl-col" :class="classes" :style="style">
+  <div class="sl-col" :style="colStyle">
     <slot></slot>
   </div>
 </template>
@@ -23,23 +23,32 @@
 
   const gutter = inject('gutter', 0)
 
-  const classes = computed(() =>
-    [
-      `sl-col-${props.span}`,
-      props.offset ? `sl-col-offset-${props.offset}` : '',
-      props.push ? `sl-col-push-${props.push}` : '',
-      props.pull ? `sl-col-pull-${props.pull}` : ''
-    ].filter(Boolean)
-  )
-
-  const style = computed(() => {
-    if (gutter) {
-      return {
-        paddingLeft: `${(gutter as number) / 2}px`,
-        paddingRight: `${(gutter as number) / 2}px`
-      }
+  const colStyle = computed(() => {
+    const style: Record<string, string> = {
+      maxWidth: `${(100 / 24) * props.span}%`,
+      flex: `0 0 ${(100 / 24) * props.span}%`
     }
-    return {}
+
+    if (props.offset) {
+      style.marginLeft = `${(100 / 24) * props.offset}%`
+    }
+
+    if (props.push) {
+      style.position = 'relative'
+      style.left = `${(100 / 24) * props.push}%`
+    }
+
+    if (props.pull) {
+      style.position = 'relative'
+      style.right = `${(100 / 24) * props.pull}%`
+    }
+
+    if (gutter) {
+      style.paddingLeft = `${(gutter as number) / 2}px`
+      style.paddingRight = `${(gutter as number) / 2}px`
+    }
+
+    return style
   })
 </script>
 
@@ -47,23 +56,5 @@
   .sl-col {
     box-sizing: border-box;
     min-height: 1px;
-
-    @for $i from 0 through 24 {
-      &-#{$i} {
-        max-width: calc(100% / 24 * #{$i});
-        flex: 0 0 calc(100% / 24 * #{$i});
-      }
-      &-offset-#{$i} {
-        margin-left: calc(100% / 24 * #{$i});
-      }
-      &-push-#{$i} {
-        position: relative;
-        left: calc(100% / 24 * #{$i});
-      }
-      &-pull-#{$i} {
-        position: relative;
-        right: calc(100% / 24 * #{$i});
-      }
-    }
   }
 </style>
