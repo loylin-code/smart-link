@@ -2,13 +2,14 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import pinia from './store'
+import i18n from './locales'
 
-// 导入OpenTiny样式
 import '@opentiny/vue-theme/index.css'
 
 const app = createApp(App)
 
 app.use(pinia)
 app.use(router)
+app.use(i18n)
 
 app.mount('#app')

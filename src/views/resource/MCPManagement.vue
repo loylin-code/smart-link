@@ -1,7 +1,7 @@
 <template>
   <div class="resource-management">
     <div class="page-header">
-      <h1 class="page-title">MCP管理</h1>
+      <h1 class="page-title">{{ t('sidebar.mcpManagement') }}</h1>
       <button class="create-btn">
         <svg viewBox="0 0 24 24" fill="none">
           <path
@@ -12,7 +12,7 @@
             stroke-linejoin="round"
           />
         </svg>
-        <span>创建MCP</span>
+        <span>{{ t('resource.createMCP') }}</span>
       </button>
     </div>
 
@@ -27,12 +27,16 @@
           stroke-linejoin="round"
         />
       </svg>
-      <p>暂无MCP配置</p>
+      <p>{{ t('resource.noMCP') }}</p>
     </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+  import { useI18n } from 'vue-i18n'
+
+  const { t } = useI18n()
+</script>
 
 <style scoped lang="scss">
   @use '@/assets/styles/variables.scss' as *;

@@ -54,6 +54,7 @@
     </div>
 
     <div class="app-header__right">
+      <LanguageSwitcher />
       <div class="user-info">
         <div class="user-avatar">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -75,8 +76,11 @@
 <script setup lang="ts">
   import { computed } from 'vue'
   import { useRoute } from 'vue-router'
+  import { useI18n } from 'vue-i18n'
+  import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
 
   const route = useRoute()
+  const { t } = useI18n()
 
   const currentTitle = computed(() => {
     return route.meta.title || 'SmartLink'

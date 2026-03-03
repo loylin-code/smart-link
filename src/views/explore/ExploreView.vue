@@ -12,7 +12,7 @@
               stroke-linejoin="round"
             />
           </svg>
-          <span>新建对话</span>
+          <span>{{ t('explore.newChat') }}</span>
         </button>
       </div>
 
@@ -90,7 +90,9 @@
             </div>
             <div class="message-content">
               <div class="message-header">
-                <span class="message-name">{{ message.role === 'user' ? '我' : 'SmartLink' }}</span>
+                <span class="message-name">{{
+                  message.role === 'user' ? t('explore.me') : t('explore.assistant')
+                }}</span>
                 <span class="message-time">{{ formatTime(message.timestamp) }}</span>
               </div>
               <div class="message-text">{{ message.content }}</div>
@@ -103,7 +105,7 @@
             <textarea
               v-model="inputMessage"
               class="message-input"
-              placeholder="输入消息..."
+              :placeholder="t('explore.inputPlaceholder')"
               @keydown.enter.exact.prevent="sendMessage"
               rows="1"
             ></textarea>
@@ -134,7 +136,7 @@
             />
           </svg>
         </div>
-        <p class="empty-text">选择或创建一个对话开始聊天</p>
+        <p class="empty-text">{{ t('explore.selectOrCreate') }}</p>
       </div>
     </div>
   </div>
@@ -143,8 +145,10 @@
 <script setup lang="ts">
   import { ref, computed } from 'vue'
   import { useExploreStore } from '@/store'
+  import { useI18n } from 'vue-i18n'
 
   const exploreStore = useExploreStore()
+  const { t } = useI18n()
 
   const inputMessage = ref('')
 
@@ -187,9 +191,9 @@
     const now = new Date()
     const diff = now.getTime() - date.getTime()
 
-    if (diff < 60000) return '刚刚'
-    if (diff < 3600000) return `${Math.floor(diff / 60000)}分钟前`
-    if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`
+    if (diff < 60000) return t('explore.justNow')
+    if (diff < 3600000) return `${Math.floor(diff / 60000)}${t('explore.minutesAgo')}`
+    if (diff < 86400000) return `${Math.floor(diff / 3600000)}${t('explore.hoursAgo')}`
 
     return date.toLocaleDateString('zh-CN')
   }

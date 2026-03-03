@@ -76,7 +76,7 @@
             stroke-linejoin="round"
           />
         </svg>
-        <span v-if="!isCollapsed" class="toggle-text">收起侧边栏</span>
+        <span v-if="!isCollapsed" class="toggle-text">{{ t('sidebar.collapseSidebar') }}</span>
       </button>
     </div>
   </aside>
@@ -85,10 +85,12 @@
 <script setup lang="ts">
   import { ref, computed, h } from 'vue'
   import { useRoute } from 'vue-router'
+  import { useI18n } from 'vue-i18n'
   import { useAppStore } from '@/store'
 
   const route = useRoute()
   const appStore = useAppStore()
+  const { t } = useI18n()
 
   const expandedItems = ref<string[]>(['/app/application', '/app/resource'])
 
@@ -160,32 +162,32 @@
       })
     ])
 
-  const menuItems = [
+  const menuItems = computed(() => [
     {
       path: '/app/explore',
-      title: '探索',
+      title: t('sidebar.explore'),
       icon: ChatIcon
     },
     {
       path: '/app/application',
-      title: '应用管理',
+      title: t('sidebar.appManagement'),
       icon: AppIcon,
       children: [
-        { path: '/app/application/list', title: '应用列表' },
-        { path: '/app/application/orchestration', title: '应用编排' }
+        { path: '/app/application/list', title: t('sidebar.appList') },
+        { path: '/app/application/orchestration', title: t('sidebar.appOrchestration') }
       ]
     },
     {
       path: '/app/resource',
-      title: '资源管理',
+      title: t('sidebar.resource'),
       icon: ResourceIcon,
       children: [
-        { path: '/app/resource/skills', title: 'Skills管理' },
-        { path: '/app/resource/mcp', title: 'MCP管理' },
-        { path: '/app/resource/components', title: '前端组件管理' }
+        { path: '/app/resource/skills', title: t('sidebar.skillsManagement') },
+        { path: '/app/resource/mcp', title: t('sidebar.mcpManagement') },
+        { path: '/app/resource/components', title: t('sidebar.componentManagement') }
       ]
     }
-  ]
+  ])
 
   const isActive = (path: string) => {
     return route.path === path || route.path.startsWith(path + '/')

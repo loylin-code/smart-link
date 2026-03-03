@@ -25,13 +25,13 @@
       </div>
 
       <!-- 标语 -->
-      <p class="welcome-slogan">智能Agent编排管理平台</p>
-      <p class="welcome-description">构建智能工作流，连接无限可能</p>
+      <p class="welcome-slogan">{{ t('welcome.slogan') }}</p>
+      <p class="welcome-description">{{ t('welcome.description') }}</p>
 
       <!-- 按钮区域 -->
       <div class="button-group">
         <button class="start-button" @click="handleStart">
-          <span class="button-text">开始探索</span>
+          <span class="button-text">{{ t('welcome.startExplore') }}</span>
           <svg class="button-icon" viewBox="0 0 24 24" fill="none">
             <path
               d="M5 12H19M19 12L12 5M19 12L12 19"
@@ -43,14 +43,14 @@
           </svg>
         </button>
         <button class="secondary-button" @click="handleOpenClaw">
-          <span>体验OpenClaw</span>
+          <span>{{ t('welcome.experienceOpenClaw') }}</span>
         </button>
       </div>
     </div>
 
     <!-- 底部信息 -->
     <div class="welcome-footer">
-      <p class="footer-text">Powered by Vue 3 + OpenTiny</p>
+      <p class="footer-text">{{ t('welcome.poweredBy') }}</p>
     </div>
   </div>
 </template>
@@ -58,8 +58,10 @@
 <script setup lang="ts">
   import { ref, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
+  import { useI18n } from 'vue-i18n'
 
   const router = useRouter()
+  const { t } = useI18n()
   const particleCanvas = ref<HTMLCanvasElement>()
 
   const handleStart = () => {
