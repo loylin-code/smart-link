@@ -262,7 +262,8 @@
   }
 
   .preview-section {
-    background: $bg-tertiary;
+    background: $bg-secondary;
+    border: 1px solid $border-color-light;
     border-radius: $border-radius-lg;
     padding: $spacing-lg;
     margin-bottom: $spacing-lg;
@@ -294,8 +295,8 @@
   .option-btn {
     padding: 4px 12px;
     font-size: $font-size-xs;
-    background: $bg-secondary;
-    border: 1px solid $bg-elevated;
+    background: $bg-tertiary;
+    border: 1px solid $border-color-base;
     border-radius: $border-radius-sm;
     color: $text-secondary;
     cursor: pointer;
@@ -307,7 +308,7 @@
     }
 
     &.active {
-      background: rgba(0, 212, 255, 0.1);
+      background: rgba(24, 144, 255, 0.1);
       border-color: $primary-color;
       color: $primary-color;
     }
@@ -329,8 +330,8 @@
   .control-input {
     padding: 4px 8px;
     font-size: $font-size-sm;
-    background: $bg-secondary;
-    border: 1px solid $bg-elevated;
+    background: $bg-tertiary;
+    border: 1px solid $border-color-base;
     border-radius: $border-radius-sm;
     color: $text-primary;
     outline: none;
@@ -346,7 +347,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: $bg-secondary;
+    background: $bg-tertiary;
+    border: 1px solid $border-color-light;
     border-radius: $border-radius-md;
     padding: $spacing-lg;
   }
@@ -355,7 +357,7 @@
     display: flex;
     gap: 2px;
     margin-bottom: $spacing-md;
-    border-bottom: 1px solid $bg-elevated;
+    border-bottom: 1px solid $border-color-light;
     padding-bottom: 2px;
   }
 
@@ -385,7 +387,8 @@
 
   .tab-count {
     font-size: $font-size-xs;
-    background: $bg-elevated;
+    background: $bg-tertiary;
+    border: 1px solid $border-color-light;
     padding: 0 6px;
     border-radius: $border-radius-full;
     color: $text-tertiary;
@@ -406,14 +409,14 @@
     td {
       text-align: left;
       padding: $spacing-sm $spacing-md;
-      border-bottom: 1px solid $bg-elevated;
+      border-bottom: 1px solid $border-color-light;
     }
 
     th {
       font-size: $font-size-sm;
       font-weight: $font-weight-medium;
       color: $text-tertiary;
-      background: $bg-tertiary;
+      background: $bg-secondary;
     }
 
     td {
@@ -426,7 +429,7 @@
     font-family: 'Fira Code', monospace;
     font-size: $font-size-xs;
     color: $primary-color;
-    background: rgba(0, 212, 255, 0.1);
+    background: rgba(24, 144, 255, 0.1);
     padding: 2px 6px;
     border-radius: 3px;
   }

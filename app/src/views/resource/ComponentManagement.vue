@@ -144,6 +144,7 @@
     align-items: center;
     padding: $spacing-sm $spacing-lg;
     background: $bg-secondary;
+    border: 1px solid $border-color-light;
     border-radius: $border-radius-md;
   }
 
@@ -171,7 +172,7 @@
     gap: 6px;
     padding: $spacing-sm $spacing-lg;
     background: $bg-secondary;
-    border: 1px solid $bg-elevated;
+    border: 1px solid $border-color-light;
     border-radius: $border-radius-full;
     color: $text-secondary;
     font-size: $font-size-sm;
@@ -184,7 +185,7 @@
     }
 
     &.active {
-      background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(124, 58, 237, 0.1));
+      background: rgba(24, 144, 255, 0.1);
       border-color: $primary-color;
       color: $primary-color;
     }
@@ -192,7 +193,8 @@
 
   .tab-count {
     font-size: $font-size-xs;
-    background: $bg-elevated;
+    background: $bg-tertiary;
+    border: 1px solid $border-color-light;
     padding: 0 6px;
     border-radius: $border-radius-full;
     color: $text-tertiary;
@@ -218,7 +220,7 @@
     max-width: 400px;
     padding: $spacing-sm $spacing-md $spacing-sm 40px;
     background: $bg-secondary;
-    border: 1px solid $bg-elevated;
+    border: 1px solid $border-color-base;
     border-radius: $border-radius-md;
     color: $text-primary;
     font-size: $font-size-sm;
@@ -231,7 +233,7 @@
 
     &:focus {
       border-color: $primary-color;
-      box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
     }
   }
 

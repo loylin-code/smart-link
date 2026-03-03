@@ -119,18 +119,16 @@
 <style scoped lang="scss">
   .component-card {
     background: $bg-secondary;
-    border: 1px solid $bg-elevated;
+    border: 1px solid $border-color-light;
     border-radius: $border-radius-lg;
     cursor: pointer;
     transition: all $transition-base ease;
     overflow: hidden;
 
     &:hover {
-      border-color: rgba(0, 212, 255, 0.5);
+      border-color: rgba(24, 144, 255, 0.5);
       transform: translateY(-4px);
-      box-shadow:
-        0 8px 24px rgba(0, 0, 0, 0.3),
-        0 0 20px rgba(0, 212, 255, 0.15);
+      box-shadow: $shadow-md;
 
       .preview-area {
         background: $bg-tertiary;
@@ -153,7 +151,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid $bg-elevated;
+    border-bottom: 1px solid $border-color-light;
   }
 
   .card-name {
@@ -165,7 +163,7 @@
   .card-category {
     font-size: $font-size-xs;
     color: $primary-color;
-    background: rgba(0, 212, 255, 0.1);
+    background: rgba(24, 144, 255, 0.1);
     padding: 2px 8px;
     border-radius: $border-radius-sm;
   }
