@@ -1,0 +1,31 @@
+{
+  "name": "@smart-link/theme",
+  "version": "1.0.0",
+  "description": "SmartLink theme styles",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c ../../internal/build/rollup.config.js"
+  },
+  "dependencies": {
+    "@smart-link/shared": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "loylin",
+  "license": "MIT"
+}

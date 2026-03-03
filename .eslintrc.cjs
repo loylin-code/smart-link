@@ -3,7 +3,7 @@ module.exports = {
   env: {
     node: true,
     browser: true,
-    es2022: true
+    es2021: true
   },
   extends: [
     'plugin:vue/vue3-essential',
@@ -12,10 +12,12 @@ module.exports = {
     '@vue/eslint-config-prettier'
   ],
   parserOptions: {
-    ecmaVersion: 'latest'
+    ecmaVersion: 'latest',
+    sourceType: 'module'
   },
   rules: {
     'vue/multi-word-component-names': 'off',
-    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }]
-  }
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }]
+  },
+  ignorePatterns: ['dist', 'node_modules', '*.md']
 }

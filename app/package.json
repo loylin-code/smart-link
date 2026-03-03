@@ -1,0 +1,36 @@
+{
+  "name": "@smart-link/app",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -p tsconfig.json && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@smart-link/ui": "workspace:*",
+    "@smart-link/core": "workspace:*",
+    "@smart-link/hooks": "workspace:*",
+    "@smart-link/shared": "workspace:*",
+    "@opentiny/vue": "^3.14.0",
+    "@opentiny/vue-icon": "^3.14.0",
+    "@opentiny/vue-theme": "^3.14.0",
+    "@vueuse/core": "^10.9.0",
+    "@vueuse/motion": "^2.1.0",
+    "axios": "^1.6.7",
+    "pinia": "^2.1.7",
+    "pinia-plugin-persistedstate": "^3.2.1",
+    "vue": "^3.4.21",
+    "vue-i18n": "^11.2.8",
+    "vue-router": "^4.3.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "sass": "^1.71.1",
+    "terser": "^5.46.0",
+    "typescript": "^5.4.2",
+    "vite": "^5.1.6",
+    "vue-tsc": "^2.0.6"
+  }
+}

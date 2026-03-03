@@ -1,0 +1,40 @@
+{
+  "name": "@smart-link/ui",
+  "version": "1.0.0",
+  "description": "SmartLink Vue UI component library",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c ../../internal/build/rollup.config.js"
+  },
+  "peerDependencies": {
+    "vue": "^3.4.0"
+  },
+  "dependencies": {
+    "@smart-link/shared": "workspace:*",
+    "@smart-link/hooks": "workspace:*",
+    "@smart-link/theme": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/loylin-code/smart-link"
+  },
+  "author": "loylin",
+  "license": "MIT"
+}
