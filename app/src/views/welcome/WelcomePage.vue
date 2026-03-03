@@ -172,7 +172,7 @@
   .welcome-page {
     width: 100%;
     height: 100vh;
-    background: $bg-primary;
+    background: linear-gradient(135deg, #0a0e27 0%, #151b3d 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -214,13 +214,13 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: $spacing-md;
-    margin-bottom: $spacing-xl;
+    gap: 16px;
+    margin-bottom: 32px;
 
     .logo-icon {
       width: 120px;
       height: 120px;
-      color: $primary-color;
+      color: #1890ff;
       animation: glow 2s ease-in-out infinite alternate;
 
       svg {
@@ -231,8 +231,8 @@
 
     .logo-text {
       font-size: 56px;
-      font-weight: $font-weight-bold;
-      background: linear-gradient(135deg, $primary-color, $secondary-color);
+      font-weight: 700;
+      background: linear-gradient(135deg, #1890ff 0%, #722ed1 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -241,37 +241,37 @@
   }
 
   .welcome-slogan {
-    font-size: $font-size-2xl;
-    color: $text-primary;
-    margin-bottom: $spacing-sm;
-    font-weight: $font-weight-semibold;
+    font-size: 24px;
+    color: #ffffff;
+    margin-bottom: 8px;
+    font-weight: 600;
   }
 
   .welcome-description {
-    font-size: $font-size-lg;
-    color: $text-secondary;
-    margin-bottom: $spacing-3xl;
+    font-size: 18px;
+    color: #b4b9d4;
+    margin-bottom: 48px;
   }
 
   .button-group {
     display: flex;
     align-items: center;
-    gap: $spacing-lg;
-    margin-bottom: $spacing-3xl;
+    gap: 24px;
+    margin-bottom: 48px;
   }
 
   .start-button {
     display: flex;
     align-items: center;
-    gap: $spacing-sm;
-    padding: $spacing-md $spacing-2xl;
-    background: linear-gradient(135deg, $primary-color, $primary-dark);
-    border-radius: $border-radius-full;
-    color: $text-primary;
-    font-size: $font-size-lg;
-    font-weight: $font-weight-semibold;
+    gap: 8px;
+    padding: 16px 48px;
+    background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+    border-radius: 999px;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
 
@@ -292,7 +292,7 @@
 
     &:hover {
       transform: translateY(-3px);
-      box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+      box-shadow: 0 10px 30px rgba(24, 144, 255, 0.4);
 
       &::before {
         width: 400px;
@@ -318,7 +318,7 @@
       height: 24px;
       position: relative;
       z-index: 1;
-      transition: transform $transition-base ease;
+      transition: transform 0.3s ease;
     }
   }
 
@@ -326,21 +326,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: $spacing-sm $spacing-xl;
+    padding: 12px 32px;
     background: transparent;
-    border: 1px solid rgba(0, 212, 255, 0.4);
-    border-radius: $border-radius-full;
-    color: $primary-color;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
+    border: 1px solid rgba(24, 144, 255, 0.4);
+    border-radius: 999px;
+    color: #1890ff;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all 0.3s ease;
 
     &:hover {
-      background: rgba(0, 212, 255, 0.1);
-      border-color: $primary-color;
+      background: rgba(24, 144, 255, 0.1);
+      border-color: #1890ff;
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2);
+      box-shadow: 0 4px 12px rgba(24, 144, 255, 0.2);
     }
 
     &:active {
@@ -350,23 +350,23 @@
 
   .welcome-footer {
     position: absolute;
-    bottom: $spacing-2xl;
+    bottom: 48px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 2;
 
     .footer-text {
-      font-size: $font-size-sm;
-      color: $text-tertiary;
+      font-size: 14px;
+      color: #6b7194;
     }
   }
 
   @keyframes glow {
     from {
-      filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.3));
+      filter: drop-shadow(0 0 20px rgba(24, 144, 255, 0.3));
     }
     to {
-      filter: drop-shadow(0 0 40px rgba(0, 212, 255, 0.6));
+      filter: drop-shadow(0 0 40px rgba(24, 144, 255, 0.6));
     }
   }
 </style>
