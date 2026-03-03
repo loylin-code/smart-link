@@ -55,7 +55,7 @@
       display: inline-block;
       width: 44px;
       height: 22px;
-      background: #252b4e;
+      background: #dcdfe6;
       border-radius: 11px;
       transition: background 0.3s ease;
     }
@@ -69,11 +69,12 @@
       background: #fff;
       border-radius: 50%;
       transition: transform 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     &.is-checked {
       .sl-switch__core {
-        background: #00d4ff;
+        background: #1890ff;
       }
 
       .sl-switch__button {

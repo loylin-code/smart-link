@@ -26,37 +26,37 @@
 
 <style scoped lang="scss">
   .sl-card {
-    background: #151b3d;
-    border: 1px solid #252b4e;
+    background: #ffffff;
+    border: 1px solid #ebeef5;
     border-radius: 8px;
     overflow: hidden;
     transition: all 0.3s ease;
 
     &.is-shadow {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
     }
 
     &:hover {
-      border-color: rgba(0, 212, 255, 0.3);
+      border-color: rgba(24, 144, 255, 0.3);
     }
 
     &__header {
       padding: 16px 20px;
-      border-bottom: 1px solid #252b4e;
+      border-bottom: 1px solid #ebeef5;
       font-size: 16px;
       font-weight: 600;
-      color: #fff;
+      color: #303133;
     }
 
     &__body {
       padding: 20px;
-      color: #b4b9d4;
+      color: #606266;
     }
 
     &__footer {
       padding: 12px 20px;
-      border-top: 1px solid #252b4e;
-      background: rgba(0, 0, 0, 0.2);
+      border-top: 1px solid #ebeef5;
+      background: #fafafa;
     }
   }
 </style>

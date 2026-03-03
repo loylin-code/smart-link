@@ -69,39 +69,39 @@
     }
 
     &--default {
-      background: rgba(107, 113, 148, 0.1);
-      border-color: rgba(107, 113, 148, 0.3);
-      color: #b4b9d4;
+      background: #f4f4f5;
+      border-color: #e9e9eb;
+      color: #909399;
     }
 
     &--primary {
-      background: rgba(0, 212, 255, 0.1);
-      border-color: rgba(0, 212, 255, 0.3);
-      color: #00d4ff;
+      background: rgba(24, 144, 255, 0.1);
+      border-color: rgba(24, 144, 255, 0.2);
+      color: #1890ff;
     }
 
     &--success {
-      background: rgba(16, 185, 129, 0.1);
-      border-color: rgba(16, 185, 129, 0.3);
-      color: #10b981;
+      background: rgba(103, 194, 58, 0.1);
+      border-color: rgba(103, 194, 58, 0.2);
+      color: #67c23a;
     }
 
     &--warning {
-      background: rgba(245, 158, 11, 0.1);
-      border-color: rgba(245, 158, 11, 0.3);
-      color: #f59e0b;
+      background: rgba(230, 162, 60, 0.1);
+      border-color: rgba(230, 162, 60, 0.2);
+      color: #e6a23c;
     }
 
     &--danger {
-      background: rgba(239, 68, 68, 0.1);
-      border-color: rgba(239, 68, 68, 0.3);
-      color: #ef4444;
+      background: rgba(245, 108, 108, 0.1);
+      border-color: rgba(245, 108, 108, 0.2);
+      color: #f56c6c;
     }
 
     &--info {
-      background: rgba(59, 130, 246, 0.1);
-      border-color: rgba(59, 130, 246, 0.3);
-      color: #3b82f6;
+      background: rgba(144, 147, 153, 0.1);
+      border-color: rgba(144, 147, 153, 0.2);
+      color: #909399;
     }
 
     &.is-round {

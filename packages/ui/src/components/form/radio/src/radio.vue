@@ -46,7 +46,7 @@
     gap: 8px;
     cursor: pointer;
     font-size: 14px;
-    color: #b4b9d4;
+    color: #606266;
 
     &__input {
       position: relative;
@@ -66,10 +66,11 @@
       display: block;
       width: 16px;
       height: 16px;
-      background: #1e2447;
-      border: 1px solid #252b4e;
+      background: #ffffff;
+      border: 1px solid #dcdfe6;
       border-radius: 50%;
       transition: all 0.3s ease;
+      position: relative;
 
       &::after {
         content: '';
@@ -79,31 +80,48 @@
         top: 50%;
         width: 6px;
         height: 6px;
-        background: #fff;
+        background: #ffffff;
         border-radius: 50%;
         transform: translate(-50%, -50%);
       }
     }
 
+    &__label {
+      color: #606266;
+    }
+
     &.is-checked {
       .sl-radio__inner {
-        border-color: #00d4ff;
+        border-color: #1890ff;
+        background: #ffffff;
 
         &::after {
           display: block;
-          background: #00d4ff;
+          background: #1890ff;
         }
+      }
+
+      .sl-radio__label {
+        color: #1890ff;
       }
     }
 
     &.is-disabled {
-      opacity: 0.5;
       cursor: not-allowed;
+
+      .sl-radio__inner {
+        background: #f5f7fa;
+        border-color: #e4e7ed;
+      }
+
+      .sl-radio__label {
+        color: #c0c4cc;
+      }
     }
 
     &:hover:not(.is-disabled) {
       .sl-radio__inner {
-        border-color: #00d4ff;
+        border-color: #1890ff;
       }
     }
   }

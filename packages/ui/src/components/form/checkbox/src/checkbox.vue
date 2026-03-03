@@ -40,7 +40,7 @@
     gap: 8px;
     cursor: pointer;
     font-size: 14px;
-    color: #b4b9d4;
+    color: #606266;
 
     &__input {
       position: relative;
@@ -60,10 +60,11 @@
       display: block;
       width: 16px;
       height: 16px;
-      background: #1e2447;
-      border: 1px solid #252b4e;
-      border-radius: 4px;
+      background: #ffffff;
+      border: 1px solid #dcdfe6;
+      border-radius: 2px;
       transition: all 0.3s ease;
+      position: relative;
 
       &::after {
         content: '';
@@ -73,31 +74,47 @@
         top: 2px;
         width: 4px;
         height: 8px;
-        border: solid #fff;
+        border: solid #ffffff;
         border-width: 0 2px 2px 0;
         transform: rotate(45deg);
       }
     }
 
+    &__label {
+      color: #606266;
+    }
+
     &.is-checked {
       .sl-checkbox__inner {
-        background: #00d4ff;
-        border-color: #00d4ff;
+        background: #1890ff;
+        border-color: #1890ff;
 
         &::after {
           display: block;
         }
       }
+
+      .sl-checkbox__label {
+        color: #1890ff;
+      }
     }
 
     &.is-disabled {
-      opacity: 0.5;
       cursor: not-allowed;
+
+      .sl-checkbox__inner {
+        background: #f5f7fa;
+        border-color: #e4e7ed;
+      }
+
+      .sl-checkbox__label {
+        color: #c0c4cc;
+      }
     }
 
     &:hover:not(.is-disabled) {
       .sl-checkbox__inner {
-        border-color: #00d4ff;
+        border-color: #1890ff;
       }
     }
   }

@@ -21,7 +21,7 @@
     position: relative;
     width: 100%;
     height: 1px;
-    background: #252b4e;
+    background: #dcdfe6;
     margin: 16px 0;
 
     &.is-vertical {
@@ -37,8 +37,8 @@
       left: 50%;
       transform: translateX(-50%) translateY(-50%);
       padding: 0 16px;
-      background: #0a0e27;
-      color: #6b7194;
+      background: #ffffff;
+      color: #909399;
       font-size: 14px;
     }
   }

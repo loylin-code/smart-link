@@ -98,20 +98,20 @@
       width: 100%;
       padding: 8px 32px 8px 12px;
       font-size: 14px;
-      color: #fff;
-      background: #1e2447;
-      border: 1px solid #252b4e;
+      color: #303133;
+      background: #ffffff;
+      border: 1px solid #dcdfe6;
       border-radius: 4px;
       outline: none;
       cursor: pointer;
       transition: all 0.3s ease;
 
       &::placeholder {
-        color: #6b7194;
+        color: #c0c4cc;
       }
 
       &:hover:not(:disabled) {
-        border-color: #00d4ff;
+        border-color: #1890ff;
       }
     }
 
@@ -120,7 +120,7 @@
       right: 8px;
       top: 50%;
       transform: translateY(-50%);
-      color: #6b7194;
+      color: #c0c4cc;
       transition: transform 0.3s ease;
 
       svg {
@@ -135,14 +135,16 @@
 
     &.is-focused {
       .sl-select__inner {
-        border-color: #00d4ff;
-        box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+        border-color: #1890ff;
+        box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
       }
     }
 
     &.is-disabled {
       .sl-select__inner {
-        opacity: 0.5;
+        background: #f5f7fa;
+        border-color: #e4e7ed;
+        color: #c0c4cc;
         cursor: not-allowed;
       }
     }
@@ -154,35 +156,35 @@
       width: 100%;
       margin-top: 4px;
       padding: 4px 0;
-      background: #151b3d;
-      border: 1px solid #252b4e;
+      background: #ffffff;
+      border: 1px solid #e4e7ed;
       border-radius: 4px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
       z-index: 100;
     }
 
     &__option {
       padding: 8px 12px;
       font-size: 14px;
-      color: #b4b9d4;
+      color: #606266;
       cursor: pointer;
       transition: all 0.2s ease;
 
       &:hover {
-        background: rgba(0, 212, 255, 0.1);
-        color: #00d4ff;
+        background: #f5f7fa;
+        color: #1890ff;
       }
 
       &.is-selected {
-        color: #00d4ff;
-        background: rgba(0, 212, 255, 0.1);
+        color: #1890ff;
+        background: rgba(24, 144, 255, 0.1);
       }
     }
 
     &__empty {
       padding: 8px 12px;
       font-size: 14px;
-      color: #6b7194;
+      color: #909399;
       text-align: center;
     }
   }

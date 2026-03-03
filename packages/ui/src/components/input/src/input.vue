@@ -93,24 +93,24 @@
       width: 100%;
       padding: 8px 12px;
       font-size: 14px;
-      color: #fff;
-      background: #1e2447;
-      border: 1px solid #252b4e;
+      color: #303133;
+      background: #ffffff;
+      border: 1px solid #dcdfe6;
       border-radius: 4px;
       outline: none;
       transition: all 0.3s ease;
 
       &::placeholder {
-        color: #6b7194;
+        color: #c0c4cc;
       }
 
       &:hover:not(:disabled) {
-        border-color: #00d4ff;
+        border-color: #1890ff;
       }
 
       &:focus {
-        border-color: #00d4ff;
-        box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+        border-color: #1890ff;
+        box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
       }
     }
 
@@ -122,14 +122,16 @@
     &.is-focused {
       .sl-input__inner,
       .sl-input__textarea {
-        border-color: #00d4ff;
+        border-color: #1890ff;
       }
     }
 
     &.is-disabled {
       .sl-input__inner,
       .sl-input__textarea {
-        opacity: 0.5;
+        background: #f5f7fa;
+        border-color: #e4e7ed;
+        color: #c0c4cc;
         cursor: not-allowed;
       }
     }
@@ -139,7 +141,7 @@
       right: 8px;
       bottom: 4px;
       font-size: 12px;
-      color: #6b7194;
+      color: #909399;
     }
   }
 </style>
