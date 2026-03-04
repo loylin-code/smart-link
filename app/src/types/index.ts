@@ -104,3 +104,52 @@ export interface ConsoleLog {
   message: string
   timestamp: number
 }
+
+// ============================================================
+// 编排器相关类型 (从 @smart-link/core 重新导出)
+// ============================================================
+
+export type {
+  PageSchema,
+  ComponentNode,
+  PropConfig,
+  ExpressionBinding,
+  StateBinding,
+  LoopConfig,
+  EventBinding,
+  EventHandler,
+  StateUpdateConfig,
+  SlotContent,
+  StyleConfig,
+  CSSProperties,
+  StyleDefinition,
+  RuntimeContext,
+  BuiltinAction,
+  ApiCallConfig,
+  ScriptDefinition,
+  RenderContext,
+  RouterContext,
+  MessageContext,
+  ApiClient,
+  StateManager,
+  WatchCallback,
+  StateOperation,
+  ComponentRegistry,
+  ComponentMeta,
+  PropMeta,
+  EventMeta,
+  SlotMeta,
+  ExampleMeta,
+  ExpressionEvaluator,
+  EvaluationContext,
+  EventProcessor,
+  DirectiveProcessor,
+  LoopResult,
+  RendererConfig,
+  RendererPlugin,
+  Renderer,
+  DeepPartial,
+  Nullable,
+  Optional,
+  AnyFunction
+} from '@smart-link/core'

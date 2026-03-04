@@ -1,220 +1,187 @@
-# SmartLink - Agent编排管理平台
+# SmartLink - AI驱动的页面编排平台
 
 ## 项目简介
 
-SmartLink是一个现代化的Agent编排管理平台，提供对话、应用管理、应用编排、资源管理等核心功能。采用科技感、现代感、简约的设计风格，具有清晰的层级结构和流畅的动画效果。
+SmartLink是一个AI驱动的前端组件自动编排系统，用户通过自然语言描述需求，AI自动生成页面结构（Schema JSON），渲染引擎将Schema渲染为可交互的前端页面，同时提供可视化编排器进行拖拽编辑。
+
+## 核心特性
+
+- 🤖 **AI驱动** - 自然语言描述需求，AI自动生成页面结构
+- 🧩 **组件丰富** - 提供基础组件、表单组件、布局组件、业务组件
+- 🎨 **可视化编排** - 拖拽式组件编辑，所见即所得
+- 📦 **Schema驱动** - JSON Schema描述页面，支持版本管理和协作
+- 🔧 **TypeScript** - 完整的TypeScript支持
 
 ## 技术栈
 
 - **前端框架**: Vue 3.4+ (Composition API)
 - **构建工具**: Vite 5.0+
-- **UI组件库**: OpenTiny Vue 3.x
+- **UI组件库**: @smart-link/ui (自研组件库)
 - **开发语言**: TypeScript 5.0+
 - **状态管理**: Pinia
 - **路由管理**: Vue Router 4.x
-- **动画库**: @vueuse/motion + CSS3
 - **样式预处理**: Sass
+- **包管理**: pnpm monorepo
 
 ## 项目结构
 
 ```
 smart-link/
-├── public/                    # 静态资源
-├── src/
-│   ├── assets/               # 资源文件
-│   │   ├── styles/          # 全局样式
-│   │   │   ├── variables.scss    # 变量定义
-│   │   │   ├── animations.scss   # 动画效果
-│   │   │   └── global.scss       # 全局样式
-│   │   └── images/          # 图片资源
-│   ├── components/          # 公共组件
-│   │   ├── layout/         # 布局组件
-│   │   │   ├── AppLayout.vue     # 主布局
-│   │   │   ├── AppHeader.vue     # 顶部栏
-│   │   │   ├── AppSidebar.vue    # 侧边栏
-│   │   │   └── AppConsole.vue    # 控制台
-│   │   ├── common/         # 通用组件
-│   │   └── business/       # 业务组件
-│   ├── views/              # 页面视图
-│   │   ├── welcome/       # 欢迎页
-│   │   ├── conversation/   # 对话模块
-│   │   ├── application/    # 应用管理
-│   │   ├── resource/       # 资源管理
-│   │   └── error/         # 错误页面
-│   ├── router/            # 路由配置
-│   ├── store/             # 状态管理
-│   │   ├── modules/
-│   │   │   ├── app.ts            # 应用状态
-│   │   │   └── conversation.ts   # 对话状态
-│   │   └── index.ts
-│   ├── api/               # API接口
-│   ├── utils/             # 工具函数
-│   ├── types/             # 类型定义
-│   ├── App.vue
-│   └── main.ts
-├── .env.development        # 开发环境配置
-├── .env.production         # 生产环境配置
-├── vite.config.ts         # Vite配置
-├── tsconfig.json          # TypeScript配置
-└── package.json
+├── packages/                    # 可发布到 npm 的包
+│   ├── ui/                      # @smart-link/ui - UI组件库
+│   ├── core/                    # @smart-link/core - 页面渲染引擎
+│   ├── hooks/                   # @smart-link/hooks - Vue组合式函数
+│   ├── theme/                   # @smart-link/theme - 主题样式
+│   └── shared/                  # @smart-link/shared - 共享工具和类型
+├── app/                         # 主应用
+│   ├── src/
+│   │   ├── components/          # 公共组件
+│   │   │   └── orchestrator/    # 可视化编排器组件
+│   │   │       ├── ComponentLibrary.vue    # 组件库面板
+│   │   │       ├── DesignCanvas.vue        # 设计画布
+│   │   │       ├── RenderableNode.vue      # 可渲染节点
+│   │   │       ├── PropsPanel.vue          # 属性面板
+│   │   │       └── PreviewContainer.vue    # 预览容器
+│   │   ├── views/              # 页面视图
+│   │   │   └── application/
+│   │   │       └── AppOrchestration.vue    # 应用编排页面
+│   │   ├── store/             # 状态管理
+│   │   │   └── modules/
+│   │   │       └── orchestrator.ts         # 编排器Store
+│   │   └── types/             # 类型定义
+│   └── ...
+├── play/                        # 组件调试环境
+├── docs/                        # VitePress 文档站点
+└── internal/build/              # Rollup 构建配置
 ```
 
-## 核心功能
+## 核心模块
 
-### 1. 欢迎页
-- 科技感粒子背景动画
-- 发光Logo效果
-- 流畅的页面过渡动画
-- 功能预览卡片
+### 1. @smart-link/core - 渲染引擎
 
-### 2. 对话管理
-- 对话列表管理
-- 实时消息展示
-- 消息输入和发送
-- 对话历史记录
+渲染引擎是整个系统的核心，负责将Schema JSON渲染为Vue组件树。
 
-### 3. 应用管理
-- 应用列表展示
-- 应用创建和编辑
-- 应用编排功能
-- 应用状态管理
+**核心能力**:
 
-### 4. 资源管理
-- Skills管理
-- MCP管理
-- 前端组件管理
+- **Schema解析** - 解析PageSchema结构
+- **组件注册** - 动态注册和管理组件
+- **表达式求值** - 支持表达式绑定和状态计算
+- **状态管理** - 运行时状态管理
+- **事件处理** - 内置动作和自定义事件
+- **指令处理** - v-if、v-for、v-model等指令
 
-### 5. 控制台
-- 实时日志展示
-- 多标签页支持
-- 可调整高度
-- 命令行终端
+**核心API**:
 
-## 设计特色
+```typescript
+import {
+  createRenderer,
+  createComponentRegistry,
+  createExpressionEvaluator,
+  createStateManager,
+  createEventProcessor,
+  createDirectiveProcessor
+} from '@smart-link/core'
 
-### 色彩系统
-- **主色调**: 科技蓝 (#00D4FF)
-- **辅助色**: 紫色系 (#7C3AED)
-- **背景色**: 深色主题 (#0A0E27)
-- **功能色**: 成功、警告、错误、信息
+// 创建渲染器
+const renderer = createRenderer({
+  registry,
+  state,
+  evaluator,
+  events,
+  directives
+})
 
-### 动画效果
-- 页面过渡动画
-- 组件交互动画
-- 加载动画
-- 发光效果
-- 粒子背景
+// 渲染页面
+const vnode = renderer.renderPage(schema, context)
+```
 
-### 响应式设计
-- 侧边栏可折叠
-- 控制台可调整
-- 自适应布局
+### 2. @smart-link/shared - 共享模块
+
+提供组件元数据定义和共享工具。
+
+```typescript
+import { COMPONENT_META_LIST, type ComponentMeta } from '@smart-link/shared'
+
+// 组件元数据示例
+const meta: ComponentMeta = {
+  type: 'SlButton',
+  name: '按钮',
+  category: 'basic',
+  description: '基础按钮组件',
+  icon: 'button',
+  props: [
+    { name: 'type', type: 'string', default: 'default', description: '按钮类型' },
+    { name: 'size', type: 'string', default: 'medium', description: '按钮尺寸' }
+  ],
+  events: [{ name: 'click', params: 'Event', description: '点击事件' }],
+  slots: [{ name: 'default', description: '默认插槽' }]
+}
+```
+
+### 3. @smart-link/ui - UI组件库
+
+自研Vue 3组件库，提供丰富的UI组件。
+
+### 4. 可视化编排器
+
+提供拖拽式可视化编辑能力。
+
+**核心组件**:
+
+- `ComponentLibrary` - 组件库面板，展示可用组件
+- `DesignCanvas` - 设计画布，组件拖放目标
+- `RenderableNode` - 可渲染节点，递归渲染组件树
+- `PropsPanel` - 属性面板，编辑组件属性
+- `PreviewContainer` - 预览容器，实时预览渲染结果
 
 ## 开发指南
 
+### 环境要求
+
+- Node.js >= 18
+- pnpm >= 9.0
+
 ### 安装依赖
+
 ```bash
-npm install
+pnpm install
 ```
 
-### 启动开发服务器
+### 开发命令
+
 ```bash
-npm run dev
+# 启动主应用
+pnpm dev
+
+# 启动组件调试环境
+pnpm play
+
+# 启动文档站点
+pnpm docs
+
+# 构建所有项目
+pnpm build
+
+# 仅构建 packages
+pnpm build:lib
+
+# 代码检查
+pnpm lint
+
+# 代码格式化
+pnpm format
 ```
 
-### 构建生产版本
-```bash
-npm run build
-```
+## 包说明
 
-### 预览生产版本
-```bash
-npm run preview
-```
+| 包名               | 说明               |
+| ------------------ | ------------------ |
+| @smart-link/ui     | Vue 3 UI 组件库    |
+| @smart-link/core   | 页面渲染引擎       |
+| @smart-link/hooks  | Vue 组合式函数     |
+| @smart-link/theme  | 主题样式           |
+| @smart-link/shared | 共享工具函数和类型 |
 
-### 代码格式化
-```bash
-npm run format
-```
+## License
 
-### 代码检查
-```bash
-npm run lint
-```
-
-## 环境配置
-
-### 开发环境 (.env.development)
-```
-VITE_APP_TITLE=SmartLink
-VITE_API_BASE_URL=http://localhost:8080/api
-VITE_APP_ENV=development
-```
-
-### 生产环境 (.env.production)
-```
-VITE_APP_TITLE=SmartLink
-VITE_API_BASE_URL=https://api.smartlink.com
-VITE_APP_ENV=production
-```
-
-## 浏览器支持
-
-- Chrome >= 87
-- Firefox >= 78
-- Safari >= 14
-- Edge >= 88
-
-## 开发规范
-
-### 命名规范
-- **文件命名**: kebab-case (如: app-layout.vue)
-- **组件命名**: PascalCase (如: AppLayout)
-- **变量命名**: camelCase (如: isActive)
-- **常量命名**: UPPER_SNAKE_CASE (如: API_BASE_URL)
-- **CSS类名**: BEM规范 (如: .block__element--modifier)
-
-### 代码规范
-- 使用TypeScript严格模式
-- 使用Composition API
-- 使用`<script setup>`语法
-- Props必须定义类型
-- 统一使用ESLint + Prettier格式化
-
-### Git提交规范
-```
-feat: 新功能
-fix: 修复bug
-docs: 文档更新
-style: 代码格式调整
-refactor: 重构
-test: 测试相关
-chore: 构建/工具相关
-```
-
-## 性能优化
-
-- 路由懒加载
-- 组件按需加载
-- 第三方库按需引入
-- 图片懒加载
-- 代码分割
-- Gzip压缩
-
-## 后续计划
-
-- [ ] 完善应用编排功能
-- [ ] 集成后端API
-- [ ] 添加用户认证
-- [ ] 实现数据持久化
-- [ ] 添加单元测试
-- [ ] 优化移动端适配
-- [ ] 添加国际化支持
-
-## 许可证
-
-MIT License
-
-## 联系方式
-
-如有问题或建议，请提交Issue或Pull Request。
+MIT

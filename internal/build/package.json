@@ -6,7 +6,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc"
+    "build": "echo \"No build needed for internal build config\""
   },
   "dependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",

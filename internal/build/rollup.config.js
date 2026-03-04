@@ -43,7 +43,8 @@ export default defineConfig({
     }),
     typescript({
       tsconfig,
-      useTsconfigDeclarationDir: true
+      useTsconfigDeclarationDir: false,
+      declarationDir: 'dist'
     }),
     postcss({
       extract: true,
