@@ -1,4 +1,4 @@
-import SlAvatar from './src/avatar.vue'
+import SlAvatar from './avatar.vue'
 import type { App } from 'vue'
 
 SlAvatar.install = (app: App) => {

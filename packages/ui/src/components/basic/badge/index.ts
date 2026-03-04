@@ -1,4 +1,4 @@
-import SlBadge from './src/badge.vue'
+import SlBadge from './badge.vue'
 import type { App } from 'vue'
 
 SlBadge.install = (app: App) => {

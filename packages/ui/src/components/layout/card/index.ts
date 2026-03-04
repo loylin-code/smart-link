@@ -1,4 +1,4 @@
-import SlCard from './src/card.vue'
+import SlCard from './card.vue'
 import type { App } from 'vue'
 
 SlCard.install = (app: App) => {

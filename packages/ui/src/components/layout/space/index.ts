@@ -1,4 +1,4 @@
-import SlSpace from './src/space.vue'
+import SlSpace from './space.vue'
 import type { App } from 'vue'
 
 SlSpace.install = (app: App) => {

@@ -1,4 +1,4 @@
-import SlSelect from './src/select.vue'
+import SlSelect from './select.vue'
 import type { App } from 'vue'
 
 SlSelect.install = (app: App) => {

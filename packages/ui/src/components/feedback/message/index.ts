@@ -1,4 +1,4 @@
-import SlMessage from './src/message.vue'
+import SlMessage from './message.vue'
 import type { App } from 'vue'
 
 SlMessage.install = (app: App) => {

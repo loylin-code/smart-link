@@ -1,4 +1,4 @@
-import SlButton from './src/button.vue'
+import SlButton from './button.vue'
 import type { App } from 'vue'
 
 SlButton.install = (app: App) => {

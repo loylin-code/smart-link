@@ -59,6 +59,19 @@
       </div>
 
       <div class="header-right">
+        <button
+          class="action-btn"
+          :class="{ active: aiPanelVisible }"
+          @click="toggleAIPanel"
+          title="AI助手"
+        >
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"
+              fill="currentColor"
+            />
+          </svg>
+        </button>
         <button class="action-btn" @click="handleUndo" :disabled="!canUndo">
           <svg viewBox="0 0 24 24" fill="none">
             <path
@@ -136,6 +149,11 @@
         >
           <PropsPanel />
         </div>
+
+        <!-- AI面板 -->
+        <div v-if="aiPanelVisible" class="ai-panel" :style="{ width: `${aiPanelWidth}px` }">
+          <AIChatPanel />
+        </div>
       </template>
 
       <!-- 预览模式 -->
@@ -151,14 +169,17 @@
   import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
   import { useOrchestratorStore } from '@/store/modules/orchestrator'
+  import { useAIStore } from '@/store/modules/ai'
   import ComponentLibrary from '@/components/orchestrator/ComponentLibrary.vue'
   import DesignCanvas from '@/components/orchestrator/DesignCanvas.vue'
   import PropsPanel from '@/components/orchestrator/PropsPanel.vue'
   import PreviewContainer from '@/components/orchestrator/PreviewContainer.vue'
+  import AIChatPanel from '@/components/ai/AIChatPanel.vue'
 
   const router = useRouter()
   const { t } = useI18n()
   const store = useOrchestratorStore()
+  const aiStore = useAIStore()
 
   // 计算属性
   const mode = computed({
@@ -172,6 +193,8 @@
   const canUndo = computed(() => store.canUndo)
   const canRedo = computed(() => store.canRedo)
   const currentSchema = computed(() => store.currentSchema)
+  const aiPanelVisible = computed(() => aiStore.panelVisible)
+  const aiPanelWidth = computed(() => aiStore.panelWidth)
 
   // 返回列表
   function handleBack() {
@@ -192,6 +215,11 @@
   function handleSave() {
     // TODO: 调用保存API
     console.log('保存Schema:', store.currentSchema)
+  }
+
+  // 切换AI面板
+  function toggleAIPanel() {
+    aiStore.togglePanel()
   }
 
   // 键盘快捷键
@@ -400,5 +428,18 @@
     background: rgba(21, 27, 61, 0.5);
     border-left: 1px solid rgba(255, 255, 255, 0.06);
     overflow: hidden;
+  }
+
+  .ai-panel {
+    flex-shrink: 0;
+    background: rgba(21, 27, 61, 0.8);
+    border-left: 1px solid rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+  }
+
+  .action-btn.active {
+    background: rgba(0, 212, 255, 0.2);
+    border-color: #00d4ff;
+    color: #00d4ff;
   }
 </style>

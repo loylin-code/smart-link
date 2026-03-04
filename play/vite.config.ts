@@ -11,6 +11,13 @@ export default defineConfig({
       '@smart-link/shared': resolve(__dirname, '../packages/shared/src')
     }
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        silenceDeprecations: ['legacy-js-api']
+      }
+    }
+  },
   server: {
     port: 5173
   }

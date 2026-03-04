@@ -11,6 +11,41 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types/index.mjs",
+      "require": "./dist/types/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./state": {
+      "import": "./dist/state/index.mjs",
+      "require": "./dist/state/index.js",
+      "types": "./dist/state/index.d.ts"
+    },
+    "./renderer": {
+      "import": "./dist/renderer/index.mjs",
+      "require": "./dist/renderer/index.js",
+      "types": "./dist/renderer/index.d.ts"
+    },
+    "./registry": {
+      "import": "./dist/registry/index.mjs",
+      "require": "./dist/registry/index.js",
+      "types": "./dist/registry/index.d.ts"
+    },
+    "./evaluator": {
+      "import": "./dist/evaluator/index.mjs",
+      "require": "./dist/evaluator/index.js",
+      "types": "./dist/evaluator/index.d.ts"
+    },
+    "./events": {
+      "import": "./dist/events/index.mjs",
+      "require": "./dist/events/index.js",
+      "types": "./dist/events/index.d.ts"
+    },
+    "./directives": {
+      "import": "./dist/directives/index.mjs",
+      "require": "./dist/directives/index.js",
+      "types": "./dist/directives/index.d.ts"
     }
   },
   "files": [

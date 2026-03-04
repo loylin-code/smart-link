@@ -1,4 +1,4 @@
-import SlImage from './src/image.vue'
+import SlImage from './image.vue'
 import type { App } from 'vue'
 
 SlImage.install = (app: App) => {

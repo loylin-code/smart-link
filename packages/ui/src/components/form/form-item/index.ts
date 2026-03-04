@@ -1,4 +1,4 @@
-import SlFormItem from './src/form-item.vue'
+import SlFormItem from './form-item.vue'
 import type { App } from 'vue'
 
 SlFormItem.install = (app: App) => {

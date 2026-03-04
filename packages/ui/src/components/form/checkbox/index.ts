@@ -1,4 +1,4 @@
-import SlCheckbox from './src/checkbox.vue'
+import SlCheckbox from './checkbox.vue'
 import type { App } from 'vue'
 
 SlCheckbox.install = (app: App) => {

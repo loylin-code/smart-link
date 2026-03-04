@@ -1,4 +1,4 @@
-import SlIcon from './src/icon.vue'
+import SlIcon from './icon.vue'
 import type { App } from 'vue'
 
 SlIcon.install = (app: App) => {

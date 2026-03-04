@@ -1,4 +1,4 @@
-import SlContainer from './src/container.vue'
+import SlContainer from './container.vue'
 import type { App } from 'vue'
 
 SlContainer.install = (app: App) => {

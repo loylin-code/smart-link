@@ -1,4 +1,4 @@
-import SlSwitch from './src/switch.vue'
+import SlSwitch from './switch.vue'
 import type { App } from 'vue'
 
 SlSwitch.install = (app: App) => {

@@ -1,4 +1,4 @@
-import SlTypography from './src/typography.vue'
+import SlTypography from './typography.vue'
 import type { App } from 'vue'
 
 SlTypography.install = (app: App) => {

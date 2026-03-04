@@ -1,4 +1,4 @@
-import SlModal from './src/modal.vue'
+import SlModal from './modal.vue'
 import type { App } from 'vue'
 
 SlModal.install = (app: App) => {

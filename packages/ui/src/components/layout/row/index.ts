@@ -1,4 +1,4 @@
-import SlRow from './src/row.vue'
+import SlRow from './row.vue'
 import type { App } from 'vue'
 
 SlRow.install = (app: App) => {

@@ -1,4 +1,4 @@
-import SlDivider from './src/divider.vue'
+import SlDivider from './divider.vue'
 import type { App } from 'vue'
 
 SlDivider.install = (app: App) => {

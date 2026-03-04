@@ -1,4 +1,4 @@
-import SlCol from './src/col.vue'
+import SlCol from './col.vue'
 import type { App } from 'vue'
 
 SlCol.install = (app: App) => {

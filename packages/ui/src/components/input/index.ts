@@ -1,4 +1,4 @@
-import SlInput from './src/input.vue'
+import SlInput from './input.vue'
 import type { App } from 'vue'
 
 SlInput.install = (app: App) => {

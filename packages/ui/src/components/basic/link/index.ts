@@ -1,4 +1,4 @@
-import SlLink from './src/link.vue'
+import SlLink from './link.vue'
 import type { App } from 'vue'
 
 SlLink.install = (app: App) => {

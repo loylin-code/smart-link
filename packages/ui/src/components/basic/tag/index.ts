@@ -1,4 +1,4 @@
-import SlTag from './src/tag.vue'
+import SlTag from './tag.vue'
 import type { App } from 'vue'
 
 SlTag.install = (app: App) => {
