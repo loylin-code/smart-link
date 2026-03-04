@@ -36,7 +36,33 @@ export default {
     mcpManagement: 'MCP管理',
     resource: '资源管理',
     appList: '应用列表',
+    appDesign: '应用设计',
     collapseSidebar: '收起侧边栏'
+  },
+  orchestrator: {
+    title: '应用编排',
+    design: '设计',
+    preview: '预览',
+    save: '保存',
+    searchComponents: '搜索组件...',
+    noComponents: '未找到组件',
+    selectComponent: '请选择组件进行编辑',
+    props: '属性',
+    copy: '复制',
+    delete: '删除',
+    categories: {
+      all: '全部',
+      basic: '基础组件',
+      form: '表单组件',
+      layout: '布局组件',
+      data: '数据展示',
+      feedback: '反馈组件',
+      business: '业务组件'
+    },
+    componentLibrary: '组件库',
+    propsPanel: '属性配置',
+    canvas: '画布',
+    aiAssistant: 'AI助手'
   },
   resource: {
     noMCP: '暂无MCP配置',

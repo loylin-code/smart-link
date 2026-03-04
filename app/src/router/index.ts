@@ -36,19 +36,48 @@ const routes: RouteRecordRaw[] = [
           {
             path: 'list',
             name: 'AppList',
-            component: () => import('@/views/application/AppManagement.vue'),
+            component: () => import('@/views/application/AppRuntimeList.vue'),
             meta: {
               title: '应用列表',
               icon: 'app'
             } as RouteMeta
           },
           {
-            path: 'orchestration/:id?',
-            name: 'AppOrchestration',
+            path: 'design',
+            name: 'AppDesign',
+            component: () => import('@/views/application/AppDesignList.vue'),
+            meta: {
+              title: '应用设计',
+              icon: 'app'
+            } as RouteMeta
+          },
+          {
+            path: 'design/create',
+            name: 'AppCreate',
             component: () => import('@/views/application/AppOrchestration.vue'),
             meta: {
-              title: '应用编排',
+              title: '新建应用',
               icon: 'flow',
+              hidden: true
+            } as RouteMeta
+          },
+          {
+            path: 'design/edit/:id',
+            name: 'AppEdit',
+            component: () => import('@/views/application/AppOrchestration.vue'),
+            meta: {
+              title: '编辑应用',
+              icon: 'flow',
+              hidden: true
+            } as RouteMeta
+          },
+          {
+            path: 'runtime/:id',
+            name: 'AppRuntime',
+            component: () => import('@/views/application/AppRuntime.vue'),
+            meta: {
+              title: '应用运行',
+              icon: 'app',
               hidden: true
             } as RouteMeta
           }

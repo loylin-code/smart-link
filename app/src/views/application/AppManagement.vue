@@ -38,7 +38,9 @@
         <p class="app-card__desc">{{ app.description }}</p>
         <div class="app-card__status">
           <span class="status-dot" :class="`status-dot--${app.status}`"></span>
-          <span class="status-text">{{ app.status === 'active' ? '运行中' : '已停止' }}</span>
+          <span class="status-text">{{
+            app.status === AppStatus.PUBLISHED ? '运行中' : '已停止'
+          }}</span>
         </div>
         <div class="app-card__actions">
           <button class="action-btn" @click="handleOrchestrate(app)">
@@ -101,6 +103,7 @@
   import { ref } from 'vue'
   import { useRouter } from 'vue-router'
   import type { Application } from '@/types'
+  import { AppStatus, AppType } from '@/types'
 
   const router = useRouter()
 
@@ -110,7 +113,9 @@
       name: '智能客服助手',
       description: '基于大语言模型的智能客服系统，支持多轮对话和知识库检索',
       icon: 'app',
-      status: 'active',
+      type: AppType.CUSTOM,
+      status: AppStatus.PUBLISHED,
+      version: '1.0.0',
       createdAt: Date.now(),
       updatedAt: Date.now()
     },
@@ -119,7 +124,9 @@
       name: '数据分析Agent',
       description: '自动化数据分析工具，支持数据清洗、可视化和报告生成',
       icon: 'app',
-      status: 'active',
+      type: AppType.DASHBOARD,
+      status: AppStatus.PUBLISHED,
+      version: '1.0.0',
       createdAt: Date.now(),
       updatedAt: Date.now()
     },
@@ -128,22 +135,24 @@
       name: '文档处理系统',
       description: '智能文档处理，支持PDF、Word等格式的解析和转换',
       icon: 'app',
-      status: 'inactive',
+      type: AppType.WORKFLOW,
+      status: AppStatus.DRAFT,
+      version: '0.9.0',
       createdAt: Date.now(),
       updatedAt: Date.now()
     }
   ])
 
   const handleCreate = () => {
-    console.log('创建应用')
+    router.push('/app/application/design/create')
   }
 
   const handleOrchestrate = (app: Application) => {
-    router.push(`/app/application/orchestration/${app.id}`)
+    router.push(`/app/application/design/edit/${app.id}`)
   }
 
   const handleEdit = (app: Application) => {
-    console.log('编辑应用:', app)
+    router.push(`/app/application/design/edit/${app.id}`)
   }
 
   const handleDelete = (app: Application) => {
@@ -267,12 +276,20 @@
     height: 8px;
     border-radius: 50%;
 
-    &--active {
+    &--published {
       background: $success;
     }
 
-    &--inactive {
+    &--draft {
       background: $text-tertiary;
+    }
+
+    &--designing {
+      background: $primary-color;
+    }
+
+    &--archived {
+      background: $error;
     }
   }
 

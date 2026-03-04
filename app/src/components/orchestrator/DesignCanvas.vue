@@ -323,12 +323,25 @@
 </script>
 
 <style scoped lang="scss">
+  @import '@/assets/styles/variables.scss';
+
   .design-canvas {
     position: relative;
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: #050810;
+    background: #f0f2f5;
+    background-image:
+      linear-gradient(45deg, #f5f5f5 25%, transparent 25%),
+      linear-gradient(-45deg, #f5f5f5 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #f5f5f5 75%),
+      linear-gradient(-45deg, transparent 75%, #f5f5f5 75%);
+    background-size: 20px 20px;
+    background-position:
+      0 0,
+      0 10px,
+      10px -10px,
+      -10px 0px;
   }
 
   .canvas-toolbar {
@@ -336,42 +349,44 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 40px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 16px;
-    background: rgba(10, 14, 39, 0.95);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 0 $spacing-lg;
+    background: $bg-primary;
+    border-bottom: 1px solid $border-color-lighter;
     z-index: 10;
+    box-shadow: $shadow-sm;
   }
 
   .toolbar-left,
   .toolbar-right {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: $spacing-sm;
   }
 
   .zoom-value {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.65);
-    min-width: 40px;
+    font-size: $font-size-sm;
+    color: $text-secondary;
+    min-width: 48px;
     text-align: center;
+    font-weight: $font-weight-medium;
   }
 
   .tool-btn {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 6px;
-    color: rgba(255, 255, 255, 0.65);
+    background: $bg-secondary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-sm;
+    color: $text-secondary;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all $transition-base ease;
 
     svg {
       width: 16px;
@@ -379,37 +394,39 @@
     }
 
     &:hover {
-      border-color: #00d4ff;
-      color: #00d4ff;
+      border-color: $primary-color;
+      color: $primary-color;
+      background: rgba($primary-color, 0.05);
     }
 
     &.active {
-      background: rgba(0, 212, 255, 0.15);
-      border-color: #00d4ff;
-      color: #00d4ff;
+      background: rgba($primary-color, 0.1);
+      border-color: $primary-color;
+      color: $primary-color;
     }
   }
 
   .device-selector {
     display: flex;
-    gap: 4px;
-    background: rgba(255, 255, 255, 0.04);
+    gap: $spacing-xs;
+    background: $bg-secondary;
     padding: 4px;
-    border-radius: 8px;
+    border-radius: $border-radius-md;
+    border: 1px solid $border-color-lighter;
   }
 
   .device-btn {
-    width: 32px;
+    width: 36px;
     height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: transparent;
     border: none;
-    border-radius: 4px;
-    color: rgba(255, 255, 255, 0.45);
+    border-radius: $border-radius-sm;
+    color: $text-tertiary;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all $transition-base ease;
 
     svg {
       width: 16px;
@@ -417,33 +434,35 @@
     }
 
     &:hover {
-      color: rgba(255, 255, 255, 0.85);
+      color: $text-primary;
+      background: rgba($primary-color, 0.05);
     }
 
     &.active {
-      background: #00d4ff;
+      background: $primary-color;
       color: #fff;
     }
   }
 
   .canvas-viewport {
     position: absolute;
-    top: 40px;
+    top: 44px;
     left: 0;
     right: 0;
     bottom: 0;
     display: flex;
     justify-content: center;
     overflow: auto;
-    padding: 24px;
+    padding: $spacing-lg;
   }
 
   .canvas-container {
     position: relative;
     background: #fff;
-    border-radius: 4px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    border-radius: $border-radius-md;
+    box-shadow: $shadow-lg;
     transition: width 0.3s ease;
+    border: 1px solid $border-color-lighter;
 
     &.device-desktop {
       width: 100%;
@@ -475,7 +494,7 @@
   .canvas-content {
     position: relative;
     min-height: 100%;
-    padding: 16px;
+    padding: $spacing-md;
   }
 
   .empty-canvas {
@@ -484,14 +503,15 @@
     align-items: center;
     justify-content: center;
     min-height: 400px;
-    color: #999;
-    font-size: 14px;
+    color: $text-tertiary;
+    font-size: $font-size-sm;
 
     svg {
       width: 64px;
       height: 64px;
-      margin-bottom: 16px;
-      opacity: 0.3;
+      margin-bottom: $spacing-md;
+      color: $text-tertiary;
+      opacity: 0.5;
     }
   }
 
@@ -499,10 +519,10 @@
     position: absolute;
     width: 4px;
     height: 4px;
-    background: #00d4ff;
+    background: $primary-color;
     border-radius: 50%;
     pointer-events: none;
     z-index: 100;
-    box-shadow: 0 0 8px #00d4ff;
+    box-shadow: 0 0 8px rgba($primary-color, 0.5);
   }
 </style>

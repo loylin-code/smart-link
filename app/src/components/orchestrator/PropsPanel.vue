@@ -314,19 +314,21 @@
 
       <!-- 事件标签页 -->
       <div v-show="activeTab === 'events'" class="props-section">
-        <div class="section-title">事件绑定</div>
+        <div class="section-title">事件配置</div>
 
-        <div class="props-list">
-          <div v-for="event in componentMeta?.events" :key="event.name" class="event-item">
+        <div v-if="!componentMeta?.events?.length" class="empty-events">此组件没有可配置的事件</div>
+
+        <div v-else class="props-list">
+          <div v-for="event in componentMeta.events" :key="event.name" class="event-item">
             <div class="event-header">
               <span class="event-name">{{ event.name }}</span>
               <span class="event-desc">{{ event.description }}</span>
             </div>
             <div class="event-config">
               <select
-                v-model="eventConfigs[event.name].type"
+                :value="eventConfigs[event.name]?.type || ''"
                 class="prop-select"
-                @change="onEventTypeChange(event.name)"
+                @change="onEventTypeChange(event.name, ($event.target as HTMLSelectElement).value)"
               >
                 <option value="">无</option>
                 <option value="builtin">内置动作</option>
@@ -335,7 +337,16 @@
 
               <!-- 内置动作配置 -->
               <template v-if="eventConfigs[event.name]?.type === 'builtin'">
-                <select v-model="eventConfigs[event.name].action" class="prop-select">
+                <select
+                  :value="eventConfigs[event.name]?.action || ''"
+                  class="prop-select"
+                  @change="
+                    eventConfigs[event.name] = {
+                      ...eventConfigs[event.name],
+                      action: ($event.target as HTMLSelectElement).value
+                    }
+                  "
+                >
                   <option value="">选择动作</option>
                   <option value="navigate">页面跳转</option>
                   <option value="showMessage">显示消息</option>
@@ -346,32 +357,36 @@
                 </select>
                 <input
                   v-if="eventConfigs[event.name]?.action === 'navigate'"
-                  v-model="eventConfigs[event.name].params"
+                  :value="eventConfigs[event.name]?.params || ''"
                   type="text"
-                  placeholder="跳转路径"
+                  placeholder="输入跳转路径"
                   class="prop-input"
-                />
-                <input
-                  v-if="eventConfigs[event.name]?.action === 'showMessage'"
-                  v-model="eventConfigs[event.name].params"
-                  type="text"
-                  placeholder="消息内容"
-                  class="prop-input"
+                  @input="
+                    eventConfigs[event.name] = {
+                      ...eventConfigs[event.name],
+                      params: ($event.target as HTMLInputElement).value
+                    }
+                  "
                 />
               </template>
 
               <!-- 自定义代码配置 -->
-              <textarea
-                v-if="eventConfigs[event.name]?.type === 'custom'"
-                v-model="eventConfigs[event.name].code"
-                class="prop-textarea"
-                placeholder="输入JavaScript代码..."
-                rows="4"
-              ></textarea>
+              <template v-if="eventConfigs[event.name]?.type === 'custom'">
+                <textarea
+                  :value="eventConfigs[event.name]?.code || ''"
+                  class="prop-textarea"
+                  placeholder="输入自定义代码"
+                  rows="3"
+                  @input="
+                    eventConfigs[event.name] = {
+                      ...eventConfigs[event.name],
+                      code: ($event.target as HTMLTextAreaElement).value
+                    }
+                  "
+                ></textarea>
+              </template>
             </div>
           </div>
-
-          <div v-if="!componentMeta?.events?.length" class="empty-events">该组件没有可用事件</div>
         </div>
       </div>
 
@@ -440,16 +455,32 @@
   const selectedNode = computed(() => store.selectedNode)
   const node = computed(() => store.selectedNode)
 
+  // 直接在组件中计算 componentMeta，避免 store getter 问题
   const componentMeta = computed<ComponentMeta | undefined>(() => {
-    return store.selectedComponentMeta
+    if (!node.value) return undefined
+    return COMPONENT_META_LIST.find((m) => m.type === node.value!.type)
   })
 
   // 监听节点变化，初始化事件配置
   watch(
-    node,
-    (newNode) => {
+    [node, componentMeta],
+    ([newNode, newMeta]) => {
+      const configs: Record<string, any> = {}
+
+      // 从组件元数据初始化事件配置
+      if (newMeta?.events) {
+        for (const event of newMeta.events) {
+          configs[event.name] = {
+            type: '',
+            action: '',
+            params: '',
+            code: ''
+          }
+        }
+      }
+
+      // 从节点事件覆盖配置
       if (newNode?.events) {
-        const configs: Record<string, any> = {}
         for (const event of newNode.events) {
           configs[event.event] = {
             type: event.handler.type || '',
@@ -458,10 +489,9 @@
             code: event.handler.code || ''
           }
         }
-        eventConfigs.value = configs
-      } else {
-        eventConfigs.value = {}
       }
+
+      eventConfigs.value = configs
     },
     { immediate: true }
   )
@@ -501,13 +531,15 @@
   }
 
   // 事件类型变化
-  function onEventTypeChange(eventName: string) {
-    const config = eventConfigs.value[eventName]
-    if (config) {
-      config.action = ''
-      config.params = ''
-      config.code = ''
+  function onEventTypeChange(eventName: string, newType: string) {
+    // 初始化或更新事件配置
+    if (!eventConfigs.value[eventName]) {
+      eventConfigs.value[eventName] = { type: '', action: '', params: '', code: '' }
     }
+    eventConfigs.value[eventName].type = newType
+    eventConfigs.value[eventName].action = ''
+    eventConfigs.value[eventName].params = ''
+    eventConfigs.value[eventName].code = ''
   }
 
   // 更新事件
@@ -563,12 +595,14 @@
 </script>
 
 <style scoped lang="scss">
+  @import '@/assets/styles/variables.scss';
+
   .props-panel {
     height: 100%;
     display: flex;
     flex-direction: column;
-    background: transparent;
-    color: rgba(255, 255, 255, 0.85);
+    background: $bg-primary;
+    color: $text-primary;
   }
 
   .empty-state {
@@ -577,9 +611,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    color: rgba(255, 255, 255, 0.25);
-    font-size: 13px;
+    gap: $spacing-md;
+    color: $text-tertiary;
+    font-size: $font-size-sm;
 
     svg {
       width: 48px;
@@ -591,9 +625,10 @@
   .component-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    gap: $spacing-md;
+    padding: $spacing-md;
+    border-bottom: 1px solid $border-color-lighter;
+    background: $bg-secondary;
   }
 
   .component-icon {
@@ -602,9 +637,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 212, 255, 0.1);
-    border-radius: 8px;
-    color: #00d4ff;
+    background: rgba($primary-color, 0.1);
+    border-radius: $border-radius-md;
+    color: $primary-color;
 
     svg {
       width: 20px;
@@ -617,14 +652,14 @@
   }
 
   .component-name {
-    font-size: 14px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.85);
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
   }
 
   .component-type {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.45);
+    font-size: $font-size-xs;
+    color: $text-tertiary;
     font-family: monospace;
     margin-top: 2px;
   }
@@ -632,44 +667,44 @@
   .props-section {
     flex: 1;
     overflow-y: auto;
-    padding: 12px;
+    padding: $spacing-md;
   }
 
   .section-title {
-    font-size: 11px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.45);
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    color: $text-tertiary;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 12px;
+    margin-bottom: $spacing-md;
   }
 
   .props-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: $spacing-md;
   }
 
   .prop-item {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: $spacing-xs;
   }
 
   .prop-label {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: $spacing-xs;
   }
 
   .prop-name {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.65);
+    font-size: $font-size-sm;
+    color: $text-secondary;
   }
 
   .prop-required {
-    color: #ef4444;
-    font-size: 12px;
+    color: $error;
+    font-size: $font-size-sm;
   }
 
   .prop-value {
@@ -678,38 +713,39 @@
 
   .prop-input {
     width: 100%;
-    padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 6px;
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 13px;
-    transition: all 0.2s;
+    padding: $spacing-sm $spacing-md;
+    background: $bg-secondary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-sm;
+    color: $text-primary;
+    font-size: $font-size-sm;
+    transition: all $transition-base ease;
 
     &:focus {
       outline: none;
-      border-color: #00d4ff;
-      background: rgba(0, 212, 255, 0.05);
+      border-color: $primary-color;
+      background: rgba($primary-color, 0.02);
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
     }
 
     &::placeholder {
-      color: rgba(255, 255, 255, 0.35);
+      color: $text-tertiary;
     }
   }
 
   .prop-select {
     width: 100%;
-    padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 6px;
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 13px;
+    padding: $spacing-sm $spacing-md;
+    background: $bg-secondary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-sm;
+    color: $text-primary;
+    font-size: $font-size-sm;
     cursor: pointer;
 
     &:focus {
       outline: none;
-      border-color: #00d4ff;
+      border-color: $primary-color;
     }
   }
 
@@ -725,7 +761,7 @@
       height: 0;
 
       &:checked + .switch-slider {
-        background-color: #00d4ff;
+        background-color: $primary-color;
 
         &:before {
           transform: translateX(20px);
@@ -737,8 +773,8 @@
       position: absolute;
       cursor: pointer;
       inset: 0;
-      background-color: rgba(255, 255, 255, 0.12);
-      transition: 0.2s;
+      background-color: $border-color-base;
+      transition: $transition-base;
       border-radius: 12px;
 
       &:before {
@@ -749,17 +785,18 @@
         left: 3px;
         bottom: 3px;
         background-color: white;
-        transition: 0.2s;
+        transition: $transition-base;
         border-radius: 50%;
       }
     }
   }
 
   .actions-section {
-    padding: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding: $spacing-md;
+    border-top: 1px solid $border-color-lighter;
     display: flex;
-    gap: 8px;
+    gap: $spacing-sm;
+    background: $bg-secondary;
   }
 
   .action-btn {
@@ -767,15 +804,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 6px;
-    color: rgba(255, 255, 255, 0.65);
-    font-size: 12px;
+    gap: $spacing-xs;
+    padding: $spacing-sm $spacing-md;
+    background: $bg-primary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-sm;
+    color: $text-secondary;
+    font-size: $font-size-xs;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all $transition-base ease;
 
     svg {
       width: 14px;
@@ -783,72 +820,79 @@
     }
 
     &:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.2);
-      color: rgba(255, 255, 255, 0.85);
+      border-color: $primary-color;
+      color: $primary-color;
+      background: rgba($primary-color, 0.05);
     }
 
     &--danger:hover {
-      border-color: #ef4444;
-      color: #ef4444;
+      border-color: $error;
+      color: $error;
+      background: rgba($error, 0.05);
     }
   }
 
   .panel-tabs {
     display: flex;
-    gap: 4px;
-    padding: 8px 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    gap: $spacing-xs;
+    padding: $spacing-sm $spacing-md;
+    border-bottom: 1px solid $border-color-lighter;
+    background: $bg-secondary;
   }
 
   .tab-btn {
     flex: 1;
-    padding: 6px 12px;
+    padding: $spacing-xs $spacing-md;
     background: transparent;
     border: 1px solid transparent;
-    border-radius: 4px;
-    color: rgba(255, 255, 255, 0.45);
-    font-size: 12px;
+    border-radius: $border-radius-sm;
+    color: $text-tertiary;
+    font-size: $font-size-sm;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all $transition-base ease;
 
     &:hover {
-      color: rgba(255, 255, 255, 0.85);
+      color: $text-primary;
+      background: rgba($primary-color, 0.05);
     }
 
     &.active {
-      background: rgba(0, 212, 255, 0.15);
-      border-color: rgba(0, 212, 255, 0.3);
-      color: #00d4ff;
+      background: rgba($primary-color, 0.1);
+      border-color: $primary-color;
+      color: $primary-color;
     }
   }
 
   .style-group {
-    margin-bottom: 16px;
+    margin-bottom: $spacing-md;
 
     .group-title {
-      font-size: 11px;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.35);
-      margin-bottom: 8px;
+      font-size: $font-size-xs;
+      font-weight: $font-weight-semibold;
+      color: $text-tertiary;
+      margin-bottom: $spacing-sm;
     }
   }
 
   .style-row {
     display: flex;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-sm;
   }
 
   .style-item {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: $spacing-xs;
 
     label {
-      font-size: 11px;
-      color: rgba(255, 255, 255, 0.45);
+      font-size: $font-size-xs;
+      color: $text-tertiary;
+    }
+
+    &.full-width {
+      flex: 1;
     }
   }
 
@@ -856,9 +900,9 @@
     width: 100%;
     height: 32px;
     padding: 2px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 6px;
+    background: $bg-secondary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-sm;
     cursor: pointer;
 
     &::-webkit-color-swatch-wrapper {
@@ -866,24 +910,24 @@
     }
 
     &::-webkit-color-swatch {
-      border-radius: 4px;
+      border-radius: $border-radius-sm;
       border: none;
     }
   }
 
   .align-btns {
     display: flex;
-    gap: 4px;
+    gap: $spacing-xs;
 
     button {
       flex: 1;
-      padding: 6px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 4px;
-      color: rgba(255, 255, 255, 0.45);
+      padding: $spacing-xs;
+      background: $bg-secondary;
+      border: 1px solid $border-color-base;
+      border-radius: $border-radius-sm;
+      color: $text-tertiary;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all $transition-base ease;
 
       svg {
         width: 14px;
@@ -891,74 +935,76 @@
       }
 
       &:hover {
-        color: rgba(255, 255, 255, 0.85);
+        color: $text-primary;
+        border-color: $primary-color;
       }
 
       &.active {
-        background: rgba(0, 212, 255, 0.15);
-        border-color: rgba(0, 212, 255, 0.3);
-        color: #00d4ff;
+        background: rgba($primary-color, 0.1);
+        border-color: $primary-color;
+        color: $primary-color;
       }
     }
   }
 
   .event-item {
-    padding: 8px;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 6px;
+    padding: $spacing-sm;
+    background: $bg-secondary;
+    border-radius: $border-radius-sm;
+    border: 1px solid $border-color-lighter;
   }
 
   .event-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-sm;
   }
 
   .event-name {
-    font-size: 12px;
-    font-weight: 500;
-    color: #00d4ff;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $primary-color;
     font-family: monospace;
   }
 
   .event-desc {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.45);
+    font-size: $font-size-xs;
+    color: $text-tertiary;
   }
 
   .event-config {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: $spacing-xs;
   }
 
   .prop-textarea {
     width: 100%;
-    padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 6px;
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 12px;
+    padding: $spacing-sm $spacing-md;
+    background: $bg-secondary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-sm;
+    color: $text-primary;
+    font-size: $font-size-sm;
     font-family: monospace;
     resize: vertical;
 
     &:focus {
       outline: none;
-      border-color: #00d4ff;
-      background: rgba(0, 212, 255, 0.05);
+      border-color: $primary-color;
+      background: rgba($primary-color, 0.02);
     }
 
     &::placeholder {
-      color: rgba(255, 255, 255, 0.35);
+      color: $text-tertiary;
     }
   }
 
   .empty-events {
     text-align: center;
-    padding: 16px;
-    color: rgba(255, 255, 255, 0.35);
-    font-size: 12px;
+    padding: $spacing-md;
+    color: $text-tertiary;
+    font-size: $font-size-sm;
   }
 </style>

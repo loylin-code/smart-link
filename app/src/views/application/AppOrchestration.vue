@@ -198,7 +198,7 @@
 
   // 返回列表
   function handleBack() {
-    router.push('/app/application/list')
+    router.push('/app/application/design')
   }
 
   // 撤销
@@ -264,58 +264,68 @@
 </script>
 
 <style scoped lang="scss">
+  @import '@/assets/styles/variables.scss';
+
   .app-orchestration {
     height: 100%;
     display: flex;
     flex-direction: column;
-    background: #0a0e27;
-    color: rgba(255, 255, 255, 0.85);
+    background: $bg-secondary;
+    color: $text-primary;
   }
+
+  // ============================================================
+  // Header
+  // ============================================================
 
   .orchestration-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 56px;
-    padding: 0 20px;
-    background: rgba(21, 27, 61, 0.95);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 0 $spacing-lg;
+    background: $bg-primary;
+    border-bottom: 1px solid $border-color-lighter;
+    box-shadow: $shadow-sm;
+    flex-shrink: 0;
   }
 
   .header-left {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: $spacing-md;
   }
 
   .back-btn {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 6px;
-    color: rgba(255, 255, 255, 0.65);
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-sm;
+    color: $text-secondary;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all $transition-base ease;
 
     svg {
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
     }
 
     &:hover {
-      border-color: #00d4ff;
-      color: #00d4ff;
+      border-color: $primary-color;
+      color: $primary-color;
+      background: rgba($primary-color, 0.05);
     }
   }
 
   .page-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.85);
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+    margin: 0;
   }
 
   .header-center {
@@ -325,23 +335,25 @@
 
   .mode-switcher {
     display: flex;
-    background: rgba(255, 255, 255, 0.04);
+    background: $bg-secondary;
     padding: 4px;
-    border-radius: 8px;
+    border-radius: $border-radius-md;
+    border: 1px solid $border-color-lighter;
   }
 
   .mode-btn {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
+    gap: $spacing-xs;
+    padding: $spacing-sm $spacing-md;
     background: transparent;
     border: none;
-    border-radius: 6px;
-    color: rgba(255, 255, 255, 0.45);
-    font-size: 13px;
+    border-radius: $border-radius-sm;
+    color: $text-tertiary;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all $transition-base ease;
 
     svg {
       width: 16px;
@@ -349,33 +361,36 @@
     }
 
     &:hover {
-      color: rgba(255, 255, 255, 0.85);
+      color: $text-primary;
+      background: rgba($primary-color, 0.05);
     }
 
     &.active {
-      background: #00d4ff;
+      background: $primary-color;
       color: #fff;
+      box-shadow: $shadow-sm;
     }
   }
 
   .header-right {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: $spacing-sm;
   }
 
   .action-btn {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 6px;
-    color: rgba(255, 255, 255, 0.65);
-    font-size: 13px;
+    gap: $spacing-xs;
+    padding: $spacing-sm $spacing-md;
+    background: $bg-secondary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-sm;
+    color: $text-secondary;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all $transition-base ease;
 
     svg {
       width: 16px;
@@ -383,9 +398,9 @@
     }
 
     &:hover:not(:disabled) {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.2);
-      color: rgba(255, 255, 255, 0.85);
+      border-color: $primary-color;
+      color: $primary-color;
+      background: rgba($primary-color, 0.05);
     }
 
     &:disabled {
@@ -394,16 +409,26 @@
     }
 
     &--primary {
-      background: #00d4ff;
-      border-color: #00d4ff;
+      background: $primary-color;
+      border-color: $primary-color;
       color: #fff;
 
       &:hover:not(:disabled) {
-        background: #4de8ff;
-        border-color: #4de8ff;
+        background: $primary-light;
+        border-color: $primary-light;
       }
     }
+
+    &.active {
+      background: rgba($primary-color, 0.1);
+      border-color: $primary-color;
+      color: $primary-color;
+    }
   }
+
+  // ============================================================
+  // Content Area
+  // ============================================================
 
   .orchestration-content {
     flex: 1;
@@ -411,35 +436,58 @@
     overflow: hidden;
   }
 
+  // ============================================================
+  // Left Panel - Component Library
+  // ============================================================
+
   .left-panel {
+    width: 280px;
     flex-shrink: 0;
-    background: rgba(21, 27, 61, 0.5);
-    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    background: $bg-primary;
+    border-right: 1px solid $border-color-lighter;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
+
+  // ============================================================
+  // Canvas Panel
+  // ============================================================
 
   .canvas-panel {
     flex: 1;
     overflow: hidden;
+    background: $bg-secondary;
+    display: flex;
+    flex-direction: column;
   }
+
+  // ============================================================
+  // Right Panel - Properties
+  // ============================================================
 
   .right-panel {
+    width: 320px;
     flex-shrink: 0;
-    background: rgba(21, 27, 61, 0.5);
-    border-left: 1px solid rgba(255, 255, 255, 0.06);
+    background: $bg-primary;
+    border-left: 1px solid $border-color-lighter;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
+
+  // ============================================================
+  // AI Panel
+  // ============================================================
 
   .ai-panel {
+    width: 380px;
     flex-shrink: 0;
-    background: rgba(21, 27, 61, 0.8);
-    border-left: 1px solid rgba(255, 255, 255, 0.06);
+    background: $bg-primary;
+    border-left: 1px solid $border-color-lighter;
     overflow: hidden;
-  }
-
-  .action-btn.active {
-    background: rgba(0, 212, 255, 0.2);
-    border-color: #00d4ff;
-    color: #00d4ff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: $shadow-lg;
   }
 </style>

@@ -30,15 +30,66 @@ export interface Conversation {
   updatedAt: number
 }
 
+// ============================================================
 // 应用相关类型
+// ============================================================
+
+// 应用状态枚举
+export enum AppStatus {
+  DRAFT = 'draft',
+  DESIGNING = 'designing',
+  PUBLISHED = 'published',
+  ARCHIVED = 'archived'
+}
+
+// 应用类型枚举
+export enum AppType {
+  WORKFLOW = 'workflow',
+  CHART = 'chart',
+  FORM = 'form',
+  DASHBOARD = 'dashboard',
+  CUSTOM = 'custom'
+}
+
+// 应用接口
 export interface Application {
   id: string
   name: string
   description: string
   icon: string
-  status: 'active' | 'inactive'
+  type: AppType
+  status: AppStatus
+  version: string
+  schema?: any
   createdAt: number
   updatedAt: number
+  publishedAt?: number
+}
+
+// 应用筛选条件
+export interface AppFilter {
+  type?: AppType
+  status?: AppStatus
+  keyword?: string
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
+}
+
+// 应用分页
+export interface AppPagination {
+  page: number
+  pageSize: number
+  total?: number
+}
+
+// 应用运行时状态
+export interface AppRuntimeStatus {
+  appId: string
+  usageCount: number
+  uptime: number
+  errorCount: number
+  lastAccessed?: number
+  lastActiveAt?: number
 }
 
 export interface AppNode {

@@ -174,7 +174,7 @@
       icon: AppIcon,
       children: [
         { path: '/app/application/list', title: t('sidebar.appList') },
-        { path: '/app/application/orchestration', title: t('sidebar.appOrchestration') }
+        { path: '/app/application/design', title: t('sidebar.appDesign') }
       ]
     },
     {

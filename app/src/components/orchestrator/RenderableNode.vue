@@ -198,42 +198,52 @@
 </script>
 
 <style scoped lang="scss">
+  @import '@/assets/styles/variables.scss';
+
   .renderable-node {
     position: relative;
     min-height: 32px;
     border: 2px solid transparent;
-    border-radius: 4px;
+    border-radius: $border-radius-sm;
     transition: all 0.15s ease;
+    cursor: pointer;
 
     &:hover {
-      border-color: rgba(0, 212, 255, 0.3);
+      border-color: rgba($primary-color, 0.3);
+      background: rgba($primary-color, 0.02);
     }
 
     &--selected {
-      border-color: #00d4ff;
-      background: rgba(0, 212, 255, 0.05);
+      border-color: $primary-color;
+      background: rgba($primary-color, 0.05);
 
       &:hover {
-        border-color: #00d4ff;
+        border-color: $primary-color;
       }
     }
 
     &--hovered:not(&--selected) {
-      border-color: rgba(0, 212, 255, 0.5);
-      background: rgba(0, 212, 255, 0.02);
+      border-color: rgba($primary-color, 0.5);
+      background: rgba($primary-color, 0.02);
     }
 
     &--container {
       min-height: 60px;
-      padding: 8px;
+      padding: $spacing-sm;
 
       &.renderable-node--empty {
-        border: 2px dashed rgba(0, 0, 0, 0.1);
+        border: 2px dashed $border-color-base;
         background: rgba(0, 0, 0, 0.02);
         display: flex;
         align-items: center;
         justify-content: center;
       }
+    }
+
+    // 非容器节点（叶子节点）的默认样式
+    &:not(&--container) {
+      min-height: 40px;
+      padding: $spacing-sm;
     }
   }
 
@@ -247,8 +257,8 @@
   .selection-border {
     position: absolute;
     inset: 0;
-    border: 2px solid #00d4ff;
-    border-radius: 4px;
+    border: 2px solid $primary-color;
+    border-radius: $border-radius-sm;
     pointer-events: none;
   }
 
@@ -257,10 +267,10 @@
     top: -20px;
     left: 0;
     padding: 2px 8px;
-    background: #00d4ff;
-    border-radius: 4px 4px 0 0;
-    font-size: 11px;
-    font-weight: 500;
+    background: $primary-color;
+    border-radius: $border-radius-sm $border-radius-sm 0 0;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
     color: #fff;
     white-space: nowrap;
   }
@@ -280,10 +290,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.8);
-    border: none;
-    border-radius: 4px;
-    color: #fff;
+    background: $bg-primary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-sm;
+    color: $text-secondary;
     cursor: pointer;
     transition: all 0.15s;
 
@@ -293,25 +303,30 @@
     }
 
     &:hover {
-      background: #00d4ff;
+      background: $primary-color;
+      border-color: $primary-color;
+      color: #fff;
     }
 
     &--danger:hover {
-      background: #ef4444;
+      background: $error;
+      border-color: $error;
+      color: #fff;
     }
   }
 
   .hover-overlay {
     position: absolute;
     inset: -2px;
-    border: 2px solid rgba(0, 212, 255, 0.5);
-    border-radius: 4px;
+    border: 2px solid rgba($primary-color, 0.5);
+    border-radius: $border-radius-sm;
     pointer-events: none;
   }
 
   .node-content {
     width: 100%;
     min-height: inherit;
+    pointer-events: auto;
   }
 
   .empty-container {
@@ -319,10 +334,10 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: $spacing-sm;
     min-height: 80px;
-    color: rgba(0, 0, 0, 0.25);
-    font-size: 12px;
+    color: $text-tertiary;
+    font-size: $font-size-sm;
 
     svg {
       width: 24px;
@@ -335,14 +350,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 32px;
-    padding: 8px 12px;
-    background: rgba(0, 0, 0, 0.03);
-    border-radius: 4px;
+    min-height: 40px;
+    padding: $spacing-md;
+    background: rgba($primary-color, 0.03);
+    border-radius: $border-radius-sm;
+    border: 1px solid $border-color-lighter;
+    cursor: pointer;
+    transition: all $transition-base ease;
+
+    &:hover {
+      background: rgba($primary-color, 0.08);
+      border-color: rgba($primary-color, 0.3);
+    }
   }
 
   .leaf-label {
-    font-size: 12px;
-    color: rgba(0, 0, 0, 0.45);
+    font-size: $font-size-sm;
+    color: $text-secondary;
+    font-weight: $font-weight-medium;
   }
 </style>
