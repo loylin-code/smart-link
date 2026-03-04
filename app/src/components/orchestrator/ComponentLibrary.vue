@@ -237,8 +237,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '@/assets/styles/variables.scss';
-
   .component-library {
     height: 100%;
     display: flex;

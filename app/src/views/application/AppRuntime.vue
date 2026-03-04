@@ -168,8 +168,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '@/assets/styles/variables.scss';
-
   .app-runtime {
     display: flex;
     flex-direction: column;

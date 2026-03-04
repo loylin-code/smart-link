@@ -323,8 +323,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '@/assets/styles/variables.scss';
-
   .design-canvas {
     position: relative;
     width: 100%;

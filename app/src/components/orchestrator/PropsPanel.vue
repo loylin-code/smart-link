@@ -595,8 +595,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '@/assets/styles/variables.scss';
-
   .props-panel {
     height: 100%;
     display: flex;

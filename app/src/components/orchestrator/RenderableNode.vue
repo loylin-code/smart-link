@@ -84,8 +84,11 @@
         <span>拖入组件</span>
       </div>
 
-      <!-- 叶子节点提示 -->
-      <div v-else-if="!isContainer" class="leaf-node">
+      <!-- 渲染真实组件 -->
+      <component v-else-if="hasRealComponent" :is="renderedComponent" class="real-component" />
+
+      <!-- 未知组件占位符 -->
+      <div v-else class="leaf-node">
         <span class="leaf-label">{{ componentMeta?.name || node.type }}</span>
       </div>
     </div>
@@ -93,10 +96,19 @@
 </template>
 
 <script setup lang="ts">
-  import { computed } from 'vue'
+  import { computed, h, type VNode, type Component, defineComponent } from 'vue'
   import { useOrchestratorStore } from '@/store/modules/orchestrator'
   import { COMPONENT_META_LIST, type ComponentMeta } from '@smart-link/shared'
   import type { ComponentNode } from '@/types'
+
+  // 导入所有 UI 组件
+  import * as UIComponents from '@smart-link/ui'
+
+  // 组件自引用类型
+  interface RenderableNodeProps {
+    node: ComponentNode
+    depth: number
+  }
 
   const props = defineProps<{
     node: ComponentNode
@@ -141,6 +153,63 @@
     'renderable-node--empty': isEmptyContainer.value,
     [`renderable-node--depth-${props.depth}`]: true
   }))
+
+  // 获取真实组件
+  function getRealComponent(type: string): Component | null {
+    const components = UIComponents as unknown as Record<string, Component>
+    return components[type] || null
+  }
+
+  // 计算组件属性
+  function getComponentProps(): Record<string, any> {
+    const node = props.node
+    const propsObj: Record<string, any> = {}
+
+    // 合并静态属性
+    if (node.props?.static) {
+      Object.assign(propsObj, node.props.static)
+    }
+
+    // 合并样式
+    if (node.style?.static) {
+      propsObj.style = node.style.static
+    }
+
+    return propsObj
+  }
+
+  // 渲染真实组件
+  const renderedComponent = computed<VNode | null>(() => {
+    const component = getRealComponent(props.node.type)
+    if (!component) return null
+
+    const componentProps = getComponentProps()
+
+    // 在编辑态，阻止组件的默认交互行为
+    const editModeProps = {
+      ...componentProps,
+      disabled: true, // 禁用表单元素
+      onClick: (e: Event) => {
+        e.stopPropagation()
+        e.preventDefault()
+        emit('select', props.node.id)
+      },
+      onInput: (e: Event) => {
+        e.stopPropagation()
+      },
+      onChange: (e: Event) => {
+        e.stopPropagation()
+      }
+    }
+
+    // 渲染叶子组件（容器组件在模板中处理子节点）
+    return h(component, editModeProps)
+  })
+
+  // 是否有可渲染的真实组件
+  const hasRealComponent = computed(() => {
+    return !isContainer.value && getRealComponent(props.node.type) !== null
+  })
 
   // 点击处理
   function handleClick(event: MouseEvent) {
@@ -198,8 +267,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '@/assets/styles/variables.scss';
-
   .renderable-node {
     position: relative;
     min-height: 32px;
@@ -327,6 +394,18 @@
     width: 100%;
     min-height: inherit;
     pointer-events: auto;
+  }
+
+  .real-component {
+    width: 100%;
+    pointer-events: none; // 禁止组件内部交互，只允许外层选中
+
+    // 覆盖禁用状态样式，保持组件可见性
+    :deep(.is-disabled),
+    :deep([disabled]) {
+      opacity: 0.85;
+      cursor: default;
+    }
   }
 
   .empty-container {

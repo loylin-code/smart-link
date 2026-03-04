@@ -264,8 +264,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '@/assets/styles/variables.scss';
-
   .app-orchestration {
     height: 100%;
     display: flex;

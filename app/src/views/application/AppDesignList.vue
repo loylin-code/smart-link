@@ -285,8 +285,6 @@
 </script>
 
 <style scoped lang="scss">
-  @import '@/assets/styles/variables.scss';
-
   .app-design-list {
     height: 100%;
     padding: $spacing-xl;
