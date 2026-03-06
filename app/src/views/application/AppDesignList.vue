@@ -3,8 +3,8 @@
     <!-- 页面头部 -->
     <div class="page-header">
       <div class="header-left">
-        <h1 class="page-title">应用设计</h1>
-        <span class="page-desc">管理和编排应用页面结构</span>
+        <h1 class="page-title">{{ t('application.designList.title') }}</h1>
+        <span class="page-desc">{{ t('application.designList.description') }}</span>
       </div>
       <div class="header-right">
         <button class="create-btn" @click="handleCreate">
@@ -16,7 +16,7 @@
               stroke-linecap="round"
             />
           </svg>
-          <span>新建应用</span>
+          <span>{{ t('application.designList.newApp') }}</span>
         </button>
       </div>
     </div>
@@ -25,19 +25,21 @@
     <div class="filter-bar">
       <div class="filter-left">
         <div class="filter-item">
-          <label>应用类型</label>
+          <label>{{ t('application.types.all') }}</label>
           <select v-model="filter.type">
-            <option value="">全部类型</option>
-            <option v-for="t in appTypes" :key="t.value" :value="t.value">{{ t.label }}</option>
+            <option value="">{{ t('application.types.all') }}</option>
+            <option v-for="type in appTypes" :key="type.value" :value="type.value">
+              {{ type.label }}
+            </option>
           </select>
         </div>
         <div class="filter-item">
-          <label>状态</label>
+          <label>{{ t('application.status.all') }}</label>
           <select v-model="filter.status">
-            <option value="">全部状态</option>
-            <option value="draft">草稿</option>
-            <option value="designing">设计中</option>
-            <option value="published">已发布</option>
+            <option value="">{{ t('application.status.all') }}</option>
+            <option value="draft">{{ t('application.status.draft') }}</option>
+            <option value="designing">{{ t('application.status.designing') }}</option>
+            <option value="published">{{ t('application.status.published') }}</option>
           </select>
         </div>
       </div>
@@ -52,7 +54,11 @@
               stroke-linecap="round"
             />
           </svg>
-          <input v-model="filter.keyword" type="text" placeholder="搜索应用..." />
+          <input
+            v-model="filter.keyword"
+            type="text"
+            :placeholder="t('application.designList.searchPlaceholder')"
+          />
         </div>
       </div>
     </div>
@@ -121,7 +127,7 @@
                 stroke-linecap="round"
               />
             </svg>
-            编辑
+            {{ t('application.card.edit') }}
           </button>
           <button class="action-btn" @click="handleDuplicate(app)">
             <svg viewBox="0 0 24 24" fill="none">
@@ -140,7 +146,7 @@
                 stroke-width="2"
               />
             </svg>
-            复制
+            {{ t('application.card.copy') }}
           </button>
           <button class="action-btn danger" @click="handleDelete(app)">
             <svg viewBox="0 0 24 24" fill="none">
@@ -151,7 +157,7 @@
                 stroke-linecap="round"
               />
             </svg>
-            删除
+            {{ t('application.card.delete') }}
           </button>
         </div>
       </div>
@@ -162,7 +168,7 @@
           <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" />
           <path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
         </svg>
-        <p>暂无应用，点击上方按钮创建</p>
+        <p>{{ t('application.designList.noApps') }}</p>
       </div>
     </div>
   </div>
@@ -171,11 +177,13 @@
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
+  import { useI18n } from 'vue-i18n'
   import { applicationApi } from '@/services/application'
   import type { Application, AppFilter } from '@/types'
   import { AppStatus, AppType } from '@/types'
 
   const router = useRouter()
+  const { t } = useI18n()
 
   // 筛选条件
   const filter = ref<AppFilter>({
@@ -189,11 +197,11 @@
 
   // 应用类型选项
   const appTypes = [
-    { value: AppType.WORKFLOW, label: '工单应用' },
-    { value: AppType.CHART, label: '图表应用' },
-    { value: AppType.FORM, label: '表单应用' },
-    { value: AppType.DASHBOARD, label: '仪表盘' },
-    { value: AppType.CUSTOM, label: '自定义' }
+    { value: AppType.WORKFLOW, label: t('application.types.workflow') },
+    { value: AppType.CHART, label: t('application.types.chart') },
+    { value: AppType.FORM, label: t('application.types.form') },
+    { value: AppType.DASHBOARD, label: t('application.types.dashboard') },
+    { value: AppType.CUSTOM, label: t('application.types.custom') }
   ]
 
   // 过滤后的应用列表
@@ -232,13 +240,13 @@
 
   // 获取状态文本
   function getStatusText(status: AppStatus): string {
-    const texts: Record<AppStatus, string> = {
-      [AppStatus.DRAFT]: '草稿',
-      [AppStatus.DESIGNING]: '设计中',
-      [AppStatus.PUBLISHED]: '已发布',
-      [AppStatus.ARCHIVED]: '已归档'
+    const statusMap: Record<AppStatus, string> = {
+      [AppStatus.DRAFT]: t('application.status.draft'),
+      [AppStatus.DESIGNING]: t('application.status.designing'),
+      [AppStatus.PUBLISHED]: t('application.status.published'),
+      [AppStatus.ARCHIVED]: t('application.status.archived')
     }
-    return texts[status] || '未知'
+    return statusMap[status] || t('application.status.all')
   }
 
   // 格式化日期
@@ -275,7 +283,7 @@
 
   // 删除应用
   async function handleDelete(app: Application) {
-    if (confirm(`确定要删除应用"${app.name}"吗？`)) {
+    if (confirm(t('application.designList.confirmDelete', { name: app.name }))) {
       await applicationApi.deleteApplication(app.id)
       await loadApps()
     }

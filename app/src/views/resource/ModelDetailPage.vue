@@ -1091,7 +1091,7 @@
     transition: all $transition-fast ease;
 
     &:hover {
-      background: darken($primary-color, 10%);
+      background: #096dd9; // darken(#1890ff, 10%)
     }
   }
 
@@ -1272,7 +1272,7 @@
       color: white;
 
       &:hover {
-        background: darken($primary-color, 10%);
+        background: #096dd9;
       }
     }
 

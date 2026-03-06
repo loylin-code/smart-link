@@ -467,7 +467,7 @@
     transition: all $transition-base ease;
 
     &:hover {
-      background: darken($primary-color, 10%);
+      background: darken(#1890ff, 10%);
     }
   }
 
