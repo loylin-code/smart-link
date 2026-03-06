@@ -505,8 +505,6 @@
 </script>
 
 <style scoped lang="scss">
-  @use '@/assets/styles/variables.scss' as *;
-
   .mcp-detail-page {
     height: 100%;
     display: flex;

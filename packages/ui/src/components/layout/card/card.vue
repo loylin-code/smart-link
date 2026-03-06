@@ -25,15 +25,17 @@
 </script>
 
 <style scoped lang="scss">
+  @use '../../../styles/variables.scss' as v;
+
   .sl-card {
-    background: $bg-primary;
-    border: 1px solid $border-color-lighter;
-    border-radius: $border-radius-md;
+    background: v.$bg-primary;
+    border: 1px solid v.$border-color-lighter;
+    border-radius: v.$border-radius-md;
     overflow: hidden;
-    transition: all $transition-base ease;
+    transition: all v.$transition-base ease;
 
     &.is-shadow {
-      box-shadow: $shadow-lg;
+      box-shadow: v.$shadow-lg;
     }
 
     &:hover {
@@ -41,22 +43,22 @@
     }
 
     &__header {
-      padding: $spacing-md $spacing-lg;
-      border-bottom: 1px solid $border-color-lighter;
-      font-size: $font-size-base;
-      font-weight: $font-weight-semibold;
-      color: $text-primary;
+      padding: v.$spacing-md v.$spacing-lg;
+      border-bottom: 1px solid v.$border-color-lighter;
+      font-size: v.$font-size-base;
+      font-weight: v.$font-weight-semibold;
+      color: v.$text-primary;
     }
 
     &__body {
-      padding: $spacing-lg;
-      color: $text-secondary;
+      padding: v.$spacing-lg;
+      color: v.$text-secondary;
     }
 
     &__footer {
-      padding: $spacing-sm $spacing-lg;
-      border-top: 1px solid $border-color-lighter;
-      background: $bg-secondary;
+      padding: v.$spacing-sm v.$spacing-lg;
+      border-top: 1px solid v.$border-color-lighter;
+      background: v.$bg-secondary;
     }
   }
 </style>

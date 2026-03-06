@@ -50,49 +50,51 @@
 </script>
 
 <style scoped lang="scss">
+  @use '../../styles/variables.scss' as ui;
+
   .sl-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: $spacing-sm;
-    padding: 0 $spacing-md;
-    font-weight: $font-weight-medium;
-    border-radius: $border-radius-sm;
+    gap: ui.$spacing-sm;
+    padding: 0 ui.$spacing-md;
+    font-weight: ui.$font-weight-medium;
+    border-radius: ui.$border-radius-sm;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all ui.$transition-base ease;
     border: 1px solid transparent;
 
     &--small {
       height: 28px;
-      font-size: $font-size-xs;
-      padding: 0 $spacing-sm;
+      font-size: ui.$font-size-xs;
+      padding: 0 ui.$spacing-sm;
     }
 
     &--medium {
       height: 36px;
-      font-size: $font-size-sm;
+      font-size: ui.$font-size-sm;
     }
 
     &--large {
       height: 44px;
-      font-size: $font-size-base;
-      padding: 0 $spacing-lg;
+      font-size: ui.$font-size-base;
+      padding: 0 ui.$spacing-lg;
     }
 
     &--default {
-      background: $bg-primary;
-      border-color: $border-color-base;
-      color: $text-secondary;
+      background: ui.$bg-primary;
+      border-color: ui.$border-color-base;
+      color: ui.$text-secondary;
 
       &:hover:not(.is-disabled) {
-        border-color: $primary-color;
-        color: $primary-color;
+        border-color: ui.$primary-color;
+        color: ui.$primary-color;
       }
     }
 
     &--primary {
-      background: $primary-color;
-      color: $bg-primary;
+      background: ui.$primary-color;
+      color: ui.$bg-primary;
 
       &:hover:not(.is-disabled) {
         opacity: 0.9;
@@ -100,18 +102,18 @@
     }
 
     &--danger {
-      background: $error;
-      color: $bg-primary;
+      background: ui.$error;
+      color: ui.$bg-primary;
     }
 
     &--warning {
-      background: $warning;
-      color: $bg-primary;
+      background: ui.$warning;
+      color: ui.$bg-primary;
     }
 
     &--success {
-      background: $success;
-      color: $bg-primary;
+      background: ui.$success;
+      color: ui.$bg-primary;
     }
 
     &.is-disabled {

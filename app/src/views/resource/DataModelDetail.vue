@@ -733,8 +733,6 @@
 </script>
 
 <style scoped lang="scss">
-  @use '@/assets/styles/variables.scss' as *;
-
   .data-model-detail {
     height: 100%;
     padding: $spacing-xl;

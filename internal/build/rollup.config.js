@@ -83,9 +83,7 @@ export default defineConfig({
       use: {
         sass: {
           silenceDeprecations: ['legacy-js-api', 'import'],
-          additionalData: hasVariables
-            ? `@use "${variablesPath.replace(/\\/g, '/')}" as *;\n`
-            : undefined
+          additionalData: hasVariables ? `@use "${variablesPath.replace(/\\/g, '/')}" as *;\n` : ''
         }
       }
     }),

@@ -184,8 +184,6 @@
 </script>
 
 <style scoped lang="scss">
-  @use '@/assets/styles/variables.scss' as *;
-
   .welcome-page {
     width: 100%;
     height: 100vh;

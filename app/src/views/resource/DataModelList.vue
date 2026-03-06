@@ -513,8 +513,6 @@
 </script>
 
 <style scoped lang="scss">
-  @use '@/assets/styles/variables.scss' as *;
-
   .data-model-list {
     display: flex;
     height: 100%;

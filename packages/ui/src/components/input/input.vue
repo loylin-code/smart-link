@@ -83,6 +83,8 @@
 </script>
 
 <style scoped lang="scss">
+  @use '../../styles/variables.scss' as v;
+
   .sl-input {
     position: relative;
     display: inline-flex;
@@ -92,25 +94,25 @@
     &__textarea {
       width: 100%;
       padding: 8px 12px;
-      font-size: $font-size-sm;
-      color: $text-primary;
-      background: $bg-primary;
-      border: 1px solid $border-color-base;
-      border-radius: $border-radius-sm;
+      font-size: v.$font-size-sm;
+      color: v.$text-primary;
+      background: v.$bg-primary;
+      border: 1px solid v.$border-color-base;
+      border-radius: v.$border-radius-sm;
       outline: none;
-      transition: all $transition-base ease;
+      transition: all v.$transition-base ease;
 
       &::placeholder {
-        color: $text-disabled;
+        color: v.$text-disabled;
       }
 
       &:hover:not(:disabled) {
-        border-color: $primary-color;
+        border-color: v.$primary-color;
       }
 
       &:focus {
-        border-color: $primary-color;
-        box-shadow: 0 0 0 2px $glow-primary;
+        border-color: v.$primary-color;
+        box-shadow: 0 0 0 2px v.$glow-primary;
       }
     }
 
@@ -122,16 +124,16 @@
     &.is-focused {
       .sl-input__inner,
       .sl-input__textarea {
-        border-color: $primary-color;
+        border-color: v.$primary-color;
       }
     }
 
     &.is-disabled {
       .sl-input__inner,
       .sl-input__textarea {
-        background: $bg-secondary;
-        border-color: $border-color-light;
-        color: $text-disabled;
+        background: v.$bg-secondary;
+        border-color: v.$border-color-light;
+        color: v.$text-disabled;
         cursor: not-allowed;
       }
     }
@@ -140,8 +142,8 @@
       position: absolute;
       right: 8px;
       bottom: 4px;
-      font-size: $font-size-xs;
-      color: $text-tertiary;
+      font-size: v.$font-size-xs;
+      color: v.$text-tertiary;
     }
   }
 </style>

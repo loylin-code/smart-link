@@ -37,6 +37,8 @@
 </script>
 
 <style scoped lang="scss">
+  @use '../../../styles/variables.scss' as v;
+
   .sl-switch {
     display: inline-flex;
     align-items: center;
@@ -55,9 +57,9 @@
       display: inline-block;
       width: 44px;
       height: 22px;
-      background: $border-color-base;
+      background: v.$border-color-base;
       border-radius: 11px;
-      transition: background $transition-base ease;
+      transition: background v.$transition-base ease;
     }
 
     &__button {
@@ -66,15 +68,15 @@
       left: 2px;
       width: 18px;
       height: 18px;
-      background: $bg-primary;
+      background: v.$bg-primary;
       border-radius: 50%;
-      transition: transform $transition-base ease;
-      box-shadow: $shadow-sm;
+      transition: transform v.$transition-base ease;
+      box-shadow: v.$shadow-sm;
     }
 
     &.is-checked {
       .sl-switch__core {
-        background: $primary-color;
+        background: v.$primary-color;
       }
 
       .sl-switch__button {
@@ -87,7 +89,7 @@
       cursor: not-allowed;
 
       .sl-switch__core {
-        background: $text-disabled;
+        background: v.$text-disabled;
       }
     }
   }

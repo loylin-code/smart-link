@@ -300,8 +300,6 @@
 </script>
 
 <style scoped lang="scss">
-  @use '@/assets/styles/variables.scss' as *;
-
   .mcp-management {
     height: 100%;
     padding: $spacing-xl;

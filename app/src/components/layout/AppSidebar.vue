@@ -265,8 +265,6 @@
 </script>
 
 <style scoped lang="scss">
-  @use '@/assets/styles/variables.scss' as *;
-
   .app-sidebar {
     width: $sidebar-width;
     height: calc(100vh - #{$header-height});

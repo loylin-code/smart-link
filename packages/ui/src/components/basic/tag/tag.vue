@@ -41,19 +41,21 @@
 </script>
 
 <style scoped lang="scss">
+  @use '../../../styles/variables.scss' as v;
+
   .sl-tag {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    border-radius: $border-radius-sm;
-    font-weight: $font-weight-medium;
+    border-radius: v.$border-radius-sm;
+    font-weight: v.$font-weight-medium;
     border: 1px solid transparent;
-    transition: all $transition-base ease;
+    transition: all v.$transition-base ease;
 
     &--small {
       height: 22px;
       padding: 0 6px;
-      font-size: $font-size-xs;
+      font-size: v.$font-size-xs;
     }
 
     &--medium {
@@ -65,47 +67,47 @@
     &--large {
       height: 34px;
       padding: 0 14px;
-      font-size: $font-size-sm;
+      font-size: v.$font-size-sm;
     }
 
     &--default {
-      background: $bg-secondary;
-      border-color: $border-color-lighter;
-      color: $text-tertiary;
+      background: v.$bg-secondary;
+      border-color: v.$border-color-lighter;
+      color: v.$text-tertiary;
     }
 
     &--primary {
-      background: rgba($primary-color, 0.1);
-      border-color: rgba($primary-color, 0.2);
-      color: $primary-color;
+      background: rgba(v.$primary-color, 0.1);
+      border-color: rgba(v.$primary-color, 0.2);
+      color: v.$primary-color;
     }
 
     &--success {
-      background: rgba($success, 0.1);
-      border-color: rgba($success, 0.2);
-      color: $success;
+      background: rgba(v.$success, 0.1);
+      border-color: rgba(v.$success, 0.2);
+      color: v.$success;
     }
 
     &--warning {
-      background: rgba($warning, 0.1);
-      border-color: rgba($warning, 0.2);
-      color: $warning;
+      background: rgba(v.$warning, 0.1);
+      border-color: rgba(v.$warning, 0.2);
+      color: v.$warning;
     }
 
     &--danger {
-      background: rgba($error, 0.1);
-      border-color: rgba($error, 0.2);
-      color: $error;
+      background: rgba(v.$error, 0.1);
+      border-color: rgba(v.$error, 0.2);
+      color: v.$error;
     }
 
     &--info {
-      background: rgba($info, 0.1);
-      border-color: rgba($info, 0.2);
-      color: $info;
+      background: rgba(v.$info, 0.1);
+      border-color: rgba(v.$info, 0.2);
+      color: v.$info;
     }
 
     &.is-round {
-      border-radius: $border-radius-full;
+      border-radius: v.$border-radius-full;
     }
 
     &__close {
@@ -116,7 +118,7 @@
       height: 14px;
       cursor: pointer;
       opacity: 0.6;
-      transition: opacity $transition-base ease;
+      transition: opacity v.$transition-base ease;
 
       svg {
         width: 10px;
