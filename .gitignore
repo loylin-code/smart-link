@@ -40,3 +40,7 @@ packages/**/src/**/*.js.map
 *.njsproj
 *.sln
 *.sw?
+
+# Build stats reports
+**/stats/
+*.stats.html

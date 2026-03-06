@@ -2,8 +2,8 @@
   <div class="not-found">
     <div class="error-content">
       <h1 class="error-code">404</h1>
-      <p class="error-message">页面未找到</p>
-      <p class="error-description">抱歉，您访问的页面不存在</p>
+      <p class="error-message">{{ t('error.notFound') }}</p>
+      <p class="error-description">{{ t('error.pageNotExist') }}</p>
       <button class="back-btn" @click="goHome">
         <svg viewBox="0 0 24 24" fill="none">
           <path
@@ -21,7 +21,7 @@
             stroke-linejoin="round"
           />
         </svg>
-        <span>返回首页</span>
+        <span>{{ t('error.backHome') }}</span>
       </button>
     </div>
   </div>
@@ -29,8 +29,10 @@
 
 <script setup lang="ts">
   import { useRouter } from 'vue-router'
+  import { useI18n } from 'vue-i18n'
 
   const router = useRouter()
+  const { t } = useI18n()
 
   const goHome = () => {
     router.push('/')
