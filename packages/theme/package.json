@@ -11,13 +11,14 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
-    }
+    },
+    "./styles/variables.scss": "./dist/styles/variables.scss"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "rollup -c ../../internal/build/rollup.config.js"
+    "build": "rollup -c ../../internal/build/rollup.config.js && node -e \"import('fs').then(fs=>fs.cpSync('src/styles', 'dist/styles', {recursive:true}))\""
   },
   "publishConfig": {
     "access": "public"

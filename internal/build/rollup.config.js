@@ -17,15 +17,27 @@ const pkgName = pkgJson.name.split('/')[1] || pkgJson.name
 const input = resolve(pkgPath, 'src/index.ts')
 const tsconfig = resolve(pkgPath, 'tsconfig.json')
 
+// Check if this package has a variables.scss file
+const variablesPath = resolve(pkgPath, 'src/styles/variables.scss')
+const hasVariables = fs.existsSync(variablesPath)
+
 // 收集所有依赖作为 external
-const externalDeps = [
-  // 核心外部依赖
-  'vue',
-  'vue-router',
-  'pinia',
-  // workspace 依赖模式
-  /^@smart-link\//
-]
+// But NOT SCSS files from @smart-link/theme - those need to be resolved for postcss
+const externalDeps = (id) => {
+  // SCSS files from @smart-link/theme should NOT be external - they need to be resolved
+  if (id.includes('@smart-link/theme') && id.endsWith('.scss')) {
+    return false
+  }
+  // Core external dependencies
+  if (['vue', 'vue-router', 'pinia'].includes(id)) {
+    return true
+  }
+  // Workspace dependencies (except SCSS from theme)
+  if (id.startsWith('@smart-link/')) {
+    return true
+  }
+  return false
+}
 
 export default defineConfig({
   input,
@@ -49,7 +61,11 @@ export default defineConfig({
   ],
   plugins: [
     nodeResolve({
-      extensions: ['.js', '.ts', '.vue']
+      extensions: ['.js', '.ts', '.vue', '.scss'],
+      // Resolve @smart-link/theme SCSS imports
+      alias: {
+        '@smart-link/theme/styles': resolve(pkgPath, '../theme/dist/styles')
+      }
     }),
     commonjs(),
     vue({
@@ -66,7 +82,10 @@ export default defineConfig({
       extensions: ['.css', '.scss'],
       use: {
         sass: {
-          silenceDeprecations: ['legacy-js-api']
+          silenceDeprecations: ['legacy-js-api', 'import'],
+          additionalData: hasVariables
+            ? `@use "${variablesPath.replace(/\\/g, '/')}" as *;\n`
+            : undefined
         }
       }
     }),
