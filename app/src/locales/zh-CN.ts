@@ -28,6 +28,31 @@ export default {
     daysAgo: '天前',
     never: '从未'
   },
+  route: {
+    explore: '探索',
+    application: '应用管理',
+    appList: '应用列表',
+    appDesign: '应用设计',
+    appCreate: '新建应用',
+    appEdit: '编辑应用',
+    appRuntime: '应用运行',
+    resource: '资源管理',
+    components: '组件管理',
+    componentDetail: '组件详情',
+    dataModel: '数据模型',
+    dataModelDetail: '数据模型详情',
+    tool: '工具管理',
+    mcp: 'MCP 管理',
+    mcpDetail: 'MCP 详情',
+    skills: 'Skills 管理',
+    skillDetail: 'Skill 详情',
+    models: '模型管理',
+    modelDetail: '模型详情',
+    settings: '系统设置',
+    appearance: '外观设置',
+    providers: '模型提供商',
+    notFound: '页面未找到'
+  },
   welcome: {
     slogan: '智能企业级 Agent 应用管理平台',
     description: '自然语言驱动 · 智能编排 · 动态渲染',
@@ -227,6 +252,7 @@ export default {
   },
   error: {
     notFound: '页面未找到',
+    pageNotExist: '抱歉，您访问的页面不存在',
     backHome: '返回首页'
   },
   skills: {
@@ -552,7 +578,8 @@ export default {
       myApps: '我的应用',
       newApp: '新建应用',
       noApps: '暂无应用',
-      createFirst: '创建第一个应用'
+      createFirst: '创建第一个应用',
+      confirmDelete: '确定要删除应用"{name}"吗？'
     },
     stats: {
       published: '已发布应用',

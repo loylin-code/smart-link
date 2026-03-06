@@ -3,11 +3,55 @@ export default {
     language: 'Language',
     chinese: '中文',
     english: 'English',
-    back: 'Back to List',
+    backToList: 'Back to List',
     save: 'Save',
+    edit: 'Edit',
     loading: 'Loading...',
     yes: 'Yes',
-    no: 'No'
+    no: 'No',
+    all: 'All',
+    back: 'Back',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
+    create: 'Create',
+    reset: 'Reset',
+    delete: 'Delete',
+    actions: 'Actions',
+    test: 'Test',
+    start: 'Start',
+    config: 'Config',
+    search: 'Search',
+    filter: 'Filter',
+    justNow: 'Just now',
+    minutesAgo: 'min ago',
+    hoursAgo: 'hr ago',
+    daysAgo: 'days ago',
+    never: 'Never'
+  },
+  route: {
+    explore: 'Explore',
+    application: 'Application Management',
+    appList: 'App List',
+    appDesign: 'App Design',
+    appCreate: 'Create App',
+    appEdit: 'Edit App',
+    appRuntime: 'App Runtime',
+    resource: 'Resource Management',
+    components: 'Component Management',
+    componentDetail: 'Component Detail',
+    dataModel: 'Data Models',
+    dataModelDetail: 'Data Model Detail',
+    tool: 'Tool Management',
+    mcp: 'MCP Management',
+    mcpDetail: 'MCP Detail',
+    skills: 'Skills Management',
+    skillDetail: 'Skill Detail',
+    models: 'Model Management',
+    modelDetail: 'Model Detail',
+    settings: 'System Settings',
+    appearance: 'Appearance Settings',
+    providers: 'Model Providers',
+    notFound: 'Page Not Found'
   },
   welcome: {
     slogan: 'Intelligent Enterprise Agent Platform',
@@ -63,6 +107,31 @@ export default {
     appList: 'App List',
     appDesign: 'App Design',
     collapseSidebar: 'Collapse Sidebar'
+  },
+  orchestrator: {
+    title: 'App Orchestration',
+    design: 'Design',
+    preview: 'Preview',
+    save: 'Save',
+    searchComponents: 'Search components...',
+    noComponents: 'No components found',
+    selectComponent: 'Please select a component to edit',
+    props: 'Props',
+    copy: 'Copy',
+    delete: 'Delete',
+    categories: {
+      all: 'All',
+      basic: 'Basic Components',
+      form: 'Form Components',
+      layout: 'Layout Components',
+      data: 'Data Display',
+      feedback: 'Feedback Components',
+      business: 'Business Components'
+    },
+    componentLibrary: 'Component Library',
+    propsPanel: 'Props Panel',
+    canvas: 'Canvas',
+    aiAssistant: 'AI Assistant'
   },
   resource: {
     noMCP: 'No MCP configuration',
@@ -183,6 +252,7 @@ export default {
   },
   error: {
     notFound: 'Page Not Found',
+    pageNotExist: 'Page does not exist',
     backHome: 'Back to Home'
   },
   skills: {
@@ -501,6 +571,16 @@ export default {
       noApps: 'No published apps',
       goToDesign: 'Go to App Design'
     },
+    designList: {
+      title: 'App Design',
+      description: 'Design and manage your applications',
+      searchPlaceholder: 'Search applications...',
+      myApps: 'My Apps',
+      newApp: 'New App',
+      noApps: 'No apps',
+      createFirst: 'Create First App',
+      confirmDelete: 'Are you sure you want to delete app "{name}"?'
+    },
     stats: {
       published: 'Published Apps',
       totalVisits: 'Total Visits',
@@ -515,8 +595,13 @@ export default {
       custom: 'Custom'
     },
     status: {
+      all: 'All',
       enabled: 'Enabled',
-      disabled: 'Disabled'
+      disabled: 'Disabled',
+      draft: 'Draft',
+      designing: 'Designing',
+      published: 'Published',
+      archived: 'Archived'
     },
     card: {
       type: 'Type',
@@ -527,7 +612,10 @@ export default {
       run: 'Run',
       share: 'Share',
       disable: 'Disable',
-      enable: 'Enable'
+      enable: 'Enable',
+      edit: 'Edit',
+      copy: 'Copy',
+      delete: 'Delete'
     },
     share: {
       title: 'Share App',
@@ -550,6 +638,23 @@ export default {
       customTitlePlaceholder: 'App Temporarily Unavailable',
       customDescPlaceholder: 'This app is under maintenance, please try again later...',
       confirm: 'Confirm Disable'
+    },
+    create: {
+      title: 'New App',
+      selectType: 'Select App Type',
+      orUseTemplate: 'Or create from template',
+      select: 'Select',
+      useTemplate: 'Use Template'
+    },
+    templates: {
+      customerService: 'Intelligent Customer Service Assistant Template',
+      customerServiceDesc:
+        'Pre-configured customer service dialog flow, supports automatic responses to common questions and human handoff',
+      dataAnalysis: 'Data Analysis Template',
+      dataAnalysisDesc:
+        'Pre-configured data analysis workflow, supports data cleaning, analysis and visual report generation',
+      survey: 'Survey Template',
+      surveyDesc: 'Pre-configured survey form, supports multiple question types and data statistics'
     },
     runtime: {
       backToList: 'Back to List',

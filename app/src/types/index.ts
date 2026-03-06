@@ -517,6 +517,7 @@ export interface Component {
 // 路由元信息类型
 export type RouteMeta = {
   title: string
+  titleKey?: string
   icon?: string
   hidden?: boolean
 } & Record<string, unknown>

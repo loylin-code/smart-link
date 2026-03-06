@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import type { RouteMeta } from '@/types'
+import i18n from '@/locales'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -7,7 +8,8 @@ const routes: RouteRecordRaw[] = [
     name: 'Welcome',
     component: () => import('@/views/welcome/WelcomePage.vue'),
     meta: {
-      title: '欢迎 - SmartLink'
+      title: '欢迎 - SmartLink',
+      titleKey: 'welcome.title'
     } as RouteMeta
   },
   {
@@ -21,6 +23,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/explore/ExploreView.vue'),
         meta: {
           title: '探索',
+          titleKey: 'route.explore',
           icon: 'chat'
         } as RouteMeta
       },
@@ -30,6 +33,7 @@ const routes: RouteRecordRaw[] = [
         redirect: '/app/application/list',
         meta: {
           title: '应用管理',
+          titleKey: 'route.application',
           icon: 'app'
         } as RouteMeta,
         children: [
@@ -39,6 +43,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/views/application/AppRuntimeList.vue'),
             meta: {
               title: '应用列表',
+              titleKey: 'route.appList',
               icon: 'app'
             } as RouteMeta
           },
@@ -48,6 +53,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/views/application/AppDesignList.vue'),
             meta: {
               title: '应用设计',
+              titleKey: 'route.appDesign',
               icon: 'app'
             } as RouteMeta
           },
@@ -57,6 +63,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/views/application/AppOrchestration.vue'),
             meta: {
               title: '新建应用',
+              titleKey: 'route.appCreate',
               icon: 'flow',
               hidden: true
             } as RouteMeta
@@ -67,6 +74,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/views/application/AppOrchestration.vue'),
             meta: {
               title: '编辑应用',
+              titleKey: 'route.appEdit',
               icon: 'flow',
               hidden: true
             } as RouteMeta
@@ -77,6 +85,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/views/application/AppRuntime.vue'),
             meta: {
               title: '应用运行',
+              titleKey: 'route.appRuntime',
               icon: 'app',
               hidden: true
             } as RouteMeta
@@ -98,6 +107,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/views/resource/ComponentManagement.vue'),
             meta: {
               title: '组件管理',
+              titleKey: 'route.components',
               icon: 'component'
             } as RouteMeta
           },
@@ -107,6 +117,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/views/resource/ComponentDetailPage.vue'),
             meta: {
               title: '组件详情',
+              titleKey: 'route.componentDetail',
               icon: 'component',
               hidden: true
             } as RouteMeta
@@ -117,6 +128,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/views/resource/DataModelList.vue'),
             meta: {
               title: '数据模型',
+              titleKey: 'route.dataModel',
               icon: 'data-model'
             } as RouteMeta
           },
@@ -126,6 +138,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/views/resource/DataModelDetail.vue'),
             meta: {
               title: '数据模型详情',
+              titleKey: 'route.dataModelDetail',
               icon: 'data-model',
               hidden: true
             } as RouteMeta
@@ -146,7 +159,8 @@ const routes: RouteRecordRaw[] = [
             name: 'MCP',
             component: () => import('@/views/resource/MCPManagement.vue'),
             meta: {
-              title: 'MCP管理',
+              title: 'MCP 管理',
+              titleKey: 'route.mcp',
               icon: 'mcp'
             } as RouteMeta
           },
@@ -155,7 +169,8 @@ const routes: RouteRecordRaw[] = [
             name: 'MCPDetail',
             component: () => import('@/views/resource/MCPDetailPage.vue'),
             meta: {
-              title: 'MCP详情',
+              title: 'MCP 详情',
+              titleKey: 'route.mcpDetail',
               icon: 'mcp',
               hidden: true
             } as RouteMeta
@@ -165,7 +180,8 @@ const routes: RouteRecordRaw[] = [
             name: 'Skills',
             component: () => import('@/views/resource/SkillsManagement.vue'),
             meta: {
-              title: 'Skills管理',
+              title: 'Skills 管理',
+              titleKey: 'route.skills',
               icon: 'skill'
             } as RouteMeta
           },
@@ -174,7 +190,8 @@ const routes: RouteRecordRaw[] = [
             name: 'SkillDetail',
             component: () => import('@/views/resource/SkillDetailPage.vue'),
             meta: {
-              title: 'Skill详情',
+              title: 'Skill 详情',
+              titleKey: 'route.skillDetail',
               icon: 'skill',
               hidden: true
             } as RouteMeta
@@ -185,6 +202,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/views/resource/ModelManagement.vue'),
             meta: {
               title: '模型管理',
+              titleKey: 'route.models',
               icon: 'model'
             } as RouteMeta
           },
@@ -194,6 +212,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/views/resource/ModelDetailPage.vue'),
             meta: {
               title: '模型详情',
+              titleKey: 'route.modelDetail',
               icon: 'model',
               hidden: true
             } as RouteMeta
@@ -206,6 +225,7 @@ const routes: RouteRecordRaw[] = [
         redirect: '/app/settings/appearance',
         meta: {
           title: '系统设置',
+          titleKey: 'route.settings',
           icon: 'settings'
         } as RouteMeta,
         children: [
@@ -215,6 +235,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/views/settings/AppearanceSettings.vue'),
             meta: {
               title: '外观设置',
+              titleKey: 'route.appearance',
               icon: 'appearance'
             } as RouteMeta
           },
@@ -224,6 +245,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('@/views/settings/ProviderSettings.vue'),
             meta: {
               title: '模型提供商',
+              titleKey: 'route.providers',
               icon: 'provider'
             } as RouteMeta
           }
@@ -236,7 +258,8 @@ const routes: RouteRecordRaw[] = [
     name: 'NotFound',
     component: () => import('@/views/error/NotFound.vue'),
     meta: {
-      title: '页面未找到'
+      title: '页面未找到',
+      titleKey: 'route.notFound'
     } as RouteMeta
   }
 ]
@@ -256,10 +279,15 @@ const router = createRouter({
 // 路由守卫
 router.beforeEach((to, _from, next) => {
   // 设置页面标题
-  const title = to.meta.title as string
-  if (title) {
-    document.title = title
+  const titleKey = to.meta.titleKey as string | undefined
+  const fallbackTitle = to.meta.title as string
+
+  if (titleKey) {
+    document.title = i18n.global.t(titleKey)
+  } else if (fallbackTitle) {
+    document.title = fallbackTitle
   }
+
   next()
 })
 
