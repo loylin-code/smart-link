@@ -86,36 +86,18 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'resource',
         name: 'Resource',
-        redirect: '/app/resource/skills',
+        redirect: '/app/resource/components',
         meta: {
           title: '资源管理',
           icon: 'resource'
         } as RouteMeta,
         children: [
           {
-            path: 'skills',
-            name: 'Skills',
-            component: () => import('@/views/resource/SkillsManagement.vue'),
-            meta: {
-              title: 'Skills管理',
-              icon: 'skill'
-            } as RouteMeta
-          },
-          {
-            path: 'mcp',
-            name: 'MCP',
-            component: () => import('@/views/resource/MCPManagement.vue'),
-            meta: {
-              title: 'MCP管理',
-              icon: 'mcp'
-            } as RouteMeta
-          },
-          {
             path: 'components',
             name: 'Components',
             component: () => import('@/views/resource/ComponentManagement.vue'),
             meta: {
-              title: '前端组件管理',
+              title: '组件管理',
               icon: 'component'
             } as RouteMeta
           },
@@ -127,6 +109,122 @@ const routes: RouteRecordRaw[] = [
               title: '组件详情',
               icon: 'component',
               hidden: true
+            } as RouteMeta
+          },
+          {
+            path: 'datamodel',
+            name: 'DataModel',
+            component: () => import('@/views/resource/DataModelList.vue'),
+            meta: {
+              title: '数据模型',
+              icon: 'data-model'
+            } as RouteMeta
+          },
+          {
+            path: 'datamodel/:id',
+            name: 'DataModelDetail',
+            component: () => import('@/views/resource/DataModelDetail.vue'),
+            meta: {
+              title: '数据模型详情',
+              icon: 'data-model',
+              hidden: true
+            } as RouteMeta
+          }
+        ]
+      },
+      {
+        path: 'tool',
+        name: 'Tool',
+        redirect: '/app/tool/mcp',
+        meta: {
+          title: '工具管理',
+          icon: 'tool'
+        } as RouteMeta,
+        children: [
+          {
+            path: 'mcp',
+            name: 'MCP',
+            component: () => import('@/views/resource/MCPManagement.vue'),
+            meta: {
+              title: 'MCP管理',
+              icon: 'mcp'
+            } as RouteMeta
+          },
+          {
+            path: 'mcp/:id',
+            name: 'MCPDetail',
+            component: () => import('@/views/resource/MCPDetailPage.vue'),
+            meta: {
+              title: 'MCP详情',
+              icon: 'mcp',
+              hidden: true
+            } as RouteMeta
+          },
+          {
+            path: 'skills',
+            name: 'Skills',
+            component: () => import('@/views/resource/SkillsManagement.vue'),
+            meta: {
+              title: 'Skills管理',
+              icon: 'skill'
+            } as RouteMeta
+          },
+          {
+            path: 'skills/:id',
+            name: 'SkillDetail',
+            component: () => import('@/views/resource/SkillDetailPage.vue'),
+            meta: {
+              title: 'Skill详情',
+              icon: 'skill',
+              hidden: true
+            } as RouteMeta
+          },
+          {
+            path: 'models',
+            name: 'Models',
+            component: () => import('@/views/resource/ModelManagement.vue'),
+            meta: {
+              title: '模型管理',
+              icon: 'model'
+            } as RouteMeta
+          },
+          {
+            path: 'models/:id',
+            name: 'ModelDetail',
+            component: () => import('@/views/resource/ModelDetailPage.vue'),
+            meta: {
+              title: '模型详情',
+              icon: 'model',
+              hidden: true
+            } as RouteMeta
+          }
+        ]
+      },
+      {
+        path: 'settings',
+        name: 'Settings',
+        redirect: '/app/settings/appearance',
+        meta: {
+          title: '系统设置',
+          icon: 'settings'
+        } as RouteMeta,
+        children: [
+          {
+            path: 'appearance',
+            name: 'Appearance',
+            component: () => import('@/views/settings/AppearanceSettings.vue'),
+            meta: {
+              title: '外观设置',
+              icon: 'appearance'
+            } as RouteMeta
+          },
+          {
+            path: 'providers',
+            name: 'Providers',
+            component: () => import('@/views/settings/ProviderSettings.vue'),
+            meta: {
+              title: '模型提供商',
+              icon: 'provider'
             } as RouteMeta
           }
         ]

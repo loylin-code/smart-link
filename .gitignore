@@ -21,6 +21,15 @@ dist-ssr
 # TypeScript
 *.tsbuildinfo
 
+# TypeScript build artifacts in source directories
+# (these should be gitignored and output to dist/)
+app/src/**/*.js
+app/src/**/*.d.ts
+app/src/**/*.js.map
+packages/**/src/**/*.js
+packages/**/src/**/*.d.ts
+packages/**/src/**/*.js.map
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -332,7 +332,7 @@ function registerBuiltInFormatters(
 
   // 布尔格式化
   formatters.set('bool', (v: any) => Boolean(v))
-  formatters.set('not', (v: any) => !Boolean(v))
+  formatters.set('not', (v: any) => !v)
 
   // 默认值
   formatters.set('default', (v: any, defaultValue: any) => v ?? defaultValue)
