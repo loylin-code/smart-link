@@ -55,9 +55,9 @@
       display: inline-block;
       width: 44px;
       height: 22px;
-      background: #dcdfe6;
+      background: $border-color-base;
       border-radius: 11px;
-      transition: background 0.3s ease;
+      transition: background $transition-base ease;
     }
 
     &__button {
@@ -66,15 +66,15 @@
       left: 2px;
       width: 18px;
       height: 18px;
-      background: #fff;
+      background: $bg-primary;
       border-radius: 50%;
-      transition: transform 0.3s ease;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: transform $transition-base ease;
+      box-shadow: $shadow-sm;
     }
 
     &.is-checked {
       .sl-switch__core {
-        background: #1890ff;
+        background: $primary-color;
       }
 
       .sl-switch__button {
@@ -85,6 +85,10 @@
     &.is-disabled {
       opacity: 0.5;
       cursor: not-allowed;
+
+      .sl-switch__core {
+        background: $text-disabled;
+      }
     }
   }
 </style>

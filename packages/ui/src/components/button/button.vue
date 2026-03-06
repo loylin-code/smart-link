@@ -54,45 +54,45 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 0 16px;
-    font-weight: 500;
-    border-radius: 4px;
+    gap: $spacing-sm;
+    padding: 0 $spacing-md;
+    font-weight: $font-weight-medium;
+    border-radius: $border-radius-sm;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all $transition-base ease;
     border: 1px solid transparent;
 
     &--small {
       height: 28px;
-      font-size: 12px;
-      padding: 0 12px;
+      font-size: $font-size-xs;
+      padding: 0 $spacing-sm;
     }
 
     &--medium {
       height: 36px;
-      font-size: 14px;
+      font-size: $font-size-sm;
     }
 
     &--large {
       height: 44px;
-      font-size: 16px;
-      padding: 0 24px;
+      font-size: $font-size-base;
+      padding: 0 $spacing-lg;
     }
 
     &--default {
-      background: #fff;
-      border-color: #dcdfe6;
-      color: #606266;
+      background: $bg-primary;
+      border-color: $border-color-base;
+      color: $text-secondary;
 
       &:hover:not(.is-disabled) {
-        border-color: #409eff;
-        color: #409eff;
+        border-color: $primary-color;
+        color: $primary-color;
       }
     }
 
     &--primary {
-      background: linear-gradient(135deg, #00d4ff, #00a8cc);
-      color: #fff;
+      background: $primary-color;
+      color: $bg-primary;
 
       &:hover:not(.is-disabled) {
         opacity: 0.9;
@@ -100,18 +100,18 @@
     }
 
     &--danger {
-      background: #f56c6c;
-      color: #fff;
+      background: $error;
+      color: $bg-primary;
     }
 
     &--warning {
-      background: #e6a23c;
-      color: #fff;
+      background: $warning;
+      color: $bg-primary;
     }
 
     &--success {
-      background: #67c23a;
-      color: #fff;
+      background: $success;
+      color: $bg-primary;
     }
 
     &.is-disabled {

@@ -92,25 +92,25 @@
     &__textarea {
       width: 100%;
       padding: 8px 12px;
-      font-size: 14px;
-      color: #303133;
-      background: #ffffff;
-      border: 1px solid #dcdfe6;
-      border-radius: 4px;
+      font-size: $font-size-sm;
+      color: $text-primary;
+      background: $bg-primary;
+      border: 1px solid $border-color-base;
+      border-radius: $border-radius-sm;
       outline: none;
-      transition: all 0.3s ease;
+      transition: all $transition-base ease;
 
       &::placeholder {
-        color: #c0c4cc;
+        color: $text-disabled;
       }
 
       &:hover:not(:disabled) {
-        border-color: #1890ff;
+        border-color: $primary-color;
       }
 
       &:focus {
-        border-color: #1890ff;
-        box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+        border-color: $primary-color;
+        box-shadow: 0 0 0 2px $glow-primary;
       }
     }
 
@@ -122,16 +122,16 @@
     &.is-focused {
       .sl-input__inner,
       .sl-input__textarea {
-        border-color: #1890ff;
+        border-color: $primary-color;
       }
     }
 
     &.is-disabled {
       .sl-input__inner,
       .sl-input__textarea {
-        background: #f5f7fa;
-        border-color: #e4e7ed;
-        color: #c0c4cc;
+        background: $bg-secondary;
+        border-color: $border-color-light;
+        color: $text-disabled;
         cursor: not-allowed;
       }
     }
@@ -140,8 +140,8 @@
       position: absolute;
       right: 8px;
       bottom: 4px;
-      font-size: 12px;
-      color: #909399;
+      font-size: $font-size-xs;
+      color: $text-tertiary;
     }
   }
 </style>

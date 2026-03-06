@@ -22,7 +22,7 @@
     </div>
     <Transition name="slide">
       <div v-if="visible" class="sl-select__dropdown">
-        <div v-if="!options.length" class="sl-select__empty">暂无数据</div>
+        <div v-if="!options.length" class="sl-select__empty">No data available</div>
         <div
           v-for="option in options"
           :key="option.value"
@@ -97,21 +97,21 @@
     &__inner {
       width: 100%;
       padding: 8px 32px 8px 12px;
-      font-size: 14px;
-      color: #303133;
-      background: #ffffff;
-      border: 1px solid #dcdfe6;
-      border-radius: 4px;
+      font-size: $font-size-sm;
+      color: $text-primary;
+      background: $bg-primary;
+      border: 1px solid $border-color-base;
+      border-radius: $border-radius-sm;
       outline: none;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all $transition-base ease;
 
       &::placeholder {
-        color: #c0c4cc;
+        color: $text-disabled;
       }
 
       &:hover:not(:disabled) {
-        border-color: #1890ff;
+        border-color: $primary-color;
       }
     }
 
@@ -120,8 +120,8 @@
       right: 8px;
       top: 50%;
       transform: translateY(-50%);
-      color: #c0c4cc;
-      transition: transform 0.3s ease;
+      color: $text-disabled;
+      transition: transform $transition-base ease;
 
       svg {
         width: 16px;
@@ -135,16 +135,16 @@
 
     &.is-focused {
       .sl-select__inner {
-        border-color: #1890ff;
-        box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+        border-color: $primary-color;
+        box-shadow: 0 0 0 2px $glow-primary;
       }
     }
 
     &.is-disabled {
       .sl-select__inner {
-        background: #f5f7fa;
-        border-color: #e4e7ed;
-        color: #c0c4cc;
+        background: $bg-secondary;
+        border-color: $border-color-light;
+        color: $text-disabled;
         cursor: not-allowed;
       }
     }
@@ -156,42 +156,42 @@
       width: 100%;
       margin-top: 4px;
       padding: 4px 0;
-      background: #ffffff;
-      border: 1px solid #e4e7ed;
-      border-radius: 4px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+      background: $bg-primary;
+      border: 1px solid $border-color-light;
+      border-radius: $border-radius-sm;
+      box-shadow: $shadow-lg;
       z-index: 100;
     }
 
     &__option {
       padding: 8px 12px;
-      font-size: 14px;
-      color: #606266;
+      font-size: $font-size-sm;
+      color: $text-secondary;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all $transition-fast ease;
 
       &:hover {
-        background: #f5f7fa;
-        color: #1890ff;
+        background: $bg-secondary;
+        color: $primary-color;
       }
 
       &.is-selected {
-        color: #1890ff;
-        background: rgba(24, 144, 255, 0.1);
+        color: $primary-color;
+        background: $glow-primary;
       }
     }
 
     &__empty {
       padding: 8px 12px;
-      font-size: 14px;
-      color: #909399;
+      font-size: $font-size-sm;
+      color: $text-tertiary;
       text-align: center;
     }
   }
 
   .slide-enter-active,
   .slide-leave-active {
-    transition: all 0.2s ease;
+    transition: all $transition-fast ease;
   }
 
   .slide-enter-from,

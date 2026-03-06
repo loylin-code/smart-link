@@ -45,15 +45,15 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    border-radius: 4px;
-    font-weight: 500;
+    border-radius: $border-radius-sm;
+    font-weight: $font-weight-medium;
     border: 1px solid transparent;
-    transition: all 0.3s ease;
+    transition: all $transition-base ease;
 
     &--small {
       height: 22px;
       padding: 0 6px;
-      font-size: 12px;
+      font-size: $font-size-xs;
     }
 
     &--medium {
@@ -65,47 +65,47 @@
     &--large {
       height: 34px;
       padding: 0 14px;
-      font-size: 14px;
+      font-size: $font-size-sm;
     }
 
     &--default {
-      background: #f4f4f5;
-      border-color: #e9e9eb;
-      color: #909399;
+      background: $bg-secondary;
+      border-color: $border-color-lighter;
+      color: $text-tertiary;
     }
 
     &--primary {
-      background: rgba(24, 144, 255, 0.1);
-      border-color: rgba(24, 144, 255, 0.2);
-      color: #1890ff;
+      background: rgba($primary-color, 0.1);
+      border-color: rgba($primary-color, 0.2);
+      color: $primary-color;
     }
 
     &--success {
-      background: rgba(103, 194, 58, 0.1);
-      border-color: rgba(103, 194, 58, 0.2);
-      color: #67c23a;
+      background: rgba($success, 0.1);
+      border-color: rgba($success, 0.2);
+      color: $success;
     }
 
     &--warning {
-      background: rgba(230, 162, 60, 0.1);
-      border-color: rgba(230, 162, 60, 0.2);
-      color: #e6a23c;
+      background: rgba($warning, 0.1);
+      border-color: rgba($warning, 0.2);
+      color: $warning;
     }
 
     &--danger {
-      background: rgba(245, 108, 108, 0.1);
-      border-color: rgba(245, 108, 108, 0.2);
-      color: #f56c6c;
+      background: rgba($error, 0.1);
+      border-color: rgba($error, 0.2);
+      color: $error;
     }
 
     &--info {
-      background: rgba(144, 147, 153, 0.1);
-      border-color: rgba(144, 147, 153, 0.2);
-      color: #909399;
+      background: rgba($info, 0.1);
+      border-color: rgba($info, 0.2);
+      color: $info;
     }
 
     &.is-round {
-      border-radius: 999px;
+      border-radius: $border-radius-full;
     }
 
     &__close {
@@ -116,7 +116,7 @@
       height: 14px;
       cursor: pointer;
       opacity: 0.6;
-      transition: opacity 0.3s ease;
+      transition: opacity $transition-base ease;
 
       svg {
         width: 10px;
