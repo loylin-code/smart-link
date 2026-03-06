@@ -153,6 +153,15 @@ $glow-shadow-primary: var(--glow-shadow-primary);
 $glow-shadow-secondary: var(--glow-shadow-secondary);
 $glow-shadow-success: var(--glow-shadow-success);
 
+// 间距系统
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-2xl: 48px;
+$spacing-3xl: 64px;
+
 // 字体系统
 $font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
 
@@ -178,31 +187,10 @@ $border-radius-xl: 16px;
 $border-radius-2xl: 24px;
 $border-radius-full: 9999px;
 
-// 阴影系统
-$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
-$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
-$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
-$shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.12);
-
-// 发光阴影
-$glow-shadow-primary: 0 2px 8px rgba(24, 144, 255, 0.15);
-$glow-shadow-secondary: 0 2px 8px rgba(114, 46, 209, 0.15);
-$glow-shadow-success: 0 2px 8px rgba(103, 194, 58, 0.15);
-
 // 过渡时间
 $transition-fast: 0.15s;
 $transition-base: 0.3s;
 $transition-slow: 0.5s;
-
-// 间距系统
-$spacing-unit: 4px;
-$spacing-xs: 4px;
-$spacing-sm: 8px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$spacing-xl: 32px;
-$spacing-2xl: 48px;
-$spacing-3xl: 64px;
 
 // 布局尺寸
 $header-height: 60px;
