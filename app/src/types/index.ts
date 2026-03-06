@@ -14,20 +14,82 @@ export interface PageResponse<T> {
   pageSize: number
 }
 
+// ============================================================
 // 对话相关类型
-export interface Message {
+// ============================================================
+
+// 文件附件类型
+export interface MessageAttachment {
+  id: string
+  name: string
+  type: string
+  size: number
+  url?: string
+  base64?: string
+}
+
+// 动态组件类型（用于聊天消息中的动态组件渲染）
+export interface ChatComponent {
+  id: string
+  type: 'stats-card' | 'form' | 'chart' | 'table' | 'list' | 'code' | 'image'
+  props: Record<string, any>
+  events?: Record<string, string>
+}
+
+// 消息交互事件
+export interface MessageEvent {
+  type: 'form_submit' | 'button_click' | 'selection_change'
+  componentId: string
+  data: Record<string, any>
+}
+
+// 消息接口（扩展版）
+export interface ChatMessage {
   id: string
   role: 'user' | 'assistant'
   content: string
   timestamp: number
+  // 动态组件
+  components?: ChatComponent[]
+  // 组件交互状态
+  interactionState?: Record<string, any>
+  // 文件附件
+  attachments?: MessageAttachment[]
+  // 是否正在生成
+  isStreaming?: boolean
 }
 
-export interface Conversation {
+// 对话模板类型
+export interface ChatTemplate {
+  id: string
+  name: string
+  icon: string
+  description: string
+  features: string[]
+  initialPrompt: string
+  category: 'service' | 'analytics' | 'document' | 'workflow' | 'content' | 'business'
+}
+
+// 对话分组类型
+export interface ConversationGroup {
+  label: string
+  key: string
+  conversations: ChatConversation[]
+}
+
+// 对话接口（扩展版）
+export interface ChatConversation {
   id: string
   title: string
-  messages: Message[]
+  messages: ChatMessage[]
   createdAt: number
   updatedAt: number
+  // 使用的模板ID
+  templateId?: string
+  // 是否已归档
+  isArchived?: boolean
+  // 标签
+  tags?: string[]
 }
 
 // ============================================================
@@ -64,6 +126,7 @@ export interface Application {
   createdAt: number
   updatedAt: number
   publishedAt?: number
+  isEnabled?: boolean // 应用启用状态
 }
 
 // 应用筛选条件

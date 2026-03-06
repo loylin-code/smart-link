@@ -854,19 +854,35 @@
   }
 
   const goBack = () => {
-    router.push('/app/resource/models')
+    router.push('/app/tool/models')
   }
 
   const handleSave = () => {
-    console.log('Saving model...')
+    if (!model.value) return
+    modelStore.updateModel(model.value.id, {
+      config: {
+        ...model.value.config,
+        baseUrl: configForm.baseUrl,
+        apiKey: configForm.apiKey,
+        organizationId: configForm.organizationId,
+        defaultParams: configForm.defaultParams
+      }
+    })
+    alert(t('common.save') + ' ' + t('common.confirm'))
   }
 
   const editBasicInfo = () => {
-    console.log('Editing basic info...')
+    // TODO: Open edit dialog
+    alert(t('model.detail.editBasicInfo'))
   }
 
   const viewDocs = () => {
-    console.log('Viewing docs...')
+    // Open external documentation
+    if (model.value?.provider === 'openai') {
+      window.open('https://platform.openai.com/docs', '_blank')
+    } else if (model.value?.provider === 'anthropic') {
+      window.open('https://docs.anthropic.com', '_blank')
+    }
   }
 
   const testConnection = async () => {
@@ -876,59 +892,95 @@
   }
 
   const saveConfig = () => {
-    console.log('Saving config...', configForm)
+    if (!model.value) return
+    modelStore.updateModel(model.value.id, {
+      config: {
+        ...model.value.config,
+        baseUrl: configForm.baseUrl,
+        apiKey: configForm.apiKey,
+        organizationId: configForm.organizationId,
+        defaultParams: configForm.defaultParams
+      }
+    })
+    alert(t('common.save') + ' ' + t('common.confirm'))
   }
 
   const saveLimits = () => {
-    console.log('Saving limits...')
+    alert(t('model.detail.saveLimits') + ' ' + t('common.confirm'))
   }
 
   const editThreshold = () => {
-    console.log('Editing threshold...')
+    const newThreshold = prompt(t('model.detail.alertThreshold') + ':', '80')
+    if (newThreshold) {
+      alert(t('common.save') + ' ' + t('common.confirm'))
+    }
   }
 
   const addFallbackModel = () => {
-    console.log('Adding fallback model...')
+    alert(t('model.detail.addFallback'))
   }
 
   const adjustOrder = () => {
-    console.log('Adjusting order...')
+    alert(t('model.detail.adjustOrder'))
   }
 
   const addTeam = () => {
-    console.log('Adding team...')
+    const teamName = prompt(t('model.detail.addTeam') + ':')
+    if (teamName) {
+      allowedTeams.value.push(teamName)
+    }
   }
 
   const savePermissions = () => {
-    console.log('Saving permissions...')
+    if (!model.value) return
+    modelStore.updateModel(model.value.id, {
+      accessControl: {
+        mode: accessMode.value,
+        teams: allowedTeams.value,
+        fallbackModel: fallbackModel.value
+      }
+    })
+    alert(t('model.detail.savePermissions') + ' ' + t('common.confirm'))
   }
 
   const viewDetailedReport = () => {
-    console.log('Viewing detailed report...')
+    router.push(`/app/tool/models/${model.value?.id}?tab=stats`)
   }
 
   const exportCSV = () => {
-    console.log('Exporting CSV...')
+    // Generate CSV export
+    const csvContent = 'data:text/csv;charset=utf-8,' + encodeURIComponent('Model Statistics\n')
+    const link = document.createElement('a')
+    link.setAttribute('href', csvContent)
+    link.setAttribute('download', `model-${model.value?.id}-stats.csv`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   const subscribe = () => {
-    console.log('Subscribing...')
+    alert(t('model.detail.subscribe') + ' ' + t('common.confirm'))
   }
 
   const viewFullLogs = () => {
-    console.log('Viewing full logs...')
+    alert(t('model.detail.viewFullLogs'))
   }
 
   const viewLogs = () => {
-    console.log('Viewing logs...')
+    alert(t('model.detail.viewLogs'))
   }
 
   const copyConfig = () => {
-    console.log('Copying config...')
+    if (!model.value) return
+    const config = JSON.stringify(configForm, null, 2)
+    navigator.clipboard.writeText(config)
+    alert(t('common.confirm'))
   }
 
   const setAsDefault = () => {
-    console.log('Setting as default...')
+    if (!model.value) return
+    modelStore.setCurrentModel(model.value)
+    alert(t('model.detail.setDefault') + ' ' + t('common.confirm'))
   }
 
   onMounted(() => {

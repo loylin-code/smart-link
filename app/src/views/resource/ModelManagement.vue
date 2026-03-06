@@ -399,15 +399,17 @@
   }
 
   const openDetail = (model: LLMModel) => {
-    router.push(`/app/resource/models/${model.id}`)
+    router.push(`/app/tool/models/${model.id}`)
   }
 
   const handleAddModel = () => {
-    console.log('Add model clicked')
+    // TODO: Open add model dialog
+    alert(t('model.management.addModel'))
   }
 
-  const handleTest = (model: LLMModel) => {
-    console.log('Test model:', model.name)
+  const handleTest = async (model: LLMModel) => {
+    const result = await modelStore.testConnection(model.id)
+    alert(result.message)
   }
 
   const handleConfig = (model: LLMModel) => {
@@ -415,7 +417,8 @@
   }
 
   const handleStats = (model: LLMModel) => {
-    console.log('View stats:', model.name)
+    // Navigate to detail page with stats tab focused
+    router.push(`/app/tool/models/${model.id}?tab=stats`)
   }
 </script>
 

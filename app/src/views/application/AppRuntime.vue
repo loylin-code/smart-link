@@ -1,46 +1,127 @@
 <template>
   <div class="app-runtime">
+    <!-- Particle Background -->
+    <ParticleBackground :particle-count="60" :connection-distance="100" />
+
     <!-- Header -->
     <div class="runtime-header">
-      <button class="back-btn" @click="goBack">
-        <svg viewBox="0 0 24 24" fill="none">
-          <path
-            d="M19 12H5M12 19L5 12L12 5"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </button>
-      <div class="app-info">
-        <h1 class="app-name">{{ app?.name }}</h1>
-        <span class="app-type">{{ getTypeLabel(app?.type) }}</span>
+      <div class="header-left">
+        <button class="back-btn" @click="goBack">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M19 12H5M12 19L5 12L12 5"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span>{{ t('application.runtime.backToList') }}</span>
+        </button>
       </div>
-      <div class="runtime-status">
-        <span class="status-dot" :class="`status--${status}`"></span>
-        <span class="status-text">{{ statusText }}</span>
+
+      <div class="header-center">
+        <h1 class="app-name">{{ app?.name }}</h1>
+        <span class="app-type-badge">{{ getTypeLabel(app?.type) }}</span>
+      </div>
+
+      <div class="header-right">
+        <div class="runtime-status">
+          <span class="status-dot" :class="`status--${status}`"></span>
+          <span class="status-text">{{ statusText }}</span>
+        </div>
+        <button class="share-btn" @click="openShare">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span>{{ t('application.card.share') }}</span>
+        </button>
       </div>
     </div>
 
     <!-- Runtime Content -->
     <div class="runtime-content">
+      <!-- Loading State -->
       <div v-if="loading" class="loading-state">
-        <div class="loading-spinner"></div>
-        <p>加载应用中...</p>
+        <div class="loading-spinner">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" opacity="0.25" />
+            <path
+              d="M12 2a10 10 0 0 1 10 10"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+        <p class="loading-text">{{ t('application.runtime.loading') }}</p>
       </div>
 
+      <!-- Error State -->
       <div v-else-if="error" class="error-state">
-        <svg viewBox="0 0 24 24" fill="none" class="error-icon">
-          <path
-            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"
-            fill="currentColor"
-          />
-        </svg>
-        <p>{{ error }}</p>
-        <button @click="loadApp">重试</button>
+        <div class="error-icon-wrapper">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+            <path
+              d="M12 8v4M12 16h.01"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+        <h3 class="error-title">{{ t('application.runtime.loadFailed') }}</h3>
+        <p class="error-message">{{ error }}</p>
+        <button class="retry-btn" @click="loadApp">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M1 4v6h6M23 20v-6h-6"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14L18.36 18.36A9 9 0 0 1 3.51 15"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          {{ t('application.runtime.retry') }}
+        </button>
       </div>
 
+      <!-- Disabled State -->
+      <div v-else-if="app?.isEnabled === false" class="disabled-state">
+        <div class="disabled-icon-wrapper">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+            <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </div>
+        <h3 class="disabled-title">{{ t('application.runtime.appDisabled') }}</h3>
+        <p class="disabled-message">{{ t('application.runtime.appDisabledDesc') }}</p>
+        <button class="back-to-list-btn" @click="goBack">
+          {{ t('application.runtime.backToList') }}
+        </button>
+      </div>
+
+      <!-- Normal Runtime -->
       <div v-else class="runtime-viewer">
         <SchemaRenderer
           :schema="schema"
@@ -56,29 +137,77 @@
     <!-- Footer Stats -->
     <div class="runtime-footer">
       <div class="stat-item">
-        <span class="stat-label">访问次数</span>
-        <span class="stat-value">{{ runtimeStatus?.usageCount || 0 }}</span>
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" />
+          </svg>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ formatNumber(runtimeStatus?.usageCount || 0) }}</span>
+          <span class="stat-label">{{ t('application.runtime.visits') }}</span>
+        </div>
       </div>
       <div class="stat-item">
-        <span class="stat-label">运行时长</span>
-        <span class="stat-value">{{ formatUptime(runtimeStatus?.uptime || 0) }}</span>
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+            <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value">{{ formatUptime(runtimeStatus?.uptime || 0) }}</span>
+          <span class="stat-label">{{ t('application.runtime.uptime') }}</span>
+        </div>
       </div>
       <div class="stat-item">
-        <span class="stat-label">错误次数</span>
-        <span class="stat-value">{{ runtimeStatus?.errorCount || 0 }}</span>
+        <div class="stat-icon error">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 9v2M12 15h.01"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <path
+              d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <div class="stat-content">
+          <span class="stat-value" :class="{ error: runtimeStatus?.errorCount }">{{
+            runtimeStatus?.errorCount || 0
+          }}</span>
+          <span class="stat-label">{{ t('application.runtime.errors') }}</span>
+        </div>
       </div>
     </div>
+
+    <!-- Share Modal -->
+    <ShareModal v-if="showShareModal" :app="app" @close="showShareModal = false" />
   </div>
 </template>
 
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
+  import { useI18n } from 'vue-i18n'
   import { applicationApi } from '@/services/application'
   import SchemaRenderer from '@/components/runtime/SchemaRenderer.vue'
+  import ShareModal from './ShareModal.vue'
+  import ParticleBackground from '@/components/common/ParticleBackground.vue'
   import type { Application, AppRuntimeStatus, PageSchema } from '@/types'
   import { AppType, AppStatus } from '@/types'
 
+  const { t } = useI18n()
   const route = useRoute()
   const router = useRouter()
 
@@ -88,17 +217,18 @@
   const loading = ref(true)
   const error = ref<string | null>(null)
   const status = ref('running')
+  const showShareModal = ref(false)
 
   const statusText = computed(() => {
     switch (status.value) {
       case 'running':
-        return '运行中'
+        return t('application.runtime.running')
       case 'error':
-        return '异常'
+        return t('application.runtime.error')
       case 'stopped':
-        return '已停止'
+        return t('application.runtime.stopped')
       default:
-        return '未知'
+        return t('application.runtime.unknown')
     }
   })
 
@@ -119,12 +249,12 @@
       runtimeStatus.value = statusData.find((s) => s.appId === appId) || null
 
       if (!appData) {
-        error.value = '应用不存在'
+        error.value = t('application.runtime.appNotFound')
       } else if (appData.status !== AppStatus.PUBLISHED) {
-        error.value = '应用未发布'
+        error.value = t('application.runtime.appNotPublished')
       }
     } catch (e) {
-      error.value = '加载失败'
+      error.value = t('application.runtime.loadFailed')
     } finally {
       loading.value = false
     }
@@ -134,21 +264,34 @@
     router.push('/app/application/list')
   }
 
+  function openShare() {
+    showShareModal.value = true
+  }
+
   function getTypeLabel(type?: AppType) {
     const labels = {
-      [AppType.WORKFLOW]: '工单应用',
-      [AppType.CHART]: '图表应用',
-      [AppType.FORM]: '表单应用',
-      [AppType.DASHBOARD]: '仪表盘',
-      [AppType.CUSTOM]: '自定义应用'
+      [AppType.WORKFLOW]: t('application.types.workflow'),
+      [AppType.CHART]: t('application.types.chart'),
+      [AppType.FORM]: t('application.types.form'),
+      [AppType.DASHBOARD]: t('application.types.dashboard'),
+      [AppType.CUSTOM]: t('application.types.custom')
     }
     return type ? labels[type] : ''
   }
 
+  function formatNumber(num: number): string {
+    if (num >= 10000) {
+      return (num / 10000).toFixed(1) + 'w'
+    }
+    return num.toString()
+  }
+
   function formatUptime(seconds: number): string {
-    if (seconds < 60) return `${seconds}秒`
-    if (seconds < 3600) return `${Math.floor(seconds / 60)}分钟`
-    return `${Math.floor(seconds / 3600)}小时`
+    if (seconds < 60) return `${seconds}s`
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m`
+    const hours = Math.floor(seconds / 3600)
+    const mins = Math.floor((seconds % 3600) / 60)
+    return `${hours}h${mins}m`
   }
 
   function onRendered() {
@@ -168,287 +311,5 @@
 </script>
 
 <style scoped lang="scss">
-  .app-runtime {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    background: $bg-secondary;
-    color: $text-primary;
-    overflow: hidden;
-  }
-
-  // ============================================================
-  // Header
-  // ============================================================
-
-  .runtime-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 24px;
-    background: $bg-primary;
-    border-bottom: 1px solid $border-color-lighter;
-    flex-shrink: 0;
-  }
-
-  .back-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: transparent;
-    border: 1px solid $border-color-base;
-    border-radius: $border-radius-sm;
-    color: $text-secondary;
-    cursor: pointer;
-    transition: all $transition-base ease;
-
-    svg {
-      width: 20px;
-      height: 20px;
-    }
-
-    &:hover {
-      background: rgba($primary-color, 0.1);
-      border-color: $primary-color;
-      color: $primary-color;
-    }
-
-    &:active {
-      transform: scale(0.95);
-    }
-  }
-
-  .app-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .app-name {
-    font-size: 20px;
-    font-weight: 600;
-    color: $text-primary;
-    margin: 0;
-  }
-
-  .app-type {
-    padding: 4px 12px;
-    background: rgba($primary-color, 0.1);
-    border: 1px solid rgba($primary-color, 0.3);
-    border-radius: 12px;
-    font-size: 12px;
-    color: $primary-color;
-    font-weight: 500;
-  }
-
-  .runtime-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    background: $bg-secondary;
-    border: 1px solid $border-color-base;
-    border-radius: $border-radius-sm;
-  }
-
-  .status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-
-    &.status--running {
-      background: $success;
-      box-shadow: 0 0 8px rgba($success, 0.5);
-    }
-
-    &.status--error {
-      background: $error;
-      box-shadow: 0 0 8px rgba($error, 0.5);
-    }
-
-    &.status--stopped {
-      background: $text-tertiary;
-      box-shadow: 0 0 8px rgba($text-tertiary, 0.3);
-    }
-  }
-
-  .status-text {
-    font-size: 14px;
-    font-weight: 500;
-    color: $text-secondary;
-  }
-
-  // ============================================================
-  // Content Area
-  // ============================================================
-
-  .runtime-content {
-    flex: 1;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .loading-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    gap: 24px;
-  }
-
-  .loading-spinner {
-    width: 48px;
-    height: 48px;
-    border: 3px solid $border-color-base;
-    border-top-color: $primary-color;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-
-  .loading-state p {
-    font-size: 14px;
-    color: $text-secondary;
-    margin: 0;
-  }
-
-  .error-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    gap: 16px;
-    text-align: center;
-  }
-
-  .error-icon {
-    width: 64px;
-    height: 64px;
-    color: $error;
-  }
-
-  .error-state p {
-    font-size: 16px;
-    color: $text-secondary;
-    margin: 0;
-    max-width: 400px;
-  }
-
-  .error-state button {
-    padding: 10px 24px;
-    background: $primary-color;
-    color: #fff;
-    border: none;
-    border-radius: $border-radius-sm;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all $transition-base ease;
-
-    &:hover {
-      background: $primary-light;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba($primary-color, 0.3);
-    }
-
-    &:active {
-      transform: translateY(0);
-    }
-  }
-
-  .runtime-viewer {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-
-  // ============================================================
-  // Footer Stats
-  // ============================================================
-
-  .runtime-footer {
-    display: flex;
-    justify-content: center;
-    gap: 48px;
-    padding: 16px 24px;
-    background: $bg-primary;
-    border-top: 1px solid $border-color-lighter;
-    flex-shrink: 0;
-  }
-
-  .stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .stat-label {
-    font-size: 12px;
-    color: $text-tertiary;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .stat-value {
-    font-size: 20px;
-    font-weight: 600;
-    color: $primary-color;
-  }
-
-  // ============================================================
-  // Animations
-  // ============================================================
-
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  @keyframes pulse {
-    0%,
-    100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 0.5;
-      transform: scale(1.2);
-    }
-  }
-
-  // ============================================================
-  // Responsive
-  // ============================================================
-
-  @media (max-width: 768px) {
-    .runtime-header {
-      padding: 12px 16px;
-    }
-
-    .app-name {
-      font-size: 16px;
-    }
-
-    .app-type {
-      display: none;
-    }
-
-    .runtime-footer {
-      gap: 24px;
-      padding: 12px 16px;
-    }
-
-    .stat-value {
-      font-size: 16px;
-    }
-  }
+  @import './AppRuntime.scss';
 </style>

@@ -266,7 +266,7 @@
   }
 
   const openDetail = (server: MCPServer) => {
-    router.push(`/app/resource/mcp/${server.id}`)
+    router.push(`/app/tool/mcp/${server.id}`)
   }
 
   const testConnection = async (server: MCPServer) => {

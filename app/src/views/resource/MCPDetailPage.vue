@@ -292,7 +292,7 @@
           <h3 class="monitoring-title">📱 {{ t('mcp.connectionMonitor') }}</h3>
 
           <div class="monitor-status">
-            <span class="monitor-label">{{ t('mcp.status') }}</span>
+            <span class="monitor-label">{{ t('mcp.statusLabel') }}</span>
             <div class="status-display" :class="`status-display--${server.status}`">
               <span class="status-dot">●</span>
               <span class="status-text">{{ t(`mcp.status.${server.status}`) }}</span>
@@ -452,7 +452,7 @@
 
   // Actions
   const goBack = () => {
-    router.push('/app/resource/mcp')
+    router.push('/app/tool/mcp')
   }
 
   const saveChanges = () => {

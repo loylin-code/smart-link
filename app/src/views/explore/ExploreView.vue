@@ -1,8 +1,10 @@
 <template>
   <div class="explore-view">
+    <!-- 左侧边栏 -->
     <div class="explore-sidebar">
+      <!-- 新建对话按钮 -->
       <div class="sidebar-header">
-        <button class="new-explore-btn" @click="createNewExplore">
+        <button class="new-chat-btn" @click="createNewChat">
           <svg viewBox="0 0 24 24" fill="none">
             <path
               d="M12 5V19M5 12H19"
@@ -16,52 +18,188 @@
         </button>
       </div>
 
-      <div class="explore-list">
+      <!-- 搜索框 -->
+      <div class="sidebar-search">
+        <div class="search-input-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+            <path
+              d="M21 21L16.65 16.65"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <input
+            v-model="searchQuery"
+            type="text"
+            class="search-input"
+            :placeholder="t('explore.searchPlaceholder')"
+          />
+        </div>
+      </div>
+
+      <!-- 对话列表 -->
+      <div class="conversation-list">
+        <!-- 按时间分组 -->
+        <div v-for="group in groupedConversations" :key="group.key" class="conversation-group">
+          <div class="group-header" @click="toggleGroup(group.key)">
+            <svg
+              class="collapse-icon"
+              :class="{ collapsed: collapsedGroups.includes(group.key) }"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M6 9L12 15L18 9"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span class="group-label">{{ group.label }}</span>
+            <span class="group-count">{{ group.conversations.length }}</span>
+          </div>
+
+          <div v-show="!collapsedGroups.includes(group.key)" class="group-items">
+            <div
+              v-for="conv in group.conversations"
+              :key="conv.id"
+              class="conversation-item"
+              :class="{ active: activeConversationId === conv.id }"
+              @click="selectConversation(conv.id)"
+            >
+              <div class="conv-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <div class="conv-info">
+                <div class="conv-title">{{ conv.title }}</div>
+                <div class="conv-meta">
+                  <span>{{ formatTime(conv.updatedAt) }}</span>
+                  <span class="dot">·</span>
+                  <span>{{ conv.messages.length }} {{ t('explore.messages') }}</span>
+                </div>
+              </div>
+              <button class="conv-delete" @click.stop="deleteConversation(conv.id)">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M18 6L6 18M6 6L18 18"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 归档对话 -->
+        <div v-if="archivedConversations.length > 0" class="conversation-group archived">
+          <div class="group-header" @click="toggleGroup('archived')">
+            <svg
+              class="collapse-icon"
+              :class="{ collapsed: collapsedGroups.includes('archived') }"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M6 9L12 15L18 9"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span class="group-label">{{ t('explore.archived') }}</span>
+            <span class="group-count">{{ archivedConversations.length }}</span>
+          </div>
+
+          <div v-show="!collapsedGroups.includes('archived')" class="group-items">
+            <div
+              v-for="conv in archivedConversations"
+              :key="conv.id"
+              class="conversation-item archived"
+              @click="selectConversation(conv.id)"
+            >
+              <div class="conv-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <div class="conv-info">
+                <div class="conv-title">{{ conv.title }}</div>
+                <div class="conv-meta">{{ formatTime(conv.updatedAt) }}</div>
+              </div>
+              <button class="conv-restore" @click.stop="restoreConversation(conv.id)">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M3 12H8M3 12V7M3 12V17"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 空状态 -->
         <div
-          v-for="exp in explores"
-          :key="exp.id"
-          class="explore-item"
-          :class="{ 'explore-item--active': activeExploreId === exp.id }"
-          @click="selectExplore(exp.id)"
+          v-if="groupedConversations.length === 0 && archivedConversations.length === 0"
+          class="empty-sidebar"
         >
-          <div class="explore-icon">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path
-                d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </div>
-          <div class="explore-info">
-            <div class="explore-title">{{ exp.title }}</div>
-            <div class="explore-time">{{ formatTime(exp.updatedAt) }}</div>
-          </div>
-          <button class="explore-delete" @click.stop="deleteExplore(exp.id)">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path
-                d="M18 6L6 18M6 6L18 18"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </button>
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <p>{{ t('explore.noConversations') }}</p>
         </div>
       </div>
     </div>
 
+    <!-- 主内容区 -->
     <div class="explore-main">
-      <div v-if="activeExplore" class="explore-content">
-        <div class="message-list">
+      <!-- 有活动对话时显示消息 -->
+      <template v-if="activeConversation">
+        <!-- 消息列表 -->
+        <div class="message-list" ref="messageListRef">
           <div
-            v-for="message in activeExplore.messages"
+            v-for="message in activeConversation.messages"
             :key="message.id"
             class="message-item"
-            :class="`message-item--${message.role}`"
+            :class="`message-${message.role}`"
           >
             <div class="message-avatar">
               <div v-if="message.role === 'user'" class="avatar user-avatar">
@@ -88,28 +226,190 @@
                 </svg>
               </div>
             </div>
-            <div class="message-content">
+
+            <div class="message-body">
               <div class="message-header">
                 <span class="message-name">{{
                   message.role === 'user' ? t('explore.me') : t('explore.assistant')
                 }}</span>
                 <span class="message-time">{{ formatTime(message.timestamp) }}</span>
               </div>
-              <div class="message-text">{{ message.content }}</div>
+
+              <!-- 文件附件 -->
+              <div
+                v-if="message.attachments && message.attachments.length > 0"
+                class="message-attachments"
+              >
+                <div
+                  v-for="attachment in message.attachments"
+                  :key="attachment.id"
+                  class="attachment-item"
+                >
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M14 2V8H20"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  <span>{{ attachment.name }}</span>
+                </div>
+              </div>
+
+              <!-- 消息内容 -->
+              <div class="message-content" v-html="renderMarkdown(message.content)"></div>
+
+              <!-- 动态组件 -->
+              <div
+                v-if="message.components && message.components.length > 0"
+                class="message-components"
+              >
+                <component
+                  v-for="component in message.components"
+                  :key="component.id"
+                  :is="getComponentRenderer(component.type)"
+                  :config="component"
+                  @event="handleComponentEvent(message.id, $event)"
+                />
+              </div>
+
+              <!-- 消息操作 -->
+              <div v-if="message.role === 'assistant'" class="message-actions">
+                <button
+                  class="action-btn"
+                  @click="copyMessage(message.content)"
+                  :title="t('explore.copy')"
+                >
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <rect
+                      x="9"
+                      y="9"
+                      width="13"
+                      height="13"
+                      rx="2"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    />
+                    <path
+                      d="M5 15H4C2.89543 15 2 14.1046 2 13V4C2 2.89543 2.89543 2 4 2H13C14.1046 2 15 2.89543 15 4V5"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    />
+                  </svg>
+                </button>
+                <button
+                  class="action-btn"
+                  @click="regenerateMessage(message.id)"
+                  :title="t('explore.regenerate')"
+                >
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M1 4V10H7"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M23 20V14H17"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14L18.36 18.36A9 9 0 0 1 3.51 15"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 正在输入指示器 -->
+          <div v-if="isGenerating" class="message-item message-assistant">
+            <div class="message-avatar">
+              <div class="avatar assistant-avatar">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+                  <path
+                    d="M12 6V12L16 14"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div class="message-body">
+              <div class="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="message-input-area">
+        <!-- 输入区域 -->
+        <div class="input-area">
+          <!-- 附件预览 -->
+          <div v-if="pendingAttachments.length > 0" class="attachments-preview">
+            <div v-for="(file, index) in pendingAttachments" :key="index" class="preview-item">
+              <span>{{ file.name }}</span>
+              <button @click="removeAttachment(index)">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M18 6L6 18M6 6L18 18"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
           <div class="input-wrapper">
+            <button class="attach-btn" @click="triggerFileUpload" :title="t('explore.attachFile')">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M21.44 11.05L12.25 20.24C11.1242 21.3658 9.59718 21.9983 8.005 21.9983C6.41282 21.9983 4.88584 21.3658 3.76 20.24C2.63416 19.1142 2.00166 17.5872 2.00166 15.995C2.00166 14.4028 2.63416 12.8758 3.76 11.75L12.33 3.18C13.0806 2.42975 14.0991 2.00606 15.16 2.00606C16.2209 2.00606 17.2394 2.42975 17.99 3.18C18.7403 3.93064 19.1639 4.94913 19.1639 6.01C19.1639 7.07087 18.7403 8.08936 17.99 8.84L9.41 17.41C9.03472 17.7853 8.52573 17.9956 7.995 17.9956C7.46427 17.9956 6.95528 17.7853 6.58 17.41C6.20472 17.0347 5.99445 16.5257 5.99445 15.995C5.99445 15.4643 6.20472 14.9553 6.58 14.58L15.07 6.1"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+            <input ref="fileInputRef" type="file" multiple hidden @change="handleFileUpload" />
+
             <textarea
               v-model="inputMessage"
-              class="message-input"
+              class="message-textarea"
               :placeholder="t('explore.inputPlaceholder')"
               @keydown.enter.exact.prevent="sendMessage"
+              @keydown.enter.shift.exact="inputMessage += '\n'"
               rows="1"
+              ref="textareaRef"
             ></textarea>
-            <button class="send-button" @click="sendMessage" :disabled="!inputMessage.trim()">
+
+            <button class="send-btn" @click="sendMessage" :disabled="!canSend">
               <svg viewBox="0 0 24 24" fill="none">
                 <path
                   d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13"
@@ -121,72 +421,286 @@
               </svg>
             </button>
           </div>
-        </div>
-      </div>
 
-      <div v-else class="empty-state">
-        <div class="empty-icon">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path
-              d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+          <div class="input-hint">
+            {{ t('explore.inputHint') }}
+          </div>
         </div>
-        <p class="empty-text">{{ t('explore.selectOrCreate') }}</p>
-      </div>
+      </template>
+
+      <!-- 没有活动对话时显示模板选择 -->
+      <template v-else>
+        <div class="template-view">
+          <div class="template-header">
+            <h2>{{ t('explore.selectTemplate') }}</h2>
+            <p>{{ t('explore.selectTemplateDesc') }}</p>
+          </div>
+
+          <div class="template-grid">
+            <div
+              v-for="template in templates"
+              :key="template.id"
+              class="template-card"
+              @click="useTemplate(template)"
+            >
+              <div class="template-icon">{{ template.icon }}</div>
+              <div class="template-info">
+                <h3>{{ template.name }}</h3>
+                <p class="template-desc">{{ template.description }}</p>
+                <ul class="template-features">
+                  <li v-for="(feature, index) in template.features.slice(0, 2)" :key="index">
+                    {{ feature }}
+                  </li>
+                </ul>
+              </div>
+              <button class="use-template-btn">{{ t('explore.useTemplate') }}</button>
+            </div>
+          </div>
+
+          <div class="direct-input">
+            <div class="direct-input-wrapper">
+              <textarea
+                v-model="directInput"
+                class="direct-input-textarea"
+                :placeholder="t('explore.directInputPlaceholder')"
+                @keydown.enter.exact.prevent="startDirectChat"
+              ></textarea>
+              <button
+                class="direct-send-btn"
+                @click="startDirectChat"
+                :disabled="!directInput.trim()"
+              >
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue'
+  import { ref, computed, watch, nextTick, onMounted } from 'vue'
   import { useExploreStore } from '@/store'
   import { useI18n } from 'vue-i18n'
+  import type { ChatTemplate, MessageAttachment } from '@/types'
 
-  const exploreStore = useExploreStore()
   const { t } = useI18n()
+  const exploreStore = useExploreStore()
 
+  // Refs
+  const messageListRef = ref<HTMLElement | null>(null)
+  const textareaRef = ref<HTMLTextAreaElement | null>(null)
+  const fileInputRef = ref<HTMLInputElement | null>(null)
+
+  // State
   const inputMessage = ref('')
+  const directInput = ref('')
+  const searchQuery = ref('')
+  const collapsedGroups = ref<string[]>([])
+  const pendingAttachments = ref<File[]>([])
+  const isGenerating = ref(false)
 
-  const explores = computed(() => exploreStore.exploreList)
-  const activeExploreId = computed(() => exploreStore.activeExploreId)
-  const activeExplore = computed(() => exploreStore.activeExplore)
+  // Computed
+  const activeConversationId = computed(() => exploreStore.activeConversationId)
+  const activeConversation = computed(() => exploreStore.activeConversation)
+  const groupedConversations = computed(() => exploreStore.groupedConversations)
+  const archivedConversations = computed(() => exploreStore.archivedConversations)
+  const templates = computed(() => exploreStore.allTemplates)
+  const canSend = computed(() => inputMessage.value.trim() || pendingAttachments.value.length > 0)
 
-  const createNewExplore = () => {
-    exploreStore.createExplore()
+  // Watchers
+  watch(searchQuery, (query) => {
+    exploreStore.setSearchQuery(query)
+  })
+
+  watch(
+    () => activeConversation.value?.messages.length,
+    () => {
+      nextTick(() => {
+        scrollToBottom()
+      })
+    }
+  )
+
+  // Methods
+  const createNewChat = () => {
+    exploreStore.createConversation()
+    inputMessage.value = ''
+    pendingAttachments.value = []
   }
 
-  const selectExplore = (id: string) => {
-    exploreStore.setActiveExplore(id)
+  const selectConversation = (id: string) => {
+    exploreStore.setActiveConversation(id)
   }
 
-  const deleteExplore = (id: string) => {
-    exploreStore.deleteExplore(id)
+  const deleteConversation = (id: string) => {
+    if (confirm(t('explore.confirmDelete'))) {
+      exploreStore.deleteConversation(id)
+    }
   }
 
-  const sendMessage = () => {
-    if (!inputMessage.value.trim() || !activeExploreId.value) return
+  const restoreConversation = (id: string) => {
+    exploreStore.unarchiveConversation(id)
+  }
 
-    exploreStore.addMessage(activeExploreId.value, {
-      role: 'user',
-      content: inputMessage.value
+  const toggleGroup = (key: string) => {
+    const index = collapsedGroups.value.indexOf(key)
+    if (index > -1) {
+      collapsedGroups.value.splice(index, 1)
+    } else {
+      collapsedGroups.value.push(key)
+    }
+  }
+
+  const useTemplate = (template: ChatTemplate) => {
+    exploreStore.createConversation({
+      templateId: template.id,
+      initialMessage: template.initialPrompt
     })
+  }
+
+  const startDirectChat = () => {
+    if (!directInput.value.trim()) return
+
+    exploreStore.createConversation({
+      initialMessage: directInput.value.trim()
+    })
+    directInput.value = ''
+  }
+
+  const sendMessage = async () => {
+    if (!canSend.value || !activeConversationId.value || isGenerating.value) return
+
+    const content = inputMessage.value.trim()
+    const attachments = pendingAttachments.value
+
+    // 清空输入
+    inputMessage.value = ''
+    pendingAttachments.value = []
+
+    // 添加用户消息
+    const userMessage: any = {
+      role: 'user' as const,
+      content
+    }
+
+    // 处理附件
+    if (attachments.length > 0) {
+      userMessage.attachments = await Promise.all(
+        attachments.map(async (file) => {
+          const attachment: MessageAttachment = {
+            id: `attach-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+            name: file.name,
+            type: file.type,
+            size: file.size
+          }
+
+          // 如果是图片，转换为 base64
+          if (file.type.startsWith('image/')) {
+            attachment.base64 = await fileToBase64(file)
+          }
+
+          return attachment
+        })
+      )
+    }
+
+    exploreStore.addMessage(activeConversationId.value, userMessage)
+
+    // 模拟 AI 回复
+    isGenerating.value = true
 
     setTimeout(() => {
-      exploreStore.addMessage(activeExploreId.value!, {
-        role: 'assistant',
-        content: '这是一个模拟的AI回复。在实际应用中，这里会调用后端API获取真实的AI响应。'
-      })
-    }, 1000)
-
-    inputMessage.value = ''
+      if (activeConversationId.value) {
+        exploreStore.addMessage(activeConversationId.value, {
+          role: 'assistant',
+          content: getSimulatedResponse(content)
+        })
+      }
+      isGenerating.value = false
+    }, 1500)
   }
 
-  const formatTime = (timestamp: number) => {
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = reject
+    })
+  }
+
+  const triggerFileUpload = () => {
+    fileInputRef.value?.click()
+  }
+
+  const handleFileUpload = (event: Event) => {
+    const target = event.target as HTMLInputElement
+    if (target.files) {
+      pendingAttachments.value = [...pendingAttachments.value, ...Array.from(target.files)]
+    }
+    target.value = ''
+  }
+
+  const removeAttachment = (index: number) => {
+    pendingAttachments.value.splice(index, 1)
+  }
+
+  const copyMessage = async (content: string) => {
+    try {
+      await navigator.clipboard.writeText(content)
+      // 可以添加 toast 提示
+    } catch (err) {
+      console.error('Failed to copy:', err)
+    }
+  }
+
+  const regenerateMessage = (messageId: string) => {
+    // TODO: 实现重新生成逻辑
+    console.log('Regenerate message:', messageId)
+  }
+
+  const handleComponentEvent = (messageId: string, event: any) => {
+    console.log('Component event:', messageId, event)
+  }
+
+  const getComponentRenderer = (type: string) => {
+    // TODO: 返回对应的动态组件
+    return 'div'
+  }
+
+  const renderMarkdown = (content: string): string => {
+    // TODO: 实现 Markdown 渲染
+    return content.replace(/\n/g, '<br>')
+  }
+
+  const getSimulatedResponse = (userMessage: string): string => {
+    const responses = [
+      `我理解您想要"${userMessage.slice(0, 30)}..."。让我来帮您分析这个问题。`,
+      `这是一个很好的问题！关于"${userMessage.slice(0, 20)}..."，我有以下几点建议：`,
+      `感谢您的提问。基于您的需求，我为您准备了以下方案。`,
+      `好的，我来处理这个请求。请稍等，我正在分析和生成响应。`
+    ]
+    return responses[Math.floor(Math.random() * responses.length)]
+  }
+
+  const scrollToBottom = () => {
+    if (messageListRef.value) {
+      messageListRef.value.scrollTop = messageListRef.value.scrollHeight
+    }
+  }
+
+  const formatTime = (timestamp: number): string => {
     const date = new Date(timestamp)
     const now = new Date()
     const diff = now.getTime() - date.getTime()
@@ -194,354 +708,28 @@
     if (diff < 60000) return t('explore.justNow')
     if (diff < 3600000) return `${Math.floor(diff / 60000)}${t('explore.minutesAgo')}`
     if (diff < 86400000) return `${Math.floor(diff / 3600000)}${t('explore.hoursAgo')}`
+    if (diff < 172800000) return t('explore.yesterday')
 
     return date.toLocaleDateString('zh-CN')
   }
+
+  // Auto-resize textarea
+  const autoResize = () => {
+    if (textareaRef.value) {
+      textareaRef.value.style.height = 'auto'
+      textareaRef.value.style.height = `${textareaRef.value.scrollHeight}px`
+    }
+  }
+
+  watch(inputMessage, () => {
+    nextTick(autoResize)
+  })
+
+  onMounted(() => {
+    autoResize()
+  })
 </script>
 
 <style scoped lang="scss">
-  .explore-view {
-    height: 100%;
-    display: flex;
-    background: $bg-primary;
-  }
-
-  .explore-sidebar {
-    width: 300px;
-    background: $bg-secondary;
-    border-right: 1px solid $bg-elevated;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .sidebar-header {
-    padding: $spacing-md;
-    border-bottom: 1px solid $bg-elevated;
-  }
-
-  .new-explore-btn {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: $spacing-sm;
-    padding: $spacing-sm $spacing-md;
-    background: $primary-color;
-    border: 1px solid $primary-color;
-    border-radius: $border-radius-md;
-    color: #fff;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    cursor: pointer;
-    transition: all $transition-base ease;
-
-    svg {
-      width: 20px;
-      height: 20px;
-    }
-
-    &:hover {
-      background: $primary-light;
-      border-color: $primary-light;
-    }
-  }
-
-  .explore-list {
-    flex: 1;
-    overflow-y: auto;
-    padding: $spacing-sm;
-  }
-
-  .explore-item {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-    padding: $spacing-sm $spacing-md;
-    border-radius: $border-radius-md;
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: all $transition-base ease;
-    margin-bottom: $spacing-xs;
-
-    &:hover {
-      background: $bg-tertiary;
-      border-color: $border-color-light;
-
-      .explore-delete {
-        opacity: 1;
-      }
-    }
-
-    &--active {
-      background: rgba(24, 144, 255, 0.1);
-      border: 1px solid rgba(24, 144, 255, 0.3);
-
-      .explore-icon {
-        color: $primary-color;
-      }
-    }
-  }
-
-  .explore-icon {
-    width: 40px;
-    height: 40px;
-    background: $bg-tertiary;
-    border: 1px solid $border-color-light;
-    border-radius: $border-radius-md;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: $text-secondary;
-    flex-shrink: 0;
-
-    svg {
-      width: 20px;
-      height: 20px;
-    }
-  }
-
-  .explore-info {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .explore-title {
-    font-size: $font-size-sm;
-    color: $text-primary;
-    font-weight: $font-weight-medium;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .explore-time {
-    font-size: $font-size-xs;
-    color: $text-tertiary;
-    margin-top: 2px;
-  }
-
-  .explore-delete {
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: $border-radius-sm;
-    color: $text-tertiary;
-    opacity: 0;
-    transition: all $transition-base ease;
-
-    svg {
-      width: 16px;
-      height: 16px;
-    }
-
-    &:hover {
-      background: rgba(245, 108, 108, 0.1);
-      color: $error;
-    }
-  }
-
-  .explore-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .explore-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .message-list {
-    flex: 1;
-    overflow-y: auto;
-    padding: $spacing-lg;
-  }
-
-  .message-item {
-    display: flex;
-    gap: $spacing-md;
-    margin-bottom: $spacing-lg;
-    animation: slideIn 0.3s ease;
-
-    &--user {
-      flex-direction: row-reverse;
-
-      .message-content {
-        background: $primary-color;
-        color: #fff;
-      }
-
-      .message-header {
-        flex-direction: row-reverse;
-      }
-    }
-
-    &--assistant {
-      .message-content {
-        background: $bg-tertiary;
-        border: 1px solid $border-color-light;
-        color: $text-primary;
-      }
-    }
-  }
-
-  .message-avatar {
-    flex-shrink: 0;
-  }
-
-  .avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: $border-radius-full;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    svg {
-      width: 24px;
-      height: 24px;
-    }
-  }
-
-  .user-avatar {
-    background: $secondary-color;
-    color: #fff;
-  }
-
-  .assistant-avatar {
-    background: $primary-color;
-    color: #fff;
-  }
-
-  .message-content {
-    flex: 1;
-    padding: $spacing-md;
-    border-radius: $border-radius-lg;
-    max-width: 70%;
-  }
-
-  .message-header {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-    margin-bottom: $spacing-xs;
-  }
-
-  .message-name {
-    font-size: $font-size-sm;
-    font-weight: $font-weight-semibold;
-  }
-
-  .message-time {
-    font-size: $font-size-xs;
-    opacity: 0.7;
-  }
-
-  .message-text {
-    font-size: $font-size-sm;
-    line-height: 1.6;
-  }
-
-  .message-input-area {
-    padding: $spacing-md $spacing-lg;
-    border-top: 1px solid $bg-elevated;
-  }
-
-  .input-wrapper {
-    display: flex;
-    gap: $spacing-sm;
-    background: $bg-secondary;
-    border: 1px solid $border-color-base;
-    border-radius: $border-radius-lg;
-    padding: $spacing-sm;
-    transition: all $transition-base ease;
-
-    &:focus-within {
-      border-color: $primary-color;
-      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
-    }
-  }
-
-  .message-input {
-    flex: 1;
-    background: transparent;
-    color: $text-primary;
-    font-size: $font-size-sm;
-    resize: none;
-    padding: $spacing-xs $spacing-sm;
-
-    &::placeholder {
-      color: $text-tertiary;
-    }
-  }
-
-  .send-button {
-    width: 40px;
-    height: 40px;
-    background: $primary-color;
-    border: 1px solid $primary-color;
-    border-radius: $border-radius-md;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    cursor: pointer;
-    transition: all $transition-base ease;
-
-    svg {
-      width: 20px;
-      height: 20px;
-    }
-
-    &:hover:not(:disabled) {
-      background: $primary-light;
-      border-color: $primary-light;
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
-
-  .empty-state {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: $spacing-md;
-  }
-
-  .empty-icon {
-    width: 80px;
-    height: 80px;
-    color: $text-tertiary;
-
-    svg {
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  .empty-text {
-    font-size: $font-size-base;
-    color: $text-secondary;
-  }
-
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+  @import './explore-view.scss';
 </style>
