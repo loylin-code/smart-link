@@ -48,7 +48,8 @@ export default defineConfig({
       entryFileNames: '[name].mjs',
       preserveModules: true,
       preserveModulesRoot: 'src',
-      sourcemap: true
+      sourcemap: true,
+      exports: 'named'
     },
     {
       format: 'cjs',
@@ -56,7 +57,8 @@ export default defineConfig({
       entryFileNames: '[name].js',
       preserveModules: true,
       preserveModulesRoot: 'src',
-      sourcemap: true
+      sourcemap: true,
+      exports: 'named'
     }
   ],
   plugins: [
@@ -82,7 +84,7 @@ export default defineConfig({
       extensions: ['.css', '.scss'],
       use: {
         sass: {
-          silenceDeprecations: ['legacy-js-api', 'import'],
+          silenceDeprecations: ['legacy-js-api', 'import', 'global-builtin', 'color-functions'],
           additionalData: hasVariables ? `@use "${variablesPath.replace(/\\/g, '/')}" as *;\n` : ''
         }
       }

@@ -180,15 +180,24 @@
         <button class="page-btn" disabled>&gt;</button>
       </div>
     </div>
+
+    <!-- Skill Form Dialog -->
+    <SkillFormDialog
+      v-model:visible="showFormDialog"
+      :skill="editingSkill"
+      @submit="handleFormSubmit"
+      @close="handleFormClose"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue'
+  import { ref, computed, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
   import { useSkillsStore } from '@/store/modules/skills'
   import type { Skill, SkillCategory, SkillRiskLevel } from '@/types'
+  import SkillFormDialog from '@/components/skill/SkillFormDialog.vue'
 
   const router = useRouter()
   const { t } = useI18n()
@@ -198,6 +207,15 @@
   const searchKeyword = ref('')
   const categoryFilter = ref<SkillCategory | ''>('')
   const riskFilter = ref<SkillRiskLevel | ''>('')
+
+  // Dialog states
+  const showFormDialog = ref(false)
+  const editingSkill = ref<Skill | null>(null)
+
+  // Fetch skills on mount
+  onMounted(async () => {
+    await skillsStore.fetchSkills()
+  })
 
   // Filtered skills based on store filter
   const filteredSkills = computed(() => {
@@ -261,8 +279,8 @@
 
   // Action handlers
   function handleCreate() {
-    // TODO: Navigate to create page or open modal
-    console.log('Create skill')
+    editingSkill.value = null
+    showFormDialog.value = true
   }
 
   function handleViewDetail(skill: Skill) {
@@ -283,14 +301,49 @@
   }
 
   function handleEdit(skill: Skill) {
-    console.log('Edit skill:', skill.id)
-    // TODO: Navigate to edit page or open modal
+    editingSkill.value = skill
+    showFormDialog.value = true
   }
 
-  function handleDelete(skill: Skill) {
+async function handleDelete(skill: Skill) {
     if (confirm(t('skills.delete.confirm', { name: skill.displayName }))) {
-      skillsStore.deleteSkill(skill.id)
+      try {
+        await skillsStore.deleteSkill(skill.id)
+      } catch (error) {
+        alert(t('skills.delete.failed', { error: skillsStore.error || 'Unknown error' }))
+      }
     }
+  }
+
+  // Form dialog handlers
+  async function handleFormSubmit(formData: any) {
+    try {
+      if (editingSkill.value) {
+        // Update existing skill
+        await skillsStore.updateSkill(editingSkill.value.id, {
+          name: formData.name,
+          description: formData.description,
+          config: formData.config
+        })
+      } else {
+        // Create new skill
+        await skillsStore.createSkill({
+          name: formData.name,
+          description: formData.description,
+          type: formData.type,
+          config: formData.config
+        })
+      }
+      showFormDialog.value = false
+      editingSkill.value = null
+    } catch (error) {
+      // Error is handled in the store
+    }
+  }
+
+  function handleFormClose() {
+    showFormDialog.value = false
+    editingSkill.value = null
   }
 </script>
 

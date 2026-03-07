@@ -1,25 +1,25 @@
 <template>
   <div class="component-management">
     <div class="page-header">
-      <h1 class="page-title">前端组件管理</h1>
+      <h1 class="page-title">{{ t('resource.componentManagement') }}</h1>
       <div class="header-stats">
         <span class="stat-item">
-          <span class="stat-value">{{ componentList.length }}</span>
-          <span class="stat-label">组件总数</span>
+          <span class="stat-value">{{ componentsStore.stats.total }}</span>
+          <span class="stat-label">{{ t('component.total') }}</span>
         </span>
       </div>
     </div>
 
     <div class="category-tabs">
       <button
-        v-for="cat in categories"
+        v-for="cat in componentsStore.categories"
         :key="cat.value"
         :class="['tab-item', { active: activeCategory === cat.value }]"
-        @click="activeCategory = cat.value"
+        @click="setCategory(cat.value)"
       >
         {{ cat.label }}
         <span v-if="cat.value !== 'all'" class="tab-count">
-          {{ getCategoryCount(cat.value) }}
+          {{ componentsStore.getCategoryCount(cat.value) }}
         </span>
       </button>
     </div>
@@ -38,7 +38,8 @@
         v-model="searchKeyword"
         type="text"
         class="search-input"
-        placeholder="搜索组件名称..."
+        :placeholder="t('component.searchPlaceholder')"
+        @input="handleSearch"
       />
     </div>
 
@@ -58,52 +59,53 @@
         <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
         <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
       </svg>
-      <p>暂无匹配的组件</p>
+      <p>{{ t('component.empty') }}</p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue'
+  import { ref, computed, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
-  import { COMPONENT_META_LIST, COMPONENT_CATEGORIES } from '@smart-link/shared'
-  import type { ComponentMeta } from '@smart-link/shared'
+  import { useI18n } from 'vue-i18n'
+  import { useComponentsStore } from '@/store/modules/components'
+  import type { ComponentMeta } from '@smart-link/core'
   import ComponentCard from '@/components/component/ComponentCard.vue'
 
   const router = useRouter()
-  const componentList = COMPONENT_META_LIST
-  const categories = COMPONENT_CATEGORIES
+  const { t } = useI18n()
+  const componentsStore = useComponentsStore()
 
   const activeCategory = ref('all')
   const searchKeyword = ref('')
 
+  // 使用 store 的过滤组件列表
   const filteredComponents = computed(() => {
-    let result = componentList
-
-    if (activeCategory.value !== 'all') {
-      result = result.filter((c) => c.category === activeCategory.value)
-    }
-
-    if (searchKeyword.value) {
-      const keyword = searchKeyword.value.toLowerCase()
-      result = result.filter(
-        (c) =>
-          c.name.toLowerCase().includes(keyword) ||
-          c.type.toLowerCase().includes(keyword) ||
-          c.description.toLowerCase().includes(keyword)
-      )
-    }
-
-    return result
+    return componentsStore.filteredComponents
   })
 
-  const getCategoryCount = (category: string) => {
-    return componentList.filter((c) => c.category === category).length
+  // 设置分类
+  function setCategory(category: string) {
+    activeCategory.value = category
+    componentsStore.setFilter({ category: category === 'all' ? undefined : category })
   }
 
-  const openDetail = (component: ComponentMeta) => {
+  // 搜索处理
+  function handleSearch() {
+    componentsStore.setFilter({ keyword: searchKeyword.value })
+  }
+
+  // 打开详情页
+  function openDetail(component: ComponentMeta) {
+    componentsStore.setCurrentComponent(component)
     router.push(`/app/resource/components/${component.type}`)
   }
+
+  // 组件挂载时初始化
+  onMounted(() => {
+    // 重置筛选条件
+    componentsStore.setFilter({ keyword: '', category: undefined })
+  })
 </script>
 
 <style scoped lang="scss">

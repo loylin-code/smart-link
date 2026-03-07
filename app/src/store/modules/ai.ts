@@ -273,6 +273,13 @@ export const useAIStore = defineStore('ai', {
     },
 
     /**
+     * 设置面板可见性
+     */
+    setPanelVisible(visible: boolean) {
+      this.panelVisible = visible
+    },
+
+    /**
      * 设置面板宽度
      */
     setPanelWidth(width: number) {

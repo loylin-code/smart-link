@@ -610,17 +610,24 @@
   function handleToggleStatus() {
     if (!skill.value) return
     const newStatus = skill.value.status === 'enabled' ? 'disabled' : 'enabled'
-    skillsStore.updateSkill(skill.value.id, { status: newStatus })
+    skillsStore.updateSkill(skill.value.id, { status: newStatus as any })
   }
 
   // Load skill on mount
-  onMounted(() => {
+  onMounted(async () => {
     const skillId = route.params.id as string
     if (skillId) {
-      const foundSkill = skillsStore.getSkillById(skillId)
-      if (foundSkill) {
-        skillsStore.setCurrentSkill(foundSkill)
+      // Try to get from store first
+      let foundSkill = skillsStore.getSkillById(skillId)
+      if (!foundSkill) {
+        // If not in store, fetch from API
+        foundSkill = (await skillsStore.fetchSkill(skillId)) ?? undefined
       } else {
+        skillsStore.setCurrentSkill(foundSkill)
+      }
+
+      if (!foundSkill) {
+        // Skill not found, redirect to list
         router.push({ name: 'Skills' })
       }
     }

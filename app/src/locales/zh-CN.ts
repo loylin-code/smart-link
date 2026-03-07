@@ -34,6 +34,7 @@ export default {
     appList: '应用列表',
     appDesign: '应用设计',
     appCreate: '新建应用',
+    appOrchestration: '编排应用',
     appEdit: '编辑应用',
     appRuntime: '应用运行',
     resource: '资源管理',
@@ -670,6 +671,114 @@ export default {
       visits: '访问次数',
       uptime: '运行时长',
       errors: '错误次数'
+    },
+    wizard: {
+      title: '新建应用',
+      editTitle: '编辑应用 - {name}',
+      steps: {
+        basic: '基本信息',
+        type: '类型选择',
+        design: '页面设计',
+        publish: '保存发布'
+      },
+      basic: {
+        title: '基本信息',
+        name: '应用名称',
+        namePlaceholder: '请输入应用名称',
+        nameRequired: '应用名称不能为空',
+        nameMaxLength: '应用名称最多50个字符',
+        description: '应用描述',
+        descriptionPlaceholder: '请输入应用描述（选填）',
+        descriptionMaxLength: '应用描述最多200个字符',
+        icon: '应用图标',
+        tags: '分类标签',
+        tagsPlaceholder: '输入后按回车添加标签',
+        addTag: '添加标签'
+      },
+      type: {
+        title: '选择类型',
+        selectType: '选择应用类型',
+        orTemplate: '或从模板创建',
+        types: {
+          workflow: '工作流',
+          workflowDesc: '流程编排型应用，支持复杂业务逻辑',
+          dashboard: '仪表盘',
+          dashboardDesc: '数据可视化仪表盘，多图表展示',
+          form: '表单',
+          formDesc: '数据收集表单，支持验证和提交',
+          chart: '图表',
+          chartDesc: '单一图表展示，支持多种图表类型',
+          custom: '自定义',
+          customDesc: '完全自定义应用，灵活配置'
+        },
+        templates: {
+          customerService: '智能客服助手模板',
+          customerServiceDesc: '预配置的客服对话流程，支持常见问题自动回复和人工转接',
+          dataAnalysis: '数据分析模板',
+          dataAnalysisDesc: '预配置的数据分析流程，支持数据清洗、分析和可视化报告生成',
+          survey: '问卷调查模板',
+          surveyDesc: '预配置的调查问卷表单，支持多种题型和数据统计'
+        }
+      },
+      design: {
+        title: '页面设计',
+        aiDesign: 'AI 助手设计',
+        aiDesignDesc: '通过自然语言描述，AI 自动生成页面',
+        manualDesign: '手动编排',
+        manualDesignDesc: '使用可视化编排器设计页面',
+        importSchema: '导入 Schema',
+        importSchemaDesc: '从 JSON 文件导入页面结构',
+        schemaConfigured: '已配置',
+        schemaNotConfigured: '未配置'
+      },
+      preview: {
+        title: '预览测试',
+        schemaVersion: 'Schema 版本',
+        componentCount: '组件数量',
+        noSchema: '暂无页面结构数据',
+        noSchemaHint: '请返回上一步进行页面设计'
+      },
+      publish: {
+        title: '保存发布',
+        summary: '应用摘要',
+        appName: '应用名称',
+        appType: '应用类型',
+        appDescription: '应用描述',
+        pageStructure: '页面结构',
+        noDescription: '无描述',
+        saveDraft: '保存为草稿',
+        publishApp: '发布应用',
+        saving: '保存中...',
+        publishing: '发布中...',
+        saveSuccess: '保存成功',
+        publishSuccess: '发布成功',
+        saveFailed: '保存失败，请重试',
+        publishFailed: '发布失败，请重试'
+      },
+      nav: {
+        prev: '上一步',
+        next: '下一步',
+        cancel: '取消'
+      },
+      icons: {
+        app: '应用',
+        dashboard: '仪表盘',
+        chart: '图表',
+        form: '表单',
+        table: '表格',
+        settings: '设置',
+        user: '用户',
+        team: '团队',
+        document: '文档',
+        folder: '文件夹',
+        calendar: '日历',
+        task: '任务',
+        message: '消息',
+        notification: '通知',
+        analytics: '分析',
+        workflow: '工作流',
+        customerService: '客服'
+      }
     }
   },
   model: {

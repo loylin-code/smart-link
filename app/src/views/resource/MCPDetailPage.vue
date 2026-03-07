@@ -456,7 +456,7 @@
   }
 
   const saveChanges = () => {
-    mcpStore.updateServer(serverId, server.value)
+    mcpStore.updateServer(serverId, server.value as any)
   }
 
   const testConnection = async () => {
@@ -464,7 +464,7 @@
   }
 
   const stopConnection = () => {
-    mcpStore.updateServer(serverId, { status: 'disconnected' })
+    mcpStore.updateServer(serverId, { status: 'disconnected' as any })
   }
 
   const restartConnection = async () => {

@@ -1,6 +1,11 @@
 import { defineStore } from 'pinia'
 import type { Application, AppFilter, AppPagination, AppRuntimeStatus } from '@/types'
 import { AppStatus, AppType } from '@/types'
+import {
+  applicationApi,
+  type ApplicationCreateParams,
+  type ApplicationUpdateParams
+} from '@/services/application'
 
 interface ApplicationState {
   // List state
@@ -60,39 +65,257 @@ export const useApplicationStore = defineStore('application', {
     // Draft apps
     draftApps: (state) => {
       return state.applications.filter((app) => app.status === AppStatus.DRAFT)
-    }
+    },
+
+    // Designing apps
+    designingApps: (state) => {
+      return state.applications.filter((app) => app.status === AppStatus.DESIGNING)
+    },
+
+    // Stats
+    stats: (state) => ({
+      total: state.pagination.total,
+      published: state.applications.filter((app) => app.status === AppStatus.PUBLISHED).length,
+      draft: state.applications.filter((app) => app.status === AppStatus.DRAFT).length,
+      designing: state.applications.filter((app) => app.status === AppStatus.DESIGNING).length
+    })
   },
 
   actions: {
-    // CRUD Operations
+    /**
+     * 获取应用列表
+     */
     async fetchApplications() {
       this.loading = true
+      this.error = null
+
       try {
-        // Will call API service
-        // For now, set mock data
+        const response = await applicationApi.getApplications({
+          page: this.pagination.page,
+          page_size: this.pagination.pageSize,
+          ...this.filter
+        })
+
+        this.applications = response.list
+        this.pagination.total = response.total
+        this.applyFilter()
+      } catch (error: unknown) {
+        const err = error as { message?: string }
+        this.error = err.message || '获取应用列表失败'
+        console.error('Failed to fetch applications:', error)
       } finally {
         this.loading = false
       }
     },
 
-    async createApp(app: Partial<Application>) {
-      // Create new application
+    /**
+     * 创建应用
+     */
+    async createApp(params: ApplicationCreateParams): Promise<Application | null> {
+      this.loading = true
+      this.error = null
+
+      try {
+        const newApp = await applicationApi.createApplication(params)
+        this.applications.push(newApp)
+        this.pagination.total = (this.pagination.total || 0) + 1
+        this.applyFilter()
+        return newApp
+      } catch (error: unknown) {
+        const err = error as { message?: string }
+        this.error = err.message || '创建应用失败'
+        console.error('Failed to create application:', error)
+        return null
+      } finally {
+        this.loading = false
+      }
     },
 
-    async updateApp(id: string, updates: Partial<Application>) {
-      // Update application
+    /**
+     * 更新应用
+     */
+    async updateApp(id: string, updates: ApplicationUpdateParams): Promise<Application | null> {
+      this.loading = true
+      this.error = null
+
+      try {
+        const updatedApp = await applicationApi.updateApplication(id, updates)
+        if (updatedApp) {
+          const index = this.applications.findIndex((app) => app.id === id)
+          if (index !== -1) {
+            this.applications[index] = updatedApp
+          }
+          this.applyFilter()
+
+          if (this.currentApp?.id === id) {
+            this.currentApp = updatedApp
+          }
+        }
+        return updatedApp
+      } catch (error: unknown) {
+        const err = error as { message?: string }
+        this.error = err.message || '更新应用失败'
+        console.error('Failed to update application:', error)
+        return null
+      } finally {
+        this.loading = false
+      }
     },
 
-    async deleteApp(id: string) {
-      // Delete application
+    /**
+     * 删除应用
+     */
+    async deleteApp(id: string): Promise<boolean> {
+      this.loading = true
+      this.error = null
+
+      try {
+        const success = await applicationApi.deleteApplication(id)
+        if (success) {
+          const index = this.applications.findIndex((app) => app.id === id)
+          if (index !== -1) {
+            this.applications.splice(index, 1)
+            this.pagination.total = Math.max(0, (this.pagination.total || 0) - 1)
+          }
+          this.applyFilter()
+
+          if (this.currentApp?.id === id) {
+            this.currentApp = null
+            this.isEditing = false
+          }
+        }
+        return success
+      } catch (error: unknown) {
+        const err = error as { message?: string }
+        this.error = err.message || '删除应用失败'
+        console.error('Failed to delete application:', error)
+        return false
+      } finally {
+        this.loading = false
+      }
     },
 
-    async duplicateApp(id: string) {
-      // Duplicate application
+    /**
+     * 复制应用
+     */
+    async duplicateApp(id: string): Promise<Application | null> {
+      this.loading = true
+      this.error = null
+
+      try {
+        const newApp = await applicationApi.duplicateApplication(id)
+        if (newApp) {
+          this.applications.push(newApp)
+          this.pagination.total = (this.pagination.total || 0) + 1
+          this.applyFilter()
+        }
+        return newApp
+      } catch (error: unknown) {
+        const err = error as { message?: string }
+        this.error = err.message || '复制应用失败'
+        console.error('Failed to duplicate application:', error)
+        return null
+      } finally {
+        this.loading = false
+      }
     },
 
-    async publishApp(id: string) {
-      // Publish application (draft -> published)
+    /**
+     * 发布应用
+     */
+    async publishApp(id: string): Promise<Application | null> {
+      this.loading = true
+      this.error = null
+
+      try {
+        const publishedApp = await applicationApi.publishApplication(id)
+        if (publishedApp) {
+          const index = this.applications.findIndex((app) => app.id === id)
+          if (index !== -1) {
+            this.applications[index] = publishedApp
+          }
+          this.applyFilter()
+
+          if (this.currentApp?.id === id) {
+            this.currentApp = publishedApp
+          }
+        }
+        return publishedApp
+      } catch (error: unknown) {
+        const err = error as { message?: string }
+        this.error = err.message || '发布应用失败'
+        console.error('Failed to publish application:', error)
+        return null
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * 获取应用详情
+     */
+    async fetchApplication(id: string): Promise<Application | null> {
+      this.loading = true
+      this.error = null
+
+      try {
+        const app = await applicationApi.getApplicationById(id)
+        if (app) {
+          // 更新列表中的数据
+          const index = this.applications.findIndex((a) => a.id === id)
+          if (index !== -1) {
+            this.applications[index] = app
+          } else {
+            this.applications.push(app)
+          }
+          this.currentApp = app
+        }
+        return app
+      } catch (error: unknown) {
+        const err = error as { message?: string }
+        this.error = err.message || '获取应用详情失败'
+        console.error('Failed to fetch application:', error)
+        return null
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * 运行应用
+     */
+    async runApp(
+      id: string,
+      inputData?: Record<string, unknown>
+    ): Promise<Record<string, unknown> | null> {
+      this.loading = true
+      this.error = null
+
+      try {
+        const result = await applicationApi.runApplication(id, { input_data: inputData })
+        return result
+      } catch (error: unknown) {
+        const err = error as { message?: string }
+        this.error = err.message || '运行应用失败'
+        console.error('Failed to run application:', error)
+        return null
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * 获取运行时状态
+     */
+    async fetchRuntimeStatus(): Promise<AppRuntimeStatus[]> {
+      try {
+        const status = await applicationApi.getRuntimeStatus()
+        this.runtimeApps = status
+        return status
+      } catch (error: unknown) {
+        console.error('Failed to fetch runtime status:', error)
+        return []
+      }
     },
 
     // Filter & Sort
@@ -144,7 +367,6 @@ export const useApplicationStore = defineStore('application', {
       }
 
       this.filteredApplications = result
-      this.pagination.total = result.length
     },
 
     // Pagination
@@ -165,6 +387,15 @@ export const useApplicationStore = defineStore('application', {
     clearCurrentApp() {
       this.currentApp = null
       this.isEditing = false
+    },
+
+    // Error handling
+    setError(error: string | null) {
+      this.error = error
+    },
+
+    clearError() {
+      this.error = null
     }
   },
 

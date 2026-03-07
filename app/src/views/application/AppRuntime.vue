@@ -245,7 +245,7 @@
       ])
 
       app.value = appData
-      schema.value = schemaData
+      schema.value = schemaData as unknown as PageSchema
       runtimeStatus.value = statusData.find((s) => s.appId === appId) || null
 
       if (!appData) {

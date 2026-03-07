@@ -215,7 +215,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue'
+  import { ref, computed, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
   import { useMCPStore } from '@/store/modules/mcp'
@@ -231,6 +231,11 @@
   const testingIds = ref<Set<string>>(new Set())
   const showAddDialog = ref(false)
 
+  // Fetch servers on mount
+  onMounted(async () => {
+    await mcpStore.fetchServers()
+  })
+
   const filteredServers = computed(() => {
     return mcpStore.filteredServers
   })
@@ -241,7 +246,14 @@
 
   const setStatusFilter = (status: MCPServerStatus | undefined) => {
     statusFilter.value = status
-    mcpStore.setFilter({ status })
+    // Map MCPServerStatus to filter status
+    const filterStatus =
+      status === 'connected'
+        ? ('active' as const)
+        : status === 'disconnected'
+          ? ('inactive' as const)
+          : undefined
+    mcpStore.setFilter({ status: filterStatus })
   }
 
   const setTransportFilter = (transport: 'stdio' | 'http' | undefined) => {
@@ -281,7 +293,8 @@
   const startServer = async (server: MCPServer) => {
     testingIds.value.add(server.id)
     try {
-      await mcpStore.refreshServerStatus(server.id)
+      // Refresh server status through test connection
+      await mcpStore.testConnection(server.id)
     } finally {
       testingIds.value.delete(server.id)
     }
@@ -292,9 +305,13 @@
     console.log('Edit server:', server.id)
   }
 
-  const deleteServer = (server: MCPServer) => {
+  const deleteServer = async (server: MCPServer) => {
     if (confirm(t('mcp.confirmDelete', { name: server.name }))) {
-      mcpStore.deleteServer(server.id)
+      try {
+        await mcpStore.deleteServer(server.id)
+      } catch (error) {
+        alert(t('mcp.deleteFailed', { error: mcpStore.error || 'Unknown error' }))
+      }
     }
   }
 </script>

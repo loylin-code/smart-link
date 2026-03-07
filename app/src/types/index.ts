@@ -12,6 +12,7 @@ export interface PageResponse<T> {
   total: number
   page: number
   pageSize: number
+  page_size?: number // API 返回的字段名
 }
 
 // ============================================================
@@ -49,6 +50,8 @@ export interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
   timestamp: number
+  // 所属对话ID
+  conversationId?: string
   // 动态组件
   components?: ChatComponent[]
   // 组件交互状态
@@ -57,6 +60,11 @@ export interface ChatMessage {
   attachments?: MessageAttachment[]
   // 是否正在生成
   isStreaming?: boolean
+  // Token使用量
+  tokens?: {
+    input: number
+    output: number
+  }
 }
 
 // 对话模板类型
@@ -84,6 +92,16 @@ export interface ChatConversation {
   messages: ChatMessage[]
   createdAt: number
   updatedAt: number
+  // 关联应用
+  appId?: string
+  // 用户ID
+  userId?: string
+  // 状态
+  status?: 'active' | 'archived' | 'deleted'
+  // 消息数量
+  messageCount?: number
+  // 最后消息时间
+  lastMessageAt?: number
   // 使用的模板ID
   templateId?: string
   // 是否已归档
@@ -122,6 +140,7 @@ export interface Application {
   type: AppType
   status: AppStatus
   version: string
+  tags?: string[]
   schema?: any
   createdAt: number
   updatedAt: number

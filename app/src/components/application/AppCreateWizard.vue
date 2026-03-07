@@ -1,5 +1,22 @@
 <template>
-  <div class="app-create-wizard">
+  <div class="app-create-wizard" :class="{ 'full-width': currentStep === 'design' }">
+    <!-- Header with back button -->
+    <div class="wizard-header">
+      <button class="back-btn" @click="handleBack">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path
+            d="M19 12H5M12 19l-7-7 7-7"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span>{{ t('common.back') }}</span>
+      </button>
+      <h1 class="wizard-title">{{ pageTitle }}</h1>
+    </div>
+
     <!-- Step Indicator -->
     <div class="wizard-steps">
       <div
@@ -8,8 +25,19 @@
         class="step-item"
         :class="{ active: currentStep === step.key, completed: isStepCompleted(step.key) }"
       >
-        <div class="step-number">{{ step.order }}</div>
-        <div class="step-label">{{ step.label }}</div>
+        <div class="step-number">
+          <svg v-if="isStepCompleted(step.key)" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M5 12l5 5L20 7"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span v-else>{{ step.order }}</span>
+        </div>
+        <div class="step-label">{{ t(`application.wizard.steps.${step.key}`) }}</div>
         <div v-if="index < steps.length - 1" class="step-line"></div>
       </div>
     </div>
@@ -18,131 +46,240 @@
     <div class="wizard-content">
       <!-- Step 1: Basic Info -->
       <div v-show="currentStep === 'basic'" class="step-panel fade-in">
-        <h2>基本信息</h2>
-        <form @submit.prevent="nextStep">
+        <h2 class="step-title">{{ t('application.wizard.basic.title') }}</h2>
+        <form @submit.prevent="nextStep" class="step-form">
           <div class="form-item">
-            <label>应用名称 *</label>
+            <label class="form-label required">{{ t('application.wizard.basic.name') }}</label>
             <input
               v-model="formData.name"
-              placeholder="请输入应用名称"
+              :placeholder="t('application.wizard.basic.namePlaceholder')"
+              :maxlength="50"
               required
+              class="form-input"
               :class="{ error: errors.name }"
             />
             <span v-if="errors.name" class="error-msg">{{ errors.name }}</span>
+            <span v-else class="char-count">{{ formData.name.length }}/50</span>
           </div>
+
           <div class="form-item">
-            <label>应用描述</label>
+            <label class="form-label">{{ t('application.wizard.basic.description') }}</label>
             <textarea
               v-model="formData.description"
-              placeholder="请输入应用描述"
+              :placeholder="t('application.wizard.basic.descriptionPlaceholder')"
+              :maxlength="200"
               rows="3"
+              class="form-textarea"
             ></textarea>
+            <span class="char-count">{{ formData.description.length }}/200</span>
           </div>
+
           <div class="form-item">
-            <label>应用类型 *</label>
-            <div class="type-selector">
-              <div
-                v-for="type in appTypes"
-                :key="type.value"
-                class="type-card"
-                :class="{ selected: formData.type === type.value }"
-                @click="
-                  formData.type = type.value
-                  errors.type = ''
-                "
-              >
-                <div class="type-icon">{{ type.icon }}</div>
-                <div class="type-name">{{ type.label }}</div>
-              </div>
-            </div>
-            <span v-if="errors.type" class="error-msg">{{ errors.type }}</span>
-          </div>
-          <div class="form-item">
-            <label>应用图标</label>
+            <label class="form-label">{{ t('application.wizard.basic.icon') }}</label>
             <div class="icon-selector">
               <div
                 v-for="icon in availableIcons"
-                :key="icon"
+                :key="icon.value"
                 class="icon-item"
-                :class="{ selected: formData.icon === icon }"
-                @click="formData.icon = icon"
+                :class="{ selected: formData.icon === icon.value }"
+                @click="formData.icon = icon.value"
+                :title="t(`application.wizard.icons.${icon.label}`)"
               >
-                <span class="icon-preview">{{ icon }}</span>
+                <span class="icon-preview">{{ icon.emoji }}</span>
               </div>
+            </div>
+          </div>
+
+          <div class="form-item">
+            <label class="form-label">{{ t('application.wizard.basic.tags') }}</label>
+            <div class="tags-container">
+              <span v-for="(tag, index) in formData.tags" :key="index" class="tag-item">
+                {{ tag }}
+                <button type="button" class="tag-remove" @click="removeTag(index)">×</button>
+              </span>
+              <input
+                v-model="tagInput"
+                :placeholder="
+                  formData.tags.length === 0 ? t('application.wizard.basic.tagsPlaceholder') : ''
+                "
+                class="tag-input"
+                @keydown.enter.prevent="addTag"
+                @keydown.backspace="removeLastTag"
+              />
             </div>
           </div>
         </form>
       </div>
 
-      <!-- Step 2: Page Design -->
-      <div v-show="currentStep === 'design'" class="step-panel fade-in">
-        <h2>页面设计</h2>
-        <div class="design-options">
-          <div class="option-card" @click="openAIAssistant">
-            <div class="option-icon">🤖</div>
-            <div class="option-title">AI 助手设计</div>
-            <div class="option-desc">通过自然语言描述，AI 自动生成页面</div>
-          </div>
-          <div class="option-card" @click="openManualDesign">
-            <div class="option-icon">✏️</div>
-            <div class="option-title">手动编排</div>
-            <div class="option-desc">使用可视化编排器设计页面</div>
-          </div>
-          <div class="option-card" @click="importSchema">
-            <div class="option-icon">📄</div>
-            <div class="option-title">导入 Schema</div>
-            <div class="option-desc">从 JSON 文件导入页面结构</div>
-          </div>
-        </div>
-      </div>
+      <!-- Step 2: Type/Template Selection -->
+      <div v-show="currentStep === 'type'" class="step-panel fade-in">
+        <h2 class="step-title">{{ t('application.wizard.type.title') }}</h2>
 
-      <!-- Step 3: Preview -->
-      <div v-show="currentStep === 'preview'" class="step-panel fade-in">
-        <h2>预览测试</h2>
-        <div class="preview-container">
-          <div v-if="formData.schema" class="schema-preview">
-            <div class="schema-info">
-              <div class="info-item">
-                <span class="label">Schema 版本:</span>
-                <span class="value">{{ formData.schema.version || '1.0' }}</span>
-              </div>
-              <div class="info-item">
-                <span class="label">组件数量:</span>
-                <span class="value">{{ countComponents(formData.schema) }}</span>
+        <div class="scrollable-content">
+          <div class="section-label">{{ t('application.wizard.type.selectType') }}</div>
+          <div class="type-selector">
+            <div
+              v-for="type in appTypes"
+              :key="type.value"
+              class="type-card"
+              :class="{ selected: formData.type === type.value }"
+              @click="selectType(type.value)"
+            >
+              <div class="type-icon">{{ type.icon }}</div>
+              <div class="type-name">{{ t(`application.types.${type.value}`) }}</div>
+              <div class="type-desc">
+                {{ t(`application.wizard.type.types.${type.value}Desc`) }}
               </div>
             </div>
-            <pre class="schema-json">{{ JSON.stringify(formData.schema, null, 2) }}</pre>
           </div>
-          <div v-else class="preview-empty">
-            <p>暂无页面结构数据</p>
-            <p>请返回上一步进行页面设计</p>
+          <span v-if="errors.type" class="error-msg block">{{ errors.type }}</span>
+
+          <div class="section-divider">
+            <span>{{ t('application.wizard.type.orTemplate') }}</span>
+          </div>
+
+          <div class="template-list">
+            <div
+              v-for="template in templates"
+              :key="template.id"
+              class="template-card"
+              :class="{ selected: selectedTemplate === template.id }"
+              @click="selectTemplate(template.id)"
+            >
+              <div class="template-icon">{{ template.icon }}</div>
+              <div class="template-info">
+                <div class="template-name">
+                  {{ t(`application.wizard.type.templates.${template.id}`) }}
+                </div>
+                <div class="template-desc">
+                  {{ t(`application.wizard.type.templates.${template.id}Desc`) }}
+                </div>
+              </div>
+              <button type="button" class="template-use-btn">
+                {{ t('application.create.useTemplate') }}
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Step 4: Save/Publish -->
+      <!-- Step 3: Page Design -->
+      <div v-show="currentStep === 'design'" class="step-panel fade-in">
+        <h2 class="step-title">{{ t('application.wizard.design.title') }}</h2>
+        <div class="design-options">
+          <div
+            class="option-card"
+            :class="{ selected: designMode === 'ai' }"
+            @click="selectDesignMode('ai')"
+          >
+            <div class="option-icon">🤖</div>
+            <div class="option-title">{{ t('application.wizard.design.aiDesign') }}</div>
+            <div class="option-desc">{{ t('application.wizard.design.aiDesignDesc') }}</div>
+          </div>
+          <div
+            class="option-card"
+            :class="{ selected: designMode === 'manual' }"
+            @click="selectDesignMode('manual')"
+          >
+            <div class="option-icon">✏️</div>
+            <div class="option-title">{{ t('application.wizard.design.manualDesign') }}</div>
+            <div class="option-desc">{{ t('application.wizard.design.manualDesignDesc') }}</div>
+          </div>
+          <div
+            class="option-card"
+            :class="{ selected: designMode === 'import' }"
+            @click="selectDesignMode('import')"
+          >
+            <div class="option-icon">📄</div>
+            <div class="option-title">{{ t('application.wizard.design.importSchema') }}</div>
+            <div class="option-desc">{{ t('application.wizard.design.importSchemaDesc') }}</div>
+          </div>
+        </div>
+
+        <div v-if="formData.schema" class="schema-status">
+          <span class="status-badge success">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M5 12l5 5L20 7"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            {{ t('application.wizard.design.schemaConfigured') }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Step 4: Preview/Publish -->
       <div v-show="currentStep === 'publish'" class="step-panel fade-in">
-        <h2>保存发布</h2>
+        <h2 class="step-title">{{ t('application.wizard.publish.title') }}</h2>
         <div class="publish-options">
           <div class="app-summary">
             <div class="summary-header">
-              <span class="summary-icon">{{ formData.icon }}</span>
-              <h3>{{ formData.name || '未命名应用' }}</h3>
+              <span class="summary-icon">{{ getIconEmoji(formData.icon) }}</span>
+              <h3>{{ formData.name || t('application.wizard.publish.appName') }}</h3>
             </div>
             <div class="summary-details">
-              <p><strong>类型：</strong>{{ getAppTypeLabel }}</p>
-              <p><strong>描述：</strong>{{ formData.description || '无描述' }}</p>
-              <p><strong>页面结构：</strong>{{ formData.schema ? '已配置' : '未配置' }}</p>
+              <div class="detail-item">
+                <span class="detail-label">{{ t('application.wizard.publish.appType') }}:</span>
+                <span class="detail-value">{{ t(`application.types.${formData.type}`) }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label"
+                  >{{ t('application.wizard.publish.appDescription') }}:</span
+                >
+                <span class="detail-value">{{
+                  formData.description || t('application.wizard.publish.noDescription')
+                }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label"
+                  >{{ t('application.wizard.publish.pageStructure') }}:</span
+                >
+                <span
+                  class="detail-value"
+                  :class="{ success: formData.schema, muted: !formData.schema }"
+                >
+                  {{
+                    formData.schema
+                      ? t('application.wizard.design.schemaConfigured')
+                      : t('application.wizard.design.schemaNotConfigured')
+                  }}
+                </span>
+              </div>
+              <div v-if="formData.tags.length > 0" class="detail-item">
+                <span class="detail-label">{{ t('application.wizard.basic.tags') }}:</span>
+                <div class="detail-tags">
+                  <span v-for="tag in formData.tags" :key="tag" class="detail-tag">{{ tag }}</span>
+                </div>
+              </div>
             </div>
           </div>
+
           <div class="action-buttons">
-            <button class="btn-save" @click="saveAsDraft">
-              <span class="btn-icon">💾</span>
-              保存为草稿
+            <button
+              type="button"
+              class="btn btn-secondary"
+              @click="saveAsDraft"
+              :disabled="isProcessing"
+            >
+              <span v-if="isProcessing && actionType === 'draft'">{{
+                t('application.wizard.publish.saving')
+              }}</span>
+              <span v-else>{{ t('application.wizard.publish.saveDraft') }}</span>
             </button>
-            <button class="btn-publish" @click="publishApp">
-              <span class="btn-icon">🚀</span>
-              发布应用
+            <button
+              type="button"
+              class="btn btn-primary"
+              @click="publishApp"
+              :disabled="isProcessing"
+            >
+              <span v-if="isProcessing && actionType === 'publish'">{{
+                t('application.wizard.publish.publishing')
+              }}</span>
+              <span v-else>{{ t('application.wizard.publish.publishApp') }}</span>
             </button>
           </div>
         </div>
@@ -151,25 +288,40 @@
 
     <!-- Navigation -->
     <div class="wizard-nav">
-      <button v-if="!isFirstStep" class="btn-prev" @click="prevStep" :disabled="isProcessing">
-        上一步
+      <button
+        v-if="!isFirstStep"
+        type="button"
+        class="btn btn-outline"
+        @click="prevStep"
+        :disabled="isProcessing"
+      >
+        {{ t('application.wizard.nav.prev') }}
       </button>
       <button
-        v-if="!isLastStep && currentStep !== 'design'"
-        class="btn-next"
+        v-if="!isFirstStep && !isLastStep"
+        type="button"
+        class="btn btn-ghost"
+        @click="handleCancel"
+      >
+        {{ t('application.wizard.nav.cancel') }}
+      </button>
+      <button
+        v-if="!isLastStep"
+        type="button"
+        class="btn btn-primary"
         @click="nextStep"
         :disabled="!canNext || isProcessing"
       >
-        下一步
+        {{ t('application.wizard.nav.next') }}
       </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue'
-  import { useRouter } from 'vue-router'
-  import { useApplicationStore } from '@/store/modules/application'
+  import { ref, computed, onMounted } from 'vue'
+  import { useRouter, useRoute } from 'vue-router'
+  import { useI18n } from 'vue-i18n'
   import { applicationApi } from '@/services/application'
   import { AppType, AppStatus, type Application, type PageSchema } from '@/types'
 
@@ -184,7 +336,9 @@
     description: string
     type: AppType
     icon: string
+    tags: string[]
     schema: PageSchema | null
+    status: AppStatus
   }
 
   interface FormErrors {
@@ -192,25 +346,60 @@
     type: string
   }
 
+  interface IconData {
+    value: string
+    label: string
+    emoji: string
+  }
+
+  interface TemplateData {
+    id: string
+    icon: string
+    type: AppType
+  }
+
   const router = useRouter()
-  const applicationStore = useApplicationStore()
+  const route = useRoute()
+  const { t } = useI18n()
 
   const steps: Step[] = [
     { key: 'basic', label: '基本信息', order: 1 },
-    { key: 'design', label: '页面设计', order: 2 },
-    { key: 'preview', label: '预览测试', order: 3 },
+    { key: 'type', label: '类型选择', order: 2 },
+    { key: 'design', label: '页面设计', order: 3 },
     { key: 'publish', label: '保存发布', order: 4 }
   ]
 
+  // Edit mode state
+  const appId = ref<string | null>(null)
+  const isEditMode = computed(() => !!appId.value)
+  const isLoading = ref<boolean>(false)
+  const originalStatus = ref<AppStatus>(AppStatus.DRAFT)
+
+  // Page title based on mode
+  const pageTitle = computed(() => {
+    if (isEditMode.value) {
+      return t('application.wizard.editTitle', {
+        name: formData.value.name || t('application.wizard.title')
+      })
+    }
+    return t('application.wizard.title')
+  })
+
   const currentStep = ref<string>('basic')
   const isProcessing = ref<boolean>(false)
+  const actionType = ref<'draft' | 'publish' | null>(null)
+  const designMode = ref<'ai' | 'manual' | 'import' | null>(null)
+  const selectedTemplate = ref<string | null>(null)
+  const tagInput = ref<string>('')
 
   const formData = ref<FormData>({
     name: '',
     description: '',
     type: AppType.CUSTOM,
     icon: 'app',
-    schema: null
+    tags: [],
+    schema: null,
+    status: AppStatus.DRAFT
   })
 
   const errors = ref<FormErrors>({
@@ -219,29 +408,37 @@
   })
 
   const appTypes = [
-    { value: AppType.WORKFLOW, label: '工单应用', icon: '📋' },
-    { value: AppType.CHART, label: '图表应用', icon: '📊' },
-    { value: AppType.FORM, label: '表单应用', icon: '📝' },
-    { value: AppType.DASHBOARD, label: '仪表盘', icon: '📈' },
-    { value: AppType.CUSTOM, label: '自定义', icon: '⚙️' }
+    { value: AppType.WORKFLOW, icon: '📋' },
+    { value: AppType.DASHBOARD, icon: '📊' },
+    { value: AppType.FORM, icon: '📝' },
+    { value: AppType.CHART, icon: '📈' },
+    { value: AppType.CUSTOM, icon: '⚙️' }
   ]
 
-  const availableIcons = [
-    'app',
-    'dashboard',
-    'chart',
-    'form',
-    'table',
-    'settings',
-    'user',
-    'team',
-    'document',
-    'folder',
-    'calendar',
-    'task',
-    'message',
-    'notification',
-    'analytics'
+  const templates: TemplateData[] = [
+    { id: 'customerService', icon: '🤖', type: AppType.WORKFLOW },
+    { id: 'dataAnalysis', icon: '📊', type: AppType.DASHBOARD },
+    { id: 'survey', icon: '📝', type: AppType.FORM }
+  ]
+
+  const availableIcons: IconData[] = [
+    { value: 'app', label: 'app', emoji: '📱' },
+    { value: 'dashboard', label: 'dashboard', emoji: '📊' },
+    { value: 'chart', label: 'chart', emoji: '📈' },
+    { value: 'form', label: 'form', emoji: '📝' },
+    { value: 'table', label: 'table', emoji: '📋' },
+    { value: 'settings', label: 'settings', emoji: '⚙️' },
+    { value: 'user', label: 'user', emoji: '👤' },
+    { value: 'team', label: 'team', emoji: '👥' },
+    { value: 'document', label: 'document', emoji: '📄' },
+    { value: 'folder', label: 'folder', emoji: '📁' },
+    { value: 'calendar', label: 'calendar', emoji: '📅' },
+    { value: 'task', label: 'task', emoji: '✅' },
+    { value: 'message', label: 'message', emoji: '💬' },
+    { value: 'notification', label: 'notification', emoji: '🔔' },
+    { value: 'analytics', label: 'analytics', emoji: '📉' },
+    { value: 'workflow', label: 'workflow', emoji: '🔄' },
+    { value: 'customerService', label: 'customerService', emoji: '🎧' }
   ]
 
   const isFirstStep = computed(() => currentStep.value === 'basic')
@@ -249,7 +446,10 @@
 
   const canNext = computed(() => {
     if (currentStep.value === 'basic') {
-      return formData.value.name.trim() !== '' && formData.value.type !== undefined
+      return formData.value.name.trim() !== '' && formData.value.name.length <= 50
+    }
+    if (currentStep.value === 'type') {
+      return formData.value.type !== undefined
     }
     return true
   })
@@ -261,25 +461,26 @@
   }
 
   function validateCurrentStep(): boolean {
+    errors.value = { name: '', type: '' }
+
     if (currentStep.value === 'basic') {
-      let isValid = true
-
       if (!formData.value.name.trim()) {
-        errors.value.name = '请输入应用名称'
-        isValid = false
-      } else {
-        errors.value.name = ''
+        errors.value.name = t('application.wizard.basic.nameRequired')
+        return false
       }
-
-      if (!formData.value.type) {
-        errors.value.type = '请选择应用类型'
-        isValid = false
-      } else {
-        errors.value.type = ''
+      if (formData.value.name.length > 50) {
+        errors.value.name = t('application.wizard.basic.nameMaxLength')
+        return false
       }
-
-      return isValid
     }
+
+    if (currentStep.value === 'type') {
+      if (!formData.value.type) {
+        errors.value.type = t('application.create.selectType')
+        return false
+      }
+    }
+
     return true
   }
 
@@ -301,26 +502,84 @@
     }
   }
 
-  // Design options
-  function openAIAssistant() {
-    router.push({
-      path: '/app/application/orchestration',
-      query: {
-        ai: 'true',
-        name: formData.value.name,
-        type: formData.value.type
-      }
-    })
+  function handleBack() {
+    if (isFirstStep) {
+      handleCancel()
+    } else {
+      prevStep()
+    }
   }
 
-  function openManualDesign() {
-    router.push({
-      path: '/app/application/orchestration',
-      query: {
-        name: formData.value.name,
-        type: formData.value.type
-      }
-    })
+  function handleCancel() {
+    router.push('/app/application/design')
+  }
+
+  // Tag management
+  function addTag() {
+    const tag = tagInput.value.trim()
+    if (tag && !formData.value.tags.includes(tag) && formData.value.tags.length < 5) {
+      formData.value.tags.push(tag)
+      tagInput.value = ''
+    }
+  }
+
+  function removeTag(index: number) {
+    formData.value.tags.splice(index, 1)
+  }
+
+  function removeLastTag() {
+    if (tagInput.value === '' && formData.value.tags.length > 0) {
+      formData.value.tags.pop()
+    }
+  }
+
+  // Type and template selection
+  function selectType(type: AppType) {
+    formData.value.type = type
+    selectedTemplate.value = null
+    errors.value.type = ''
+  }
+
+  function selectTemplate(templateId: string) {
+    selectedTemplate.value = templateId
+    const template = templates.find((t) => t.id === templateId)
+    if (template) {
+      formData.value.type = template.type
+    }
+  }
+
+  // Design mode selection
+  function selectDesignMode(mode: 'ai' | 'manual' | 'import') {
+    designMode.value = mode
+
+    const baseQuery = {
+      mode: isEditMode.value ? 'edit' : 'create',
+      name: formData.value.name,
+      type: formData.value.type,
+      icon: formData.value.icon,
+      tags: formData.value.tags.join(',')
+    }
+
+    if (mode === 'ai') {
+      router.push({
+        path: isEditMode.value
+          ? `/app/application/design/orchestration/${appId.value}`
+          : '/app/application/design/orchestration',
+        query: {
+          ...baseQuery,
+          ai: 'true'
+        }
+      })
+    } else if (mode === 'manual') {
+      router.push({
+        path: isEditMode.value
+          ? `/app/application/design/orchestration/${appId.value}`
+          : '/app/application/design/orchestration',
+        query: baseQuery
+      })
+    } else if (mode === 'import') {
+      importSchema()
+    }
   }
 
   function importSchema() {
@@ -339,39 +598,19 @@
           formData.value.schema = schema
           nextStep()
         } else {
-          alert('无效的 Schema 文件格式')
+          alert('Invalid Schema file format')
         }
       } catch (err) {
-        alert('文件解析失败')
+        alert('File parsing failed')
       }
     }
     input.click()
   }
 
-  function countComponents(schema: PageSchema): number {
-    if (!schema) return 0
-    // Simple count based on components array or root children
-    if ('components' in schema && Array.isArray(schema.components)) {
-      return schema.components.length
-    }
-    return 1
+  function getIconEmoji(icon: string): string {
+    const iconData = availableIcons.find((i) => i.value === icon)
+    return iconData ? iconData.emoji : '📱'
   }
-
-  // Watch for schema changes from orchestration
-  router.afterEach((to, from) => {
-    if (from.path === '/app/application/orchestration' && to.path === '/app/application/create') {
-      const schemaJson = sessionStorage.getItem('temp_schema')
-      if (schemaJson) {
-        try {
-          formData.value.schema = JSON.parse(schemaJson) as PageSchema
-          sessionStorage.removeItem('temp_schema')
-          currentStep.value = 'preview'
-        } catch (e) {
-          console.error('Failed to parse schema from session', e)
-        }
-      }
-    }
-  })
 
   // Save methods
   async function saveAsDraft() {
@@ -379,23 +618,31 @@
 
     try {
       isProcessing.value = true
-      const app = await applicationApi.createApplication({
+      actionType.value = 'draft'
+
+      const appData = {
         name: formData.value.name,
         description: formData.value.description,
         type: formData.value.type,
         icon: formData.value.icon,
+        tags: formData.value.tags,
         schema: formData.value.schema || undefined,
         status: AppStatus.DRAFT
-      })
+      }
 
-      // Refresh the applications list
-      await applicationStore.fetchApplications()
-      router.push('/app/application/list')
+      if (isEditMode.value && appId.value) {
+        await applicationApi.updateApplication(appId.value, appData)
+      } else {
+        await applicationApi.createApplication(appData)
+      }
+
+      router.push('/app/application/design')
     } catch (error) {
       console.error('Failed to save draft:', error)
-      alert('保存失败，请重试')
+      alert(t('application.wizard.publish.saveFailed'))
     } finally {
       isProcessing.value = false
+      actionType.value = null
     }
   }
 
@@ -404,29 +651,98 @@
 
     try {
       isProcessing.value = true
-      const app = await applicationApi.createApplication({
+      actionType.value = 'publish'
+
+      const appData = {
         name: formData.value.name,
         description: formData.value.description,
         type: formData.value.type,
         icon: formData.value.icon,
+        tags: formData.value.tags,
         schema: formData.value.schema || undefined,
         status: AppStatus.PUBLISHED
-      })
+      }
 
-      // Refresh the applications list
-      await applicationStore.fetchApplications()
-      router.push('/app/application/runtime')
+      if (isEditMode.value && appId.value) {
+        await applicationApi.updateApplication(appId.value, appData)
+      } else {
+        await applicationApi.createApplication(appData)
+      }
+
+      router.push('/app/application/list')
     } catch (error) {
       console.error('Failed to publish app:', error)
-      alert('发布失败，请重试')
+      alert(t('application.wizard.publish.publishFailed'))
     } finally {
       isProcessing.value = false
+      actionType.value = null
     }
   }
 
-  const getAppTypeLabel = computed(() => {
-    const type = appTypes.find((t) => t.value === formData.value.type)
-    return type ? type.label : '未知类型'
+  // Load app data for edit mode
+  async function loadAppData(id: string) {
+    isLoading.value = true
+    try {
+      const app = await applicationApi.getApplicationById(id)
+      if (app) {
+        formData.value = {
+          name: app.name,
+          description: app.description || '',
+          type: app.type,
+          icon: app.icon || 'app',
+          tags: app.tags || [],
+          schema: app.schema || null,
+          status: app.status
+        }
+        originalStatus.value = app.status
+      } else {
+        // App not found, redirect to design list
+        router.push('/app/application/design')
+      }
+    } catch (error) {
+      console.error('Failed to load app:', error)
+      router.push('/app/application/design')
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  // Restore state from route query / load app data
+  onMounted(async () => {
+    // Check if editing an existing app
+    const id = route.params.id as string
+    if (id) {
+      appId.value = id
+      await loadAppData(id)
+      return
+    }
+
+    // Check if returning from orchestration with schema
+    const schemaJson = sessionStorage.getItem('temp_schema')
+    if (schemaJson) {
+      try {
+        formData.value.schema = JSON.parse(schemaJson) as PageSchema
+        sessionStorage.removeItem('temp_schema')
+        // Move to publish step
+        currentStep.value = 'publish'
+      } catch (e) {
+        console.error('Failed to parse schema from session', e)
+      }
+    }
+
+    // Restore form data from query params (if starting fresh)
+    if (route.query.name && !schemaJson) {
+      formData.value.name = route.query.name as string
+    }
+    if (route.query.type && !schemaJson) {
+      formData.value.type = route.query.type as AppType
+    }
+    if (route.query.icon && !schemaJson) {
+      formData.value.icon = route.query.icon as string
+    }
+    if (route.query.tags && !schemaJson) {
+      formData.value.tags = (route.query.tags as string).split(',').filter(Boolean)
+    }
   })
 </script>
 
@@ -434,18 +750,76 @@
   .app-create-wizard {
     max-width: 900px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: $spacing-xl;
+    background-color: $bg-primary;
+    border-radius: $border-radius-lg;
+    box-shadow: $shadow-lg;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 
-    background-color: #1a1a2e;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    &.full-width {
+      max-width: 100%;
+      border-radius: 0;
+      box-shadow: none;
+      background-color: $bg-secondary;
+    }
   }
+
+  // ============================================================
+  // Header with back button
+  // ============================================================
+
+  .wizard-header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
+    padding-bottom: $spacing-md;
+    border-bottom: 1px solid $border-color-lighter;
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: $spacing-xs;
+      padding: $spacing-xs $spacing-sm;
+      background: transparent;
+      border: 1px solid $border-color-base;
+      border-radius: $border-radius-sm;
+      color: $text-secondary;
+      font-size: $font-size-sm;
+      cursor: pointer;
+      transition: all $transition-base ease;
+
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      &:hover {
+        border-color: $primary-color;
+        color: $primary-color;
+      }
+    }
+
+    .wizard-title {
+      margin: 0;
+      font-size: $font-size-xl;
+      font-weight: $font-weight-semibold;
+      color: $text-primary;
+    }
+  }
+
+  // ============================================================
+  // Steps Progress
+  // ============================================================
 
   .wizard-steps {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 2rem;
+    margin-bottom: $spacing-xl;
     position: relative;
+    flex-shrink: 0;
 
     .step-item {
       display: flex;
@@ -458,22 +832,28 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background-color: #2a2a3e;
-        color: #6c6c8a;
+        background-color: $bg-tertiary;
+        color: $text-tertiary;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: bold;
-        font-size: 1.1rem;
-        transition: all 0.3s ease;
-        border: 2px solid #2a2a3e;
+        font-weight: $font-weight-semibold;
+        font-size: $font-size-base;
+        transition: all $transition-base ease;
+        border: 2px solid transparent;
+
+        svg {
+          width: 20px;
+          height: 20px;
+        }
       }
 
       .step-label {
-        margin-top: 0.5rem;
-        font-size: 0.9rem;
-        color: #6c6c8a;
-        transition: all 0.3s ease;
+        margin-top: $spacing-sm;
+        font-size: $font-size-sm;
+        color: $text-tertiary;
+        transition: all $transition-base ease;
+        text-align: center;
       }
 
       .step-line {
@@ -482,50 +862,64 @@
         left: 50%;
         width: 100%;
         height: 2px;
-        background-color: #2a2a3e;
+        background-color: $border-color-base;
         z-index: -1;
       }
 
       &.active {
         .step-number {
-          background-color: #4a4a6a;
-          color: #fff;
-          border-color: #6366f1;
+          background-color: rgba($primary-color, 0.1);
+          color: $primary-color;
+          border-color: $primary-color;
         }
 
         .step-label {
-          color: #fff;
-          font-weight: 500;
+          color: $primary-color;
+          font-weight: $font-weight-medium;
         }
       }
 
       &.completed {
         .step-number {
-          background-color: #6366f1;
+          background-color: $primary-color;
           color: #fff;
-          border-color: #6366f1;
+          border-color: $primary-color;
+        }
+
+        .step-line {
+          background-color: $primary-color;
         }
 
         .step-label {
-          color: #6366f1;
+          color: $primary-color;
         }
       }
     }
   }
 
+  // ============================================================
+  // Content Area
+  // ============================================================
+
   .wizard-content {
-    background-color: #16162a;
-    border-radius: 8px;
-    padding: 2rem;
-    min-height: 400px;
-    margin-bottom: 1.5rem;
+    background-color: $bg-secondary;
+    border-radius: $border-radius-md;
+    padding: $spacing-xl;
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: $spacing-lg;
+
+    .full-width & {
+      background-color: $bg-primary;
+    }
   }
 
   .step-panel {
-    h2 {
-      margin-bottom: 1.5rem;
-      color: #fff;
-      font-size: 1.5rem;
+    .step-title {
+      margin-bottom: $spacing-lg;
+      color: $text-primary;
+      font-size: $font-size-xl;
+      font-weight: $font-weight-semibold;
     }
   }
 
@@ -544,98 +938,165 @@
     }
   }
 
-  .form-item {
-    margin-bottom: 1.5rem;
+  // Scrollable content for type selection
+  .scrollable-content {
+    max-height: calc(100vh - 400px);
+    overflow-y: auto;
+    padding-right: $spacing-sm;
 
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      color: #a0a0b0;
-      font-weight: 500;
+    &::-webkit-scrollbar {
+      width: 6px;
     }
 
-    input,
-    textarea {
+    &::-webkit-scrollbar-track {
+      background: $bg-tertiary;
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $border-color-dark;
+      border-radius: 3px;
+
+      &:hover {
+        background: $text-tertiary;
+      }
+    }
+  }
+
+  // ============================================================
+  // Form Styles
+  // ============================================================
+
+  .step-form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+  }
+
+  .form-item {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+
+    .form-label {
+      color: $text-secondary;
+      font-weight: $font-weight-medium;
+      font-size: $font-size-sm;
+
+      &.required::after {
+        content: ' *';
+        color: $error;
+      }
+    }
+
+    .form-input,
+    .form-textarea {
       width: 100%;
-      padding: 0.75rem 1rem;
-      background-color: #2a2a3e;
-      border: 1px solid #3a3a5a;
-      border-radius: 6px;
-      color: #fff;
-      font-size: 1rem;
-      transition: all 0.3s ease;
+      padding: $spacing-sm $spacing-md;
+      background-color: $bg-primary;
+      border: 1px solid $border-color-base;
+      border-radius: $border-radius-sm;
+      color: $text-primary;
+      font-size: $font-size-base;
+      transition: all $transition-base ease;
 
       &::placeholder {
-        color: #5a5a7a;
+        color: $text-tertiary;
       }
 
       &:focus {
         outline: none;
-        border-color: #6366f1;
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        border-color: $primary-color;
+        box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
       }
 
       &.error {
-        border-color: #ef4444;
+        border-color: $error;
       }
     }
 
-    textarea {
+    .form-textarea {
       resize: vertical;
       min-height: 80px;
     }
 
     .error-msg {
-      color: #ef4444;
-      font-size: 0.85rem;
-      margin-top: 0.25rem;
-      display: block;
+      color: $error;
+      font-size: $font-size-xs;
+      margin-top: $spacing-xs;
+
+      &.block {
+        display: block;
+        margin-top: $spacing-sm;
+      }
+    }
+
+    .char-count {
+      color: $text-tertiary;
+      font-size: $font-size-xs;
+      text-align: right;
     }
   }
 
-  .type-selector {
+  // Tags
+  .tags-container {
     display: flex;
-    gap: 1rem;
     flex-wrap: wrap;
+    gap: $spacing-xs;
+    padding: $spacing-sm;
+    background-color: $bg-primary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-sm;
+    min-height: 42px;
+    align-items: center;
   }
 
-  .type-card {
+  .tag-item {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-xs $spacing-sm;
+    background-color: rgba($primary-color, 0.1);
+    border: 1px solid rgba($primary-color, 0.3);
+    border-radius: $border-radius-sm;
+    color: $primary-color;
+    font-size: $font-size-sm;
+
+    .tag-remove {
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      font-size: $font-size-base;
+      line-height: 1;
+      padding: 0;
+      opacity: 0.6;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .tag-input {
     flex: 1;
     min-width: 100px;
-    padding: 1.5rem 1rem;
-    background-color: #2a2a3e;
-    border: 2px solid #3a3a5a;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: center;
+    border: none;
+    background: transparent;
+    color: $text-primary;
+    font-size: $font-size-sm;
+    outline: none;
 
-    &:hover {
-      border-color: #6366f1;
-      transform: translateY(-2px);
-    }
-
-    &.selected {
-      border-color: #6366f1;
-      background-color: rgba(99, 102, 241, 0.1);
-    }
-
-    .type-icon {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .type-name {
-      color: #fff;
-      font-size: 0.9rem;
-      font-weight: 500;
+    &::placeholder {
+      color: $text-tertiary;
     }
   }
 
+  // Icon selector
   .icon-selector {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-    gap: 0.75rem;
+    gap: $spacing-sm;
   }
 
   .icon-item {
@@ -644,19 +1105,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #2a2a3e;
-    border: 2px solid #3a3a5a;
-    border-radius: 6px;
+    background-color: $bg-primary;
+    border: 2px solid $border-color-base;
+    border-radius: $border-radius-sm;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all $transition-base ease;
 
     &:hover {
-      border-color: #6366f1;
+      border-color: $primary-color;
+      transform: translateY(-2px);
     }
 
     &.selected {
-      border-color: #6366f1;
-      background-color: rgba(99, 102, 241, 0.1);
+      border-color: $primary-color;
+      background-color: rgba($primary-color, 0.1);
     }
 
     .icon-preview {
@@ -664,139 +1126,291 @@
     }
   }
 
-  .design-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
+  // ============================================================
+  // Type & Template Selection
+  // ============================================================
+
+  .section-label {
+    color: $text-secondary;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    margin-bottom: $spacing-md;
   }
 
-  .option-card {
-    padding: 2rem;
-    background-color: #2a2a3e;
-    border: 2px solid #3a3a5a;
-    border-radius: 8px;
+  .type-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: $spacing-md;
+    margin-bottom: $spacing-xl;
+  }
+
+  .type-card {
+    padding: $spacing-lg;
+    background-color: $bg-primary;
+    border: 2px solid $border-color-base;
+    border-radius: $border-radius-md;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all $transition-base ease;
     text-align: center;
 
     &:hover {
-      border-color: #6366f1;
+      border-color: $primary-color;
       transform: translateY(-4px);
-      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
+      box-shadow: $shadow-md;
     }
 
-    .option-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
+    &.selected {
+      border-color: $primary-color;
+      background-color: rgba($primary-color, 0.05);
     }
 
-    .option-title {
-      color: #fff;
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
+    .type-icon {
+      font-size: 2.5rem;
+      margin-bottom: $spacing-sm;
     }
 
-    .option-desc {
-      color: #a0a0b0;
-      font-size: 0.9rem;
+    .type-name {
+      color: $text-primary;
+      font-size: $font-size-base;
+      font-weight: $font-weight-semibold;
+      margin-bottom: $spacing-xs;
+    }
+
+    .type-desc {
+      color: $text-tertiary;
+      font-size: $font-size-xs;
       line-height: 1.4;
     }
   }
 
-  .preview-container {
-    background-color: #1a1a2e;
-    border-radius: 6px;
-    padding: 1rem;
-    min-height: 300px;
-    overflow: auto;
+  .section-divider {
+    display: flex;
+    align-items: center;
+    margin: $spacing-xl 0;
+    color: $text-tertiary;
+    font-size: $font-size-sm;
+
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background-color: $border-color-base;
+    }
+
+    span {
+      padding: 0 $spacing-md;
+    }
   }
 
-  .schema-preview {
-    .schema-info {
-      display: flex;
-      gap: 2rem;
-      margin-bottom: 1rem;
-      padding: 1rem;
-      background-color: #2a2a3e;
-      border-radius: 6px;
+  .template-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
 
-      .info-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+  .template-card {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    padding: $spacing-md;
+    background-color: $bg-primary;
+    border: 2px solid $border-color-base;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: all $transition-base ease;
 
-        .label {
-          color: #a0a0b0;
-          font-size: 0.9rem;
-        }
+    &:hover {
+      border-color: $primary-color;
+    }
 
-        .value {
-          color: #6366f1;
-          font-weight: 600;
-          font-size: 1rem;
-        }
+    &.selected {
+      border-color: $primary-color;
+      background-color: rgba($primary-color, 0.05);
+    }
+
+    .template-icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+
+    .template-info {
+      flex: 1;
+
+      .template-name {
+        color: $text-primary;
+        font-weight: $font-weight-semibold;
+        margin-bottom: $spacing-xs;
+      }
+
+      .template-desc {
+        color: $text-tertiary;
+        font-size: $font-size-sm;
       }
     }
 
-    .schema-json {
-      background-color: #0f0f1a;
-      color: #a0a0b0;
-      padding: 1rem;
-      border-radius: 6px;
-      font-family: 'Courier New', monospace;
-      font-size: 0.85rem;
-      overflow-x: auto;
-      max-height: 400px;
-      white-space: pre-wrap;
-      word-wrap: break-word;
+    .template-use-btn {
+      padding: $spacing-xs $spacing-md;
+      background-color: transparent;
+      border: 1px solid $primary-color;
+      border-radius: $border-radius-sm;
+      color: $primary-color;
+      font-size: $font-size-sm;
+      cursor: pointer;
+      transition: all $transition-base ease;
+
+      &:hover {
+        background-color: $primary-color;
+        color: #fff;
+      }
     }
   }
 
-  .preview-empty {
-    display: flex;
-    flex-direction: column;
+  // ============================================================
+  // Design Options
+  // ============================================================
+
+  .design-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: $spacing-lg;
+  }
+
+  .option-card {
+    padding: $spacing-xl;
+    background-color: $bg-primary;
+    border: 2px solid $border-color-base;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: all $transition-base ease;
+    text-align: center;
+
+    &:hover {
+      border-color: $primary-color;
+      transform: translateY(-4px);
+      box-shadow: $shadow-lg;
+    }
+
+    &.selected {
+      border-color: $primary-color;
+      background-color: rgba($primary-color, 0.05);
+    }
+
+    .option-icon {
+      font-size: 3rem;
+      margin-bottom: $spacing-md;
+    }
+
+    .option-title {
+      color: $text-primary;
+      font-size: $font-size-base;
+      font-weight: $font-weight-semibold;
+      margin-bottom: $spacing-sm;
+    }
+
+    .option-desc {
+      color: $text-tertiary;
+      font-size: $font-size-sm;
+      line-height: 1.4;
+    }
+  }
+
+  .schema-status {
+    margin-top: $spacing-lg;
+    text-align: center;
+  }
+
+  .status-badge {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    height: 300px;
-    color: #6c6c8a;
+    gap: $spacing-xs;
+    padding: $spacing-xs $spacing-md;
+    border-radius: $border-radius-full;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
 
-    p {
-      margin: 0.5rem 0;
+    &.success {
+      background-color: rgba($success, 0.1);
+      color: $success;
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
     }
   }
+
+  // ============================================================
+  // Publish Summary
+  // ============================================================
 
   .publish-options {
     .app-summary {
-      background-color: #2a2a3e;
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
+      background-color: $bg-primary;
+      border: 1px solid $border-color-base;
+      border-radius: $border-radius-md;
+      padding: $spacing-lg;
+      margin-bottom: $spacing-xl;
 
       .summary-header {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
+        gap: $spacing-md;
+        margin-bottom: $spacing-lg;
+        padding-bottom: $spacing-md;
+        border-bottom: 1px solid $border-color-lighter;
 
         .summary-icon {
           font-size: 2.5rem;
         }
 
         h3 {
-          color: #fff;
-          font-size: 1.3rem;
           margin: 0;
+          color: $text-primary;
+          font-size: $font-size-lg;
+          font-weight: $font-weight-semibold;
         }
       }
 
       .summary-details {
-        p {
-          color: #a0a0b0;
-          margin: 0.5rem 0;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
 
-          strong {
-            color: #fff;
+        .detail-item {
+          display: flex;
+          gap: $spacing-sm;
+          font-size: $font-size-sm;
+
+          .detail-label {
+            color: $text-tertiary;
+            min-width: 80px;
+          }
+
+          .detail-value {
+            color: $text-primary;
+
+            &.success {
+              color: $success;
+            }
+
+            &.muted {
+              color: $text-tertiary;
+            }
+          }
+
+          .detail-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: $spacing-xs;
+          }
+
+          .detail-tag {
+            padding: 2px $spacing-xs;
+            background-color: rgba($primary-color, 0.1);
+            border-radius: $border-radius-sm;
+            color: $primary-color;
+            font-size: $font-size-xs;
           }
         }
       }
@@ -804,89 +1418,89 @@
 
     .action-buttons {
       display: flex;
-      gap: 1rem;
+      gap: $spacing-md;
       justify-content: center;
     }
   }
 
-  .btn-save,
-  .btn-publish {
-    padding: 0.875rem 2rem;
-    border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
+  // ============================================================
+  // Buttons
+  // ============================================================
+
+  .btn {
+    display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: center;
+    gap: $spacing-xs;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: all $transition-base ease;
+    border: 1px solid transparent;
 
-    .btn-icon {
-      font-size: 1.2rem;
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
     }
   }
 
-  .btn-save {
-    background-color: #4a4a6a;
+  .btn-primary {
+    background-color: $primary-color;
+    border-color: $primary-color;
     color: #fff;
 
     &:hover:not(:disabled) {
-      background-color: #5a5a7a;
-    }
-  }
-
-  .btn-publish {
-    background-color: #6366f1;
-    color: #fff;
-
-    &:hover:not(:disabled) {
-      background-color: #5457d6;
+      background-color: $primary-dark;
+      border-color: $primary-dark;
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+      box-shadow: $shadow-md;
     }
   }
 
-  button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none !important;
+  .btn-secondary {
+    background-color: $bg-tertiary;
+    border-color: $border-color-base;
+    color: $text-primary;
+
+    &:hover:not(:disabled) {
+      background-color: $bg-elevated;
+      border-color: $primary-color;
+    }
   }
+
+  .btn-outline {
+    background-color: transparent;
+    border-color: $border-color-base;
+    color: $text-secondary;
+
+    &:hover:not(:disabled) {
+      border-color: $primary-color;
+      color: $primary-color;
+    }
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    border-color: transparent;
+    color: $text-tertiary;
+
+    &:hover:not(:disabled) {
+      color: $text-primary;
+      background-color: $bg-tertiary;
+    }
+  }
+
+  // ============================================================
+  // Navigation
+  // ============================================================
 
   .wizard-nav {
     display: flex;
     justify-content: center;
-    gap: 1rem;
-
-    .btn-prev,
-    .btn-next {
-      padding: 0.75rem 2rem;
-      border: 1px solid #3a3a5a;
-      border-radius: 6px;
-      background-color: #2a2a3e;
-      color: #fff;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-
-      &:hover:not(:disabled) {
-        background-color: #3a3a5a;
-        border-color: #6366f1;
-      }
-
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-    }
-
-    .btn-next {
-      background-color: #6366f1;
-      border-color: #6366f1;
-
-      &:hover:not(:disabled) {
-        background-color: #5457d6;
-      }
-    }
+    gap: $spacing-md;
+    flex-shrink: 0;
   }
 </style>

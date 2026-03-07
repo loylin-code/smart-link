@@ -58,23 +58,45 @@ const routes: RouteRecordRaw[] = [
             } as RouteMeta
           },
           {
-            path: 'design/create',
-            name: 'AppCreate',
-            component: () => import('@/views/application/AppOrchestration.vue'),
+            path: 'design/wizard',
+            name: 'AppCreateWizard',
+            component: () => import('@/components/application/AppCreateWizard.vue'),
             meta: {
               title: '新建应用',
               titleKey: 'route.appCreate',
+              icon: 'app',
+              hidden: true
+            } as RouteMeta
+          },
+          {
+            path: 'design/wizard/:id',
+            name: 'AppEditWizard',
+            component: () => import('@/components/application/AppCreateWizard.vue'),
+            meta: {
+              title: '编辑应用',
+              titleKey: 'route.appEdit',
+              icon: 'app',
+              hidden: true
+            } as RouteMeta
+          },
+          {
+            path: 'design/orchestration',
+            name: 'AppOrchestrationCreate',
+            component: () => import('@/views/application/AppOrchestration.vue'),
+            meta: {
+              title: '编排应用',
+              titleKey: 'route.appOrchestration',
               icon: 'flow',
               hidden: true
             } as RouteMeta
           },
           {
-            path: 'design/edit/:id',
-            name: 'AppEdit',
+            path: 'design/orchestration/:id',
+            name: 'AppOrchestrationEdit',
             component: () => import('@/views/application/AppOrchestration.vue'),
             meta: {
-              title: '编辑应用',
-              titleKey: 'route.appEdit',
+              title: '编排应用',
+              titleKey: 'route.appOrchestration',
               icon: 'flow',
               hidden: true
             } as RouteMeta

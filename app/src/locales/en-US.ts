@@ -34,6 +34,7 @@ export default {
     appList: 'App List',
     appDesign: 'App Design',
     appCreate: 'Create App',
+    appOrchestration: 'Orchestrate App',
     appEdit: 'Edit App',
     appRuntime: 'App Runtime',
     resource: 'Resource Management',
@@ -672,6 +673,116 @@ export default {
       visits: 'Visits',
       uptime: 'Uptime',
       errors: 'Errors'
+    },
+    wizard: {
+      title: 'New Application',
+      editTitle: 'Edit Application - {name}',
+      steps: {
+        basic: 'Basic Info',
+        type: 'Type Selection',
+        design: 'Page Design',
+        publish: 'Save & Publish'
+      },
+      basic: {
+        title: 'Basic Information',
+        name: 'Application Name',
+        namePlaceholder: 'Enter application name',
+        nameRequired: 'Application name is required',
+        nameMaxLength: 'Application name must be less than 50 characters',
+        description: 'Description',
+        descriptionPlaceholder: 'Enter application description (optional)',
+        descriptionMaxLength: 'Description must be less than 200 characters',
+        icon: 'Application Icon',
+        tags: 'Category Tags',
+        tagsPlaceholder: 'Press Enter to add tag',
+        addTag: 'Add Tag'
+      },
+      type: {
+        title: 'Select Type',
+        selectType: 'Select Application Type',
+        orTemplate: 'Or Create from Template',
+        types: {
+          workflow: 'Workflow',
+          workflowDesc: 'Process orchestration app with complex business logic',
+          dashboard: 'Dashboard',
+          dashboardDesc: 'Data visualization dashboard with multiple charts',
+          form: 'Form',
+          formDesc: 'Data collection form with validation and submission',
+          chart: 'Chart',
+          chartDesc: 'Single chart display with multiple chart types',
+          custom: 'Custom',
+          customDesc: 'Fully customizable application'
+        },
+        templates: {
+          customerService: 'Intelligent Customer Service Template',
+          customerServiceDesc:
+            'Pre-configured customer service dialog flow with auto-reply and human handoff',
+          dataAnalysis: 'Data Analysis Template',
+          dataAnalysisDesc:
+            'Pre-configured data analysis workflow with cleaning, analysis and visualization',
+          survey: 'Survey Template',
+          surveyDesc: 'Pre-configured survey form with multiple question types and statistics'
+        }
+      },
+      design: {
+        title: 'Page Design',
+        aiDesign: 'AI Assistant Design',
+        aiDesignDesc: 'Generate pages automatically through natural language',
+        manualDesign: 'Manual Design',
+        manualDesignDesc: 'Design pages using visual orchestrator',
+        importSchema: 'Import Schema',
+        importSchemaDesc: 'Import page structure from JSON file',
+        schemaConfigured: 'Configured',
+        schemaNotConfigured: 'Not Configured'
+      },
+      preview: {
+        title: 'Preview & Test',
+        schemaVersion: 'Schema Version',
+        componentCount: 'Component Count',
+        noSchema: 'No page structure data',
+        noSchemaHint: 'Please go back to design the page'
+      },
+      publish: {
+        title: 'Save & Publish',
+        summary: 'Application Summary',
+        appName: 'Application Name',
+        appType: 'Application Type',
+        appDescription: 'Description',
+        pageStructure: 'Page Structure',
+        noDescription: 'No description',
+        saveDraft: 'Save as Draft',
+        publishApp: 'Publish Application',
+        saving: 'Saving...',
+        publishing: 'Publishing...',
+        saveSuccess: 'Saved successfully',
+        publishSuccess: 'Published successfully',
+        saveFailed: 'Save failed, please retry',
+        publishFailed: 'Publish failed, please retry'
+      },
+      nav: {
+        prev: 'Previous',
+        next: 'Next',
+        cancel: 'Cancel'
+      },
+      icons: {
+        app: 'App',
+        dashboard: 'Dashboard',
+        chart: 'Chart',
+        form: 'Form',
+        table: 'Table',
+        settings: 'Settings',
+        user: 'User',
+        team: 'Team',
+        document: 'Document',
+        folder: 'Folder',
+        calendar: 'Calendar',
+        task: 'Task',
+        message: 'Message',
+        notification: 'Notification',
+        analytics: 'Analytics',
+        workflow: 'Workflow',
+        customerService: 'Service'
+      }
     }
   },
   model: {

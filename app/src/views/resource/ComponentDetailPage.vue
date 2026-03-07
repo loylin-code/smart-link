@@ -240,8 +240,10 @@
 <script setup lang="ts">
   import { ref, computed, reactive, watch, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
-  import { COMPONENT_META_LIST, COMPONENT_CATEGORIES } from '@smart-link/shared'
-  import type { ComponentMeta, ExampleMeta } from '@smart-link/shared'
+  import { useI18n } from 'vue-i18n'
+  import { COMPONENT_CATEGORIES } from '@smart-link/shared'
+  import type { ComponentMeta, ExampleMeta } from '@smart-link/core'
+  import { useComponentsStore } from '@/store/modules/components'
   import {
     SlButton,
     SlInput,
@@ -293,8 +295,10 @@
 
   const route = useRoute()
   const router = useRouter()
+  const { t } = useI18n()
+  const componentsStore = useComponentsStore()
 
-  const component = ref<ComponentMeta | null>(null)
+  const component = computed<ComponentMeta | null>(() => componentsStore.currentComponent)
   const activeApiTab = ref('props')
   const previewState = reactive<Record<string, any>>({})
 
@@ -345,10 +349,13 @@
 
   const loadComponent = () => {
     const type = route.params.type as string
-    component.value = COMPONENT_META_LIST.find((c) => c.type === type) || null
-
-    if (component.value) {
+    const found = componentsStore.loadComponentDetail(type)
+    
+    if (found) {
       initPreviewState()
+    } else {
+      // 组件未找到，返回列表页
+      router.push('/app/resource/components')
     }
   }
 

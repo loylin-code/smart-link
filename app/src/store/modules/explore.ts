@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
 import type { ChatMessage, ChatConversation, ChatTemplate, ConversationGroup } from '@/types'
+import { conversationApi, type ConversationCreateParams } from '@/services/conversation'
+import { getWebSocket, type StreamResponseData } from '@/services/websocket'
 
 // 预定义对话模板
 const CHAT_TEMPLATES: ChatTemplate[] = [
@@ -64,7 +66,15 @@ interface ExploreState {
   activeConversationId: string | null
   searchQuery: string
   loading: boolean
+  error: string | null
   templates: ChatTemplate[]
+  wsConnected: boolean
+  streamingMessage: string
+  pagination: {
+    page: number
+    pageSize: number
+    total: number
+  }
 }
 
 export const useExploreStore = defineStore('explore', {
@@ -73,7 +83,15 @@ export const useExploreStore = defineStore('explore', {
     activeConversationId: null,
     searchQuery: '',
     loading: false,
-    templates: CHAT_TEMPLATES
+    error: null,
+    templates: CHAT_TEMPLATES,
+    wsConnected: false,
+    streamingMessage: '',
+    pagination: {
+      page: 1,
+      pageSize: 20,
+      total: 0
+    }
   }),
 
   getters: {
@@ -96,7 +114,7 @@ export const useExploreStore = defineStore('explore', {
       return state.conversations.filter(
         (c) =>
           c.title.toLowerCase().includes(query) ||
-          c.messages.some((m) => m.content.toLowerCase().includes(query))
+          (c.messages && c.messages.some((m) => m.content.toLowerCase().includes(query)))
       )
     },
 
@@ -119,14 +137,15 @@ export const useExploreStore = defineStore('explore', {
         ? state.conversations.filter(
             (c) =>
               c.title.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
-              c.messages.some((m) =>
-                m.content.toLowerCase().includes(state.searchQuery.toLowerCase())
-              )
+              (c.messages &&
+                c.messages.some((m) =>
+                  m.content.toLowerCase().includes(state.searchQuery.toLowerCase())
+                ))
           )
         : state.conversations
 
       // 非归档的对话
-      const activeConversations = conversations.filter((c) => !c.isArchived)
+      const activeConversations = conversations.filter((c) => c.status !== 'archived')
 
       activeConversations.forEach((conv) => {
         const diff = now - conv.updatedAt
@@ -150,7 +169,7 @@ export const useExploreStore = defineStore('explore', {
 
     // 归档的对话
     archivedConversations(state): ChatConversation[] {
-      return state.conversations.filter((c) => c.isArchived)
+      return state.conversations.filter((c) => c.status === 'archived')
     },
 
     // 所有模板
@@ -172,159 +191,370 @@ export const useExploreStore = defineStore('explore', {
   },
 
   actions: {
-    // 创建新对话
-    createConversation(options?: {
+    /**
+     * 从后端获取对话列表
+     */
+    async fetchConversations() {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await conversationApi.getConversations({
+          page: this.pagination.page,
+          page_size: this.pagination.pageSize
+        })
+
+        this.conversations = response.list
+        this.pagination.total = response.total
+      } catch (error: unknown) {
+        const err = error as { message?: string }
+        this.error = err.message || '获取对话列表失败'
+        console.error('Failed to fetch conversations:', error)
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * 获取对话详情
+     */
+    async fetchConversation(id: string) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const conversation = await conversationApi.getConversation(id, true)
+        if (conversation) {
+          const index = this.conversations.findIndex((c) => c.id === id)
+          if (index !== -1) {
+            this.conversations[index] = conversation
+          } else {
+            this.conversations.unshift(conversation)
+          }
+          return conversation
+        }
+        return null
+      } catch (error: unknown) {
+        const err = error as { message?: string }
+        this.error = err.message || '获取对话详情失败'
+        console.error('Failed to fetch conversation:', error)
+        return null
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * 创建新对话
+     */
+    async createConversation(options?: {
       title?: string
       templateId?: string
       initialMessage?: string
-    }): ChatConversation {
-      const template = options?.templateId ? this.getTemplateById(options.templateId) : undefined
+      appId?: string
+    }): Promise<ChatConversation | null> {
+      this.loading = true
+      this.error = null
 
-      const conversation: ChatConversation = {
-        id: `conv-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-        title: options?.title || template?.name || '新对话',
-        messages: [],
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-        templateId: options?.templateId,
-        tags: template ? [template.category] : []
+      try {
+        const template = options?.templateId ? this.getTemplateById(options.templateId) : undefined
+
+        const params: ConversationCreateParams = {
+          title: options?.title || template?.name || '新对话',
+          app_id: options?.appId
+        }
+
+        const conversation = await conversationApi.createConversation(params)
+        this.conversations.unshift(conversation)
+        this.activeConversationId = conversation.id
+        this.pagination.total += 1
+
+        return conversation
+      } catch (error: unknown) {
+        const err = error as { message?: string }
+        this.error = err.message || '创建对话失败'
+        console.error('Failed to create conversation:', error)
+        return null
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * 删除对话
+     */
+    async deleteConversation(id: string) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const success = await conversationApi.deleteConversation(id)
+        if (success) {
+          const index = this.conversations.findIndex((c) => c.id === id)
+          if (index > -1) {
+            this.conversations.splice(index, 1)
+            this.pagination.total -= 1
+          }
+          if (this.activeConversationId === id) {
+            this.activeConversationId = this.conversations[0]?.id || null
+          }
+        }
+      } catch (error: unknown) {
+        const err = error as { message?: string }
+        this.error = err.message || '删除对话失败'
+        console.error('Failed to delete conversation:', error)
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * 归档对话
+     */
+    async archiveConversation(id: string) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const updated = await conversationApi.archiveConversation(id)
+        if (updated) {
+          const index = this.conversations.findIndex((c) => c.id === id)
+          if (index !== -1) {
+            this.conversations[index] = updated
+          }
+          if (this.activeConversationId === id) {
+            this.activeConversationId =
+              this.conversations.find((c) => c.status !== 'archived')?.id || null
+          }
+        }
+      } catch (error: unknown) {
+        const err = error as { message?: string }
+        this.error = err.message || '归档对话失败'
+        console.error('Failed to archive conversation:', error)
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * 恢复归档对话
+     */
+    async unarchiveConversation(id: string) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const updated = await conversationApi.restoreConversation(id)
+        if (updated) {
+          const index = this.conversations.findIndex((c) => c.id === id)
+          if (index !== -1) {
+            this.conversations[index] = updated
+          }
+        }
+      } catch (error: unknown) {
+        const err = error as { message?: string }
+        this.error = err.message || '恢复对话失败'
+        console.error('Failed to restore conversation:', error)
+      } finally {
+        this.loading = false
+      }
+    },
+
+    /**
+     * 发送消息（通过 WebSocket）
+     */
+    async sendMessage(content: string, attachments?: File[]) {
+      const ws = getWebSocket()
+
+      // 确保连接
+      if (!ws.isConnected) {
+        await ws.connect()
       }
 
-      // 如果有初始消息，添加到对话中
-      if (options?.initialMessage || template?.initialPrompt) {
-        const initialContent = options?.initialMessage || template!.initialPrompt
-        conversation.messages.push({
-          id: `msg-${Date.now()}`,
+      // 确保有活动对话
+      let conversationId = this.activeConversationId
+      if (!conversationId) {
+        const newConv = await this.createConversation({ title: content.slice(0, 50) })
+        if (newConv) {
+          conversationId = newConv.id
+        } else {
+          return
+        }
+      }
+
+      // 添加用户消息到本地
+      const conversation = this.conversations.find((c) => c.id === conversationId)
+      if (conversation) {
+        const userMessage: ChatMessage = {
+          id: `msg-local-${Date.now()}`,
+          conversationId,
           role: 'user',
-          content: initialContent,
-          timestamp: Date.now()
-        })
-      }
-
-      this.conversations.unshift(conversation)
-      this.activeConversationId = conversation.id
-
-      return conversation
-    },
-
-    // 删除对话
-    deleteConversation(id: string) {
-      const index = this.conversations.findIndex((c) => c.id === id)
-      if (index > -1) {
-        this.conversations.splice(index, 1)
-        if (this.activeConversationId === id) {
-          this.activeConversationId = this.conversations[0]?.id || null
-        }
-      }
-    },
-
-    // 归档对话
-    archiveConversation(id: string) {
-      const conversation = this.conversations.find((c) => c.id === id)
-      if (conversation) {
-        conversation.isArchived = true
-        if (this.activeConversationId === id) {
-          this.activeConversationId = this.conversations.find((c) => !c.isArchived)?.id || null
-        }
-      }
-    },
-
-    // 恢复归档对话
-    unarchiveConversation(id: string) {
-      const conversation = this.conversations.find((c) => c.id === id)
-      if (conversation) {
-        conversation.isArchived = false
-      }
-    },
-
-    // 添加消息
-    addMessage(conversationId: string, message: Omit<ChatMessage, 'id' | 'timestamp'>) {
-      const conversation = this.conversations.find((c) => c.id === conversationId)
-      if (conversation) {
-        const newMessage: ChatMessage = {
-          ...message,
-          id: `msg-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+          content,
           timestamp: Date.now()
         }
-        conversation.messages.push(newMessage)
+        if (!conversation.messages) {
+          conversation.messages = []
+        }
+        conversation.messages.push(userMessage)
         conversation.updatedAt = Date.now()
-
-        // 如果是第一条用户消息，更新标题
-        if (
-          message.role === 'user' &&
-          conversation.messages.filter((m) => m.role === 'user').length === 1
-        ) {
-          conversation.title =
-            message.content.slice(0, 50) + (message.content.length > 50 ? '...' : '')
-        }
-
-        return newMessage
       }
-      return null
+
+      // 发送到 WebSocket
+      ws.sendChat({
+        message: content,
+        conversation_id: conversationId,
+        attachments
+      })
     },
 
-    // 更新消息
-    updateMessage(conversationId: string, messageId: string, updates: Partial<ChatMessage>) {
-      const conversation = this.conversations.find((c) => c.id === conversationId)
-      if (conversation) {
-        const message = conversation.messages.find((m) => m.id === messageId)
-        if (message) {
-          Object.assign(message, updates)
-          conversation.updatedAt = Date.now()
+    /**
+     * 处理流式响应
+     */
+    handleStreamResponse(data: StreamResponseData) {
+      const conversation = this.conversations.find((c) => c.id === data.conversation_id)
+      if (!conversation) return
+
+      // 找到或创建 AI 消息
+      let aiMessage = conversation.messages?.find((m) => m.id === data.message_id)
+      if (!aiMessage) {
+        aiMessage = {
+          id: data.message_id || `msg-ai-${Date.now()}`,
+          conversationId: data.conversation_id!,
+          role: 'assistant',
+          content: '',
+          timestamp: Date.now()
         }
+        if (!conversation.messages) {
+          conversation.messages = []
+        }
+        conversation.messages.push(aiMessage)
       }
+
+      // 追加内容
+      if (aiMessage) {
+        aiMessage.content += data.delta
+      }
+
+      // 如果完成，添加组件
+      if (data.done && data.component && aiMessage) {
+        aiMessage.components = [data.component as any]
+      }
+
+      conversation.updatedAt = Date.now()
     },
 
-    // 删除消息
-    deleteMessage(conversationId: string, messageId: string) {
-      const conversation = this.conversations.find((c) => c.id === conversationId)
-      if (conversation) {
-        const index = conversation.messages.findIndex((m) => m.id === messageId)
-        if (index > -1) {
-          conversation.messages.splice(index, 1)
-          conversation.updatedAt = Date.now()
-        }
-      }
+    /**
+     * 初始化 WebSocket 连接
+     */
+    async initWebSocket() {
+      const ws = getWebSocket()
+
+      // 设置事件处理器
+      ws.on('connected', () => {
+        this.wsConnected = true
+      })
+
+      ws.on('disconnected', () => {
+        this.wsConnected = false
+      })
+
+      ws.on('stream', (data: StreamResponseData) => {
+        this.handleStreamResponse(data)
+      })
+
+      ws.on('error', (error: unknown) => {
+        console.error('WebSocket error:', error)
+        this.error = '连接错误'
+      })
+
+      // 连接
+      await ws.connect()
     },
 
-    // 设置活动对话
+    /**
+     * 设置活动对话
+     */
     setActiveConversation(id: string | null) {
       this.activeConversationId = id
     },
 
-    // 更新对话标题
-    updateConversationTitle(id: string, title: string) {
-      const conversation = this.conversations.find((c) => c.id === id)
-      if (conversation) {
-        conversation.title = title
-        conversation.updatedAt = Date.now()
+    /**
+     * 更新对话标题
+     */
+    async updateConversationTitle(id: string, title: string) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const updated = await conversationApi.renameConversation(id, title)
+        if (updated) {
+          const index = this.conversations.findIndex((c) => c.id === id)
+          if (index !== -1) {
+            this.conversations[index] = updated
+          }
+        }
+      } catch (error: unknown) {
+        const err = error as { message?: string }
+        this.error = err.message || '更新标题失败'
+        console.error('Failed to update title:', error)
+      } finally {
+        this.loading = false
       }
     },
 
-    // 设置搜索查询
+    /**
+     * 设置搜索查询
+     */
     setSearchQuery(query: string) {
       this.searchQuery = query
     },
 
-    // 设置加载状态
+    /**
+     * 设置加载状态
+     */
     setLoading(loading: boolean) {
       this.loading = loading
     },
 
-    // 清空所有对话
+    /**
+     * 清空所有对话
+     */
     clearAllConversations() {
       this.conversations = []
       this.activeConversationId = null
     },
 
-    // 清空归档对话
+    /**
+     * 清空归档对话
+     */
     clearArchivedConversations() {
-      this.conversations = this.conversations.filter((c) => !c.isArchived)
+      this.conversations = this.conversations.filter((c) => c.status !== 'archived')
+    },
+
+    /**
+     * 添加消息到对话
+     */
+    addMessage(conversationId: string, message: Partial<ChatMessage>) {
+      const conversation = this.conversations.find((c) => c.id === conversationId)
+      if (conversation) {
+        const newMessage: ChatMessage = {
+          id: message.id || `msg-${Date.now()}`,
+          role: message.role || 'user',
+          content: message.content || '',
+          timestamp: message.timestamp || Date.now(),
+          ...message
+        }
+        if (!conversation.messages) {
+          conversation.messages = []
+        }
+        conversation.messages.push(newMessage)
+        conversation.updatedAt = Date.now()
+      }
     }
   },
 
   persist: {
     key: 'smart-link-explore',
-    paths: ['conversations', 'activeConversationId']
+    paths: ['activeConversationId', 'pagination']
   }
 })

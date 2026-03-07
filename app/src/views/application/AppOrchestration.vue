@@ -165,10 +165,11 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, onMounted, onUnmounted } from 'vue'
-  import { useRouter } from 'vue-router'
+  import { computed, onMounted, onUnmounted, ref } from 'vue'
+  import { useRouter, useRoute } from 'vue-router'
   import { useI18n } from 'vue-i18n'
   import { useOrchestratorStore } from '@/store/modules/orchestrator'
+  import { useApplicationStore } from '@/store/modules/application'
   import { useAIStore } from '@/store/modules/ai'
   import ComponentLibrary from '@/components/orchestrator/ComponentLibrary.vue'
   import DesignCanvas from '@/components/orchestrator/DesignCanvas.vue'
@@ -177,9 +178,24 @@
   import AIChatPanel from '@/components/ai/AIChatPanel.vue'
 
   const router = useRouter()
+  const route = useRoute()
   const { t } = useI18n()
   const store = useOrchestratorStore()
+  const appStore = useApplicationStore()
   const aiStore = useAIStore()
+
+  // Track if this is a create flow from wizard
+  const isCreateMode = ref(false)
+  const isEditMode = ref(false)
+  const appId = ref<string | null>(null)
+  const saving = ref(false)
+  const wizardData = ref<{
+    name?: string
+    type?: string
+    icon?: string
+    tags?: string[]
+    ai?: boolean
+  }>({})
 
   // 计算属性
   const mode = computed({
@@ -196,9 +212,16 @@
   const aiPanelVisible = computed(() => aiStore.panelVisible)
   const aiPanelWidth = computed(() => aiStore.panelWidth)
 
-  // 返回列表
+  // 返回 - 根据来源返回不同页面
   function handleBack() {
-    router.push('/app/application/design')
+    if (isCreateMode.value) {
+      // Return to wizard with confirmation
+      if (confirm(t('common.confirm') + ' - ' + t('application.wizard.nav.cancel') + '?')) {
+        router.push('/app/application/design/wizard')
+      }
+    } else {
+      router.push('/app/application/design')
+    }
   }
 
   // 撤销
@@ -211,10 +234,45 @@
     store.redo()
   }
 
-  // 保存
-  function handleSave() {
-    // TODO: 调用保存API
-    console.log('保存Schema:', store.currentSchema)
+  // 保存 - 支持返回向导完成流程
+  async function handleSave() {
+    const schema = store.currentSchema
+
+    if (saving.value) return
+    saving.value = true
+
+    try {
+      if (isCreateMode.value && schema) {
+        // 创建新应用
+        const newApp = await appStore.createApp({
+          name: wizardData.value.name || t('application.untitled'),
+          description: '',
+          type: (wizardData.value.type as any) || 'custom',
+          icon: wizardData.value.icon || 'app',
+          schema: schema
+        })
+
+        if (newApp) {
+          // Save schema to session storage for wizard to pick up
+          sessionStorage.setItem('temp_schema', JSON.stringify(schema))
+          sessionStorage.setItem('temp_app_id', newApp.id)
+          // Navigate back to wizard publish step
+          router.push('/app/application/design/wizard')
+        }
+      } else if (isEditMode.value && appId.value && schema) {
+        // 更新现有应用
+        await appStore.updateApp(appId.value, { schema })
+      } else {
+        // 通用保存 - 仅保存 schema 到 sessionStorage
+        console.log('保存Schema:', schema)
+        sessionStorage.setItem('temp_schema', JSON.stringify(schema))
+      }
+    } catch (error) {
+      console.error('Save failed:', error)
+      alert(t('application.save.failed'))
+    } finally {
+      saving.value = false
+    }
   }
 
   // 切换AI面板
@@ -251,9 +309,42 @@
   }
 
   // 生命周期
-  onMounted(() => {
-    // 初始化Schema
-    store.initSchema()
+  onMounted(async () => {
+    // Check if coming from wizard create flow
+    const query = route.query
+    if (query.mode === 'create') {
+      isCreateMode.value = true
+      wizardData.value = {
+        name: query.name as string,
+        type: query.type as string,
+        icon: query.icon as string,
+        tags: query.tags ? (query.tags as string).split(',').filter(Boolean) : [],
+        ai: query.ai === 'true'
+      }
+
+      // If AI mode, auto-open AI panel
+      if (wizardData.value.ai) {
+        aiStore.setPanelVisible(true)
+      }
+    }
+
+    // Check if editing existing application
+    const editAppId = route.params.id as string
+    if (editAppId && editAppId !== 'create') {
+      isEditMode.value = true
+      appId.value = editAppId
+
+      // Load application data
+      const app = await appStore.fetchApplication(editAppId)
+      if (app?.schema) {
+        // Initialize editor with existing schema
+        store.initSchema(app.schema)
+      }
+    } else {
+      // 初始化空 Schema
+      store.initSchema()
+    }
+
     // 注册快捷键
     window.addEventListener('keydown', handleKeyDown)
   })

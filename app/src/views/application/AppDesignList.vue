@@ -267,12 +267,12 @@
 
   // 新建应用
   function handleCreate() {
-    router.push('/app/application/design/create')
+    router.push('/app/application/design/wizard')
   }
 
   // 编辑应用
   function handleEdit(app: Application) {
-    router.push(`/app/application/design/edit/${app.id}`)
+    router.push(`/app/application/design/wizard/${app.id}`)
   }
 
   // 复制应用
