@@ -13,6 +13,16 @@ const routes: RouteRecordRaw[] = [
     } as RouteMeta
   },
   {
+    path: '/app/agent/run/:id',
+    name: 'AgentRunner',
+    component: () => import('@/views/agent/AgentRunner.vue'),
+    meta: {
+      title: '智能体运行',
+      titleKey: 'route.agentRunner',
+      hidden: true
+    } as RouteMeta
+  },
+  {
     path: '/app',
     component: () => import('@/components/layout/AppLayout.vue'),
     redirect: '/app/explore',

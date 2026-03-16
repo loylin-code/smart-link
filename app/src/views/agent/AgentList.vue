@@ -464,7 +464,7 @@
   }
 
   function handleRun(agent: Agent) {
-    router.push(`/app/agent/runtime/${agent.id}`)
+    router.push(`/app/agent/run/${agent.id}`)
   }
 
   async function handleToggle(agent: Agent) {
@@ -477,7 +477,7 @@
 
   function handleShare(agent: Agent) {
     // 复制分享链接到剪贴板
-    const shareUrl = `${window.location.origin}/app/agent/runtime/${agent.id}`
+    const shareUrl = `${window.location.origin}/app/agent/run/${agent.id}`
     navigator.clipboard.writeText(shareUrl).then(() => {
       // 可以添加提示消息
       console.log('Share link copied:', shareUrl)
