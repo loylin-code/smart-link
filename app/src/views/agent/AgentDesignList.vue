@@ -43,22 +43,22 @@
       </button>
       <button
         class="filter-tag"
-        :class="{ active: filter.status === 'draft' }"
-        @click="filter.status = 'draft'"
+        :class="{ active: filter.status === AgentStatus.DRAFT }"
+        @click="filter.status = AgentStatus.DRAFT"
       >
         <span class="tag-label">{{ t('agent.status.draft') }}</span>
       </button>
       <button
         class="filter-tag"
-        :class="{ active: filter.status === 'active' }"
-        @click="filter.status = 'active'"
+        :class="{ active: filter.status === AgentStatus.ACTIVE }"
+        @click="filter.status = AgentStatus.ACTIVE"
       >
         <span class="tag-label">{{ t('agent.status.active') }}</span>
       </button>
       <button
         class="filter-tag"
-        :class="{ active: filter.status === 'paused' }"
-        @click="filter.status = 'paused'"
+        :class="{ active: filter.status === AgentStatus.PAUSED }"
+        @click="filter.status = AgentStatus.PAUSED"
       >
         <span class="tag-label">{{ t('agent.status.paused') }}</span>
       </button>
