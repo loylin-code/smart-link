@@ -750,6 +750,8 @@
     cursor: pointer;
     transition: all 0.2s ease;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 
     &:hover {
       border-color: $primary-color;
@@ -944,19 +946,33 @@
     display: flex;
     align-items: center;
     padding: $spacing-md $spacing-lg;
-    background: $bg-secondary;
+    background: linear-gradient(180deg, $bg-secondary 0%, rgba($bg-tertiary, 0.6) 100%);
     border-top: 1px solid $border-color-lighter;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.03);
+    margin-top: auto;
   }
 
   .stats-item {
     flex: 1;
     text-align: center;
+    padding: $spacing-sm $spacing-xs;
+    margin: 0 $spacing-xs;
+    background: rgba($bg-primary, 0.7);
+    border-radius: $border-radius-md;
+    border: 1px solid $border-color-lighter;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba($bg-primary, 0.9);
+      box-shadow: $shadow-sm;
+    }
   }
 
   .stats-divider {
     width: 1px;
-    height: 32px;
-    background: $border-color-base;
+    height: 24px;
+    background: linear-gradient(180deg, transparent 0%, $border-color-base 50%, transparent 100%);
+    opacity: 0.6;
   }
 
   .stats-value {
