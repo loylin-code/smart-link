@@ -488,8 +488,8 @@
     gap: 2px;
   }
 
-  .agent-name {
-    font-size: $font-size-lg;
+  .agent-meta h1.agent-name {
+    font-size: $font-size-lg !important;
     font-weight: $font-weight-semibold;
     color: $text-primary;
     margin: 0;

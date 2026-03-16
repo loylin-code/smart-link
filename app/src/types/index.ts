@@ -32,7 +32,17 @@ export interface MessageAttachment {
 // 动态组件类型（用于聊天消息中的动态组件渲染）
 export interface ChatComponent {
   id: string
-  type: 'stats-card' | 'form' | 'chart' | 'table' | 'list' | 'code' | 'image'
+  type:
+    | 'stats-card'
+    | 'form'
+    | 'chart'
+    | 'table'
+    | 'list'
+    | 'code'
+    | 'image'
+    | 'confirm'
+    | 'trend-analysis'
+    | 'data-summary'
   props: Record<string, any>
   events?: Record<string, string>
 }

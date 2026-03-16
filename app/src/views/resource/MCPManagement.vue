@@ -6,6 +6,19 @@
         <h1 class="page-title">{{ t('resource.mcpManagement') }}</h1>
         <span class="page-desc">{{ t('resource.mcpDescription') }}</span>
       </div>
+      <div class="header-right">
+        <button class="create-btn" @click="handleAddServer">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 5v14M5 12h14"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+          <span>{{ t('mcp.addServer') }}</span>
+        </button>
+      </div>
     </div>
 
     <!-- 筛选标签 -->
@@ -17,7 +30,6 @@
           @click="setStatusFilter(undefined)"
         >
           <span class="tag-label">{{ t('common.all') }}</span>
-          <span class="tag-count">{{ mcpStore.stats.total }}</span>
         </button>
         <button
           :class="['filter-tag', { active: statusFilter === 'connected' }]"
@@ -25,7 +37,6 @@
         >
           <span class="status-dot status-dot--connected"></span>
           <span class="tag-label">{{ t('mcp.status.connected') }}</span>
-          <span class="tag-count">{{ mcpStore.stats.connected }}</span>
         </button>
         <button
           :class="['filter-tag', { active: statusFilter === 'connecting' }]"
@@ -33,7 +44,6 @@
         >
           <span class="status-dot status-dot--connecting"></span>
           <span class="tag-label">{{ t('mcp.status.connecting') }}</span>
-          <span class="tag-count">{{ mcpStore.stats.connecting }}</span>
         </button>
         <button
           :class="['filter-tag', { active: statusFilter === 'disconnected' }]"
@@ -41,7 +51,6 @@
         >
           <span class="status-dot status-dot--disconnected"></span>
           <span class="tag-label">{{ t('mcp.status.disconnected') }}</span>
-          <span class="tag-count">{{ mcpStore.serversByStatus.disconnected.length }}</span>
         </button>
       </div>
 
@@ -309,6 +318,11 @@
       }
     }
   }
+
+  const handleAddServer = () => {
+    // TODO: 打开添加服务器对话框
+    console.log('Add new MCP server')
+  }
 </script>
 
 <style scoped lang="scss">
@@ -340,21 +354,61 @@
   // 页面头部
   // ================================
   .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: $spacing-lg;
     margin-bottom: $spacing-xl;
   }
 
   .header-left {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+
     .page-title {
       font-size: $font-size-3xl;
       font-weight: $font-weight-bold;
       color: $text-primary;
-      margin: 0 0 $spacing-xs 0;
+      margin: 0;
+      text-align: left;
     }
 
     .page-desc {
       font-size: $font-size-sm;
       color: $text-tertiary;
       margin: 0;
+      text-align: left;
+    }
+  }
+
+  .header-right {
+    flex-shrink: 0;
+  }
+
+  .create-btn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-sm $spacing-lg;
+    background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
+    border: none;
+    border-radius: $border-radius-lg;
+    color: #fff;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
     }
   }
 
@@ -765,6 +819,21 @@
   @media (max-width: 768px) {
     .mcp-management {
       padding: $spacing-md;
+    }
+
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-md;
+
+      .header-right {
+        width: 100%;
+
+        .create-btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
     }
 
     .section-header {

@@ -1,83 +1,92 @@
 <template>
   <div class="data-model-list">
-    <!-- 左侧分类树 -->
-    <aside class="category-sidebar">
-      <div class="sidebar-header">
-        <span class="sidebar-title">{{ t('datamodel.categoryTitle') }}</span>
+    <!-- 页面头部 - 放在最上方 -->
+    <header class="page-header">
+      <div class="header-left">
+        <h1 class="page-title">{{ t('datamodel.title') }}</h1>
+        <span class="page-desc">{{ t('datamodel.pageDesc') }}</span>
       </div>
-
-      <div class="category-list">
-        <button
-          v-for="cat in categories"
-          :key="cat.id"
-          :class="['category-item', { active: selectedCategory === cat.id }]"
-          @click="selectCategory(cat.id)"
-        >
-          <span class="category-icon">{{ cat.icon }}</span>
-          <span class="category-name">{{ cat.name }}</span>
-          <span class="category-count">{{ getCategoryModelCount(cat.id) }}</span>
-        </button>
-      </div>
-
-      <div class="sidebar-footer">
-        <button class="new-category-btn" @click="showNewCategoryDialog = true">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path
-              d="M12 5V19M5 12H19"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-          {{ t('datamodel.newCategory') }}
-        </button>
-      </div>
-    </aside>
-
-    <!-- 右侧内容区 -->
-    <main class="main-content">
-      <!-- 页面头部 -->
-      <header class="page-header">
-        <div class="header-left">
-          <h1 class="page-title">{{ t('datamodel.title') }}</h1>
-          <span class="page-desc">{{ t('datamodel.description') }}</span>
-        </div>
+      <div class="header-right">
         <button class="create-btn" @click="showCreateDialog = true">
           <svg viewBox="0 0 24 24" fill="none">
             <path
-              d="M12 5V19M5 12H19"
+              d="M12 5v14M5 12h14"
               stroke="currentColor"
               stroke-width="2"
               stroke-linecap="round"
-              stroke-linejoin="round"
             />
           </svg>
           <span>{{ t('datamodel.createModel') }}</span>
         </button>
-      </header>
+      </div>
+    </header>
 
-      <!-- 搜索和筛选 -->
-      <div class="filter-section">
-        <div class="search-box">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none">
-            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
-            <path
-              d="M21 21l-4.35-4.35"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
-          </svg>
-          <input
-            v-model="searchKeyword"
-            type="text"
-            class="search-input"
-            :placeholder="t('datamodel.searchPlaceholder')"
-            @input="handleSearch"
-          />
+    <!-- 下方内容区 -->
+    <div class="content-area">
+      <!-- 左侧分类树 -->
+      <aside class="category-sidebar">
+        <div class="sidebar-header">
+          <span class="sidebar-title">{{ t('datamodel.categoryTitle') }}</span>
         </div>
 
+        <div class="category-list">
+          <button
+            v-for="cat in categories"
+            :key="cat.id"
+            :class="['category-item', { active: selectedCategory === cat.id }]"
+            @click="selectCategory(cat.id)"
+          >
+            <span class="category-icon">{{ cat.icon }}</span>
+            <span class="category-name">{{ cat.name }}</span>
+            <span class="category-count">{{ getCategoryModelCount(cat.id) }}</span>
+          </button>
+        </div>
+
+        <div class="sidebar-footer">
+          <button class="new-category-btn" @click="showNewCategoryDialog = true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 5V19M5 12H19"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            {{ t('datamodel.newCategory') }}
+          </button>
+        </div>
+      </aside>
+
+      <!-- 右侧内容区 -->
+      <main class="main-content">
+        <!-- 列表标题 + 搜索框 -->
+        <div class="section-header">
+          <h2 class="section-title">
+            {{ t('datamodel.modelList')
+            }}<span class="title-count">({{ filteredModels.length }})</span>
+          </h2>
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none">
+              <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+              <path
+                d="M21 21l-4.35-4.35"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+            <input
+              v-model="searchKeyword"
+              type="text"
+              class="search-input"
+              :placeholder="t('datamodel.searchPlaceholder')"
+              @input="handleSearch"
+            />
+          </div>
+        </div>
+
+        <!-- 筛选标签 -->
         <div class="filter-tags">
           <button
             :class="['filter-tag', { active: typeFilter === undefined }]"
@@ -97,109 +106,123 @@
             <span class="tag-count">{{ getTypeCount(type.value) }}</span>
           </button>
         </div>
-      </div>
 
-      <!-- 模型卡片网格 -->
-      <div v-if="displayModels.length" class="model-grid">
-        <div
-          v-for="model in displayModels"
-          :key="model.id"
-          class="model-card"
-          @click="openDetail(model)"
-        >
-          <div class="card-icon">📄</div>
-          <h3 class="card-name">{{ model.displayName }}</h3>
-          <div class="card-meta">
-            <span class="model-type">{{ getModelTypeLabel(model.type) }}</span>
-            <span class="version">v{{ model.version }}</span>
-          </div>
-          <div class="card-stats">
-            <div class="stat-row">
-              <span class="stat-label">{{ t('datamodel.fieldCount') }}:</span>
-              <span class="stat-value">{{ model.fields.length }} {{ t('datamodel.fields') }}</span>
+        <!-- 模型卡片网格 -->
+        <div v-if="displayModels.length" class="model-grid">
+          <div
+            v-for="model in displayModels"
+            :key="model.id"
+            class="model-card"
+            @click="openDetail(model)"
+          >
+            <div class="card-header">
+              <div class="card-icon">{{ getModelTypeIcon(model.type) }}</div>
+              <div class="card-header-info">
+                <h3 class="card-name">{{ model.displayName }}</h3>
+                <div class="card-tags">
+                  <span class="model-type">{{ getModelTypeLabel(model.type) }}</span>
+                  <span class="version">v{{ model.version }}</span>
+                </div>
+              </div>
             </div>
-            <div class="stat-row">
-              <span class="stat-label">{{ t('datamodel.relationCount') }}:</span>
-              <span class="stat-value"
-                >{{ model.relations.length }} {{ t('datamodel.models') }}</span
+            <div class="card-stats">
+              <div class="stat-row">
+                <span class="stat-label">{{ t('datamodel.fieldCount') }}:</span>
+                <span class="stat-value"
+                  >{{ model.fields.length }} {{ t('datamodel.fields') }}</span
+                >
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">{{ t('datamodel.relationCount') }}:</span>
+                <span class="stat-value"
+                  >{{ model.relations.length }} {{ t('datamodel.models') }}</span
+                >
+              </div>
+            </div>
+            <div class="card-footer">
+              <span class="update-time"
+                >{{ t('datamodel.updated') }}: {{ formatTime(model.updatedAt) }}</span
               >
             </div>
+
+            <!-- 悬浮操作按钮 -->
+            <div class="card-actions" @click.stop>
+              <button class="action-btn primary" @click="openDetail(model)">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+                <span>{{ t('common.edit') }}</span>
+              </button>
+              <button class="action-btn" @click="handleDelete(model)" :title="t('common.delete')">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
-          <div class="card-footer">
-            <span class="update-time"
-              >{{ t('datamodel.updated') }}: {{ formatTime(model.updatedAt) }}</span
+        </div>
+
+        <!-- 空状态 -->
+        <div v-else class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
+            <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
+            <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
+            <rect
+              x="14"
+              y="14"
+              width="7"
+              height="7"
+              rx="1"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+          </svg>
+          <p>{{ t('datamodel.noModels') }}</p>
+        </div>
+
+        <!-- 分页 -->
+        <div v-if="displayModels.length" class="pagination">
+          <span class="pagination-info">
+            {{ t('datamodel.showing') }} {{ paginationStart }}-{{ paginationEnd }} /
+            {{ t('datamodel.total') }} {{ totalCount }} {{ t('datamodel.items') }}
+          </span>
+          <div class="pagination-controls">
+            <button class="page-btn" :disabled="currentPage === 1" @click="currentPage--">
+              &lt;
+            </button>
+            <button
+              v-for="page in visiblePages"
+              :key="page"
+              :class="['page-btn', { active: currentPage === page }]"
+              @click="currentPage = page"
             >
-          </div>
-
-          <!-- 悬浮操作按钮 -->
-          <div class="card-actions" @click.stop>
-            <button class="action-btn primary" @click="openDetail(model)">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-                <path
-                  d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-              </svg>
-              <span>{{ t('common.edit') }}</span>
+              {{ page }}
             </button>
-            <button class="action-btn" @click="handleDelete(model)" :title="t('common.delete')">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
+            <button class="page-btn" :disabled="currentPage === totalPages" @click="currentPage++">
+              &gt;
             </button>
           </div>
         </div>
-      </div>
-
-      <!-- 空状态 -->
-      <div v-else class="empty-state">
-        <svg viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
-          <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
-          <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
-          <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
-        </svg>
-        <p>{{ t('datamodel.noModels') }}</p>
-      </div>
-
-      <!-- 分页 -->
-      <div v-if="displayModels.length" class="pagination">
-        <span class="pagination-info">
-          {{ t('datamodel.showing') }} {{ paginationStart }}-{{ paginationEnd }} /
-          {{ t('datamodel.total') }} {{ totalCount }} {{ t('datamodel.items') }}
-        </span>
-        <div class="pagination-controls">
-          <button class="page-btn" :disabled="currentPage === 1" @click="currentPage--">
-            &lt;
-          </button>
-          <button
-            v-for="page in visiblePages"
-            :key="page"
-            :class="['page-btn', { active: currentPage === page }]"
-            @click="currentPage = page"
-          >
-            {{ page }}
-          </button>
-          <button class="page-btn" :disabled="currentPage === totalPages" @click="currentPage++">
-            &gt;
-          </button>
-        </div>
-      </div>
-    </main>
+      </main>
+    </div>
 
     <!-- 创建模型弹窗 -->
     <div v-if="showCreateDialog" class="dialog-overlay" @click.self="showCreateDialog = false">
@@ -473,6 +496,11 @@
     return found?.label || type
   }
 
+  const getModelTypeIcon = (type: DataModelType): string => {
+    const found = modelTypes.find((t) => t.value === type)
+    return found?.icon || '📄'
+  }
+
   const formatTime = (timestamp: number): string => {
     const now = Date.now()
     const diff = now - timestamp
@@ -549,30 +577,106 @@
 <style scoped lang="scss">
   .data-model-list {
     display: flex;
+    flex-direction: column;
     height: 100%;
     overflow: hidden;
+    background: $bg-secondary;
+  }
+
+  // ================================
+  // 页面头部
+  // ================================
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: $spacing-lg;
+    padding: $spacing-xl $spacing-xl 0;
+  }
+
+  .header-left {
+    flex: 1;
+
+    .page-title {
+      display: block;
+      font-size: $font-size-3xl;
+      font-weight: $font-weight-bold;
+      color: $text-primary;
+      margin: 0 0 $spacing-xs 0;
+      text-align: left;
+    }
+
+    .page-desc {
+      display: block;
+      font-size: $font-size-sm;
+      color: $text-tertiary;
+      margin: 0;
+      text-align: left;
+    }
+  }
+
+  .header-right {
+    flex-shrink: 0;
+  }
+
+  .create-btn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-sm $spacing-lg;
+    background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
+    border: none;
+    border-radius: $border-radius-lg;
+    color: #fff;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+    }
+  }
+
+  // ================================
+  // 下方内容区
+  // ================================
+  .content-area {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    padding: $spacing-xl;
+    padding-top: $spacing-lg;
   }
 
   // 左侧分类树
   .category-sidebar {
     width: 240px;
     flex-shrink: 0;
-    background: $bg-secondary;
-    border-right: 1px solid $border-color-light;
+    background: $bg-primary;
+    border: 1px solid $border-color-light;
+    border-radius: $border-radius-lg;
     display: flex;
     flex-direction: column;
   }
 
   .sidebar-header {
-    padding: $spacing-lg $spacing-lg $spacing-sm;
+    padding: $spacing-lg;
+    padding-bottom: $spacing-md;
   }
 
   .sidebar-title {
-    font-size: $font-size-sm;
+    font-size: $font-size-lg;
     font-weight: $font-weight-semibold;
-    color: $text-secondary;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    color: $text-primary;
+    margin: 0;
   }
 
   .category-list {
@@ -667,76 +771,46 @@
   // ================================
   .main-content {
     flex: 1;
-    padding: $spacing-xl;
-    background: $bg-secondary;
+    padding: 0;
+    background: $bg-primary;
+    border: 1px solid $border-color-light;
+    border-radius: $border-radius-lg;
     overflow-y: auto;
+    margin-left: $spacing-lg;
   }
 
-  .page-header {
+  // ================================
+  // 列表标题 + 搜索框
+  // ================================
+  .section-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: $spacing-lg;
+    justify-content: space-between;
+    gap: $spacing-lg;
+    padding: $spacing-lg;
+    padding-bottom: $spacing-md;
   }
 
-  .header-left {
+  .section-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+    margin: 0;
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: $spacing-xs;
 
-    .page-title {
-      font-size: $font-size-2xl;
-      font-weight: $font-weight-bold;
-      color: $text-primary;
-      margin: 0;
-    }
-
-    .page-desc {
-      font-size: $font-size-sm;
+    .title-count {
+      font-size: $font-size-base;
+      font-weight: $font-weight-normal;
       color: $text-tertiary;
-      margin: 0;
     }
   }
 
-  .create-btn {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-    padding: $spacing-sm $spacing-lg;
-    background: $primary-color;
-    border: 1px solid $primary-color;
-    border-radius: $border-radius-md;
-    color: #fff;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    cursor: pointer;
-    transition: all $transition-base ease;
-
-    svg {
-      width: 20px;
-      height: 20px;
-    }
-
-    &:hover {
-      background: $primary-light;
-      border-color: $primary-light;
-    }
-  }
-
-  // ================================
-  // 搜索和筛选
-  // ================================
-  .filter-section {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-md;
-    margin-bottom: $spacing-lg;
-  }
-
-  .search-box {
+  .section-header .search-box {
     position: relative;
-    width: 100%;
-    max-width: 500px;
+    width: 280px;
+    flex-shrink: 0;
   }
 
   .search-icon {
@@ -744,16 +818,17 @@
     left: $spacing-md;
     top: 50%;
     transform: translateY(-50%);
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     color: $text-tertiary;
     pointer-events: none;
   }
 
-  .search-input {
+  .section-header .search-input {
     width: 100%;
-    padding: $spacing-sm $spacing-md $spacing-sm 44px;
-    background: $bg-primary;
+    height: 40px;
+    padding: $spacing-sm $spacing-md $spacing-sm 40px;
+    background: $bg-secondary;
     border: 1px solid $border-color-base;
     border-radius: $border-radius-lg;
     font-size: $font-size-sm;
@@ -771,10 +846,14 @@
     }
   }
 
+  // ================================
+  // 筛选标签
+  // ================================
   .filter-tags {
     display: flex;
     flex-wrap: wrap;
     gap: $spacing-sm;
+    padding: 0 $spacing-lg $spacing-md;
   }
 
   .filter-tag {
@@ -782,7 +861,7 @@
     align-items: center;
     gap: 6px;
     padding: $spacing-xs $spacing-md;
-    background: $bg-primary;
+    background: $bg-secondary;
     border: 1px solid transparent;
     border-radius: $border-radius-full;
     font-size: $font-size-sm;
@@ -832,13 +911,14 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: $spacing-lg;
-    margin-bottom: $spacing-xl;
+    padding: $spacing-lg;
+    padding-top: 0;
   }
 
   .model-card {
     position: relative;
-    background: $bg-primary;
-    border: 1px solid $border-color-base;
+    background: $bg-secondary;
+    border: 1px solid $border-color-light;
     border-radius: $border-radius-lg;
     padding: $spacing-lg;
     cursor: pointer;
@@ -856,28 +936,42 @@
     }
   }
 
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-md;
+    margin-bottom: $spacing-md;
+    padding-bottom: $spacing-md;
+    border-bottom: 1px solid $border-color-light;
+  }
+
   .card-icon {
-    font-size: 32px;
-    margin-bottom: $spacing-sm;
+    font-size: 36px;
+    flex-shrink: 0;
+  }
+
+  .card-header-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
 
   .card-name {
     font-size: $font-size-lg;
     font-weight: $font-weight-semibold;
     color: $text-primary;
-    margin: 0 0 $spacing-xs 0;
+    margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .card-meta {
+  .card-tags {
     display: flex;
     align-items: center;
     gap: $spacing-sm;
-    margin-bottom: $spacing-md;
-    padding-bottom: $spacing-md;
-    border-bottom: 1px solid $border-color-light;
   }
 
   .model-type {
@@ -1015,7 +1109,8 @@
     justify-content: center;
     align-items: center;
     gap: $spacing-xs;
-    margin-top: $spacing-xl;
+    padding: $spacing-lg;
+    padding-top: 0;
   }
 
   .pagination-info {
@@ -1033,7 +1128,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: $bg-primary;
+    background: $bg-secondary;
     border: 1px solid $border-color-base;
     border-radius: $border-radius-md;
     color: $text-secondary;
@@ -1264,15 +1359,15 @@
     }
 
     .model-card {
-      background: $bg-secondary;
+      background: $bg-tertiary;
     }
 
     .search-input {
-      background: $bg-secondary;
+      background: $bg-tertiary;
     }
 
     .filter-tag {
-      background: $bg-secondary;
+      background: $bg-tertiary;
 
       &.active {
         background: rgba(96, 165, 250, 0.15);
@@ -1290,7 +1385,7 @@
   }
 
   @media (max-width: 768px) {
-    .main-content {
+    .content-area {
       padding: $spacing-md;
     }
 
@@ -1306,7 +1401,7 @@
       opacity: 1;
       transform: translateY(0);
       position: static;
-      background: $bg-secondary;
+      background: $bg-tertiary;
       backdrop-filter: none;
       border-top: 1px solid $border-color-light;
       margin-top: $spacing-md;
@@ -1328,10 +1423,24 @@
       flex-direction: column;
       align-items: flex-start;
       gap: $spacing-md;
+      padding: $spacing-lg $spacing-md 0;
+    }
+
+    .header-right {
+      width: 100%;
+    }
+
+    .content-area {
+      flex-direction: column;
+      padding: $spacing-md;
     }
 
     .category-sidebar {
       display: none;
+    }
+
+    .main-content {
+      margin-left: 0;
     }
 
     .create-btn {

@@ -6,25 +6,88 @@
         <h1 class="page-title">{{ t('skills.title') }}</h1>
         <span class="page-desc">{{ t('skills.description') }}</span>
       </div>
+      <div class="header-right">
+        <button class="create-btn" @click="handleCreate">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 5v14M5 12h14"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+          <span>{{ t('skills.create') }}</span>
+        </button>
+      </div>
     </div>
 
-    <!-- 统计栏 -->
-    <div class="stats-bar">
-      <div class="stat-item">
-        <span class="stat-value">{{ skillsStore.stats.total }}</span>
-        <span class="stat-label">{{ t('skills.stats.total') }}</span>
+    <!-- 统计卡片 -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon total">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
+            <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
+            <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
+            <rect
+              x="14"
+              y="14"
+              width="7"
+              height="7"
+              rx="1"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+          </svg>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ skillsStore.stats.total }}</div>
+          <div class="stat-label">{{ t('skills.stats.total') }}</div>
+        </div>
       </div>
-      <div class="stat-item">
-        <span class="stat-value">{{ skillsStore.stats.enabled }}</span>
-        <span class="stat-label">{{ t('skills.stats.enabled') }}</span>
+      <div class="stat-card">
+        <div class="stat-icon enabled">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ skillsStore.stats.enabled }}</div>
+          <div class="stat-label">{{ t('skills.stats.enabled') }}</div>
+        </div>
       </div>
-      <div class="stat-item">
-        <span class="stat-value">{{ formatNumber(skillsStore.stats.totalCalls) }}</span>
-        <span class="stat-label">{{ t('skills.stats.totalCalls') }}</span>
+      <div class="stat-card">
+        <div class="stat-icon calls">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+          </svg>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatNumber(skillsStore.stats.totalCalls) }}</div>
+          <div class="stat-label">{{ t('skills.stats.totalCalls') }}</div>
+        </div>
       </div>
-      <div class="stat-item">
-        <span class="stat-value">{{ skillsStore.stats.avgSuccessRate }}%</span>
-        <span class="stat-label">{{ t('skills.stats.avgSuccessRate') }}</span>
+      <div class="stat-card">
+        <div class="stat-icon success">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+            <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ skillsStore.stats.avgSuccessRate }}%</div>
+          <div class="stat-label">{{ t('skills.stats.avgSuccessRate') }}</div>
+        </div>
       </div>
     </div>
 
@@ -35,7 +98,12 @@
         :key="cat.value"
         class="filter-tag"
         :class="{ active: categoryFilter === cat.value }"
-        @click="categoryFilter = cat.value; handleFilterChange()"
+        @click="
+          () => {
+            categoryFilter = cat.value
+            handleFilterChange()
+          }
+        "
       >
         <span v-if="cat.icon" class="tag-icon">{{ cat.icon }}</span>
         <span class="tag-label">{{ cat.label }}</span>
@@ -49,7 +117,12 @@
         :key="risk.value"
         class="filter-tag"
         :class="{ active: riskFilter === risk.value }"
-        @click="riskFilter = risk.value; handleFilterChange()"
+        @click="
+          () => {
+            riskFilter = risk.value
+            handleFilterChange()
+          }
+        "
       >
         <span v-if="risk.icon" class="tag-icon">{{ risk.icon }}</span>
         <span class="tag-label">{{ risk.label }}</span>
@@ -91,28 +164,18 @@
       >
         <!-- Card Header -->
         <div class="card-header">
-          <span class="status-indicator" :class="`status--${skill.status}`" />
-          <h3 class="skill-name" :title="skill.displayName">{{ skill.displayName }}</h3>
+          <div class="card-icon">{{ getCategoryIcon(skill.category) }}</div>
+          <div class="card-header-info">
+            <h3 class="card-name">{{ skill.displayName }}</h3>
+            <div class="card-tags">
+              <span class="model-type">{{ getCategoryLabel(skill.category) }}</span>
+              <span class="version">v{{ skill.version }}</span>
+            </div>
+          </div>
         </div>
 
-        <div class="card-divider" />
-
-        <!-- Category & Version -->
-        <div class="skill-meta">
-          <span class="category-badge">
-            <span class="category-icon">{{ getCategoryIcon(skill.category) }}</span>
-            {{ getCategoryLabel(skill.category) }}
-          </span>
-          <span class="version">· v{{ skill.version }}</span>
-        </div>
-
-        <!-- Author -->
-        <div class="skill-author">{{ t('skills.author') }}: {{ skill.author }}</div>
-
-        <div class="card-divider" />
-
-        <!-- Usage Stats -->
-        <div class="skill-stats">
+        <!-- Card Stats -->
+        <div class="card-stats">
           <div class="stat-row">
             <span class="stat-label">{{ t('skills.stats.calls') }}:</span>
             <span class="stat-value">{{ formatNumber(skill.stats.totalCalls) }}</span>
@@ -133,29 +196,58 @@
             <span class="stat-label">{{ t('skills.stats.avgDuration') }}:</span>
             <span class="stat-value">{{ skill.stats.avgDuration }}s</span>
           </div>
+          <div class="stat-row">
+            <span class="stat-label">{{ t('skills.risk.label') }}:</span>
+            <span class="stat-value risk-value" :class="`risk--${skill.riskLevel}`">
+              {{ getRiskLabel(skill.riskLevel, skill.requiresApproval) }}
+            </span>
+          </div>
         </div>
 
-        <!-- Risk Level -->
-        <div class="risk-badge" :class="`risk--${skill.riskLevel}`">
-          <span class="risk-indicator" />
-          <span class="risk-label">{{
-            getRiskLabel(skill.riskLevel, skill.requiresApproval)
-          }}</span>
+        <!-- Card Footer -->
+        <div class="card-footer">
+          <span class="status-dot" :class="`status--${skill.status}`" />
+          <span class="update-time">{{ t('skills.author') }}: {{ skill.author }}</span>
         </div>
 
-        <!-- Quick Actions -->
-        <div class="card-actions">
-          <button class="action-btn action-test" @click.stop="handleTest(skill)">
-            <span class="action-icon">▶</span>
+        <!-- 悬浮操作按钮 -->
+        <div class="card-actions" @click.stop>
+          <button class="action-btn primary" @click="handleTest(skill)">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M8 5v14l11-7L8 5z" fill="currentColor" />
+            </svg>
             <span>{{ t('skills.actions.test') }}</span>
           </button>
-          <button class="action-btn action-edit" @click.stop="handleEdit(skill)">
-            <span class="action-icon">✏️</span>
-            <span>{{ t('skills.actions.edit') }}</span>
+          <button class="action-btn" @click="handleEdit(skill)" :title="t('skills.actions.edit')">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+              <path
+                d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
           </button>
-          <button class="action-btn action-delete" @click.stop="handleDelete(skill)">
-            <span class="action-icon">🗑️</span>
-            <span>{{ t('skills.actions.delete') }}</span>
+          <button
+            class="action-btn"
+            @click="handleDelete(skill)"
+            :title="t('skills.actions.delete')"
+          >
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
           </button>
         </div>
       </div>
@@ -398,51 +490,154 @@
   // 页面头部
   // ================================
   .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: $spacing-lg;
     margin-bottom: $spacing-xl;
   }
 
   .header-left {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+
     .page-title {
       font-size: $font-size-3xl;
       font-weight: $font-weight-bold;
       color: $text-primary;
-      margin: 0 0 $spacing-xs 0;
+      margin: 0;
+      text-align: left;
     }
 
     .page-desc {
       font-size: $font-size-sm;
       color: $text-tertiary;
       margin: 0;
+      text-align: left;
+    }
+  }
+
+  .header-right {
+    flex-shrink: 0;
+  }
+
+  .create-btn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-sm $spacing-lg;
+    background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
+    border: none;
+    border-radius: $border-radius-lg;
+    color: #fff;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
     }
   }
 
   // ================================
-  // 统计栏
+  // 统计卡片
   // ================================
-  .stats-bar {
-    display: flex;
-    gap: $spacing-xl;
-    margin-bottom: $spacing-lg;
-    padding: $spacing-md $spacing-lg;
-    background: $bg-primary;
-    border-radius: $border-radius-md;
-    border: 1px solid $border-color-light;
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $spacing-lg;
+    margin-bottom: $spacing-xl;
   }
 
-  .stat-item {
+  .stat-card {
     display: flex;
-    flex-direction: column;
-    gap: $spacing-xs;
+    align-items: center;
+    gap: $spacing-md;
+    padding: $spacing-lg;
+    background: $bg-primary;
+    border-radius: $border-radius-lg;
+    border: 1px solid $border-color-base;
+    transition: all 0.2s ease;
 
+    &:hover {
+      border-color: $primary-color;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+      transform: translateY(-2px);
+    }
+  }
+
+  .stat-icon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $border-radius-lg;
+    flex-shrink: 0;
+
+    svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    &.total {
+      background: linear-gradient(
+        135deg,
+        rgba(59, 130, 246, 0.15) 0%,
+        rgba(139, 92, 246, 0.15) 100%
+      );
+      color: $primary-color;
+    }
+
+    &.enabled {
+      background: linear-gradient(
+        135deg,
+        rgba(16, 185, 129, 0.15) 0%,
+        rgba(52, 211, 153, 0.15) 100%
+      );
+      color: #10b981;
+    }
+
+    &.calls {
+      background: linear-gradient(
+        135deg,
+        rgba(245, 158, 11, 0.15) 0%,
+        rgba(251, 191, 36, 0.15) 100%
+      );
+      color: #f59e0b;
+    }
+
+    &.success {
+      background: linear-gradient(
+        135deg,
+        rgba(139, 92, 246, 0.15) 0%,
+        rgba(167, 139, 250, 0.15) 100%
+      );
+      color: #8b5cf6;
+    }
+  }
+
+  .stat-content {
     .stat-value {
-      font-size: $font-size-xl;
+      font-size: $font-size-2xl;
       font-weight: $font-weight-bold;
       color: $text-primary;
+      line-height: 1.2;
     }
 
     .stat-label {
-      font-size: $font-size-xs;
+      font-size: $font-size-sm;
       color: $text-tertiary;
+      margin-top: 4px;
     }
   }
 
@@ -557,37 +752,150 @@
   // ================================
   .skills-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: $spacing-lg;
     margin-bottom: $spacing-xl;
   }
 
   // Skill Card
   .skill-card {
-    background: $bg-secondary;
-    border: 1px solid $border-color-light;
+    position: relative;
+    background: $bg-primary;
+    border: 1px solid $border-color-base;
     border-radius: $border-radius-lg;
     padding: $spacing-lg;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all 0.2s ease;
+    overflow: hidden;
 
     &:hover {
       border-color: $primary-color;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(59, 130, 246, 0.12);
+
+      .card-actions {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   }
 
+  // ================================
+  // 卡片头部
+  // ================================
   .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-md;
+    margin-bottom: $spacing-md;
+    padding-bottom: $spacing-md;
+    border-bottom: 1px solid $border-color-light;
+  }
+
+  .card-icon {
+    font-size: 36px;
+    flex-shrink: 0;
+  }
+
+  .card-header-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .card-name {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .card-tags {
     display: flex;
     align-items: center;
     gap: $spacing-sm;
+  }
+
+  .model-type {
+    font-size: $font-size-xs;
+    color: $text-secondary;
+  }
+
+  .version {
+    font-size: $font-size-xs;
+    color: $primary-color;
+    background: rgba(59, 130, 246, 0.1);
+    padding: 2px 8px;
+    border-radius: $border-radius-full;
+  }
+
+  // ================================
+  // 卡片统计
+  // ================================
+  .card-stats {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
     margin-bottom: $spacing-md;
   }
 
-  .status-indicator {
-    width: 10px;
-    height: 10px;
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .stat-label {
+    font-size: $font-size-sm;
+    color: $text-secondary;
+  }
+
+  .stat-value {
+    font-size: $font-size-sm;
+    color: $text-primary;
+    font-weight: $font-weight-medium;
+
+    &.text-warning {
+      color: #faad14;
+    }
+
+    &.text-danger {
+      color: #f5222d;
+    }
+
+    &.risk-value {
+      &.risk--low {
+        color: #52c41a;
+      }
+
+      &.risk--medium {
+        color: #faad14;
+      }
+
+      &.risk--high {
+        color: #f5222d;
+      }
+    }
+  }
+
+  // ================================
+  // 卡片底部
+  // ================================
+  .card-footer {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    font-size: $font-size-xs;
+    color: $text-tertiary;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     flex-shrink: 0;
 
@@ -604,144 +912,27 @@
     }
   }
 
-  .skill-name {
-    font-size: $font-size-lg;
-    font-weight: $font-weight-semibold;
-    color: $text-primary;
-    margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .card-divider {
-    height: 1px;
-    background: $border-color-light;
-    margin: $spacing-md 0;
-  }
-
-  .skill-meta {
-    display: flex;
-    align-items: center;
-    gap: $spacing-xs;
-    margin-bottom: $spacing-sm;
-  }
-
-  .category-badge {
-    display: flex;
-    align-items: center;
-    gap: $spacing-xs;
-    font-size: $font-size-sm;
-    color: $text-secondary;
-
-    .category-icon {
-      font-size: 14px;
-    }
-  }
-
-  .version {
-    font-size: $font-size-sm;
-    color: $text-tertiary;
-  }
-
-  .skill-author {
-    font-size: $font-size-sm;
-    color: $text-secondary;
-    margin-bottom: $spacing-md;
-  }
-
-  .skill-stats {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-xs;
-    margin-bottom: $spacing-md;
-  }
-
-  .stat-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: $font-size-sm;
-
-    .stat-label {
-      color: $text-tertiary;
-    }
-
-    .stat-value {
-      font-weight: $font-weight-medium;
-      color: $text-primary;
-
-      &.text-warning {
-        color: #faad14;
-      }
-
-      &.text-danger {
-        color: #f5222d;
-      }
-    }
-  }
-
-  // Risk Badge
-  .risk-badge {
-    display: flex;
-    align-items: center;
-    gap: $spacing-xs;
-    padding: $spacing-xs $spacing-sm;
-    border-radius: $border-radius-sm;
-    margin-bottom: $spacing-md;
-
-    .risk-indicator {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
-
-    .risk-label {
-      font-size: $font-size-xs;
-      font-weight: $font-weight-medium;
-    }
-
-    &.risk--low {
-      background: rgba(82, 196, 26, 0.1);
-
-      .risk-indicator {
-        background: #52c41a;
-      }
-
-      .risk-label {
-        color: #52c41a;
-      }
-    }
-
-    &.risk--medium {
-      background: rgba(250, 173, 20, 0.1);
-
-      .risk-indicator {
-        background: #faad14;
-      }
-
-      .risk-label {
-        color: #faad14;
-      }
-    }
-
-    &.risk--high {
-      background: rgba(245, 34, 45, 0.1);
-
-      .risk-indicator {
-        background: #f5222d;
-      }
-
-      .risk-label {
-        color: #f5222d;
-      }
-    }
-  }
-
-  // Card Actions
+  // ================================
+  // 悬浮操作按钮
+  // ================================
   .card-actions {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: flex;
     gap: $spacing-sm;
+    padding: $spacing-md;
+    background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(255, 255, 255, 0.95) 100%
+    );
+    border-top: 1px solid $border-color-lighter;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
   }
 
   .action-btn {
@@ -749,29 +940,35 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: $spacing-xs;
-    padding: $spacing-xs $spacing-sm;
-    background: transparent;
+    gap: 6px;
+    padding: $spacing-sm $spacing-md;
+    background: $bg-secondary;
     border: 1px solid $border-color-base;
-    border-radius: $border-radius-sm;
+    border-radius: $border-radius-md;
     color: $text-secondary;
     font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all 0.2s ease;
 
-    .action-icon {
-      font-size: 10px;
+    svg {
+      width: 14px;
+      height: 14px;
     }
 
     &:hover {
-      background: $bg-tertiary;
       border-color: $primary-color;
       color: $primary-color;
     }
 
-    &.action-delete:hover {
-      border-color: #f5222d;
-      color: #f5222d;
+    &.primary {
+      background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+      border-color: transparent;
+      color: #fff;
+
+      &:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+      }
     }
   }
 
@@ -848,6 +1045,90 @@
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+    }
+  }
+
+  // ================================
+  // 响应式
+  // ================================
+  @media (max-width: 1200px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .skills-grid {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+  }
+
+  @media (max-width: 768px) {
+    .skills-management {
+      padding: $spacing-md;
+    }
+
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-md;
+
+      .header-right {
+        width: 100%;
+
+        .create-btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    }
+
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .skills-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-md;
+
+      .search-box {
+        width: 100%;
+      }
+    }
+
+    .card-actions {
+      opacity: 1;
+      transform: translateY(0);
+      position: static;
+      background: $bg-secondary;
+      backdrop-filter: none;
+    }
+  }
+
+  // ================================
+  // 深色模式适配
+  // ================================
+  [data-theme='dark'] {
+    .skill-card {
+      background: $bg-secondary;
+      border-color: $border-color-base;
+    }
+
+    .card-actions {
+      background: linear-gradient(to top, rgba(30, 41, 59, 0.98) 0%, rgba(30, 41, 59, 0.95) 100%);
+      border-top-color: $border-color-base;
+    }
+
+    .action-btn {
+      background: $bg-tertiary;
+      border-color: $border-color-base;
+
+      &.primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+      }
     }
   }
 </style>

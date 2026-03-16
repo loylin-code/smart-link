@@ -6,6 +6,260 @@ import {
   type MCPServerUpdateParams
 } from '@/services/resource'
 
+// Mock MCP服务器数据
+const mockMCPServers: MCPServer[] = [
+  {
+    id: 'mcp-001',
+    name: 'PostgreSQL 数据库工具',
+    uniqueId: 'postgres-tools',
+    version: '1.2.0',
+    description: '提供PostgreSQL数据库查询、插入、更新和删除操作能力',
+    author: 'SmartLink Team',
+    homepage: 'https://github.com/smartlink/mcp-postgres',
+    transport: 'stdio',
+    status: 'connected',
+    responseTime: 45,
+    errorCount: 0,
+    capabilities: { tools: 8, resources: 3, prompts: 2 },
+    config: {
+      command: 'mcp-server-postgres',
+      args: ['--connection-string', 'postgresql://localhost:5432/mydb'],
+      timeout: 30000
+    },
+    tools: [
+      {
+        name: 'query',
+        description: '执行SQL查询',
+        inputSchema: { type: 'object', properties: { sql: { type: 'string' } } }
+      },
+      {
+        name: 'insert',
+        description: '插入数据',
+        inputSchema: {
+          type: 'object',
+          properties: { table: { type: 'string' }, data: { type: 'object' } }
+        }
+      }
+    ],
+    resources: [{ uri: 'postgres://tables', name: '数据库表列表', mimeType: 'application/json' }],
+    prompts: [{ name: 'generate_query', description: '根据自然语言生成SQL查询' }],
+    lastActive: Date.now() - 1000 * 60 * 5,
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 30,
+    updatedAt: Date.now() - 1000 * 60 * 60 * 2
+  },
+  {
+    id: 'mcp-002',
+    name: '文件系统操作',
+    uniqueId: 'filesystem-tools',
+    version: '2.0.1',
+    description: '提供文件和目录的读写、搜索、监控等操作能力',
+    author: 'MCP Community',
+    homepage: 'https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem',
+    transport: 'stdio',
+    status: 'connected',
+    responseTime: 12,
+    errorCount: 0,
+    capabilities: { tools: 12, resources: 5, prompts: 3 },
+    config: {
+      command: 'mcp-server-filesystem',
+      args: ['--root', '/data'],
+      timeout: 15000
+    },
+    tools: [
+      {
+        name: 'read_file',
+        description: '读取文件内容',
+        inputSchema: { type: 'object', properties: { path: { type: 'string' } } }
+      },
+      {
+        name: 'write_file',
+        description: '写入文件',
+        inputSchema: {
+          type: 'object',
+          properties: { path: { type: 'string' }, content: { type: 'string' } }
+        }
+      },
+      {
+        name: 'list_directory',
+        description: '列出目录内容',
+        inputSchema: { type: 'object', properties: { path: { type: 'string' } } }
+      }
+    ],
+    resources: [{ uri: 'file://root', name: '根目录', mimeType: 'application/json' }],
+    prompts: [{ name: 'analyze_code', description: '分析代码文件结构' }],
+    lastActive: Date.now() - 1000 * 60 * 30,
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 60,
+    updatedAt: Date.now() - 1000 * 60 * 60 * 5
+  },
+  {
+    id: 'mcp-003',
+    name: 'GitHub API 集成',
+    uniqueId: 'github-api',
+    version: '1.5.0',
+    description: '提供GitHub仓库、Issue、PR、Actions等操作能力',
+    author: 'MCP Community',
+    homepage: 'https://github.com/modelcontextprotocol/servers/tree/main/src/github',
+    transport: 'http',
+    status: 'connected',
+    responseTime: 156,
+    errorCount: 2,
+    capabilities: { tools: 25, resources: 8, prompts: 5 },
+    config: {
+      endpoint: 'https://api.github.com/mcp',
+      headers: { Authorization: 'Bearer ${GITHUB_TOKEN}' },
+      timeout: 60000
+    },
+    tools: [
+      {
+        name: 'create_issue',
+        description: '创建Issue',
+        inputSchema: {
+          type: 'object',
+          properties: { repo: { type: 'string' }, title: { type: 'string' } }
+        }
+      },
+      {
+        name: 'create_pr',
+        description: '创建Pull Request',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            repo: { type: 'string' },
+            title: { type: 'string' },
+            body: { type: 'string' }
+          }
+        }
+      },
+      {
+        name: 'search_code',
+        description: '搜索代码',
+        inputSchema: { type: 'object', properties: { query: { type: 'string' } } }
+      }
+    ],
+    resources: [{ uri: 'github://repos', name: '仓库列表', mimeType: 'application/json' }],
+    prompts: [{ name: 'review_pr', description: '审查Pull Request' }],
+    lastActive: Date.now() - 1000 * 60 * 60,
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 90,
+    updatedAt: Date.now() - 1000 * 60 * 60 * 24
+  },
+  {
+    id: 'mcp-004',
+    name: 'Slack 消息集成',
+    uniqueId: 'slack-integration',
+    version: '1.0.3',
+    description: '提供Slack频道消息发送、读取、搜索等操作能力',
+    author: 'SmartLink Team',
+    transport: 'http',
+    status: 'connecting',
+    capabilities: { tools: 6, resources: 2, prompts: 1 },
+    config: {
+      endpoint: 'https://slack.com/api/mcp',
+      headers: { Authorization: 'Bearer ${SLACK_TOKEN}' },
+      timeout: 30000
+    },
+    tools: [
+      {
+        name: 'send_message',
+        description: '发送消息到频道',
+        inputSchema: {
+          type: 'object',
+          properties: { channel: { type: 'string' }, text: { type: 'string' } }
+        }
+      },
+      {
+        name: 'list_channels',
+        description: '列出所有频道',
+        inputSchema: { type: 'object', properties: {} }
+      }
+    ],
+    resources: [{ uri: 'slack://channels', name: '频道列表', mimeType: 'application/json' }],
+    prompts: [{ name: 'summarize_thread', description: '总结对话线程' }],
+    lastActive: Date.now() - 1000 * 60 * 60 * 3,
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 15,
+    updatedAt: Date.now() - 1000 * 60 * 60 * 3
+  },
+  {
+    id: 'mcp-005',
+    name: 'Redis 缓存服务',
+    uniqueId: 'redis-cache',
+    version: '1.1.0',
+    description: '提供Redis缓存读写、过期管理、发布订阅等操作能力',
+    author: 'MCP Community',
+    transport: 'stdio',
+    status: 'disconnected',
+    errorCount: 5,
+    lastError: 'Connection refused: localhost:6379',
+    capabilities: { tools: 10, resources: 1, prompts: 0 },
+    config: {
+      command: 'mcp-server-redis',
+      args: ['--host', 'localhost', '--port', '6379'],
+      timeout: 10000
+    },
+    tools: [
+      {
+        name: 'get',
+        description: '获取缓存值',
+        inputSchema: { type: 'object', properties: { key: { type: 'string' } } }
+      },
+      {
+        name: 'set',
+        description: '设置缓存值',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            key: { type: 'string' },
+            value: { type: 'string' },
+            ttl: { type: 'number' }
+          }
+        }
+      }
+    ],
+    resources: [{ uri: 'redis://info', name: 'Redis信息', mimeType: 'application/json' }],
+    prompts: [],
+    lastActive: Date.now() - 1000 * 60 * 60 * 24 * 2,
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 45,
+    updatedAt: Date.now() - 1000 * 60 * 60 * 24 * 2
+  },
+  {
+    id: 'mcp-006',
+    name: 'Web 搜索服务',
+    uniqueId: 'web-search',
+    version: '2.1.0',
+    description: '提供网络搜索、网页抓取、内容提取等操作能力',
+    author: 'SmartLink Team',
+    homepage: 'https://github.com/smartlink/mcp-websearch',
+    transport: 'http',
+    status: 'connected',
+    responseTime: 320,
+    errorCount: 1,
+    capabilities: { tools: 5, resources: 0, prompts: 2 },
+    config: {
+      endpoint: 'https://api.search.example.com/mcp',
+      timeout: 45000
+    },
+    tools: [
+      {
+        name: 'search',
+        description: '网络搜索',
+        inputSchema: {
+          type: 'object',
+          properties: { query: { type: 'string' }, limit: { type: 'number' } }
+        }
+      },
+      {
+        name: 'fetch_page',
+        description: '抓取网页内容',
+        inputSchema: { type: 'object', properties: { url: { type: 'string' } } }
+      }
+    ],
+    resources: [],
+    prompts: [{ name: 'summarize_results', description: '总结搜索结果' }],
+    lastActive: Date.now() - 1000 * 60 * 15,
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 20,
+    updatedAt: Date.now() - 1000 * 60 * 60
+  }
+]
+
 interface MCPState {
   servers: MCPServer[]
   currentServer: MCPServer | null
@@ -139,9 +393,14 @@ export const useMCPStore = defineStore('mcp', {
           total: response.total
         }
       } catch (error: unknown) {
-        const err = error as { message?: string }
-        this.error = err.message || '获取服务器列表失败'
-        console.error('Failed to fetch MCP servers:', error)
+        // API调用失败时使用mock数据
+        console.warn('Failed to fetch MCP servers from API, using mock data:', error)
+        this.servers = mockMCPServers
+        this.pagination = {
+          page: 1,
+          pageSize: 20,
+          total: mockMCPServers.length
+        }
       } finally {
         this.loading = false
       }

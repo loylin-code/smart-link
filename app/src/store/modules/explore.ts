@@ -3,6 +3,357 @@ import type { ChatMessage, ChatConversation, ChatTemplate, ConversationGroup } f
 import { conversationApi, type ConversationCreateParams } from '@/services/conversation'
 import { getWebSocket, type StreamResponseData } from '@/services/websocket'
 
+// Mock 数据 - 用于演示
+const MOCK_CONVERSATIONS: ChatConversation[] = [
+  {
+    id: 'conv-1',
+    title: '智能体性能分析',
+    status: 'active',
+    createdAt: Date.now() - 3600000,
+    updatedAt: Date.now() - 1800000,
+    messages: [
+      {
+        id: 'msg-1-1',
+        conversationId: 'conv-1',
+        role: 'user',
+        content: '帮我分析一下最近一周智能体的使用情况',
+        timestamp: Date.now() - 3600000
+      },
+      {
+        id: 'msg-1-2',
+        conversationId: 'conv-1',
+        role: 'assistant',
+        content: '📊 **智能体使用分析报告**\n\n根据最近一周的数据统计，以下是关键指标：',
+        timestamp: Date.now() - 3500000,
+        components: [
+          {
+            id: 'comp-1-1',
+            type: 'data-summary',
+            props: {
+              title: '核心指标概览',
+              status: 'success',
+              items: [
+                { icon: '🤖', label: '活跃智能体', value: '12', unit: '个' },
+                { icon: '📞', label: '总调用次数', value: '1,234', unit: '次' },
+                { icon: '⚡', label: '平均响应', value: '1.2', unit: '秒' },
+                { icon: '✅', label: '成功率', value: '98.5', unit: '%' }
+              ],
+              description: '数据更新时间：2024年1月15日 14:30'
+            }
+          }
+        ]
+      },
+      {
+        id: 'msg-1-3',
+        conversationId: 'conv-1',
+        role: 'user',
+        content: '可以看看调用趋势吗？',
+        timestamp: Date.now() - 3000000
+      },
+      {
+        id: 'msg-1-4',
+        conversationId: 'conv-1',
+        role: 'assistant',
+        content: '📈 **最近7天调用趋势**\n\n整体呈上升趋势，周末达到峰值：',
+        timestamp: Date.now() - 2900000,
+        components: [
+          {
+            id: 'comp-1-2',
+            type: 'trend-analysis',
+            props: {
+              title: '调用次数趋势',
+              summaries: [
+                { label: '日均调用', value: '176', change: '↑ 12%', trend: 'up', color: '#10b981' },
+                { label: '峰值调用', value: '234', change: '周六', trend: 'up', color: '#3b82f6' },
+                { label: '成功率', value: '98.5%', change: '↑ 0.5%', trend: 'up', color: '#8b5cf6' }
+              ],
+              chartData: [120, 145, 132, 167, 189, 234, 198],
+              chartLabels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+              insights: [
+                { type: 'positive', text: '周六调用达到峰值 234 次，用户活跃度最高' },
+                { type: 'positive', text: '整体成功率稳定在 98% 以上' },
+                { type: 'neutral', text: '建议在周末增加资源配置以应对高峰' }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        id: 'msg-1-5',
+        conversationId: 'conv-1',
+        role: 'user',
+        content: '各智能体的使用分布是怎样的？',
+        timestamp: Date.now() - 2400000
+      },
+      {
+        id: 'msg-1-6',
+        conversationId: 'conv-1',
+        role: 'assistant',
+        content: '📊 **智能体使用分布**\n\n客服智能体占比最高，达到 35%：',
+        timestamp: Date.now() - 2300000,
+        components: [
+          {
+            id: 'comp-1-3',
+            type: 'chart',
+            props: {
+              title: '各智能体调用占比',
+              type: 'pie',
+              data: [35, 25, 18, 12, 10],
+              labels: ['客服智能体', '数据分析', '文档处理', '内容生成', '业务分析'],
+              legend: ['客服', '分析', '文档', '内容', '业务']
+            }
+          },
+          {
+            id: 'comp-1-4',
+            type: 'chart',
+            props: {
+              title: '响应时间对比',
+              type: 'bar',
+              data: [0.8, 1.2, 3.5, 1.5, 2.1],
+              labels: ['数据分析', '客服', '文档处理', '内容生成', '业务分析'],
+              unit: '秒'
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'conv-2',
+    title: '创建新智能体咨询',
+    status: 'active',
+    createdAt: Date.now() - 86400000,
+    updatedAt: Date.now() - 86000000,
+    messages: [
+      {
+        id: 'msg-2-1',
+        conversationId: 'conv-2',
+        role: 'user',
+        content: '我想创建一个智能客服机器人',
+        timestamp: Date.now() - 86400000
+      },
+      {
+        id: 'msg-2-2',
+        conversationId: 'conv-2',
+        role: 'assistant',
+        content: '好的，我可以帮你创建智能客服机器人。首先需要确认以下配置：',
+        timestamp: Date.now() - 86300000,
+        components: [
+          {
+            id: 'comp-2-1',
+            type: 'confirm',
+            props: {
+              title: '确认创建智能客服机器人',
+              description: '将使用以下默认配置创建新的智能客服机器人',
+              variant: 'info',
+              items: [
+                '名称：智能客服助手',
+                '模型：GPT-4o',
+                '知识库：自动从 FAQ 导入',
+                '转人工：开启自动转接功能'
+              ],
+              confirmText: '确认创建',
+              cancelText: '修改配置'
+            }
+          }
+        ]
+      },
+      {
+        id: 'msg-2-3',
+        conversationId: 'conv-2',
+        role: 'user',
+        content: '确认创建',
+        timestamp: Date.now() - 86200000
+      },
+      {
+        id: 'msg-2-4',
+        conversationId: 'conv-2',
+        role: 'assistant',
+        content:
+          '✅ 智能客服机器人创建成功！\n\n现在需要进行以下配置：\n\n**步骤 1：知识库配置** 📚\n上传常见问题文档，支持 PDF、Word、Excel 格式\n\n**步骤 2：对话流程设计** 💬\n设置问候语、自动回复规则\n\n**步骤 3：测试发布** 🚀\n模拟对话测试后一键上线',
+        timestamp: Date.now() - 86100000
+      }
+    ]
+  },
+  {
+    id: 'conv-3',
+    title: '资源监控告警',
+    status: 'active',
+    createdAt: Date.now() - 172800000,
+    updatedAt: Date.now() - 172500000,
+    messages: [
+      {
+        id: 'msg-3-1',
+        conversationId: 'conv-3',
+        role: 'assistant',
+        content: '⚠️ **资源告警通知**\n\n检测到以下资源使用异常：',
+        timestamp: Date.now() - 172800000,
+        components: [
+          {
+            id: 'comp-3-1',
+            type: 'data-summary',
+            props: {
+              title: '资源使用状态',
+              status: 'warning',
+              items: [
+                {
+                  icon: '💾',
+                  label: '内存使用',
+                  value: '85',
+                  unit: '%',
+                  change: '↑ 15%',
+                  changeClass: 'negative'
+                },
+                {
+                  icon: '💿',
+                  label: '磁盘使用',
+                  value: '72',
+                  unit: '%',
+                  change: '↑ 8%',
+                  changeClass: 'negative'
+                },
+                {
+                  icon: '🖥️',
+                  label: 'CPU 使用',
+                  value: '45',
+                  unit: '%',
+                  change: '稳定',
+                  changeClass: 'neutral'
+                },
+                {
+                  icon: '🌐',
+                  label: '网络带宽',
+                  value: '120',
+                  unit: 'Mbps',
+                  change: '正常',
+                  changeClass: 'positive'
+                }
+              ],
+              description: '内存使用率超过 80% 阈值，建议尽快处理'
+            }
+          }
+        ]
+      },
+      {
+        id: 'msg-3-2',
+        conversationId: 'conv-3',
+        role: 'user',
+        content: '内存占用最高的进程是什么？',
+        timestamp: Date.now() - 172700000
+      },
+      {
+        id: 'msg-3-3',
+        conversationId: 'conv-3',
+        role: 'assistant',
+        content: '📊 **内存占用 TOP 5 进程**',
+        timestamp: Date.now() - 172600000,
+        components: [
+          {
+            id: 'comp-3-2',
+            type: 'chart',
+            props: {
+              title: '进程内存占用',
+              type: 'bar',
+              data: [2.4, 1.8, 1.2, 0.9, 0.6],
+              labels: ['node-agent', 'redis-server', 'postgres', 'nginx', 'monitor'],
+              unit: 'GB'
+            }
+          }
+        ]
+      },
+      {
+        id: 'msg-3-4',
+        conversationId: 'conv-3',
+        role: 'user',
+        content: '帮我重启 node-agent 服务释放内存',
+        timestamp: Date.now() - 172500000
+      },
+      {
+        id: 'msg-3-5',
+        conversationId: 'conv-3',
+        role: 'assistant',
+        content: '即将重启 node-agent 服务，请确认操作：',
+        timestamp: Date.now() - 172400000,
+        components: [
+          {
+            id: 'comp-3-3',
+            type: 'confirm',
+            props: {
+              title: '确认重启服务',
+              description: '重启 node-agent 服务将暂时中断相关功能',
+              variant: 'warning',
+              items: [
+                '服务名称：node-agent',
+                '预计中断时间：约 10 秒',
+                '影响范围：智能体调用服务',
+                '自动恢复：是'
+              ],
+              confirmText: '确认重启',
+              cancelText: '取消'
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'conv-4',
+    title: '数据分析报告',
+    status: 'active',
+    createdAt: Date.now() - 259200000,
+    updatedAt: Date.now() - 259100000,
+    messages: [
+      {
+        id: 'msg-4-1',
+        conversationId: 'conv-4',
+        role: 'user',
+        content: '生成本周数据分析报告',
+        timestamp: Date.now() - 259200000
+      },
+      {
+        id: 'msg-4-2',
+        conversationId: 'conv-4',
+        role: 'assistant',
+        content: '📈 **本周数据分析报告**\n\n数据周期：2024年1月8日 - 2024年1月14日',
+        timestamp: Date.now() - 259150000,
+        components: [
+          {
+            id: 'comp-4-1',
+            type: 'trend-analysis',
+            props: {
+              title: '业务趋势分析',
+              summaries: [
+                {
+                  label: '总请求量',
+                  value: '8.5K',
+                  change: '↑ 23%',
+                  trend: 'up',
+                  color: '#3b82f6'
+                },
+                {
+                  label: '活跃用户',
+                  value: '1,234',
+                  change: '↑ 15%',
+                  trend: 'up',
+                  color: '#10b981'
+                },
+                { label: '平均延迟', value: '156ms', change: '↓ 8%', trend: 'up', color: '#8b5cf6' }
+              ],
+              chartData: [820, 932, 901, 934, 1290, 1330, 1320],
+              chartLabels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+              insights: [
+                { type: 'positive', text: '本周请求量较上周增长 23%，用户活跃度显著提升' },
+                { type: 'positive', text: '系统响应延迟优化 8%，用户体验改善明显' },
+                { type: 'neutral', text: '建议关注周六的流量峰值，考虑动态扩容' }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
+
 // 预定义对话模板
 const CHAT_TEMPLATES: ChatTemplate[] = [
   {
@@ -79,7 +430,7 @@ interface ExploreState {
 
 export const useExploreStore = defineStore('explore', {
   state: (): ExploreState => ({
-    conversations: [],
+    conversations: MOCK_CONVERSATIONS,
     activeConversationId: null,
     searchQuery: '',
     loading: false,
@@ -90,7 +441,7 @@ export const useExploreStore = defineStore('explore', {
     pagination: {
       page: 1,
       pageSize: 20,
-      total: 0
+      total: MOCK_CONVERSATIONS.length
     }
   }),
 
@@ -253,18 +604,20 @@ export const useExploreStore = defineStore('explore', {
       initialMessage?: string
       appId?: string
     }): Promise<ChatConversation | null> {
-      this.loading = true
-      this.error = null
-
       try {
         const template = options?.templateId ? this.getTemplateById(options.templateId) : undefined
 
-        const params: ConversationCreateParams = {
+        // 本地创建对话（mock 模式）
+        const conversation: ChatConversation = {
+          id: `conv-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
           title: options?.title || template?.name || '新对话',
-          app_id: options?.appId
+          messages: [],
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          status: 'active',
+          templateId: options?.templateId
         }
 
-        const conversation = await conversationApi.createConversation(params)
         this.conversations.unshift(conversation)
         this.activeConversationId = conversation.id
         this.pagination.total += 1
@@ -275,8 +628,6 @@ export const useExploreStore = defineStore('explore', {
         this.error = err.message || '创建对话失败'
         console.error('Failed to create conversation:', error)
         return null
-      } finally {
-        this.loading = false
       }
     },
 

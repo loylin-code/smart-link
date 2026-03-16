@@ -29,7 +29,7 @@ export default {
     never: '从未'
   },
   route: {
-    explore: '探索',
+    explore: '探索中心',
     agentManagement: '智能体管理',
     agentList: '智能体列表',
     agentDesign: '智能体设计',
@@ -71,7 +71,7 @@ export default {
     poweredBy: 'Powered by SmartLink'
   },
   header: {
-    explore: '探索',
+    explore: '探索中心',
     application: '应用',
     resource: '资源'
   },
@@ -98,12 +98,23 @@ export default {
     inputHint: '按 Enter 发送，Shift+Enter 换行',
     attachFile: '添加附件',
     copy: '复制',
-    regenerate: '重新生成'
+    regenerate: '重新生成',
+    welcomeTitle: '探索中心',
+    welcomeSubtitle: '智能对话式探索，快速获取资源状态、趋势分析和预测建议',
+    suggestion1: '查看智能体使用情况',
+    suggestion2: '查询资源容量',
+    suggestion3: '创建新智能体',
+    suggestion4: '查看模型配置',
+    close: '关闭',
+    expandSidebar: '展开侧边栏',
+    collapseSidebar: '收起侧边栏',
+    conversationStats: '今日对话统计',
+    quickStart: '快速开始'
   },
   sidebar: {
     appOrchestration: '智能体编排',
     agentManagement: '智能体管理',
-    explore: '探索',
+    explore: '探索中心',
     componentManagement: '组件管理',
     skillsManagement: 'Skills管理',
     mcpManagement: 'MCP管理',
@@ -150,7 +161,8 @@ export default {
   resource: {
     noMCP: '暂无MCP配置',
     createMCP: '创建MCP',
-    mcpManagement: 'MCP服务器管理',
+    mcpManagement: 'MCP管理',
+    mcpDescription: '管理和配置MCP服务器连接',
     mcpServer: 'MCP服务器',
     totalServers: '共 {count} 个',
     showingResults: '显示 {start}-{end} / 共 {total} 个',
@@ -309,6 +321,7 @@ export default {
     searchPlaceholder: '搜索Skills...',
     author: '作者',
     category: {
+      label: '分类',
       all: '全部分类',
       analytics: '分析类',
       processing: '处理类',
@@ -316,10 +329,11 @@ export default {
       transform: '转换类'
     },
     risk: {
-      all: '全部风险等级',
+      all: '全部风险',
       low: '低风险',
       medium: '中风险',
-      high: '高风险'
+      high: '高风险',
+      label: '风险等级'
     },
     requiresApproval: '需要审批',
     stats: {
@@ -455,7 +469,9 @@ export default {
     }
   },
   datamodel: {
-    title: '数据模型管理',
+    title: '数据模型',
+    pageDesc: '用户自定义数据模型、配置模型管理',
+    modelList: '模型列表',
     categoryTitle: '分类目录',
     allModels: '全部模型',
     newCategory: '新建分类',
@@ -592,6 +608,7 @@ export default {
     modelProviders: {
       title: '模型提供商',
       subtitle: '管理 AI 模型提供商的 API 配置',
+      filterAll: '全部',
       configured: '已配置',
       unconfigured: '未配置',
       available: '可用提供商',
@@ -600,6 +617,7 @@ export default {
       availableModels: '可用模型',
       testConnection: '测试连接',
       testing: '测试中...',
+      addProvider: '添加供应商',
       addConfig: '添加配置',
       addNewProvider: '添加新提供商',
       confirmDelete: '确定要删除提供商 "{name}" 吗？',

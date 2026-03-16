@@ -1,65 +1,11 @@
 <template>
   <div class="settings-page">
-    <div class="settings-layout">
-      <!-- 左侧导航 -->
-      <aside class="settings-sidebar">
-        <nav class="settings-nav">
-          <router-link
-            to="/app/settings/appearance"
-            class="nav-item"
-            :class="{ 'nav-item--active': isActive('/app/settings/appearance') }"
-          >
-            <span class="nav-icon">
-              <svg viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" />
-                <path
-                  d="M12 1V3M12 21V23M4.22 4.22L5.64 5.64M18.36 18.36L19.78 19.78M1 12H3M21 12H23M4.22 19.78L5.64 18.36M18.36 5.64L19.78 4.22"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-              </svg>
-            </span>
-            <span class="nav-text">{{ t('settings.appearance') }}</span>
-          </router-link>
-          <router-link
-            to="/app/settings/providers"
-            class="nav-item"
-            :class="{ 'nav-item--active': isActive('/app/settings/providers') }"
-          >
-            <span class="nav-icon">
-              <svg viewBox="0 0 24 24" fill="none">
-                <rect
-                  x="2"
-                  y="3"
-                  width="20"
-                  height="14"
-                  rx="2"
-                  stroke="currentColor"
-                  stroke-width="2"
-                />
-                <path
-                  d="M8 21H16M12 17V21"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-              </svg>
-            </span>
-            <span class="nav-text">{{ t('settings.providers') }}</span>
-          </router-link>
-        </nav>
-      </aside>
-
-      <!-- 右侧内容区 -->
-      <main class="settings-content">
-        <div class="settings-header">
-          <h1 class="settings-title">{{ t('settings.appearance') }}</h1>
-          <p class="settings-subtitle">
-            {{ t('settings.appearanceDesc') || '自定义应用的外观和主题设置' }}
-          </p>
-        </div>
-
+    <div class="settings-content">
+      <div class="page-meta">
+        <h1 class="page-name">{{ t('settings.appearance') }}</h1>
+        <span class="page-type">{{ t('settings.appearanceDesc') }}</span>
+      </div>
+      <div class="content-body">
         <div class="settings-form">
           <!-- 主题模式 -->
           <section class="form-section">
@@ -253,7 +199,7 @@
             {{ t('settings.saveChanges') }}
           </button>
         </div>
-      </main>
+      </div>
     </div>
   </div>
 </template>
@@ -261,13 +207,12 @@
 <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue'
   import { useI18n } from 'vue-i18n'
-  import { useRouter, useRoute } from 'vue-router'
+  import { useRouter } from 'vue-router'
   import { useSettingsStore } from '@/store/modules/settings'
   import type { AppearanceSettings } from '@/types'
 
   const { t, locale } = useI18n()
   const router = useRouter()
-  const route = useRoute()
   const settingsStore = useSettingsStore()
 
   // 颜色选项
@@ -303,11 +248,6 @@
     localAppearance.value = { ...settingsStore.appearance }
   })
 
-  // 检查路由激活状态
-  const isActive = (path: string) => {
-    return route.path === path
-  }
-
   // 保存
   const handleSave = () => {
     settingsStore.setTheme(localAppearance.value.theme)
@@ -332,141 +272,46 @@
 <style scoped lang="scss">
   .settings-page {
     height: 100%;
-    padding: $spacing-xl;
-    overflow-y: auto;
     background: $bg-secondary;
-
-    @include respond-below(md) {
-      padding: $spacing-md;
-    }
+    overflow-y: auto;
+    padding: $spacing-xl;
   }
 
-  .settings-layout {
-    display: flex;
-    gap: $spacing-xl;
+  .settings-content {
     max-width: 1200px;
     margin: 0 auto;
-
-    @include respond-below(lg) {
-      flex-direction: column;
-      gap: $spacing-lg;
-    }
   }
 
   // ================================
-  // 侧边栏导航
+  // Page Meta
   // ================================
-  .settings-sidebar {
-    flex-shrink: 0;
-    width: 220px;
-
-    @include respond-below(lg) {
-      width: 100%;
-    }
-  }
-
-  .settings-nav {
+  .page-meta {
     display: flex;
     flex-direction: column;
-    gap: $spacing-xs;
-    background: $bg-primary;
-    border: 1px solid $border-color-base;
-    border-radius: $border-radius-lg;
-    padding: $spacing-sm;
-
-    @include respond-below(lg) {
-      flex-direction: row;
-      flex-wrap: wrap;
-    }
+    gap: 2px;
+    margin-bottom: $spacing-lg;
   }
 
-  .nav-item {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-    padding: $spacing-md;
-    border-radius: $border-radius-md;
-    color: $text-secondary;
-    text-decoration: none;
-    transition: all $transition-fast $ease-out;
-
-    &:hover {
-      background: $bg-tertiary;
-      color: $text-primary;
-    }
-
-    &--active {
-      background: $primary-surface;
-      color: $primary-color;
-
-      .nav-icon {
-        color: $primary-color;
-      }
-
-      .nav-text {
-        font-weight: $font-weight-semibold;
-      }
-    }
-  }
-
-  .nav-icon {
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-
-    svg {
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  .nav-text {
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-  }
-
-  // ================================
-  // 内容区
-  // ================================
-  .settings-content {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .settings-header {
-    margin-bottom: $spacing-xl;
-  }
-
-  .settings-title {
-    font-family: $font-family-display;
-    font-size: $font-size-3xl;
-    font-weight: $font-weight-bold;
+  .page-meta h1.page-name {
+    font-size: $font-size-lg !important;
+    font-weight: $font-weight-semibold;
     color: $text-primary;
-    margin: 0 0 $spacing-xs 0;
-
-    @include respond-below(md) {
-      font-size: $font-size-2xl;
-    }
-  }
-
-  .settings-subtitle {
-    font-size: $font-size-sm;
-    color: $text-tertiary;
     margin: 0;
   }
 
-  .settings-form {
+  .page-type {
+    font-size: $font-size-xs;
+    color: $text-tertiary;
+  }
+
+  // ================================
+  // Content Body
+  // ================================
+  .content-body {
     background: $bg-primary;
     border: 1px solid $border-color-base;
     border-radius: $border-radius-lg;
     padding: $spacing-xl;
-
-    @include respond-below(md) {
-      padding: $spacing-lg;
-    }
   }
 
   .form-section {
@@ -837,7 +682,6 @@
   // 动画减少模式
   // ================================
   @include reduced-motion {
-    .nav-item,
     .theme-card,
     .color-option,
     .size-option,

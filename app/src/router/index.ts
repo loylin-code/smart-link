@@ -22,7 +22,7 @@ const routes: RouteRecordRaw[] = [
         name: 'Explore',
         component: () => import('@/views/explore/ExploreView.vue'),
         meta: {
-          title: '探索',
+          title: '探索中心',
           titleKey: 'route.explore',
           icon: 'chat'
         } as RouteMeta

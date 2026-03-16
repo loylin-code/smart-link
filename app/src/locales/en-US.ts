@@ -29,7 +29,7 @@ export default {
     never: 'Never'
   },
   route: {
-    explore: 'Explore',
+    explore: 'Explore Center',
     agentManagement: 'Agent Management',
     agentList: 'Agent List',
     agentDesign: 'Agent Design',
@@ -71,14 +71,14 @@ export default {
     poweredBy: 'Powered by SmartLink'
   },
   header: {
-    explore: 'Explore',
+    explore: 'Explore Center',
     application: 'Application',
     resource: 'Resource'
   },
   explore: {
     newChat: 'New Chat',
     chat: 'Chat',
-    inputPlaceholder: 'Type your question or request...',
+    inputPlaceholder: 'Enter your question or request...',
     selectOrCreate: 'Select or create a conversation to start chatting',
     justNow: 'Just now',
     minutesAgo: 'min ago',
@@ -90,7 +90,7 @@ export default {
     searchPlaceholder: 'Search conversations...',
     noConversations: 'No conversations',
     archived: 'Archived',
-    confirmDelete: 'Are you sure you want to delete this conversation?',
+    confirmDelete: 'Are you sure you want to vu delete this conversation?',
     selectTemplate: 'Select a Template',
     selectTemplateDesc: 'Choose a template or start typing directly',
     useTemplate: 'Use Template',
@@ -98,12 +98,21 @@ export default {
     inputHint: 'Press Enter to send, Shift+Enter for new line',
     attachFile: 'Attach file',
     copy: 'Copy',
-    regenerate: 'Regenerate'
+    regenerate: 'Regenerate',
+    welcomeTitle: 'Explore Center',
+    welcomeSubtitle:
+      'Intelligent conversational exploration for quick insights and recommendations',
+    suggestion1: 'View agent usage',
+    suggestion2: 'Query resource capacity',
+    suggestion3: 'Create new agent',
+    suggestion4: 'View model config',
+    conversationStats: "Today's conversation stats",
+    quickStart: 'Quick Start'
   },
   sidebar: {
     appOrchestration: 'Agent Orchestration',
     agentManagement: 'Agent Management',
-    explore: 'Explore',
+    explore: 'Explore Center',
     componentManagement: 'Component Management',
     skillsManagement: 'Skills Management',
     mcpManagement: 'MCP Management',
@@ -150,7 +159,8 @@ export default {
   resource: {
     noMCP: 'No MCP configuration',
     createMCP: 'Create MCP',
-    mcpManagement: 'MCP Server Management',
+    mcpManagement: 'MCP Management',
+    mcpDescription: 'Manage and configure MCP server connections',
     mcpServer: 'MCP Server',
     totalServers: 'Total {count} servers',
     showingResults: 'Showing {start}-{end} of {total}',
@@ -309,6 +319,7 @@ export default {
     searchPlaceholder: 'Search Skills...',
     author: 'Author',
     category: {
+      label: 'Category',
       all: 'All Categories',
       analytics: 'Analytics',
       processing: 'Processing',
@@ -319,7 +330,8 @@ export default {
       all: 'All Risk Levels',
       low: 'Low Risk',
       medium: 'Medium Risk',
-      high: 'High Risk'
+      high: 'High Risk',
+      label: 'Risk Level'
     },
     requiresApproval: 'Requires Approval',
     stats: {
@@ -455,7 +467,9 @@ export default {
     }
   },
   datamodel: {
-    title: 'Data Model Management',
+    title: 'Data Models',
+    pageDesc: 'User-defined data models and configuration management',
+    modelList: 'Model List',
     categoryTitle: 'Categories',
     allModels: 'All Models',
     newCategory: 'New Category',
@@ -596,6 +610,7 @@ export default {
       title: 'Model Providers',
       subtitle: 'Manage API configurations for AI model providers',
       sectionTitle: 'Model Provider Configuration',
+      filterAll: 'All',
       configured: 'Configured',
       unconfigured: 'Not Configured',
       available: 'Available Providers',
@@ -604,6 +619,7 @@ export default {
       availableModels: 'Available Models',
       testConnection: 'Test Connection',
       testing: 'Testing...',
+      addProvider: 'Add Provider',
       addConfig: 'Add Configuration',
       addNewProvider: 'Add New Provider',
       confirmDelete: 'Are you sure you want to delete provider "{name}"?',
