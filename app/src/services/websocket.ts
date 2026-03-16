@@ -16,14 +16,7 @@ interface WebSocketConfig {
 }
 
 // WebSocket 消息类型
-export type WSMessageType = 
-  | 'chat' 
-  | 'stream' 
-  | 'ping' 
-  | 'pong' 
-  | 'tool_call'
-  | 'status'
-  | 'error'
+export type WSMessageType = 'chat' | 'stream' | 'ping' | 'pong' | 'tool_call' | 'status' | 'error'
 
 // WebSocket 消息接口
 export interface WSMessage<T = unknown> {
@@ -50,11 +43,11 @@ export interface StreamResponseData {
 }
 
 // WebSocket 连接状态
-export type WSConnectionState = 
-  | 'connecting' 
-  | 'connected' 
-  | 'disconnecting' 
-  | 'disconnected' 
+export type WSConnectionState =
+  | 'connecting'
+  | 'connected'
+  | 'disconnecting'
+  | 'disconnected'
   | 'error'
 
 // 事件处理器类型
@@ -109,7 +102,7 @@ export class WebSocketService {
       }
 
       this.connectionState = 'connecting'
-      
+
       try {
         this.ws = new WebSocket(this.config.url)
 
@@ -228,7 +221,7 @@ export class WebSocketService {
   private handleMessage(rawData: string): void {
     try {
       const message: WSMessage = JSON.parse(rawData)
-      
+
       // 调用通用消息处理器
       this.config.onMessage(message)
 
@@ -263,7 +256,7 @@ export class WebSocketService {
   private emit<T = unknown>(event: string, data: T): void {
     const handlers = this.eventHandlers.get(event)
     if (handlers) {
-      handlers.forEach(handler => handler(data))
+      handlers.forEach((handler) => handler(data))
     }
   }
 
@@ -293,9 +286,9 @@ export class WebSocketService {
   private scheduleReconnect(): void {
     this.reconnectCount++
     console.log(`Reconnecting... (${this.reconnectCount}/${this.config.reconnectAttempts})`)
-    
+
     setTimeout(() => {
-      this.connect().catch(error => {
+      this.connect().catch((error) => {
         console.error('Reconnect failed:', error)
       })
     }, this.config.reconnectInterval)
@@ -315,12 +308,12 @@ export function getWebSocket(): WebSocketService {
   if (!wsInstance) {
     const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8000'
     const clientId = `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-    
+
     wsInstance = new WebSocketService({
       url: `${wsUrl}/ws/chat/${clientId}`
     })
   }
-  
+
   return wsInstance
 }
 
@@ -330,7 +323,7 @@ export function getWebSocket(): WebSocketService {
 export function createWebSocket(clientId?: string): WebSocketService {
   const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8000'
   const id = clientId || `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-  
+
   return new WebSocketService({
     url: `${wsUrl}/ws/chat/${id}`
   })

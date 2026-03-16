@@ -8,5 +8,6 @@ export default pinia
 
 // 导出所有store
 export * from './modules/app'
+export * from './modules/agent'
 export * from './modules/explore'
 export * from './modules/orchestrator'

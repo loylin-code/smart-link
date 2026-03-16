@@ -1,22 +1,31 @@
 @use './animations';
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 // 重置样式
-* {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html,
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 body {
   width: 100%;
   height: 100%;
   font-family: $font-family;
   font-size: $font-size-base;
+  line-height: $line-height-base;
   color: $text-primary;
   background-color: $bg-primary;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: $letter-spacing-normal;
 }
 
 #app {
@@ -24,19 +33,24 @@ body {
   height: 100%;
 }
 
-// 滚动条样式
+// 选中文本样式
+::selection {
+  background: var(--primary-muted);
+  color: $text-primary;
+}
+
+// 滚动条样式 - 优雅细腻
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: $bg-secondary;
-  border-radius: $border-radius-full;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: $bg-elevated;
+  background: $border-color-base;
   border-radius: $border-radius-full;
 
   &:hover {
@@ -44,131 +58,209 @@ body {
   }
 }
 
-// 选中文本样式
-::selection {
-  background: rgba(24, 144, 255, 0.2);
-  color: $text-primary;
-}
-
 // 链接样式
 a {
   color: $primary-color;
   text-decoration: none;
-  transition: color $transition-fast ease;
+  transition: color $transition-fast $ease-out;
 
   &:hover {
     color: $primary-light;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
   }
 }
 
 // 按钮基础样式
 button {
   font-family: inherit;
+  font-size: inherit;
   cursor: pointer;
   border: none;
   outline: none;
   background: none;
+  color: inherit;
+
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
 }
 
 // 输入框基础样式
 input,
-textarea {
+textarea,
+select {
   font-family: inherit;
+  font-size: inherit;
   outline: none;
   border: none;
   background: none;
+  color: inherit;
+
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
 }
 
-// 科技按钮
-.tech-button {
+// 标题样式 - 使用衬线字体增加优雅感
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $font-family-display;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  letter-spacing: $letter-spacing-tight;
+  color: $text-primary;
+}
+
+h1 {
+  font-size: $font-size-5xl;
+}
+
+h2 {
+  font-size: $font-size-4xl;
+}
+
+h3 {
+  font-size: $font-size-3xl;
+}
+
+h4 {
+  font-size: $font-size-2xl;
+}
+
+h5 {
+  font-size: $font-size-xl;
+}
+
+h6 {
+  font-size: $font-size-lg;
+}
+
+// 段落样式
+p {
+  line-height: $line-height-relaxed;
+  color: $text-secondary;
+}
+
+// 代码样式
+code,
+pre {
+  font-family: $font-family-mono;
+  font-size: 0.9em;
+}
+
+code {
+  padding: 2px 6px;
+  background: $bg-tertiary;
+  border-radius: $border-radius-xs;
+  color: $primary-dark;
+}
+
+pre {
+  padding: $spacing-md;
+  background: $bg-secondary;
+  border-radius: $border-radius-md;
+  overflow-x: auto;
+
+  code {
+    padding: 0;
+    background: transparent;
+  }
+}
+
+// 优雅按钮
+.elegant-button {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: $spacing-sm;
   padding: $spacing-sm $spacing-lg;
-  font-size: $font-size-base;
+  font-family: $font-family;
+  font-size: $font-size-sm;
   font-weight: $font-weight-medium;
+  letter-spacing: $letter-spacing-wide;
   color: $text-primary;
-  background: linear-gradient(135deg, $primary-color, $primary-dark);
-  border-radius: $border-radius-md;
+  background: transparent;
+  border: 1px solid $border-color-base;
+  border-radius: $border-radius-sm;
   cursor: pointer;
-  transition: all $transition-base ease;
+  transition: all $transition-base $ease-out;
   overflow: hidden;
 
   &::before {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
-    transform: translate(-50%, -50%);
-    transition:
-      width 0.6s,
-      height 0.6s;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: $primary-color;
+    opacity: 0;
+    transition: opacity $transition-base $ease-out;
+    z-index: -1;
   }
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: $glow-shadow-primary;
+    border-color: $primary-color;
+    color: $text-inverse;
+    box-shadow: $shadow-hover;
 
     &::before {
-      width: 300px;
-      height: 300px;
+      opacity: 1;
     }
   }
 
   &:active {
-    transform: translateY(0);
+    box-shadow: $shadow-active;
   }
 
-  &--secondary {
-    background: linear-gradient(135deg, $secondary-color, $secondary-dark);
+  &--primary {
+    background: $primary-color;
+    border-color: $primary-color;
+    color: $text-inverse;
 
     &:hover {
-      box-shadow: $glow-shadow-secondary;
+      background: $primary-dark;
+      border-color: $primary-dark;
     }
-  }
-
-  &--ghost {
-    background: transparent;
-    border: 1px solid $primary-color;
-    color: $primary-color;
-
-    &:hover {
-      background: rgba(24, 144, 255, 0.1);
-    }
-  }
-
-  &--small {
-    padding: $spacing-xs $spacing-md;
-    font-size: $font-size-sm;
   }
 
   &--large {
     padding: $spacing-md $spacing-xl;
-    font-size: $font-size-lg;
+    font-size: $font-size-base;
+  }
+
+  &--small {
+    padding: $spacing-xs $spacing-md;
+    font-size: $font-size-xs;
   }
 }
 
-// 卡片
-.glow-card {
-  background: $bg-tertiary;
+// 优雅卡片
+.elegant-card {
+  background: $bg-primary;
+  border: 1px solid $border-color-lighter;
   border-radius: $border-radius-lg;
-  border: 1px solid $border-color-light;
-  transition: all $transition-base ease;
+  transition: all $transition-base $ease-out;
 
-  &--hoverable:hover {
-    transform: translateY(-4px);
-    border-color: rgba(24, 144, 255, 0.3);
-    box-shadow: $shadow-lg;
+  &:hover {
+    border-color: rgba(201, 166, 107, 0.3);
+    box-shadow: $shadow-hover;
   }
 
   &__header {
     padding: $spacing-md $spacing-lg;
-    border-bottom: 1px solid $bg-elevated;
+    border-bottom: 1px solid $border-color-lighter;
   }
 
   &__body {
@@ -177,7 +269,9 @@ textarea {
 
   &__footer {
     padding: $spacing-md $spacing-lg;
-    border-top: 1px solid $bg-elevated;
+    border-top: 1px solid $border-color-lighter;
+    background: $bg-secondary;
+    border-radius: 0 0 $border-radius-lg $border-radius-lg;
   }
 }
 
@@ -210,6 +304,10 @@ textarea {
   color: $info;
 }
 
+.text-accent {
+  color: $primary-color;
+}
+
 // 背景样式
 .bg-primary {
   background-color: $bg-primary;
@@ -223,6 +321,10 @@ textarea {
   background-color: $bg-tertiary;
 }
 
+.bg-elevated {
+  background-color: $bg-elevated;
+}
+
 // 间距工具类
 @each $prop, $abbrev in (margin: m, padding: p) {
   @each $size,
@@ -233,7 +335,8 @@ textarea {
         md: $spacing-md,
         lg: $spacing-lg,
         xl: $spacing-xl,
-        2xl: $spacing-2xl
+        2xl: $spacing-2xl,
+        3xl: $spacing-3xl
       )
   {
     .#{$abbrev}-#{$size} {
@@ -251,6 +354,14 @@ textarea {
     .#{$abbrev}l-#{$size} {
       #{$prop}-left: $value;
     }
+    .#{$abbrev}x-#{$size} {
+      #{$prop}-left: $value;
+      #{$prop}-right: $value;
+    }
+    .#{$abbrev}y-#{$size} {
+      #{$prop}-top: $value;
+      #{$prop}-bottom: $value;
+    }
   }
 }
 
@@ -259,20 +370,48 @@ textarea {
   display: flex;
 }
 
+.inline-flex {
+  display: inline-flex;
+}
+
 .flex-col {
   flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.items-start {
+  align-items: flex-start;
 }
 
 .items-center {
   align-items: center;
 }
 
+.items-end {
+  align-items: flex-end;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
 .justify-center {
   justify-content: center;
 }
 
+.justify-end {
+  justify-content: flex-end;
+}
+
 .justify-between {
   justify-content: space-between;
+}
+
+.gap-xs {
+  gap: $spacing-xs;
 }
 
 .gap-sm {
@@ -285,4 +424,100 @@ textarea {
 
 .gap-lg {
   gap: $spacing-lg;
+}
+
+.gap-xl {
+  gap: $spacing-xl;
+}
+
+// Grid 工具类
+.grid {
+  display: grid;
+}
+
+// 圆角工具类
+.rounded-sm {
+  border-radius: $border-radius-sm;
+}
+
+.rounded-md {
+  border-radius: $border-radius-md;
+}
+
+.rounded-lg {
+  border-radius: $border-radius-lg;
+}
+
+.rounded-xl {
+  border-radius: $border-radius-xl;
+}
+
+.rounded-full {
+  border-radius: $border-radius-full;
+}
+
+// 阴影工具类
+.shadow-sm {
+  box-shadow: $shadow-sm;
+}
+
+.shadow-md {
+  box-shadow: $shadow-md;
+}
+
+.shadow-lg {
+  box-shadow: $shadow-lg;
+}
+
+.shadow-xl {
+  box-shadow: $shadow-xl;
+}
+
+// 过渡工具类
+.transition-fast {
+  transition: all $transition-fast $ease-out;
+}
+
+.transition-base {
+  transition: all $transition-base $ease-out;
+}
+
+.transition-slow {
+  transition: all $transition-slow $ease-out;
+}
+
+// 光标工具类
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+// 选中禁用
+.select-none {
+  user-select: none;
+}
+
+// 文字截断
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 多行截断
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

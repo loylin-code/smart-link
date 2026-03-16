@@ -96,19 +96,13 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, h, type VNode, type Component, defineComponent } from 'vue'
+  import { computed, h, type VNode, type Component } from 'vue'
   import { useOrchestratorStore } from '@/store/modules/orchestrator'
   import { COMPONENT_META_LIST, type ComponentMeta } from '@smart-link/shared'
   import type { ComponentNode } from '@/types'
 
   // 导入所有 UI 组件
   import * as UIComponents from '@smart-link/ui'
-
-  // 组件自引用类型
-  interface RenderableNodeProps {
-    node: ComponentNode
-    depth: number
-  }
 
   const props = defineProps<{
     node: ComponentNode

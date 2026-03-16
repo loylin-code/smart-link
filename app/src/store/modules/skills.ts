@@ -45,7 +45,9 @@ export const useSkillsStore = defineStore('skills', {
       }
 
       if (state.filter.status) {
-        result = result.filter((s) => s.status === (state.filter.status === 'active' ? 'enabled' : 'disabled'))
+        result = result.filter(
+          (s) => s.status === (state.filter.status === 'active' ? 'enabled' : 'disabled')
+        )
       }
 
       if (state.filter.riskLevel) {
@@ -92,7 +94,8 @@ export const useSkillsStore = defineStore('skills', {
         avgSuccessRate:
           state.skills.length > 0
             ? (
-                state.skills.reduce((sum, s) => sum + (s.stats?.successRate || 0), 0) / state.skills.length
+                state.skills.reduce((sum, s) => sum + (s.stats?.successRate || 0), 0) /
+                state.skills.length
               ).toFixed(1)
             : '0.0'
       }

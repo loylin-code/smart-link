@@ -158,7 +158,7 @@
           </div>
         </div>
 
-        <div class="card-footer">
+        <div class="card-footer" @click.stop>
           <button class="action-btn primary" @click.stop="handleRun(app)">
             <svg viewBox="0 0 24 24" fill="none">
               <path d="M5 3l14 9-14 9V3z" fill="currentColor" />

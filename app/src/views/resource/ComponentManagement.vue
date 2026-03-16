@@ -1,46 +1,58 @@
 <template>
   <div class="component-management">
+    <!-- 页面头部 -->
     <div class="page-header">
-      <h1 class="page-title">{{ t('resource.componentManagement') }}</h1>
-      <div class="header-stats">
-        <span class="stat-item">
-          <span class="stat-value">{{ componentsStore.stats.total }}</span>
-          <span class="stat-label">{{ t('component.total') }}</span>
-        </span>
+      <div class="header-left">
+        <h1 class="page-title">{{ t('resource.componentManagement') }}</h1>
+        <span class="page-desc">{{ t('component.managementDescription') }}</span>
       </div>
     </div>
 
-    <div class="category-tabs">
+    <!-- 筛选标签 -->
+    <div class="filter-tags">
       <button
         v-for="cat in componentsStore.categories"
         :key="cat.value"
-        :class="['tab-item', { active: activeCategory === cat.value }]"
+        class="filter-tag"
+        :class="{
+          active:
+            cat.value === 'all'
+              ? !activeCategory || activeCategory === 'all'
+              : activeCategory === cat.value
+        }"
         @click="setCategory(cat.value)"
       >
-        {{ cat.label }}
-        <span v-if="cat.value !== 'all'" class="tab-count">
+        <span class="tag-label">{{ cat.label }}</span>
+        <span v-if="cat.value !== 'all'" class="tag-count">
           {{ componentsStore.getCategoryCount(cat.value) }}
         </span>
       </button>
     </div>
 
-    <div class="search-bar">
-      <svg viewBox="0 0 24 24" fill="none" class="search-icon">
-        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
-        <path
-          d="M21 21L16.65 16.65"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
+    <!-- 组件列表标题 + 搜索框 -->
+    <div class="section-header">
+      <h2 class="section-title">
+        {{ t('component.componentList')
+        }}<span class="title-count">({{ componentsStore.stats.total }})</span>
+      </h2>
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none">
+          <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+          <path
+            d="M21 21l-4.35-4.35"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+        <input
+          v-model="searchKeyword"
+          type="text"
+          class="search-input"
+          :placeholder="t('component.searchPlaceholder')"
+          @input="handleSearch"
         />
-      </svg>
-      <input
-        v-model="searchKeyword"
-        type="text"
-        class="search-input"
-        :placeholder="t('component.searchPlaceholder')"
-        @input="handleSearch"
-      />
+      </div>
     </div>
 
     <div v-if="filteredComponents.length" class="component-grid">
@@ -112,132 +124,174 @@
   .component-management {
     height: 100%;
     padding: $spacing-xl;
-    overflow-y: auto;
-  }
-
-  .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: $spacing-xl;
-  }
-
-  .page-title {
-    font-size: $font-size-3xl;
-    font-weight: $font-weight-bold;
-    color: $text-primary;
-  }
-
-  .header-stats {
-    display: flex;
-    gap: $spacing-lg;
-  }
-
-  .stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: $spacing-sm $spacing-lg;
     background: $bg-secondary;
-    border: 1px solid $border-color-light;
-    border-radius: $border-radius-md;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $border-color-base;
+      border-radius: 3px;
+
+      &:hover {
+        background: $text-tertiary;
+      }
+    }
   }
 
-  .stat-value {
-    font-size: $font-size-2xl;
-    font-weight: $font-weight-bold;
-    color: $primary-color;
+  // ================================
+  // 页面头部
+  // ================================
+  .page-header {
+    margin-bottom: $spacing-xl;
+
+    .header-left {
+      .page-title {
+        display: block;
+        font-size: $font-size-3xl;
+        font-weight: $font-weight-bold;
+        color: $text-primary;
+        margin: 0 0 $spacing-xs 0;
+        text-align: left;
+      }
+
+      .page-desc {
+        display: block;
+        font-size: $font-size-sm;
+        color: $text-tertiary;
+        margin: 0;
+        text-align: left;
+      }
+    }
   }
 
-  .stat-label {
-    font-size: $font-size-xs;
-    color: $text-tertiary;
-  }
-
-  .category-tabs {
+  // ================================
+  // 筛选标签
+  // ================================
+  .filter-tags {
     display: flex;
+    flex-wrap: wrap;
     gap: $spacing-sm;
     margin-bottom: $spacing-lg;
-    flex-wrap: wrap;
   }
 
-  .tab-item {
+  .filter-tag {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: $spacing-sm $spacing-lg;
-    background: $bg-secondary;
-    border: 1px solid $border-color-light;
+    padding: $spacing-xs $spacing-md;
+    background: $bg-primary;
+    border: 1px solid transparent;
     border-radius: $border-radius-full;
-    color: $text-secondary;
     font-size: $font-size-sm;
+    color: $text-secondary;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all 0.2s ease;
 
     &:hover {
-      border-color: $primary-color;
+      background: $bg-tertiary;
       color: $text-primary;
     }
 
     &.active {
-      background: rgba(24, 144, 255, 0.1);
+      background: rgba(59, 130, 246, 0.1);
       border-color: $primary-color;
       color: $primary-color;
     }
   }
 
-  .tab-count {
+  .tag-count {
     font-size: $font-size-xs;
     background: $bg-tertiary;
-    border: 1px solid $border-color-light;
     padding: 0 6px;
     border-radius: $border-radius-full;
     color: $text-tertiary;
   }
 
-  .search-bar {
-    position: relative;
-    margin-bottom: $spacing-xl;
+  // ================================
+  // 区块标题（标题 + 搜索框）
+  // ================================
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-lg;
+    margin-bottom: $spacing-lg;
   }
 
-  .search-icon {
+  .section-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+
+    .title-count {
+      font-size: $font-size-base;
+      font-weight: $font-weight-normal;
+      color: $text-tertiary;
+    }
+  }
+
+  .section-header .search-box {
+    position: relative;
+    width: 280px;
+    flex-shrink: 0;
+  }
+
+  .section-header .search-icon {
     position: absolute;
-    left: 12px;
+    left: $spacing-md;
     top: 50%;
     transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     color: $text-tertiary;
+    pointer-events: none;
   }
 
-  .search-input {
+  .section-header .search-input {
     width: 100%;
-    max-width: 400px;
+    height: 40px;
     padding: $spacing-sm $spacing-md $spacing-sm 40px;
-    background: $bg-secondary;
+    background: $bg-primary;
     border: 1px solid $border-color-base;
-    border-radius: $border-radius-md;
-    color: $text-primary;
+    border-radius: $border-radius-lg;
     font-size: $font-size-sm;
-    outline: none;
-    transition: all $transition-base ease;
+    color: $text-primary;
+    transition: all 0.2s ease;
 
     &::placeholder {
       color: $text-tertiary;
     }
 
     &:focus {
+      outline: none;
       border-color: $primary-color;
-      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
     }
   }
 
+  // ================================
+  // 组件网格
+  // ================================
   .component-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: $spacing-lg;
   }
 
+  // ================================
+  // 空状态
+  // ================================
   .empty-state {
     display: flex;
     flex-direction: column;
@@ -254,6 +308,29 @@
 
     p {
       font-size: $font-size-base;
+    }
+  }
+
+  // ================================
+  // 响应式
+  // ================================
+  @media (max-width: 768px) {
+    .component-management {
+      padding: $spacing-md;
+    }
+
+    .component-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-md;
+
+      .search-box {
+        width: 100%;
+      }
     }
   }
 </style>

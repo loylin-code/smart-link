@@ -1,4 +1,4 @@
-// 探索视图样式
+// 探索视图样式 - 专业蓝风格
 .explore-view {
   height: 100%;
   display: flex;
@@ -11,15 +11,24 @@
 .explore-sidebar {
   width: 280px;
   background: $bg-secondary;
-  border-right: 1px solid $bg-elevated;
+  border-right: 1px solid $border-color-base;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  transition: width $transition-base $ease-out;
+
+  @include respond-below(md) {
+    width: 240px;
+  }
+
+  @include respond-below(sm) {
+    display: none;
+  }
 }
 
 .sidebar-header {
   padding: $spacing-md;
-  border-bottom: 1px solid $bg-elevated;
+  border-bottom: 1px solid $border-color-base;
 }
 
 .new-chat-btn {
@@ -32,25 +41,25 @@
   background: $primary-color;
   border: none;
   border-radius: $border-radius-md;
-  color: #fff;
+  color: $text-inverse;
+  font-family: $font-family;
   font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
+  font-weight: $font-weight-semibold;
   cursor: pointer;
-  transition: all $transition-base ease;
+  transition: all $transition-fast $ease-out;
 
   svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
   }
 
   &:hover {
-    background: $primary-light;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba($primary-color, 0.3);
+    background: $primary-dark;
+    box-shadow: $shadow-primary;
   }
 
   &:active {
-    transform: translateY(0);
+    transform: translateY(1px);
   }
 }
 
@@ -79,18 +88,20 @@
   background: $bg-tertiary;
   border: 1px solid transparent;
   border-radius: $border-radius-md;
+  font-family: $font-family;
   font-size: $font-size-sm;
   color: $text-primary;
-  transition: all $transition-base ease;
+  transition: all $transition-fast $ease-out;
 
   &::placeholder {
-    color: $text-tertiary;
+    color: $text-disabled;
   }
 
   &:focus {
     outline: none;
     background: $bg-primary;
     border-color: $primary-color;
+    box-shadow: $ring-primary;
   }
 }
 
@@ -98,6 +109,24 @@
   flex: 1;
   overflow-y: auto;
   padding: $spacing-xs;
+
+  // 自定义滚动条
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $border-color-base;
+    border-radius: 2px;
+
+    &:hover {
+      background: $text-tertiary;
+    }
+  }
 }
 
 .conversation-group {
@@ -117,10 +146,13 @@
   padding: $spacing-xs $spacing-sm;
   font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-wider;
   color: $text-secondary;
   cursor: pointer;
   user-select: none;
   border-radius: $border-radius-sm;
+  transition: background $transition-fast $ease-out;
 
   &:hover {
     background: $bg-tertiary;
@@ -130,7 +162,7 @@
 .collapse-icon {
   width: 14px;
   height: 14px;
-  transition: transform $transition-base ease;
+  transition: transform $transition-fast $ease-out;
 
   &.collapsed {
     transform: rotate(-90deg);
@@ -144,8 +176,8 @@
 .group-count {
   padding: 2px 6px;
   background: $bg-elevated;
-  border-radius: $border-radius-sm;
-  font-size: $font-size-xs;
+  border-radius: $border-radius-xs;
+  font-size: 10px;
   color: $text-tertiary;
 }
 
@@ -160,7 +192,7 @@
   padding: $spacing-sm;
   border-radius: $border-radius-md;
   cursor: pointer;
-  transition: all $transition-base ease;
+  transition: all $transition-fast $ease-out;
   margin-bottom: 2px;
 
   &:hover {
@@ -173,13 +205,13 @@
   }
 
   &.active {
-    background: rgba($primary-color, 0.1);
-    border-left: 3px solid $primary-color;
+    background: $primary-surface;
+    border-left: 2px solid $primary-color;
 
     .conv-icon {
       color: $primary-color;
-      background: rgba($primary-color, 0.1);
-      border-color: rgba($primary-color, 0.2);
+      background: $primary-surface;
+      border-color: rgba(30, 64, 175, 0.2);
     }
   }
 
@@ -192,7 +224,7 @@
   width: 36px;
   height: 36px;
   background: $bg-tertiary;
-  border: 1px solid $border-color-light;
+  border: 1px solid $border-color-base;
   border-radius: $border-radius-md;
   display: flex;
   align-items: center;
@@ -243,7 +275,7 @@
   border-radius: $border-radius-sm;
   color: $text-tertiary;
   opacity: 0;
-  transition: all $transition-base ease;
+  transition: all $transition-fast $ease-out;
   flex-shrink: 0;
 
   svg {
@@ -252,13 +284,13 @@
   }
 
   &:hover {
-    background: rgba($error, 0.1);
+    background: $error-bg;
     color: $error;
   }
 }
 
 .conv-restore:hover {
-  background: rgba($primary-color, 0.1);
+  background: $primary-surface;
   color: $primary-color;
 }
 
@@ -299,13 +331,31 @@
   flex: 1;
   overflow-y: auto;
   padding: $spacing-lg;
+
+  // 自定义滚动条
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $border-color-base;
+    border-radius: 3px;
+
+    &:hover {
+      background: $text-tertiary;
+    }
+  }
 }
 
 .message-item {
   display: flex;
   gap: $spacing-md;
   margin-bottom: $spacing-lg;
-  animation: slideIn 0.3s ease;
+  animation: messageSlide 0.3s $ease-out;
 
   &.message-user {
     flex-direction: row-reverse;
@@ -316,16 +366,16 @@
 
     .message-content {
       background: $primary-color;
-      color: #fff;
-      border-radius: $border-radius-lg $border-radius-lg $border-radius-sm $border-radius-lg;
+      color: $text-inverse;
+      border-radius: $border-radius-lg $border-radius-lg $border-radius-xs $border-radius-lg;
     }
   }
 
   &.message-assistant {
     .message-content {
       background: $bg-secondary;
-      border: 1px solid $border-color-light;
-      border-radius: $border-radius-lg $border-radius-lg $border-radius-lg $border-radius-sm;
+      border: 1px solid $border-color-base;
+      border-radius: $border-radius-lg $border-radius-lg $border-radius-lg $border-radius-xs;
     }
   }
 }
@@ -350,12 +400,12 @@
 
 .user-avatar {
   background: $secondary-color;
-  color: #fff;
+  color: $text-inverse;
 }
 
 .assistant-avatar {
   background: $primary-color;
-  color: #fff;
+  color: $text-inverse;
 }
 
 .message-body {
@@ -364,6 +414,10 @@
   flex-direction: column;
   gap: $spacing-xs;
   max-width: 70%;
+
+  @include respond-below(md) {
+    max-width: 85%;
+  }
 }
 
 .message-header {
@@ -373,6 +427,7 @@
 }
 
 .message-name {
+  font-family: $font-family;
   font-size: $font-size-sm;
   font-weight: $font-weight-semibold;
   color: $text-primary;
@@ -408,8 +463,9 @@
 
 .message-content {
   padding: $spacing-md;
+  font-family: $font-family;
   font-size: $font-size-sm;
-  line-height: 1.6;
+  line-height: $line-height-relaxed;
   color: $text-primary;
 }
 
@@ -431,7 +487,8 @@
   justify-content: center;
   border-radius: $border-radius-sm;
   color: $text-tertiary;
-  transition: all $transition-base ease;
+  transition: all $transition-fast $ease-out;
+  cursor: pointer;
 
   svg {
     width: 14px;
@@ -449,13 +506,13 @@
   gap: 4px;
   padding: $spacing-md;
   background: $bg-secondary;
-  border: 1px solid $border-color-light;
+  border: 1px solid $border-color-base;
   border-radius: $border-radius-lg;
 
   span {
-    width: 8px;
-    height: 8px;
-    background: $text-tertiary;
+    width: 6px;
+    height: 6px;
+    background: $primary-color;
     border-radius: 50%;
     animation: typing 1.4s infinite ease-in-out;
 
@@ -476,7 +533,7 @@
 // ================================
 .input-area {
   padding: $spacing-md $spacing-lg;
-  border-top: 1px solid $bg-elevated;
+  border-top: 1px solid $border-color-base;
   background: $bg-primary;
 }
 
@@ -504,6 +561,7 @@
     align-items: center;
     justify-content: center;
     color: $text-tertiary;
+    cursor: pointer;
 
     svg {
       width: 12px;
@@ -524,11 +582,11 @@
   border: 1px solid $border-color-base;
   border-radius: $border-radius-lg;
   padding: $spacing-sm;
-  transition: all $transition-base ease;
+  transition: all $transition-fast $ease-out;
 
   &:focus-within {
     border-color: $primary-color;
-    box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+    box-shadow: $ring-primary;
   }
 }
 
@@ -540,12 +598,13 @@
   justify-content: center;
   color: $text-tertiary;
   border-radius: $border-radius-sm;
-  transition: all $transition-base ease;
+  transition: all $transition-fast $ease-out;
   flex-shrink: 0;
+  cursor: pointer;
 
   svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
   }
 
   &:hover {
@@ -558,8 +617,9 @@
   flex: 1;
   background: transparent;
   color: $text-primary;
+  font-family: $font-family;
   font-size: $font-size-sm;
-  line-height: 1.5;
+  line-height: $line-height-base;
   resize: none;
   padding: $spacing-xs;
   max-height: 150px;
@@ -583,9 +643,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: $text-inverse;
   cursor: pointer;
-  transition: all $transition-base ease;
+  transition: all $transition-fast $ease-out;
   flex-shrink: 0;
 
   svg {
@@ -594,7 +654,8 @@
   }
 
   &:hover:not(:disabled) {
-    background: $primary-light;
+    background: $primary-dark;
+    box-shadow: $shadow-primary;
   }
 
   &:disabled {
@@ -619,19 +680,28 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: $spacing-xl;
+  padding: $spacing-2xl;
   overflow-y: auto;
+
+  @include respond-below(md) {
+    padding: $spacing-lg;
+  }
 }
 
 .template-header {
   text-align: center;
-  margin-bottom: $spacing-xl;
+  margin-bottom: $spacing-2xl;
 
   h2 {
-    font-size: 28px;
+    font-family: $font-family-display;
+    font-size: $font-size-4xl;
     font-weight: $font-weight-bold;
     color: $text-primary;
     margin-bottom: $spacing-sm;
+
+    @include respond-below(md) {
+      font-size: $font-size-3xl;
+    }
   }
 
   p {
@@ -643,28 +713,34 @@
 .template-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: $spacing-md;
+  gap: $spacing-lg;
   width: 100%;
   max-width: 1000px;
-  margin-bottom: $spacing-xl;
+  margin-bottom: $spacing-2xl;
+
+  @include respond-below(md) {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+  }
 }
 
 .template-card {
   background: $bg-secondary;
-  border: 1px solid $border-color-light;
+  border: 1px solid $border-color-base;
   border-radius: $border-radius-lg;
   padding: $spacing-lg;
   cursor: pointer;
-  transition: all $transition-base ease;
+  transition: all $transition-fast $ease-out;
 
   &:hover {
     border-color: $primary-color;
+    box-shadow: $shadow-card-hover;
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba($primary-color, 0.15);
 
     .use-template-btn {
       background: $primary-color;
-      color: #fff;
+      border-color: $primary-color;
+      color: $text-inverse;
     }
   }
 }
@@ -676,6 +752,7 @@
 
 .template-info {
   h3 {
+    font-family: $font-family-display;
     font-size: $font-size-lg;
     font-weight: $font-weight-semibold;
     color: $text-primary;
@@ -686,6 +763,7 @@
     font-size: $font-size-sm;
     color: $text-secondary;
     margin-bottom: $spacing-sm;
+    line-height: $line-height-relaxed;
   }
 }
 
@@ -702,7 +780,7 @@
     margin-bottom: 4px;
 
     &:before {
-      content: '•';
+      content: '→';
       position: absolute;
       left: 0;
       color: $primary-color;
@@ -716,11 +794,12 @@
   background: $bg-tertiary;
   border: 1px solid $border-color-base;
   border-radius: $border-radius-md;
+  font-family: $font-family;
   font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
+  font-weight: $font-weight-semibold;
   color: $text-secondary;
   cursor: pointer;
-  transition: all $transition-base ease;
+  transition: all $transition-fast $ease-out;
 }
 
 .direct-input {
@@ -735,14 +814,14 @@
   gap: $spacing-md;
   background: $bg-secondary;
   border: 1px solid $border-color-base;
-  border-radius: 16px;
+  border-radius: $border-radius-lg;
   padding: $spacing-md $spacing-lg;
-  transition: all $transition-base ease;
+  transition: all $transition-fast $ease-out;
   min-height: 60px;
 
   &:focus-within {
     border-color: $primary-color;
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+    box-shadow: $ring-primary;
   }
 }
 
@@ -750,8 +829,9 @@
   flex: 1;
   background: transparent;
   color: $text-primary;
+  font-family: $font-family;
   font-size: $font-size-base;
-  line-height: 1.5;
+  line-height: $line-height-base;
   resize: none;
   padding: $spacing-sm 0;
   min-height: 24px;
@@ -771,13 +851,13 @@
   height: 44px;
   background: $primary-color;
   border: none;
-  border-radius: 12px;
+  border-radius: $border-radius-md;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: $text-inverse;
   cursor: pointer;
-  transition: all $transition-base ease;
+  transition: all $transition-fast $ease-out;
   flex-shrink: 0;
 
   svg {
@@ -786,12 +866,12 @@
   }
 
   &:hover:not(:disabled) {
-    background: $primary-light;
-    transform: scale(1.05);
+    background: $primary-dark;
+    box-shadow: $shadow-primary;
   }
 
   &:active:not(:disabled) {
-    transform: scale(0.98);
+    transform: translateY(1px);
   }
 
   &:disabled {
@@ -803,10 +883,10 @@
 // ================================
 // 动画
 // ================================
-@keyframes slideIn {
+@keyframes messageSlide {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -824,5 +904,24 @@
   30% {
     transform: translateY(-4px);
     opacity: 1;
+  }
+}
+
+// ================================
+// 动画减少模式
+// ================================
+@include reduced-motion {
+  .message-item,
+  .conversation-item,
+  .template-card {
+    animation: none;
+    transition:
+      opacity 0.15s ease,
+      background 0.15s ease;
+  }
+
+  .typing-indicator span {
+    animation: none;
+    opacity: 0.6;
   }
 }

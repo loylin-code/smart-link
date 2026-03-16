@@ -41,9 +41,7 @@
       <header class="page-header">
         <div class="header-left">
           <h1 class="page-title">{{ t('datamodel.title') }}</h1>
-          <span class="current-category-label">
-            {{ t('datamodel.currentCategory') }}: {{ getCurrentCategoryName() }}
-          </span>
+          <span class="page-desc">{{ t('datamodel.description') }}</span>
         </div>
         <button class="create-btn" @click="showCreateDialog = true">
           <svg viewBox="0 0 24 24" fill="none">
@@ -59,35 +57,33 @@
         </button>
       </header>
 
-      <!-- 搜索栏 -->
-      <div class="search-bar">
-        <svg viewBox="0 0 24 24" fill="none" class="search-icon">
-          <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
-          <path
-            d="M21 21L16.65 16.65"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-          />
-        </svg>
-        <input
-          v-model="searchKeyword"
-          type="text"
-          class="search-input"
-          :placeholder="t('datamodel.searchPlaceholder')"
-          @input="handleSearch"
-        />
-      </div>
-
-      <!-- 类型筛选 -->
+      <!-- 搜索和筛选 -->
       <div class="filter-section">
-        <span class="filter-label">{{ t('datamodel.filterByType') }}:</span>
+        <div class="search-box">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+            <path
+              d="M21 21l-4.35-4.35"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+          <input
+            v-model="searchKeyword"
+            type="text"
+            class="search-input"
+            :placeholder="t('datamodel.searchPlaceholder')"
+            @input="handleSearch"
+          />
+        </div>
+
         <div class="filter-tags">
           <button
             :class="['filter-tag', { active: typeFilter === undefined }]"
             @click="setTypeFilter(undefined)"
           >
-            {{ t('common.all') }}
+            <span class="tag-label">{{ t('common.all') }}</span>
             <span class="tag-count">{{ filteredModels.length }}</span>
           </button>
           <button
@@ -96,8 +92,8 @@
             :class="['filter-tag', { active: typeFilter === type.value }]"
             @click="setTypeFilter(type.value)"
           >
-            <span class="type-icon">{{ type.icon }}</span>
-            {{ type.label }}
+            <span v-if="type.icon" class="tag-icon">{{ type.icon }}</span>
+            <span class="tag-label">{{ type.label }}</span>
             <span class="tag-count">{{ getTypeCount(type.value) }}</span>
           </button>
         </div>
@@ -133,6 +129,38 @@
             <span class="update-time"
               >{{ t('datamodel.updated') }}: {{ formatTime(model.updatedAt) }}</span
             >
+          </div>
+
+          <!-- 悬浮操作按钮 -->
+          <div class="card-actions" @click.stop>
+            <button class="action-btn primary" @click="openDetail(model)">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <span>{{ t('common.edit') }}</span>
+            </button>
+            <button class="action-btn" @click="handleDelete(model)" :title="t('common.delete')">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
@@ -510,6 +538,12 @@
     showNewCategoryDialog.value = false
     newCategory.value = { name: '', icon: '📁', description: '' }
   }
+
+  const handleDelete = (model: DataModel) => {
+    if (confirm(t('datamodel.confirmDelete'))) {
+      dataModelStore.deleteModel(model.id)
+    }
+  }
 </script>
 
 <style scoped lang="scss">
@@ -628,10 +662,13 @@
     }
   }
 
-  // 右侧主内容
+  // ================================
+  // 主内容区
+  // ================================
   .main-content {
     flex: 1;
     padding: $spacing-xl;
+    background: $bg-secondary;
     overflow-y: auto;
   }
 
@@ -644,19 +681,21 @@
 
   .header-left {
     display: flex;
-    align-items: baseline;
-    gap: $spacing-md;
-  }
+    flex-direction: column;
+    gap: $spacing-xs;
 
-  .page-title {
-    font-size: $font-size-2xl;
-    font-weight: $font-weight-bold;
-    color: $text-primary;
-  }
+    .page-title {
+      font-size: $font-size-2xl;
+      font-weight: $font-weight-bold;
+      color: $text-primary;
+      margin: 0;
+    }
 
-  .current-category-label {
-    font-size: $font-size-sm;
-    color: $text-secondary;
+    .page-desc {
+      font-size: $font-size-sm;
+      color: $text-tertiary;
+      margin: 0;
+    }
   }
 
   .create-btn {
@@ -684,63 +723,58 @@
     }
   }
 
-  // 搜索栏
-  .search-bar {
-    position: relative;
+  // ================================
+  // 搜索和筛选
+  // ================================
+  .filter-section {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
     margin-bottom: $spacing-lg;
+  }
+
+  .search-box {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
   }
 
   .search-icon {
     position: absolute;
-    left: 12px;
+    left: $spacing-md;
     top: 50%;
     transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     color: $text-tertiary;
+    pointer-events: none;
   }
 
   .search-input {
     width: 100%;
-    max-width: 400px;
-    padding: $spacing-sm $spacing-md $spacing-sm 40px;
-    background: $bg-secondary;
+    padding: $spacing-sm $spacing-md $spacing-sm 44px;
+    background: $bg-primary;
     border: 1px solid $border-color-base;
-    border-radius: $border-radius-md;
-    color: $text-primary;
+    border-radius: $border-radius-lg;
     font-size: $font-size-sm;
-    outline: none;
-    transition: all $transition-base ease;
+    color: $text-primary;
+    transition: all 0.2s ease;
 
     &::placeholder {
       color: $text-tertiary;
     }
 
     &:focus {
+      outline: none;
       border-color: $primary-color;
-      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
     }
-  }
-
-  // 筛选区
-  .filter-section {
-    display: flex;
-    align-items: center;
-    gap: $spacing-md;
-    margin-bottom: $spacing-md;
-    flex-wrap: wrap;
-  }
-
-  .filter-label {
-    font-size: $font-size-sm;
-    color: $text-secondary;
-    font-weight: $font-weight-medium;
   }
 
   .filter-tags {
     display: flex;
-    gap: $spacing-sm;
     flex-wrap: wrap;
+    gap: $spacing-sm;
   }
 
   .filter-tag {
@@ -748,65 +782,77 @@
     align-items: center;
     gap: 6px;
     padding: $spacing-xs $spacing-md;
-    background: $bg-secondary;
-    border: 1px solid $border-color-light;
+    background: $bg-primary;
+    border: 1px solid transparent;
     border-radius: $border-radius-full;
-    color: $text-secondary;
     font-size: $font-size-sm;
+    color: $text-secondary;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all 0.2s ease;
+
+    .tag-icon {
+      font-size: 14px;
+    }
+
+    .tag-label {
+      font-weight: $font-weight-medium;
+    }
+
+    .tag-count {
+      font-size: $font-size-xs;
+      background: $bg-tertiary;
+      border: 1px solid $border-color-light;
+      padding: 0 6px;
+      border-radius: $border-radius-full;
+      color: $text-tertiary;
+    }
 
     &:hover {
-      border-color: $primary-color;
+      background: $bg-tertiary;
       color: $text-primary;
     }
 
     &.active {
-      background: rgba(24, 144, 255, 0.1);
+      background: rgba(59, 130, 246, 0.1);
       border-color: $primary-color;
       color: $primary-color;
+
+      .tag-count {
+        background: rgba(59, 130, 246, 0.2);
+        border-color: rgba(59, 130, 246, 0.3);
+        color: $primary-color;
+      }
     }
   }
 
-  .type-icon {
-    font-size: 14px;
-  }
-
-  .tag-count {
-    font-size: $font-size-xs;
-    background: $bg-tertiary;
-    border: 1px solid $border-color-light;
-    padding: 0 6px;
-    border-radius: $border-radius-full;
-    color: $text-tertiary;
-  }
-
-  .filter-tag.active .tag-count {
-    background: rgba(24, 144, 255, 0.2);
-    border-color: rgba(24, 144, 255, 0.3);
-    color: $primary-color;
-  }
-
+  // ================================
   // 模型卡片网格
+  // ================================
   .model-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: $spacing-lg;
     margin-bottom: $spacing-xl;
   }
 
   .model-card {
-    background: $bg-secondary;
-    border: 1px solid $border-color-light;
+    position: relative;
+    background: $bg-primary;
+    border: 1px solid $border-color-base;
     border-radius: $border-radius-lg;
     padding: $spacing-lg;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all 0.2s ease;
+    overflow: hidden;
 
     &:hover {
       border-color: $primary-color;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(59, 130, 246, 0.12);
+
+      .card-actions {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   }
 
@@ -842,7 +888,7 @@
   .version {
     font-size: $font-size-xs;
     color: $primary-color;
-    background: rgba(24, 144, 255, 0.1);
+    background: rgba(59, 130, 246, 0.1);
     padding: 2px 8px;
     border-radius: $border-radius-full;
   }
@@ -876,38 +922,104 @@
     color: $text-tertiary;
   }
 
+  // ================================
+  // 悬浮操作按钮
+  // ================================
+  .card-actions {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    gap: $spacing-sm;
+    padding: $spacing-md;
+    background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(255, 255, 255, 0.95) 100%
+    );
+    border-top: 1px solid $border-color-lighter;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+  }
+
+  .action-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: $spacing-sm $spacing-md;
+    background: $bg-secondary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-md;
+    color: $text-secondary;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    &:hover {
+      border-color: $primary-color;
+      color: $primary-color;
+    }
+
+    &.primary {
+      background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+      border-color: transparent;
+      color: #fff;
+
+      &:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+      }
+    }
+  }
+
+  // ================================
   // 空状态
+  // ================================
   .empty-state {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: $spacing-3xl;
-    color: $text-tertiary;
+    text-align: center;
 
     svg {
       width: 80px;
       height: 80px;
+      color: $text-tertiary;
       margin-bottom: $spacing-md;
     }
 
     p {
       font-size: $font-size-base;
+      color: $text-secondary;
+      margin: 0;
     }
   }
 
+  // ================================
   // 分页
+  // ================================
   .pagination {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    padding-top: $spacing-lg;
-    border-top: 1px solid $border-color-light;
+    gap: $spacing-xs;
+    margin-top: $spacing-xl;
   }
 
   .pagination-info {
-    font-size: $font-size-sm;
-    color: $text-secondary;
+    display: none;
   }
 
   .pagination-controls {
@@ -916,34 +1028,38 @@
   }
 
   .page-btn {
+    min-width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 32px;
-    height: 32px;
-    padding: 0 $spacing-sm;
-    background: $bg-secondary;
-    border: 1px solid $border-color-light;
+    background: $bg-primary;
+    border: 1px solid $border-color-base;
     border-radius: $border-radius-md;
     color: $text-secondary;
     font-size: $font-size-sm;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all 0.2s ease;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
 
     &:hover:not(:disabled) {
       border-color: $primary-color;
       color: $primary-color;
     }
 
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
     &.active {
       background: $primary-color;
       border-color: $primary-color;
       color: #fff;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
   }
 
@@ -1126,6 +1242,101 @@
         background: $primary-light;
         border-color: $primary-light;
       }
+    }
+  }
+
+  // ================================
+  // 深色模式适配
+  // ================================
+  [data-theme='dark'] {
+    .card-actions {
+      background: linear-gradient(to top, rgba(30, 41, 59, 0.98) 0%, rgba(30, 41, 59, 0.95) 100%);
+      border-top-color: $border-color-base;
+    }
+
+    .action-btn {
+      background: $bg-tertiary;
+      border-color: $border-color-base;
+
+      &.primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+      }
+    }
+
+    .model-card {
+      background: $bg-secondary;
+    }
+
+    .search-input {
+      background: $bg-secondary;
+    }
+
+    .filter-tag {
+      background: $bg-secondary;
+
+      &.active {
+        background: rgba(96, 165, 250, 0.15);
+      }
+    }
+  }
+
+  // ================================
+  // 响应式
+  // ================================
+  @media (max-width: 1200px) {
+    .model-grid {
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+  }
+
+  @media (max-width: 768px) {
+    .main-content {
+      padding: $spacing-md;
+    }
+
+    .category-sidebar {
+      width: 200px;
+    }
+
+    .model-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .card-actions {
+      opacity: 1;
+      transform: translateY(0);
+      position: static;
+      background: $bg-secondary;
+      backdrop-filter: none;
+      border-top: 1px solid $border-color-light;
+      margin-top: $spacing-md;
+      padding: $spacing-sm 0 0 0;
+    }
+
+    .filter-section {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .search-box {
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-md;
+    }
+
+    .category-sidebar {
+      display: none;
+    }
+
+    .create-btn {
+      width: 100%;
+      justify-content: center;
     }
   }
 </style>

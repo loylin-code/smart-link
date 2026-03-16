@@ -1,9 +1,9 @@
-// 应用运行态页面样式
+// 应用运行态页面样式 - 专业蓝风格
 .app-runtime {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: linear-gradient(135deg, #f0f5ff 0%, #e6f7ff 50%, #ffffff 100%);
+  background: $bg-primary;
   color: $text-primary;
   overflow: hidden;
   position: relative;
@@ -19,7 +19,7 @@
   justify-content: space-between;
   padding: $spacing-md $spacing-lg;
   background: $bg-primary;
-  border-bottom: 1px solid $border-color-lighter;
+  border-bottom: 1px solid $border-color-base;
   flex-shrink: 0;
   box-shadow: $shadow-sm;
 }
@@ -49,7 +49,7 @@
   }
 
   &:hover {
-    background: rgba($primary-color, 0.1);
+    background: $primary-surface;
     border-color: $primary-color;
     color: $primary-color;
   }
@@ -74,9 +74,9 @@
 
 .app-type-badge {
   padding: 4px 12px;
-  background: rgba($primary-color, 0.1);
-  border: 1px solid rgba($primary-color, 0.3);
-  border-radius: 12px;
+  background: $primary-surface;
+  border: 1px solid rgba($primary-color, 0.2);
+  border-radius: $border-radius-full;
   font-size: $font-size-xs;
   color: $primary-color;
   font-weight: $font-weight-medium;
@@ -134,11 +134,11 @@
   background: $primary-color;
   border: 1px solid $primary-color;
   border-radius: $border-radius-md;
-  color: #fff;
+  color: $text-inverse;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   cursor: pointer;
-  transition: all $transition-base ease;
+  transition: all $transition-fast $ease-out;
 
   svg {
     width: 16px;
@@ -146,10 +146,10 @@
   }
 
   &:hover {
-    background: $primary-light;
-    border-color: $primary-light;
+    background: $primary-dark;
+    border-color: $primary-dark;
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba($primary-color, 0.3);
+    box-shadow: $shadow-primary;
   }
 
   &:active {
@@ -239,13 +239,13 @@
   gap: $spacing-xs;
   padding: $spacing-sm $spacing-lg;
   background: $primary-color;
-  color: #fff;
+  color: $text-inverse;
   border: none;
   border-radius: $border-radius-md;
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   cursor: pointer;
-  transition: all $transition-base ease;
+  transition: all $transition-fast $ease-out;
 
   svg {
     width: 16px;
@@ -253,9 +253,9 @@
   }
 
   &:hover {
-    background: $primary-light;
+    background: $primary-dark;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+    box-shadow: $shadow-primary;
   }
 
   &:active {
@@ -336,7 +336,7 @@
   gap: $spacing-3xl;
   padding: $spacing-lg $spacing-xl;
   background: $bg-primary;
-  border-top: 1px solid $border-color-lighter;
+  border-top: 1px solid $border-color-base;
   flex-shrink: 0;
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
 }
@@ -353,7 +353,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba($primary-color, 0.1);
+  background: $primary-surface;
   border-radius: $border-radius-md;
   color: $primary-color;
 

@@ -76,11 +76,9 @@
 <script setup lang="ts">
   import { computed } from 'vue'
   import { useRoute } from 'vue-router'
-  import { useI18n } from 'vue-i18n'
   import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
 
   const route = useRoute()
-  const { t } = useI18n()
 
   const currentTitle = computed(() => {
     return route.meta.title || 'SmartLink'
@@ -90,8 +88,8 @@
 <style scoped lang="scss">
   .app-header {
     height: $header-height;
-    background: $bg-secondary;
-    border-bottom: 1px solid $bg-elevated;
+    background: $bg-primary;
+    border-bottom: 1px solid $border-color-base;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -110,12 +108,17 @@
       align-items: center;
       gap: $spacing-sm;
       text-decoration: none;
+      transition: opacity $transition-fast $ease-out;
+
+      &:hover {
+        opacity: 0.85;
+      }
 
       .logo-icon {
         width: 32px;
         height: 32px;
         color: $primary-color;
-        animation: glow 2s ease-in-out infinite alternate;
+        transition: transform $transition-base $ease-out;
 
         svg {
           width: 100%;
@@ -123,24 +126,28 @@
         }
 
         .eye {
-          animation: eyeGlow 1.5s ease-in-out infinite alternate;
+          transition: fill $transition-fast $ease-out;
         }
       }
 
+      &:hover .logo-icon {
+        transform: scale(1.05);
+      }
+
       .logo-text {
+        font-family: $font-family-display;
         font-size: $font-size-xl;
         font-weight: $font-weight-bold;
-        background: linear-gradient(135deg, $primary-color, $secondary-color);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        color: $text-primary;
+        letter-spacing: -0.02em;
       }
     }
 
     &__breadcrumb {
       .breadcrumb-item {
-        color: $text-secondary;
+        color: $text-tertiary;
         font-size: $font-size-sm;
+        font-weight: $font-weight-medium;
       }
     }
 
@@ -158,27 +165,32 @@
     padding: $spacing-xs $spacing-md;
     border-radius: $border-radius-md;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all $transition-fast $ease-out;
 
     &:hover {
-      background: $bg-tertiary;
+      background: $bg-secondary;
     }
 
     .user-avatar {
       width: 32px;
       height: 32px;
       border-radius: $border-radius-full;
-      background: $bg-tertiary;
+      background: $primary-surface;
       border: 1px solid $border-color-base;
       display: flex;
       align-items: center;
       justify-content: center;
       color: $primary-color;
+      transition: all $transition-fast $ease-out;
 
       svg {
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
       }
+    }
+
+    &:hover .user-avatar {
+      border-color: $primary-color;
     }
 
     .user-name {
@@ -188,23 +200,18 @@
     }
   }
 
-  @keyframes glow {
-    from {
-      filter: drop-shadow(0 0 3px rgba(24, 144, 255, 0.2));
-    }
-    to {
-      filter: drop-shadow(0 0 6px rgba(24, 144, 255, 0.4));
-    }
-  }
+  // 响应式设计
+  @include respond-below(md) {
+    .app-header {
+      padding: 0 $spacing-md;
 
-  @keyframes eyeGlow {
-    from {
-      fill: $primary-color;
-      filter: drop-shadow(0 0 1px rgba(24, 144, 255, 0.3));
-    }
-    to {
-      fill: $primary-light;
-      filter: drop-shadow(0 0 3px rgba(24, 144, 255, 0.5));
+      &__breadcrumb {
+        display: none;
+      }
+
+      .user-name {
+        display: none;
+      }
     }
   }
 </style>

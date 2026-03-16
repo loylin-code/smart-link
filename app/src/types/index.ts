@@ -190,6 +190,224 @@ export interface AppFlow {
 }
 
 // ============================================================
+// 智能体相关类型 (基于架构设计文档 Role 模型)
+// ============================================================
+
+// 智能体状态枚举
+export enum AgentStatus {
+  DRAFT = 'draft', // 草稿
+  ACTIVE = 'active', // 激活可用
+  PAUSED = 'paused', // 暂停
+  DEPRECATED = 'deprecated' // 废弃
+}
+
+// 智能体类型枚举
+export enum AgentType {
+  SYSTEM = 'system', // 系统预置角色
+  CUSTOM = 'custom', // 用户自定义角色
+  TEMPLATE = 'template' // 模板角色（可复制）
+}
+
+// 职责定义
+export interface AgentResponsibility {
+  id: string
+  name: string
+  description: string
+  priority: number
+  keywords: string[]
+  examples: string[]
+}
+
+// MCP 服务绑定
+export interface MCPServerBinding {
+  serverId: string
+  required: boolean
+  fallbackAction: 'skip' | 'error' | 'wait'
+  customConfig?: Record<string, unknown>
+}
+
+// Skill 绑定
+export interface SkillBinding {
+  skillId: string
+  version: string
+  enabled: boolean
+  parameters: Record<string, unknown>
+}
+
+// Tool 绑定
+export interface ToolBinding {
+  toolId: string
+  enabled: boolean
+  parameters?: Record<string, unknown>
+}
+
+// 交互视图
+export interface InteractionView {
+  id: string
+  name: string
+  description: string
+  type: 'chart' | 'table' | 'form' | 'dashboard' | 'custom'
+  schema?: Record<string, unknown>
+  thumbnail?: string
+  createdAt: number
+  updatedAt: number
+}
+
+// LLM 配置
+export interface AgentLLMConfig {
+  provider: string
+  model: string
+  temperature: number
+  maxTokens: number
+  topP: number
+  systemPrompt?: string
+}
+
+// 能力定义
+export interface AgentCapabilities {
+  mcpServers: MCPServerBinding[]
+  skills: SkillBinding[]
+  tools: ToolBinding[]
+  llm: AgentLLMConfig
+}
+
+// 文档源
+export interface DocumentSource {
+  id: string
+  name: string
+  type: 'file' | 'url' | 'text'
+  source: string
+  enabled: boolean
+}
+
+// 数据库源
+export interface DatabaseSource {
+  id: string
+  name: string
+  type: 'mysql' | 'postgresql' | 'mongodb' | 'redis'
+  connectionString: string
+  enabled: boolean
+}
+
+// API 数据源
+export interface APISource {
+  id: string
+  name: string
+  endpoint: string
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE'
+  headers?: Record<string, string>
+  enabled: boolean
+}
+
+// 检索配置
+export interface SearchConfig {
+  enabled: boolean
+  topK: number
+  similarityThreshold: number
+  rerankEnabled: boolean
+}
+
+// 知识库配置
+export interface AgentKnowledge {
+  documents: DocumentSource[]
+  databases: DatabaseSource[]
+  apis: APISource[]
+  searchConfig: SearchConfig
+}
+
+// 身份定义
+export interface AgentIdentity {
+  name: string
+  code: string
+  avatar: string
+  description: string
+  persona: string // 系统提示词
+  welcomeMessage: string
+  responsibilities: AgentResponsibility[]
+}
+
+// 智能体运行时状态
+export interface AgentRuntimeStatus {
+  agentId: string
+  status: 'idle' | 'busy' | 'error'
+  sessionCount: number
+  lastActiveAt?: number
+  tokensConsumed: number
+  avgLatency: number
+}
+
+// 核心智能体模型
+export interface Agent {
+  id: string
+  type: AgentType
+  status: AgentStatus
+
+  // 身份定义
+  identity: AgentIdentity
+
+  // 能力定义
+  capabilities: AgentCapabilities
+
+  // 知识库 (RAG)
+  knowledge: AgentKnowledge
+
+  // 页面设计 Schema
+  pageSchema?: any
+
+  // 元数据
+  createdAt: number
+  updatedAt: number
+  tags: string[]
+  version: string
+  creator?: string
+  category?: string
+}
+
+// 智能体筛选条件
+export interface AgentFilter {
+  type?: AgentType | ''
+  status?: AgentStatus | ''
+  keyword?: string
+  category?: string
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
+}
+
+// 智能体分页
+export interface AgentPagination {
+  page: number
+  pageSize: number
+  total?: number
+}
+
+// 智能体创建参数
+export interface AgentCreateParams {
+  name: string
+  code: string
+  description: string
+  avatar?: string
+  persona?: string
+  welcomeMessage?: string
+  tags?: string[]
+  category?: string
+}
+
+// 智能体更新参数
+export interface AgentUpdateParams {
+  name?: string
+  description?: string
+  avatar?: string
+  persona?: string
+  welcomeMessage?: string
+  identity?: Partial<AgentIdentity>
+  capabilities?: Partial<AgentCapabilities>
+  knowledge?: Partial<AgentKnowledge>
+  pageSchema?: any
+  tags?: string[]
+  status?: AgentStatus
+}
+
+// ============================================================
 // MCP 服务器相关类型
 // ============================================================
 

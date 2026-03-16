@@ -1,62 +1,14 @@
 <template>
   <div class="skills-management">
-    <!-- Page Header -->
+    <!-- 页面头部 -->
     <div class="page-header">
-      <h1 class="page-title">{{ t('skills.title') }}</h1>
-      <button class="create-btn" @click="handleCreate">
-        <svg viewBox="0 0 24 24" fill="none">
-          <path
-            d="M12 5V19M5 12H19"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-        <span>{{ t('skills.create') }}</span>
-      </button>
-    </div>
-
-    <!-- Search & Filters -->
-    <div class="filter-bar">
-      <div class="search-wrapper">
-        <svg class="search-icon" viewBox="0 0 24 24" fill="none">
-          <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" />
-          <path
-            d="M21 21L16.65 16.65"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-          />
-        </svg>
-        <input
-          v-model="searchKeyword"
-          type="text"
-          :placeholder="t('skills.searchPlaceholder')"
-          class="search-input"
-          @input="handleSearch"
-        />
-      </div>
-
-      <div class="filter-group">
-        <select v-model="categoryFilter" class="filter-select" @change="handleFilterChange">
-          <option value="">{{ t('skills.category.all') }}</option>
-          <option value="analytics">{{ t('skills.category.analytics') }}</option>
-          <option value="processing">{{ t('skills.category.processing') }}</option>
-          <option value="invoker">{{ t('skills.category.invoker') }}</option>
-          <option value="transform">{{ t('skills.category.transform') }}</option>
-        </select>
-
-        <select v-model="riskFilter" class="filter-select" @change="handleFilterChange">
-          <option value="">{{ t('skills.risk.all') }}</option>
-          <option value="low">{{ t('skills.risk.low') }}</option>
-          <option value="medium">{{ t('skills.risk.medium') }}</option>
-          <option value="high">{{ t('skills.risk.high') }}</option>
-        </select>
+      <div class="header-left">
+        <h1 class="page-title">{{ t('skills.title') }}</h1>
+        <span class="page-desc">{{ t('skills.description') }}</span>
       </div>
     </div>
 
-    <!-- Stats Summary -->
+    <!-- 统计栏 -->
     <div class="stats-bar">
       <div class="stat-item">
         <span class="stat-value">{{ skillsStore.stats.total }}</span>
@@ -73,6 +25,59 @@
       <div class="stat-item">
         <span class="stat-value">{{ skillsStore.stats.avgSuccessRate }}%</span>
         <span class="stat-label">{{ t('skills.stats.avgSuccessRate') }}</span>
+      </div>
+    </div>
+
+    <!-- 分类筛选标签 -->
+    <div class="filter-tags">
+      <button
+        v-for="cat in categoryOptions"
+        :key="cat.value"
+        class="filter-tag"
+        :class="{ active: categoryFilter === cat.value }"
+        @click="categoryFilter = cat.value; handleFilterChange()"
+      >
+        <span v-if="cat.icon" class="tag-icon">{{ cat.icon }}</span>
+        <span class="tag-label">{{ cat.label }}</span>
+      </button>
+    </div>
+
+    <!-- 风险等级筛选标签 -->
+    <div class="filter-tags">
+      <button
+        v-for="risk in riskOptions"
+        :key="risk.value"
+        class="filter-tag"
+        :class="{ active: riskFilter === risk.value }"
+        @click="riskFilter = risk.value; handleFilterChange()"
+      >
+        <span v-if="risk.icon" class="tag-icon">{{ risk.icon }}</span>
+        <span class="tag-label">{{ risk.label }}</span>
+      </button>
+    </div>
+
+    <!-- Skills列表标题 + 搜索框 -->
+    <div class="section-header">
+      <h2 class="section-title">
+        {{ t('skills.listTitle') }}<span class="title-count">({{ filteredSkills.length }})</span>
+      </h2>
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none">
+          <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+          <path
+            d="M21 21l-4.35-4.35"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+        <input
+          v-model="searchKeyword"
+          type="text"
+          class="search-input"
+          :placeholder="t('skills.searchPlaceholder')"
+          @input="handleSearch"
+        />
       </div>
     </div>
 
@@ -212,6 +217,23 @@
   const showFormDialog = ref(false)
   const editingSkill = ref<Skill | null>(null)
 
+  // Category filter options
+  const categoryOptions = computed(() => [
+    { value: '' as SkillCategory | '', label: t('skills.category.all'), icon: '' },
+    { value: 'analytics' as SkillCategory, label: t('skills.category.analytics'), icon: '📊' },
+    { value: 'processing' as SkillCategory, label: t('skills.category.processing'), icon: '🔄' },
+    { value: 'invoker' as SkillCategory, label: t('skills.category.invoker'), icon: '🔗' },
+    { value: 'transform' as SkillCategory, label: t('skills.category.transform'), icon: '⚙️' }
+  ])
+
+  // Risk level filter options
+  const riskOptions = computed(() => [
+    { value: '' as SkillRiskLevel | '', label: t('skills.risk.all'), icon: '' },
+    { value: 'low' as SkillRiskLevel, label: t('skills.risk.low'), icon: '🟢' },
+    { value: 'medium' as SkillRiskLevel, label: t('skills.risk.medium'), icon: '🟡' },
+    { value: 'high' as SkillRiskLevel, label: t('skills.risk.high'), icon: '🔴' }
+  ])
+
   // Fetch skills on mount
   onMounted(async () => {
     await skillsStore.fetchSkills()
@@ -305,7 +327,7 @@
     showFormDialog.value = true
   }
 
-async function handleDelete(skill: Skill) {
+  async function handleDelete(skill: Skill) {
     if (confirm(t('skills.delete.confirm', { name: skill.displayName }))) {
       try {
         await skillsStore.deleteSkill(skill.id)
@@ -351,128 +373,58 @@ async function handleDelete(skill: Skill) {
   .skills-management {
     height: 100%;
     padding: $spacing-xl;
+    background: $bg-secondary;
     overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $border-color-base;
+      border-radius: 3px;
+
+      &:hover {
+        background: $text-tertiary;
+      }
+    }
   }
 
-  // Page Header
+  // ================================
+  // 页面头部
+  // ================================
   .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-bottom: $spacing-xl;
   }
 
-  .page-title {
-    font-size: $font-size-3xl;
-    font-weight: $font-weight-bold;
-    color: $text-primary;
-  }
-
-  .create-btn {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-    padding: $spacing-sm $spacing-lg;
-    background: $primary-color;
-    border: 1px solid $primary-color;
-    border-radius: $border-radius-md;
-    color: #fff;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    cursor: pointer;
-    transition: all $transition-base ease;
-
-    svg {
-      width: 20px;
-      height: 20px;
+  .header-left {
+    .page-title {
+      font-size: $font-size-3xl;
+      font-weight: $font-weight-bold;
+      color: $text-primary;
+      margin: 0 0 $spacing-xs 0;
     }
 
-    &:hover {
-      background: $primary-light;
-      border-color: $primary-light;
-    }
-  }
-
-  // Filter Bar
-  .filter-bar {
-    display: flex;
-    align-items: center;
-    gap: $spacing-md;
-    margin-bottom: $spacing-lg;
-    flex-wrap: wrap;
-  }
-
-  .search-wrapper {
-    position: relative;
-    flex: 1;
-    min-width: 280px;
-    max-width: 400px;
-
-    .search-icon {
-      position: absolute;
-      left: $spacing-md;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 18px;
-      height: 18px;
+    .page-desc {
+      font-size: $font-size-sm;
       color: $text-tertiary;
-      pointer-events: none;
+      margin: 0;
     }
   }
 
-  .search-input {
-    width: 100%;
-    padding: $spacing-sm $spacing-md $spacing-sm $spacing-xl;
-    background: $bg-secondary;
-    border: 1px solid $border-color-base;
-    border-radius: $border-radius-md;
-    color: $text-primary;
-    font-size: $font-size-sm;
-    transition: border-color $transition-base ease;
-
-    &::placeholder {
-      color: $text-tertiary;
-    }
-
-    &:focus {
-      border-color: $primary-color;
-      outline: none;
-    }
-  }
-
-  .filter-group {
-    display: flex;
-    gap: $spacing-sm;
-  }
-
-  .filter-select {
-    padding: $spacing-sm $spacing-md;
-    padding-right: $spacing-xl;
-    background: $bg-secondary;
-    border: 1px solid $border-color-base;
-    border-radius: $border-radius-md;
-    color: $text-primary;
-    font-size: $font-size-sm;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7184' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right $spacing-sm center;
-    transition: border-color $transition-base ease;
-
-    &:focus {
-      border-color: $primary-color;
-      outline: none;
-    }
-  }
-
-  // Stats Bar
+  // ================================
+  // 统计栏
+  // ================================
   .stats-bar {
     display: flex;
     gap: $spacing-xl;
     margin-bottom: $spacing-lg;
     padding: $spacing-md $spacing-lg;
-    background: $bg-secondary;
+    background: $bg-primary;
     border-radius: $border-radius-md;
     border: 1px solid $border-color-light;
   }
@@ -494,7 +446,115 @@ async function handleDelete(skill: Skill) {
     }
   }
 
+  // ================================
+  // 筛选标签
+  // ================================
+  .filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-md;
+  }
+
+  .filter-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: $spacing-xs $spacing-md;
+    background: $bg-primary;
+    border: 1px solid transparent;
+    border-radius: $border-radius-full;
+    font-size: $font-size-sm;
+    color: $text-secondary;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    .tag-icon {
+      font-size: 14px;
+    }
+
+    &:hover {
+      background: $bg-tertiary;
+      color: $text-primary;
+    }
+
+    &.active {
+      background: rgba(59, 130, 246, 0.1);
+      border-color: $primary-color;
+      color: $primary-color;
+    }
+  }
+
+  // ================================
+  // 区块标题（标题 + 搜索框）
+  // ================================
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-lg;
+    margin-top: $spacing-md;
+    margin-bottom: $spacing-lg;
+  }
+
+  .section-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+
+    .title-count {
+      font-size: $font-size-base;
+      font-weight: $font-weight-normal;
+      color: $text-tertiary;
+    }
+  }
+
+  .section-header .search-box {
+    position: relative;
+    width: 280px;
+    flex-shrink: 0;
+  }
+
+  .section-header .search-icon {
+    position: absolute;
+    left: $spacing-md;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: $text-tertiary;
+    pointer-events: none;
+  }
+
+  .section-header .search-input {
+    width: 100%;
+    height: 40px;
+    padding: $spacing-sm $spacing-md $spacing-sm 40px;
+    background: $bg-primary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-lg;
+    font-size: $font-size-sm;
+    color: $text-primary;
+    transition: all 0.2s ease;
+
+    &::placeholder {
+      color: $text-tertiary;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    }
+  }
+
+  // ================================
   // Skills Grid
+  // ================================
   .skills-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));

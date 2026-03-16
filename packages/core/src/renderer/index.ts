@@ -3,14 +3,13 @@
  * 核心渲染引擎
  */
 
-import { h, defineComponent, type VNode, type Component as VueComponent, Fragment, Text } from 'vue'
+import { h, defineComponent, type VNode, Fragment } from 'vue'
 import type {
   Renderer,
   RendererConfig,
   PageSchema,
   ComponentNode,
   RuntimeContext,
-  EventBinding,
   SlotContent
 } from '../types'
 import { createExpressionEvaluator } from '../evaluator'

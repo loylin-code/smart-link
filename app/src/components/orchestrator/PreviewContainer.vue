@@ -75,8 +75,8 @@
 
 <script setup lang="ts">
   import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
-  import { createApp, h, type App as VueApp } from 'vue'
-  import type { PageSchema, RuntimeContext, ComponentNode } from '@/types'
+  import { createApp, type App as VueApp } from 'vue'
+  import type { PageSchema, RuntimeContext } from '@/types'
   import {
     createRenderer,
     createExpressionEvaluator,

@@ -91,12 +91,7 @@
   const appStore = useAppStore()
   const { t } = useI18n()
 
-  const expandedItems = ref<string[]>([
-    '/app/application',
-    '/app/resource',
-    '/app/tool',
-    '/app/settings'
-  ])
+  const expandedItems = ref<string[]>(['/app/agent', '/app/resource', '/app/tool', '/app/settings'])
 
   const isCollapsed = computed(() => appStore.isSidebarCollapsed)
 
@@ -204,12 +199,12 @@
       icon: ChatIcon
     },
     {
-      path: '/app/application',
-      title: t('sidebar.appManagement'),
+      path: '/app/agent',
+      title: t('sidebar.agentManagement'),
       icon: AppIcon,
       children: [
-        { path: '/app/application/list', title: t('sidebar.appList') },
-        { path: '/app/application/design', title: t('sidebar.appDesign') }
+        { path: '/app/agent/list', title: t('sidebar.agentList') },
+        { path: '/app/agent/design', title: t('sidebar.agentDesign') }
       ]
     },
     {
@@ -269,11 +264,10 @@
     width: $sidebar-width;
     height: calc(100vh - #{$header-height});
     background: $bg-primary;
-    border-right: 1px solid $border-color-light;
+    border-right: 1px solid $border-color-base;
     display: flex;
     flex-direction: column;
-    transition: width $transition-base ease;
-    box-shadow: 1px 0 0 0 $border-color-lighter;
+    transition: width $transition-base $ease-out;
 
     &--collapsed {
       width: $sidebar-collapsed-width;
@@ -340,7 +334,7 @@
     border-radius: $border-radius-md;
     color: $text-secondary;
     cursor: pointer;
-    transition: all $transition-fast ease;
+    transition: all $transition-fast $ease-out;
     text-decoration: none;
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
@@ -357,7 +351,7 @@
     }
 
     &--active {
-      background: rgba($primary-color, 0.08);
+      background: $primary-surface;
       color: $primary-color;
 
       .nav-item__icon {
@@ -408,7 +402,7 @@
     &__arrow {
       width: 16px;
       height: 16px;
-      transition: transform $transition-fast ease;
+      transition: transform $transition-fast $ease-out;
       flex-shrink: 0;
     }
   }
@@ -429,20 +423,20 @@
     flex-direction: column;
     gap: 2px;
     padding-left: 4px;
-    border-left: 1px solid $border-color-lighter;
+    border-left: 1px solid $border-color-light;
   }
 
-  // 二级菜单项 - 与一级菜单高度一致
+  // 二级菜单项
   .nav-child {
     display: flex;
     align-items: center;
-    height: 40px;
+    height: 36px;
     padding: 0 $spacing-md;
     border-radius: $border-radius-md;
     color: $text-tertiary;
     font-size: $font-size-sm;
     cursor: pointer;
-    transition: all $transition-fast ease;
+    transition: all $transition-fast $ease-out;
     text-decoration: none;
     position: relative;
     user-select: none;
@@ -458,7 +452,7 @@
 
     &--active {
       color: $primary-color;
-      background: rgba($primary-color, 0.06);
+      background: $primary-surface;
 
       // 左侧激活指示条
       &::before {
@@ -485,7 +479,7 @@
   // 底部折叠按钮
   .sidebar-footer {
     padding: $spacing-sm;
-    border-top: 1px solid $border-color-light;
+    border-top: 1px solid $border-color-base;
     display: flex;
     justify-content: center;
   }
@@ -504,7 +498,7 @@
     color: $text-secondary;
     font-size: $font-size-sm;
     cursor: pointer;
-    transition: all $transition-fast ease;
+    transition: all $transition-fast $ease-out;
 
     &:hover {
       background: $bg-secondary;
@@ -520,7 +514,7 @@
       width: 16px;
       height: 16px;
       flex-shrink: 0;
-      transition: transform $transition-base ease;
+      transition: transform $transition-base $ease-out;
 
       &--collapsed {
         transform: rotate(180deg);
@@ -549,7 +543,7 @@
   // 过渡动画
   .slide-enter-active,
   .slide-leave-active {
-    transition: all 0.2s ease;
+    transition: all 0.2s $ease-out;
   }
 
   .slide-enter-from,
@@ -559,7 +553,7 @@
   }
 
   // 响应式设计
-  @media (max-width: 768px) {
+  @include respond-below(md) {
     .app-sidebar {
       width: $sidebar-collapsed-width;
 

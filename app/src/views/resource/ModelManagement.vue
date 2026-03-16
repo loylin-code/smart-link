@@ -2,22 +2,91 @@
   <div class="model-management">
     <div class="page-header">
       <div class="header-left">
-        <span class="header-icon">🤖</span>
         <h1 class="page-title">{{ t('model.management.title') }}</h1>
+        <span class="page-desc">{{ t('model.management.description') }}</span>
       </div>
-      <button class="add-btn" @click="handleAddModel">
-        <span class="btn-icon">➕</span>
-        <span>{{ t('model.management.addModel') }}</span>
+      <div class="header-right">
+        <button class="create-btn" @click="handleAddModel">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 5v14M5 12h14"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+          <span>{{ t('model.management.addModel') }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Provider Filter -->
+    <div class="filter-tags">
+      <button
+        :class="['filter-tag', { active: !modelStore.filter.provider }]"
+        @click="setFilter('provider', undefined)"
+      >
+        {{ t('model.filters.all') }}
+      </button>
+      <button
+        v-for="provider in providers"
+        :key="provider.value"
+        :class="['filter-tag', { active: modelStore.filter.provider === provider.value }]"
+        @click="setFilter('provider', provider.value)"
+      >
+        {{ provider.label }}
       </button>
     </div>
 
-    <!-- Search Bar -->
-    <div class="search-section">
-      <div class="search-bar">
-        <svg viewBox="0 0 24 24" fill="none" class="search-icon">
+    <!-- Type Filter -->
+    <div class="filter-tags">
+      <button
+        :class="['filter-tag', { active: !modelStore.filter.type }]"
+        @click="setFilter('type', undefined)"
+      >
+        {{ t('model.filters.all') }}
+      </button>
+      <button
+        v-for="type in modelTypes"
+        :key="type.value"
+        :class="['filter-tag', { active: modelStore.filter.type === type.value }]"
+        @click="setFilter('type', type.value)"
+      >
+        <span v-if="type.icon" class="tag-icon">{{ type.icon }}</span>
+        {{ type.label }}
+      </button>
+    </div>
+
+    <!-- Status Filter -->
+    <div class="filter-tags">
+      <button
+        :class="['filter-tag', { active: !modelStore.filter.status }]"
+        @click="setFilter('status', undefined)"
+      >
+        {{ t('model.filters.all') }}
+      </button>
+      <button
+        v-for="status in modelStatuses"
+        :key="status.value"
+        :class="['filter-tag', status.value, { active: modelStore.filter.status === status.value }]"
+        @click="setFilter('status', status.value)"
+      >
+        <span class="status-dot" :class="status.value"></span>
+        {{ status.label }}
+      </button>
+    </div>
+
+    <!-- Section Header: Title + Search -->
+    <div class="section-header">
+      <h2 class="section-title">
+        {{ t('model.management.listTitle')
+        }}<span class="title-count">({{ filteredModels.length }})</span>
+      </h2>
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none">
           <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
           <path
-            d="M21 21L16.65 16.65"
+            d="M21 21l-4.35-4.35"
             stroke="currentColor"
             stroke-width="2"
             stroke-linecap="round"
@@ -30,93 +99,6 @@
           :placeholder="t('model.management.searchPlaceholder')"
         />
       </div>
-    </div>
-
-    <!-- Provider Filter -->
-    <div class="filter-section">
-      <div class="filter-label">{{ t('model.management.filterByProvider') }}</div>
-      <div class="filter-tags">
-        <button
-          :class="['filter-tag', { active: !modelStore.filter.provider }]"
-          @click="setFilter('provider', undefined)"
-        >
-          {{ t('model.filters.all') }}
-          <span v-if="!modelStore.filter.provider" class="tag-indicator">●</span>
-        </button>
-        <button
-          v-for="provider in providers"
-          :key="provider.value"
-          :class="['filter-tag', { active: modelStore.filter.provider === provider.value }]"
-          @click="setFilter('provider', provider.value)"
-        >
-          {{ provider.label }}
-          <span class="tag-count">{{ getProviderCount(provider.value) }}</span>
-          <span v-if="modelStore.filter.provider === provider.value" class="tag-indicator">●</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Type Filter -->
-    <div class="filter-section">
-      <div class="filter-label">{{ t('model.management.filterByType') }}</div>
-      <div class="filter-tags">
-        <button
-          :class="['filter-tag', { active: !modelStore.filter.type }]"
-          @click="setFilter('type', undefined)"
-        >
-          {{ t('model.filters.all') }}
-          <span v-if="!modelStore.filter.type" class="tag-indicator">●</span>
-        </button>
-        <button
-          v-for="type in modelTypes"
-          :key="type.value"
-          :class="['filter-tag', { active: modelStore.filter.type === type.value }]"
-          @click="setFilter('type', type.value)"
-        >
-          <span class="type-icon">{{ type.icon }}</span>
-          {{ type.label }}
-          <span class="tag-count">{{ getTypeCount(type.value) }}</span>
-          <span v-if="modelStore.filter.type === type.value" class="tag-indicator">●</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Status Filter -->
-    <div class="filter-section">
-      <div class="filter-label">{{ t('model.management.filterByStatus') }}</div>
-      <div class="filter-tags">
-        <button
-          :class="['filter-tag', { active: !modelStore.filter.status }]"
-          @click="setFilter('status', undefined)"
-        >
-          {{ t('model.filters.all') }}
-          <span v-if="!modelStore.filter.status" class="tag-indicator">●</span>
-        </button>
-        <button
-          v-for="status in modelStatuses"
-          :key="status.value"
-          :class="[
-            'filter-tag',
-            status.value,
-            { active: modelStore.filter.status === status.value }
-          ]"
-          @click="setFilter('status', status.value)"
-        >
-          <span class="status-dot" :class="status.value"></span>
-          {{ status.label }}
-          <span class="tag-count">{{ getStatusCount(status.value) }}</span>
-          <span v-if="modelStore.filter.status === status.value" class="tag-indicator">●</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Divider -->
-    <div class="section-divider">
-      <span class="divider-text">
-        {{ t('model.management.models') }} ({{
-          t('model.management.total', { count: filteredModels.length })
-        }})
-      </span>
     </div>
 
     <!-- Model Cards Grid -->
@@ -212,18 +194,16 @@
         </div>
 
         <!-- Quick Actions -->
-        <div class="card-actions">
-          <button class="action-btn" @click.stop="handleTest(model)">
+        <div class="card-actions" @click.stop>
+          <button class="action-btn primary" @click="handleTest(model)">
             <span class="btn-icon">🧪</span>
             <span>{{ t('model.actions.test') }}</span>
           </button>
-          <button class="action-btn" @click.stop="handleConfig(model)">
+          <button class="action-btn" @click="handleConfig(model)" :title="t('common.edit')">
             <span class="btn-icon">⚙️</span>
-            <span>{{ t('model.actions.config') }}</span>
           </button>
-          <button class="action-btn" @click.stop="handleStats(model)">
+          <button class="action-btn" @click="handleStats(model)" :title="t('model.actions.stats')">
             <span class="btn-icon">📊</span>
-            <span>{{ t('model.actions.stats') }}</span>
           </button>
         </div>
       </div>
@@ -426,146 +406,115 @@
   .model-management {
     height: 100%;
     padding: $spacing-xl;
+    background: $bg-secondary;
     overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $border-color-base;
+      border-radius: 3px;
+
+      &:hover {
+        background: $text-tertiary;
+      }
+    }
   }
 
+  // ================================
+  // 页面头部
+  // ================================
   .page-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    gap: $spacing-lg;
     margin-bottom: $spacing-xl;
   }
 
   .header-left {
     display: flex;
-    align-items: center;
-    gap: $spacing-md;
+    flex-direction: column;
+    gap: $spacing-xs;
+
+    .page-title {
+      display: block;
+      font-size: $font-size-3xl;
+      font-weight: $font-weight-bold;
+      color: $text-primary;
+      margin: 0;
+      text-align: left;
+    }
+
+    .page-desc {
+      display: block;
+      font-size: $font-size-sm;
+      color: $text-tertiary;
+      margin: 0;
+      text-align: left;
+    }
   }
 
-  .header-icon {
-    font-size: 28px;
+  .header-right {
+    flex-shrink: 0;
   }
 
-  .page-title {
-    font-size: $font-size-2xl;
-    font-weight: $font-weight-bold;
-    color: $text-primary;
-  }
-
-  .add-btn {
+  .create-btn {
     display: flex;
     align-items: center;
-    gap: $spacing-xs;
+    gap: $spacing-sm;
     padding: $spacing-sm $spacing-lg;
-    background: $primary-color;
+    background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
     border: none;
-    border-radius: $border-radius-md;
-    color: white;
+    border-radius: $border-radius-lg;
+    color: #fff;
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
 
     &:hover {
-      background: darken(#1890ff, 10%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
     }
   }
 
-  .search-section {
-    margin-bottom: $spacing-lg;
-  }
-
-  .search-bar {
-    position: relative;
-    max-width: 600px;
-  }
-
-  .search-icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    color: $text-tertiary;
-  }
-
-  .search-input {
-    width: 100%;
-    padding: $spacing-sm $spacing-md $spacing-sm 40px;
-    background: $bg-secondary;
-    border: 1px solid $border-color-base;
-    border-radius: $border-radius-md;
-    color: $text-primary;
-    font-size: $font-size-sm;
-    outline: none;
-    transition: all $transition-base ease;
-
-    &::placeholder {
-      color: $text-tertiary;
-    }
-
-    &:focus {
-      border-color: $primary-color;
-      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
-    }
-  }
-
-  .filter-section {
-    margin-bottom: $spacing-md;
-  }
-
-  .filter-label {
-    font-size: $font-size-xs;
-    color: $text-tertiary;
-    margin-bottom: $spacing-xs;
-    padding-left: $spacing-xs;
-  }
-
+  // ================================
+  // 筛选标签
+  // ================================
   .filter-tags {
     display: flex;
     flex-wrap: wrap;
     gap: $spacing-sm;
+    margin-bottom: $spacing-lg;
   }
 
   .filter-tag {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     padding: $spacing-xs $spacing-md;
-    background: $bg-secondary;
-    border: 1px solid $border-color-light;
+    background: $bg-primary;
+    border: 1px solid transparent;
     border-radius: $border-radius-full;
-    color: $text-secondary;
     font-size: $font-size-sm;
+    color: $text-secondary;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all 0.2s ease;
 
-    &:hover {
-      border-color: $primary-color;
-      color: $text-primary;
-    }
-
-    &.active {
-      background: rgba(24, 144, 255, 0.1);
-      border-color: $primary-color;
-      color: $primary-color;
-    }
-
-    .tag-count {
-      font-size: $font-size-xs;
-      background: $bg-tertiary;
-      padding: 0 6px;
-      border-radius: $border-radius-full;
-      color: $text-tertiary;
-    }
-
-    .tag-indicator {
-      font-size: 8px;
-      margin-left: 2px;
-    }
-
-    .type-icon {
+    .tag-icon {
       font-size: 14px;
     }
 
@@ -590,52 +539,119 @@
         background: $warning-dark;
       }
     }
+
+    &:hover {
+      background: $bg-tertiary;
+      color: $text-primary;
+    }
+
+    &.active {
+      background: rgba(59, 130, 246, 0.1);
+      border-color: $primary-color;
+      color: $primary-color;
+    }
   }
 
-  .section-divider {
+  // ================================
+  // 区块标题（标题 + 搜索框）
+  // ================================
+  .section-header {
     display: flex;
     align-items: center;
-    margin: $spacing-lg 0;
-    color: $text-tertiary;
-    font-size: $font-size-sm;
+    justify-content: space-between;
+    gap: $spacing-lg;
+    margin-bottom: $spacing-lg;
+  }
 
-    &::before {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: $border-color-light;
-      margin-right: $spacing-md;
-    }
+  .section-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
 
-    &::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: $border-color-light;
-      margin-left: $spacing-md;
+    .title-count {
+      font-size: $font-size-base;
+      font-weight: $font-weight-normal;
+      color: $text-tertiary;
     }
   }
 
+  .section-header .search-box {
+    position: relative;
+    width: 280px;
+    flex-shrink: 0;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: $spacing-md;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: $text-tertiary;
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    height: 40px;
+    padding: $spacing-sm $spacing-md $spacing-sm 40px;
+    background: $bg-primary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-lg;
+    font-size: $font-size-sm;
+    color: $text-primary;
+    transition: all 0.2s ease;
+
+    &::placeholder {
+      color: $text-tertiary;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    }
+  }
+
+  // ================================
+  // 模型卡片网格
+  // ================================
   .model-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: $spacing-lg;
+    margin-bottom: $spacing-xl;
   }
 
   .model-card {
-    background: $bg-secondary;
-    border: 1px solid $border-color-light;
+    position: relative;
+    background: $bg-primary;
+    border: 1px solid $border-color-base;
     border-radius: $border-radius-lg;
     padding: $spacing-lg;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all 0.2s ease;
+    overflow: hidden;
 
     &:hover {
       border-color: $primary-color;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 16px rgba(59, 130, 246, 0.12);
+
+      .card-actions {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   }
 
+  // ================================
+  // 卡片头部
+  // ================================
   .card-header {
     display: flex;
     align-items: center;
@@ -682,6 +698,9 @@
     margin: $spacing-sm 0;
   }
 
+  // ================================
+  // 模型信息
+  // ================================
   .model-meta {
     display: flex;
     flex-direction: column;
@@ -713,6 +732,9 @@
     border-radius: $border-radius-sm;
   }
 
+  // ================================
+  // 规格信息
+  // ================================
   .model-specs {
     display: flex;
     flex-direction: column;
@@ -735,6 +757,9 @@
     font-weight: $font-weight-medium;
   }
 
+  // ================================
+  // 定价信息
+  // ================================
   .model-pricing {
     display: flex;
     flex-direction: column;
@@ -780,6 +805,9 @@
     margin-left: auto;
   }
 
+  // ================================
+  // 能力标签
+  // ================================
   .model-capabilities {
     display: flex;
     flex-wrap: wrap;
@@ -799,35 +827,68 @@
     }
   }
 
+  // ================================
+  // 悬浮操作按钮
+  // ================================
   .card-actions {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: flex;
     gap: $spacing-sm;
-    margin-top: $spacing-sm;
+    padding: $spacing-md;
+    background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(255, 255, 255, 0.95) 100%
+    );
+    border-top: 1px solid $border-color-lighter;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
   }
 
   .action-btn {
+    flex: 1;
     display: flex;
     align-items: center;
-    gap: 4px;
-    padding: $spacing-xs $spacing-sm;
-    background: $bg-tertiary;
+    justify-content: center;
+    gap: 6px;
+    padding: $spacing-sm $spacing-md;
+    background: $bg-secondary;
     border: 1px solid $border-color-base;
     border-radius: $border-radius-md;
     color: $text-secondary;
     font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
     cursor: pointer;
-    transition: all $transition-fast ease;
+    transition: all 0.2s ease;
+
+    .btn-icon {
+      font-size: 12px;
+    }
 
     &:hover {
       border-color: $primary-color;
       color: $primary-color;
     }
 
-    .btn-icon {
-      font-size: 12px;
+    &.primary {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-color: transparent;
+      color: #fff;
+
+      &:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      }
     }
   }
 
+  // ================================
+  // 空状态
+  // ================================
   .empty-state {
     display: flex;
     flex-direction: column;
@@ -846,6 +907,9 @@
     }
   }
 
+  // ================================
+  // 分页
+  // ================================
   .pagination {
     display: flex;
     justify-content: space-between;
@@ -873,7 +937,7 @@
     color: $text-secondary;
     font-size: $font-size-sm;
     cursor: pointer;
-    transition: all $transition-fast ease;
+    transition: all 0.2s ease;
 
     &:hover:not(:disabled) {
       border-color: $primary-color;
@@ -883,12 +947,64 @@
     &.active {
       background: $primary-color;
       border-color: $primary-color;
-      color: white;
+      color: #fff;
     }
 
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+    }
+  }
+
+  // ================================
+  // 响应式
+  // ================================
+  @media (max-width: 1200px) {
+    .model-grid {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+  }
+
+  @media (max-width: 768px) {
+    .model-management {
+      padding: $spacing-md;
+    }
+
+    .model-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-md;
+
+      .header-right {
+        width: 100%;
+
+        .create-btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    }
+
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-md;
+
+      .search-box {
+        width: 100%;
+      }
+    }
+
+    .card-actions {
+      opacity: 1;
+      transform: translateY(0);
+      position: static;
+      background: $bg-secondary;
+      backdrop-filter: none;
     }
   }
 </style>

@@ -3,13 +3,7 @@
  * 支持导出Vue SFC、React JSX、HTML等格式
  */
 
-import type {
-  PageSchema,
-  ComponentNode,
-  PropConfig,
-  StyleConfig,
-  EventBinding
-} from '@smart-link/core'
+import type { PageSchema, ComponentNode, EventBinding } from '@smart-link/core'
 
 // 导出格式
 export type ExportFormat = 'vue-sfc' | 'vue-setup' | 'react-jsx' | 'html'

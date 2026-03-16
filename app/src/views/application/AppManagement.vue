@@ -90,10 +90,42 @@
         <div class="app-card__header">
           <div class="app-card__icon">
             <svg viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
-              <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
-              <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
-              <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
+              <rect
+                x="3"
+                y="3"
+                width="7"
+                height="7"
+                rx="1"
+                stroke="currentColor"
+                stroke-width="2"
+              />
+              <rect
+                x="14"
+                y="3"
+                width="7"
+                height="7"
+                rx="1"
+                stroke="currentColor"
+                stroke-width="2"
+              />
+              <rect
+                x="3"
+                y="14"
+                width="7"
+                height="7"
+                rx="1"
+                stroke="currentColor"
+                stroke-width="2"
+              />
+              <rect
+                x="14"
+                y="14"
+                width="7"
+                height="7"
+                rx="1"
+                stroke="currentColor"
+                stroke-width="2"
+              />
             </svg>
           </div>
           <span class="app-card__version">v{{ app.version }}</span>
@@ -289,21 +321,24 @@
 <style scoped lang="scss">
   .app-management {
     height: 100%;
-    padding: $spacing-xl;
+    padding: $spacing-2xl;
     overflow-y: auto;
+    background: $bg-primary;
   }
 
   .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: $spacing-xl;
+    margin-bottom: $spacing-2xl;
   }
 
   .page-title {
+    font-family: $font-family-display;
     font-size: $font-size-3xl;
-    font-weight: $font-weight-bold;
+    font-weight: $font-weight-semibold;
     color: $text-primary;
+    letter-spacing: $letter-spacing-tight;
   }
 
   .header-actions {
@@ -322,18 +357,25 @@
     padding-right: $spacing-xl;
     background: $bg-secondary;
     border: 1px solid $border-color-base;
-    border-radius: $border-radius-md;
+    border-radius: $border-radius-sm;
     color: $text-primary;
+    font-family: $font-family;
     font-size: $font-size-sm;
     cursor: pointer;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7184' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    transition: all $transition-base $ease-out;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7a7a' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right $spacing-sm center;
+
+    &:hover {
+      border-color: $text-tertiary;
+    }
 
     &:focus {
       border-color: $primary-color;
       outline: none;
+      box-shadow: 0 0 0 3px var(--primary-muted);
     }
   }
 
@@ -343,33 +385,39 @@
     gap: $spacing-sm;
     padding: $spacing-sm $spacing-lg;
     background: $primary-color;
-    border: 1px solid $primary-color;
-    border-radius: $border-radius-md;
-    color: #fff;
+    border: none;
+    border-radius: $border-radius-sm;
+    color: $text-inverse;
+    font-family: $font-family;
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
+    letter-spacing: $letter-spacing-wide;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all $transition-base $ease-out;
 
     svg {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
     }
 
     &:hover {
-      background: $primary-light;
-      border-color: $primary-light;
+      background: $primary-dark;
+      box-shadow: $shadow-hover;
+    }
+
+    &:active {
+      transform: translateY(1px);
     }
   }
 
   .stats-bar {
     display: flex;
-    gap: $spacing-xl;
-    margin-bottom: $spacing-lg;
-    padding: $spacing-md $spacing-lg;
+    gap: $spacing-2xl;
+    margin-bottom: $spacing-xl;
+    padding: $spacing-lg $spacing-xl;
     background: $bg-secondary;
     border-radius: $border-radius-md;
-    border: 1px solid $border-color-light;
+    border: 1px solid $border-color-lighter;
   }
 
   .stat-item {
@@ -378,14 +426,17 @@
     gap: $spacing-xs;
 
     .stat-value {
-      font-size: $font-size-xl;
-      font-weight: $font-weight-bold;
+      font-family: $font-family-display;
+      font-size: $font-size-2xl;
+      font-weight: $font-weight-semibold;
       color: $text-primary;
     }
 
     .stat-label {
       font-size: $font-size-xs;
       color: $text-tertiary;
+      text-transform: uppercase;
+      letter-spacing: $letter-spacing-wider;
     }
   }
 
@@ -400,9 +451,9 @@
     text-align: center;
 
     svg {
-      width: 80px;
-      height: 80px;
-      margin-bottom: $spacing-md;
+      width: 64px;
+      height: 64px;
+      margin-bottom: $spacing-lg;
       color: $text-tertiary;
     }
 
@@ -425,27 +476,30 @@
   }
 
   .retry-btn {
-    margin-top: $spacing-md;
+    margin-top: $spacing-lg;
     padding: $spacing-sm $spacing-lg;
     background: $primary-color;
     border: none;
-    border-radius: $border-radius-md;
-    color: #fff;
+    border-radius: $border-radius-sm;
+    color: $text-inverse;
+    font-family: $font-family;
     font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
     cursor: pointer;
+    transition: all $transition-base $ease-out;
 
     &:hover {
-      background: $primary-light;
+      background: $primary-dark;
     }
   }
 
   .loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid $border-color-light;
+    width: 32px;
+    height: 32px;
+    border: 2px solid $border-color-light;
     border-top-color: $primary-color;
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    animation: spin 0.8s linear infinite;
   }
 
   @keyframes spin {
@@ -456,21 +510,21 @@
 
   .app-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: $spacing-lg;
   }
 
   .app-card {
     background: $bg-secondary;
-    border: 1px solid $border-color-light;
+    border: 1px solid $border-color-lighter;
     border-radius: $border-radius-lg;
     padding: $spacing-lg;
-    transition: all $transition-base ease;
+    transition: all $transition-base $ease-out;
 
     &:hover {
-      transform: translateY(-4px);
-      border-color: rgba(24, 144, 255, 0.3);
-      box-shadow: $shadow-md;
+      border-color: rgba(201, 166, 107, 0.3);
+      box-shadow: $shadow-hover;
+      transform: translateY(-2px);
     }
 
     &__header {
@@ -481,19 +535,19 @@
     }
 
     &__icon {
-      width: 60px;
-      height: 60px;
-      background: $bg-tertiary;
-      border: 1px solid $border-color-base;
-      border-radius: $border-radius-lg;
+      width: 56px;
+      height: 56px;
+      background: var(--primary-muted);
+      border: 1px solid rgba(201, 166, 107, 0.2);
+      border-radius: $border-radius-md;
       display: flex;
       align-items: center;
       justify-content: center;
       color: $primary-color;
 
       svg {
-        width: 32px;
-        height: 32px;
+        width: 28px;
+        height: 28px;
       }
     }
 
@@ -502,20 +556,22 @@
       color: $text-tertiary;
       background: $bg-tertiary;
       padding: $spacing-xs $spacing-sm;
-      border-radius: $border-radius-sm;
+      border-radius: $border-radius-xs;
+      font-family: $font-family-mono;
     }
 
     &__title {
+      font-family: $font-family-display;
       font-size: $font-size-lg;
       font-weight: $font-weight-semibold;
       color: $text-primary;
-      margin-bottom: $spacing-sm;
+      margin-bottom: $spacing-xs;
     }
 
     &__desc {
       font-size: $font-size-sm;
       color: $text-secondary;
-      line-height: 1.6;
+      line-height: $line-height-relaxed;
       margin-bottom: $spacing-md;
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -534,7 +590,7 @@
       display: flex;
       gap: $spacing-sm;
       padding-top: $spacing-md;
-      border-top: 1px solid $border-color-light;
+      border-top: 1px solid $border-color-lighter;
     }
   }
 
@@ -580,20 +636,22 @@
     padding: $spacing-xs $spacing-sm;
     background: $bg-tertiary;
     border: 1px solid $border-color-light;
-    border-radius: $border-radius-sm;
+    border-radius: $border-radius-xs;
     color: $text-secondary;
+    font-family: $font-family;
     font-size: $font-size-xs;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all $transition-base $ease-out;
 
     svg {
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
     }
 
     &:hover:not(:disabled) {
       border-color: $primary-color;
       color: $primary-color;
+      background: var(--primary-muted);
     }
 
     &:disabled {
@@ -604,6 +662,7 @@
     &--danger:hover {
       border-color: $error;
       color: $error;
+      background: rgba($error, 0.08);
     }
   }
 </style>

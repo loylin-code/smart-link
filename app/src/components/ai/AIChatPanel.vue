@@ -136,7 +136,7 @@
 
 <script setup lang="ts">
   import { ref, computed, nextTick, watch } from 'vue'
-  import { useAIStore, type AIMessage } from '@/store/modules/ai'
+  import { useAIStore } from '@/store/modules/ai'
   import { useOrchestratorStore } from '@/store/modules/orchestrator'
   import type { PageSchema } from '@smart-link/core'
 

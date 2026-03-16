@@ -25,7 +25,7 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    background: $bg-primary;
+    background: $bg-secondary;
     overflow: hidden;
 
     &__container {
@@ -42,18 +42,32 @@
     }
   }
 
+  // 路由过渡动画 - 优雅淡入
   .route-enter-active,
   .route-leave-active {
-    transition: all 0.3s ease;
+    transition: all 0.25s $ease-out;
   }
 
   .route-enter-from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
 
   .route-leave-to {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-8px);
+  }
+
+  // 动画减少模式
+  @include reduced-motion {
+    .route-enter-active,
+    .route-leave-active {
+      transition: opacity 0.15s ease;
+    }
+
+    .route-enter-from,
+    .route-leave-to {
+      transform: none;
+    }
   }
 </style>

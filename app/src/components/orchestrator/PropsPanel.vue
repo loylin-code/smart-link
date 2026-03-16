@@ -432,8 +432,8 @@
   import { ref, computed, watch } from 'vue'
   import { useI18n } from 'vue-i18n'
   import { useOrchestratorStore } from '@/store/modules/orchestrator'
-  import { COMPONENT_META_LIST, type ComponentMeta, type PropMeta } from '@smart-link/shared'
-  import type { EventBinding, EventHandler } from '@smart-link/core'
+  import { COMPONENT_META_LIST, type ComponentMeta } from '@smart-link/shared'
+  import type { EventHandler } from '@smart-link/core'
 
   const { t } = useI18n()
   const store = useOrchestratorStore()
@@ -543,7 +543,7 @@
   }
 
   // 更新事件
-  function updateEvent(eventName: string) {
+  function _updateEvent(eventName: string) {
     if (!node.value) return
 
     const config = eventConfigs.value[eventName]

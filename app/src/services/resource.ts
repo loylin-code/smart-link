@@ -3,17 +3,7 @@
  * 对接后端 /api/v1/resources 接口
  */
 import http, { type PageParams, type PageResponse, type ApiResponse } from '@/utils/http'
-import type {
-  Skill,
-  MCPServer,
-  LLMModel,
-  DataModel,
-  Component,
-  SkillCategory,
-  SkillStatus,
-  SkillRiskLevel,
-  MCPServerStatus
-} from '@/types'
+import type { Skill, MCPServer, Component, SkillCategory, MCPServerStatus } from '@/types'
 
 // ============================================================
 // Skills API

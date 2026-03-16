@@ -30,13 +30,14 @@ export default {
   },
   route: {
     explore: 'Explore',
-    application: 'Application Management',
-    appList: 'App List',
-    appDesign: 'App Design',
-    appCreate: 'Create App',
-    appOrchestration: 'Orchestrate App',
-    appEdit: 'Edit App',
-    appRuntime: 'App Runtime',
+    agentManagement: 'Agent Management',
+    agentList: 'Agent List',
+    agentDesign: 'Agent Design',
+    agentCreate: 'Create Agent',
+    agentOrchestration: 'Orchestrate Agent',
+    agentEdit: 'Edit Agent',
+    agentRuntime: 'Agent Runtime',
+    viewOrchestration: 'View Orchestration',
     resource: 'Resource Management',
     components: 'Component Management',
     componentDetail: 'Component Detail',
@@ -52,7 +53,15 @@ export default {
     settings: 'System Settings',
     appearance: 'Appearance Settings',
     providers: 'Model Providers',
-    notFound: 'Page Not Found'
+    notFound: 'Page Not Found',
+    // Keep old keys for compatibility
+    application: 'Agent Management',
+    appList: 'Agent List',
+    appDesign: 'Agent Design',
+    appCreate: 'Create Agent',
+    appOrchestration: 'Orchestrate Agent',
+    appEdit: 'Edit Agent',
+    appRuntime: 'Agent Runtime'
   },
   welcome: {
     slogan: 'Intelligent Enterprise Agent Platform',
@@ -92,8 +101,8 @@ export default {
     regenerate: 'Regenerate'
   },
   sidebar: {
-    appOrchestration: 'App Orchestration',
-    appManagement: 'App Management',
+    appOrchestration: 'Agent Orchestration',
+    agentManagement: 'Agent Management',
     explore: 'Explore',
     componentManagement: 'Component Management',
     skillsManagement: 'Skills Management',
@@ -105,9 +114,13 @@ export default {
     settings: 'Settings',
     appearance: 'Appearance',
     providers: 'Model Providers',
-    appList: 'App List',
-    appDesign: 'App Design',
-    collapseSidebar: 'Collapse Sidebar'
+    agentList: 'Agent List',
+    agentDesign: 'Agent Design',
+    collapseSidebar: 'Collapse Sidebar',
+    // Keep old keys for compatibility
+    appManagement: 'Agent Management',
+    appList: 'Agent List',
+    appDesign: 'Agent Design'
   },
   orchestrator: {
     title: 'App Orchestration',
@@ -143,9 +156,12 @@ export default {
     showingResults: 'Showing {start}-{end} of {total}',
     searchMCP: 'Search servers...',
     filterByStatus: 'Filter by Status',
-    filterByTransport: 'Filter by Transport'
+    filterByTransport: 'Filter by Transport',
+    componentManagement: 'Component Management'
   },
   mcp: {
+    // List
+    listTitle: 'MCP Server List',
     // Status
     statusLabel: 'Status',
     status: {
@@ -256,8 +272,39 @@ export default {
     pageNotExist: 'Page does not exist',
     backHome: 'Back to Home'
   },
+  // Component Management
+  component: {
+    total: '{count} components',
+    searchPlaceholder: 'Search component name, type...',
+    empty: 'No components found',
+    managementDescription: 'Manage and configure system components',
+    componentList: 'Component List',
+    categories: {
+      all: 'All Components',
+      basic: 'Basic Components',
+      form: 'Form Components',
+      layout: 'Layout Components',
+      data: 'Data Display',
+      feedback: 'Feedback Components',
+      business: 'Business Components'
+    },
+    card: {
+      type: 'Type',
+      version: 'Version',
+      author: 'Author',
+      views: 'Views',
+      usage: 'Usage',
+      status: {
+        stable: 'Stable',
+        beta: 'Beta',
+        deprecated: 'Deprecated'
+      }
+    }
+  },
   skills: {
     title: 'Skills Management',
+    description: 'Manage and configure skill modules',
+    listTitle: 'Skills List',
     create: 'Create Skill',
     searchPlaceholder: 'Search Skills...',
     author: 'Author',
@@ -520,6 +567,7 @@ export default {
   },
   settings: {
     appearance: 'Appearance',
+    appearanceDesc: 'Customize the appearance and theme settings',
     providers: 'Model Providers',
     systemSettings: 'System Settings',
     themeMode: 'Theme Mode',
@@ -531,7 +579,10 @@ export default {
       defaultBlue: 'Default Blue',
       techGreen: 'Tech Green',
       elegantPurple: 'Elegant Purple',
-      activeOrange: 'Active Orange'
+      activeOrange: 'Active Orange',
+      professionalBlue: 'Professional Blue',
+      emeraldGreen: 'Emerald Green',
+      vibrantRed: 'Vibrant Red'
     },
     fontSize: 'Font Size',
     small: 'Small',
@@ -543,9 +594,11 @@ export default {
     },
     modelProviders: {
       title: 'Model Providers',
+      subtitle: 'Manage API configurations for AI model providers',
       sectionTitle: 'Model Provider Configuration',
       configured: 'Configured',
       unconfigured: 'Not Configured',
+      available: 'Available Providers',
       apiKey: 'API Key',
       baseUrl: 'Base URL',
       availableModels: 'Available Models',
@@ -564,26 +617,26 @@ export default {
   },
   application: {
     runtimeList: {
-      title: 'Application Management',
-      description: 'Run and manage published applications',
-      searchPlaceholder: 'Search applications...',
-      publishedApps: 'Published Apps',
-      apps: 'apps',
-      noApps: 'No published apps',
-      goToDesign: 'Go to App Design'
+      title: 'Agent Management',
+      description: 'Run and manage published agents',
+      searchPlaceholder: 'Search agents...',
+      publishedApps: 'Published Agents',
+      apps: 'agents',
+      noApps: 'No published agents',
+      goToDesign: 'Go to Agent Design'
     },
     designList: {
-      title: 'App Design',
-      description: 'Design and manage your applications',
-      searchPlaceholder: 'Search applications...',
-      myApps: 'My Apps',
-      newApp: 'New App',
-      noApps: 'No apps',
-      createFirst: 'Create First App',
-      confirmDelete: 'Are you sure you want to delete app "{name}"?'
+      title: 'Agent Design',
+      description: 'Design and manage your agents',
+      searchPlaceholder: 'Search agents...',
+      myApps: 'My Agents',
+      newApp: 'New Agent',
+      noApps: 'No agents',
+      createFirst: 'Create First Agent',
+      confirmDelete: 'Are you sure you want to delete agent "{name}"?'
     },
     stats: {
-      published: 'Published Apps',
+      published: 'Published Agents',
       totalVisits: 'Total Visits',
       totalUptime: 'Total Uptime'
     },
@@ -619,7 +672,7 @@ export default {
       delete: 'Delete'
     },
     share: {
-      title: 'Share App',
+      title: 'Share Agent',
       accessLink: 'Access Link',
       linkSettings: 'Link Settings',
       requirePassword: 'Require password',
@@ -629,20 +682,20 @@ export default {
       applySettings: 'Apply Settings'
     },
     disable: {
-      title: 'Confirm Disable App',
+      title: 'Confirm Disable Agent',
       confirmMessage: 'Are you sure you want to disable "{name}"?',
       effects: 'After disabling',
-      effect1: 'Users will not be able to access the app',
+      effect1: 'Users will not be able to access the agent',
       effect2: 'Share links will show a custom message',
       effect3: 'Can be re-enabled at any time',
       customMessage: 'Custom Message (Optional)',
-      customTitlePlaceholder: 'App Temporarily Unavailable',
-      customDescPlaceholder: 'This app is under maintenance, please try again later...',
+      customTitlePlaceholder: 'Agent Temporarily Unavailable',
+      customDescPlaceholder: 'This agent is under maintenance, please try again later...',
       confirm: 'Confirm Disable'
     },
     create: {
-      title: 'New App',
-      selectType: 'Select App Type',
+      title: 'New Agent',
+      selectType: 'Select Agent Type',
       orUseTemplate: 'Or create from template',
       select: 'Select',
       useTemplate: 'Use Template'
@@ -659,13 +712,13 @@ export default {
     },
     runtime: {
       backToList: 'Back to List',
-      loading: 'Loading application...',
+      loading: 'Loading agent...',
       loadFailed: 'Failed to load',
       retry: 'Retry',
-      appNotFound: 'Application not found',
-      appNotPublished: 'Application not published',
-      appDisabled: 'Application Disabled',
-      appDisabledDesc: 'This application is under maintenance and temporarily unavailable',
+      appNotFound: 'Agent not found',
+      appNotPublished: 'Agent not published',
+      appDisabled: 'Agent Disabled',
+      appDisabledDesc: 'This agent is under maintenance and temporarily unavailable',
       running: 'Running',
       error: 'Error',
       stopped: 'Stopped',
@@ -675,54 +728,100 @@ export default {
       errors: 'Errors'
     },
     wizard: {
-      title: 'New Application',
-      editTitle: 'Edit Application - {name}',
+      title: 'New Agent',
+      editTitle: 'Edit Agent - {name}',
       steps: {
         basic: 'Basic Info',
-        type: 'Type Selection',
+        persona: 'System Prompt',
+        capabilities: 'Capabilities',
+        llm: 'LLM Config',
+        knowledge: 'Knowledge Base',
         design: 'Page Design',
         publish: 'Save & Publish'
       },
       basic: {
         title: 'Basic Information',
-        name: 'Application Name',
-        namePlaceholder: 'Enter application name',
-        nameRequired: 'Application name is required',
-        nameMaxLength: 'Application name must be less than 50 characters',
+        name: 'Agent Name',
+        namePlaceholder: 'Enter agent name',
+        nameRequired: 'Agent name is required',
+        nameMaxLength: 'Agent name must be less than 50 characters',
+        code: 'Unique Code',
+        codePlaceholder: 'Enter unique code (for routing)',
         description: 'Description',
-        descriptionPlaceholder: 'Enter application description (optional)',
+        descriptionPlaceholder: 'Enter agent description (optional)',
         descriptionMaxLength: 'Description must be less than 200 characters',
-        icon: 'Application Icon',
+        avatar: 'Agent Avatar',
         tags: 'Category Tags',
         tagsPlaceholder: 'Press Enter to add tag',
-        addTag: 'Add Tag'
+        addTag: 'Add Tag',
+        category: 'Category'
       },
-      type: {
-        title: 'Select Type',
-        selectType: 'Select Application Type',
-        orTemplate: 'Or Create from Template',
-        types: {
-          workflow: 'Workflow',
-          workflowDesc: 'Process orchestration app with complex business logic',
-          dashboard: 'Dashboard',
-          dashboardDesc: 'Data visualization dashboard with multiple charts',
-          form: 'Form',
-          formDesc: 'Data collection form with validation and submission',
-          chart: 'Chart',
-          chartDesc: 'Single chart display with multiple chart types',
-          custom: 'Custom',
-          customDesc: 'Fully customizable application'
-        },
-        templates: {
-          customerService: 'Intelligent Customer Service Template',
-          customerServiceDesc:
-            'Pre-configured customer service dialog flow with auto-reply and human handoff',
-          dataAnalysis: 'Data Analysis Template',
-          dataAnalysisDesc:
-            'Pre-configured data analysis workflow with cleaning, analysis and visualization',
-          survey: 'Survey Template',
-          surveyDesc: 'Pre-configured survey form with multiple question types and statistics'
-        }
+      persona: {
+        title: 'System Prompt',
+        personaLabel: 'Persona Prompt',
+        personaPlaceholder: 'Enter agent persona and role definition...',
+        personaHint: 'Define agent identity, expertise, behavior guidelines, etc.',
+        welcomeMessage: 'Welcome Message',
+        welcomePlaceholder: 'Enter agent welcome message...',
+        responsibilities: 'Responsibilities',
+        addResponsibility: 'Add Responsibility',
+        responsibilityName: 'Responsibility Name',
+        responsibilityDesc: 'Responsibility Description',
+        priority: 'Priority',
+        keywords: 'Keywords',
+        examples: 'Example Queries'
+      },
+      capabilities: {
+        title: 'Capabilities Configuration',
+        mcpBindings: 'MCP Bindings',
+        skillBindings: 'Skill Bindings',
+        toolBindings: 'Tool Bindings',
+        addMcp: 'Add MCP Server',
+        addSkill: 'Add Skill',
+        addTool: 'Add Tool',
+        required: 'Required',
+        enabled: 'Enabled',
+        fallbackAction: 'Fallback Action',
+        fallbackSkip: 'Skip',
+        fallbackError: 'Error',
+        fallbackWait: 'Wait',
+        noMcpBindings: 'No MCP bindings',
+        noSkillBindings: 'No Skill bindings',
+        noToolBindings: 'No Tool bindings'
+      },
+      llm: {
+        title: 'LLM Configuration',
+        provider: 'Provider',
+        model: 'Model',
+        temperature: 'Temperature',
+        maxTokens: 'Max Tokens',
+        topP: 'Top P',
+        systemPrompt: 'Additional System Prompt',
+        systemPromptPlaceholder: 'Optional, appended to persona prompt...'
+      },
+      knowledge: {
+        title: 'Knowledge Base (RAG)',
+        documents: 'Document Sources',
+        databases: 'Database Sources',
+        apis: 'API Data Sources',
+        searchConfig: 'Search Configuration',
+        addDocument: 'Add Document',
+        addDatabase: 'Add Database',
+        addApi: 'Add API',
+        documentType: 'Document Type',
+        documentSource: 'Document Source',
+        dbType: 'Database Type',
+        connectionString: 'Connection String',
+        apiEndpoint: 'API Endpoint',
+        apiMethod: 'Request Method',
+        enabled: 'Enabled',
+        noDocuments: 'No document sources',
+        noDatabases: 'No database sources',
+        noApis: 'No API data sources',
+        searchEnabled: 'Enable Search',
+        topK: 'Return Count (Top K)',
+        similarityThreshold: 'Similarity Threshold',
+        rerankEnabled: 'Enable Reranking'
       },
       design: {
         title: 'Page Design',
@@ -744,14 +843,14 @@ export default {
       },
       publish: {
         title: 'Save & Publish',
-        summary: 'Application Summary',
-        appName: 'Application Name',
-        appType: 'Application Type',
+        summary: 'Agent Summary',
+        appName: 'Agent Name',
+        appType: 'Agent Type',
         appDescription: 'Description',
         pageStructure: 'Page Structure',
         noDescription: 'No description',
         saveDraft: 'Save as Draft',
-        publishApp: 'Publish Application',
+        publishApp: 'Publish Agent',
         saving: 'Saving...',
         publishing: 'Publishing...',
         saveSuccess: 'Saved successfully',
@@ -765,7 +864,7 @@ export default {
         cancel: 'Cancel'
       },
       icons: {
-        app: 'App',
+        app: 'Agent',
         dashboard: 'Dashboard',
         chart: 'Chart',
         form: 'Form',
@@ -785,9 +884,233 @@ export default {
       }
     }
   },
+  // New agent internationalization
+  agent: {
+    list: {
+      title: 'Agent List',
+      description: 'Run and manage published agents',
+      searchPlaceholder: 'Search agents...',
+      publishedAgents: 'Published Agents',
+      activeAgents: 'Active Agents',
+      agents: 'agents',
+      noAgents: 'No published agents',
+      noAgentsDesc: 'Create and publish your first agent application',
+      noDescription: 'No description',
+      noCapabilities: 'No capabilities configured',
+      goToDesign: 'Go to Agent Design'
+    },
+    designList: {
+      title: 'Agent Design',
+      description: 'Design and manage your agents',
+      searchPlaceholder: 'Search agents...',
+      newAgent: 'New Agent',
+      agentList: 'Agent List',
+      noAgents: 'No agents',
+      noAgentsDesc: 'Click "New Agent" to get started',
+      confirmDelete: 'Are you sure you want to delete agent "{name}"?'
+    },
+    design: {
+      untitled: 'Untitled Agent',
+      preview: 'Preview',
+      save: 'Save',
+      publish: 'Publish',
+      config: {
+        prompt: 'System Prompt',
+        promptDesc: 'Define agent role, behavior and capabilities',
+        skills: 'Skills',
+        skillsDesc: 'Configure skill modules available to the agent',
+        mcp: 'MCP Service',
+        mcpDesc: 'Connect external tools and data sources',
+        rag: 'RAG Knowledge',
+        ragDesc: 'Configure retrieval-augmented generation',
+        llm: 'LLM Model',
+        llmDesc: 'Configure language model parameters',
+        view: 'Interaction View',
+        viewDesc: 'Generate chart pages via AGUI to display response information'
+      },
+      prompt: {
+        soul: 'Soul Definition',
+        memory: 'Memory',
+        soulTitle: 'Soul Definition (SOUL)',
+        soulDesc: 'Define the agent personality, role, behavior patterns and expertise',
+        memoryTitle: 'Memory',
+        memoryDesc: 'Persistent memory, context information and knowledge base',
+        soulPlaceholder:
+          '## Role Definition\nYou are a professional assistant...\n\n### Personality\n- Professional, patient, meticulous\n\n### Guidelines\n1. Maintain professional attitude\n2. Provide accurate information',
+        memoryPlaceholder:
+          '## Product Info\n\n### Core Features\n- Feature A\n- Feature B\n\n### FAQ\nQ: Question?\nA: Answer',
+        templates: 'Templates',
+        edit: 'Edit',
+        preview: 'Preview',
+        chars: 'chars',
+        words: 'words'
+      },
+      skills: {
+        selected: 'Added Skills',
+        emptySelected: 'No skills added, please select from available skills below',
+        available: 'Available Skills',
+        search: 'Search skills...',
+        noAvailable: 'No available skills',
+        enable: 'Enable',
+        disable: 'Disable',
+        remove: 'Remove',
+        emptyTitle: 'No Skills Configured',
+        emptyDesc:
+          'Add skills to extend agent capabilities including analytics, processing, invocation and transformation',
+        addSkill: 'Add Skill',
+        addMore: 'Add More',
+        selectTitle: 'Select Skills',
+        noResults: 'No matching skills found',
+        selectedCount: '{count} skills selected',
+        confirmAdd: 'Confirm',
+        alreadySelected: 'Added'
+      },
+      mcp: {
+        selected: 'Added Services',
+        emptyTitle: 'No MCP Services Configured',
+        emptyDesc:
+          'Add MCP services to connect external tools, databases and APIs, extending agent capabilities',
+        addMCP: 'Add MCP Service',
+        addMore: 'Add More',
+        selectTitle: 'Select MCP Services',
+        search: 'Search MCP services...',
+        noResults: 'No matching services found',
+        selectedCount: '{count} services selected',
+        confirmAdd: 'Confirm',
+        alreadySelected: 'Added',
+        required: 'Set Required',
+        optional: 'Set Optional',
+        remove: 'Remove'
+      },
+      promptPlaceholder: 'You are a professional customer service assistant...',
+      noSkills: 'No skills added',
+      noSkillsDesc: 'Add skills to extend agent capabilities',
+      addSkill: 'Add Skill',
+      noMCP: 'No MCP configured',
+      noMCPDesc: 'Configure MCP to connect external tools and services',
+      addMCP: 'Add MCP',
+      rag: {
+        enable: 'Enable Knowledge Retrieval',
+        topK: 'Retrieval Count',
+        threshold: 'Similarity Threshold'
+      },
+      llm: {
+        provider: 'Model Provider',
+        model: 'Model',
+        temperature: 'Temperature',
+        maxTokens: 'Max Output Tokens'
+      },
+      view: {
+        created: 'Created Views',
+        emptyTitle: 'No Interaction Views Created',
+        emptyDesc:
+          'Generate matching chart pages through AGUI technology to visualize response information',
+        addView: 'Add View',
+        createTitle: 'Create Interaction View',
+        viewName: 'View Name',
+        viewNamePlaceholder: 'Enter view name',
+        viewDescription: 'View Description',
+        viewDescPlaceholder: 'Describe the purpose and content of this view',
+        viewType: 'View Type',
+        createAndDesign: 'Create & Design',
+        noDescription: 'No description',
+        types: {
+          dashboard: 'Dashboard',
+          chart: 'Chart',
+          table: 'Table',
+          form: 'Form',
+          custom: 'Custom'
+        },
+        untitled: 'Untitled View',
+        components: 'Components',
+        charts: 'Charts',
+        widgets: 'Widgets',
+        layouts: 'Layouts',
+        canvasEmpty: 'Start designing your interaction view',
+        canvasEmptyDesc: 'Drag components from the left panel to the canvas',
+        properties: 'Properties',
+        selectElement: 'Select a component to configure',
+        elementName: 'Component Name',
+        dataSource: 'Data Source',
+        staticData: 'Static Data',
+        lineChart: 'Line Chart',
+        barChart: 'Bar Chart',
+        pieChart: 'Pie Chart',
+        areaChart: 'Area Chart',
+        statCard: 'Stat Card',
+        dataTable: 'Data Table',
+        progressBar: 'Progress Bar',
+        textBlock: 'Text Block',
+        gridLayout: 'Grid Layout',
+        flexRow: 'Flex Row',
+        flexCol: 'Flex Column',
+        tabs: 'Tabs',
+        componentsCount: 'components'
+      }
+    },
+    stats: {
+      active: 'Active Agents',
+      totalSessions: 'Total Sessions',
+      totalTokens: 'Total Tokens'
+    },
+    status: {
+      all: 'All Status',
+      draft: 'Draft',
+      active: 'Active',
+      paused: 'Paused',
+      deprecated: 'Deprecated'
+    },
+    types: {
+      all: 'All Types',
+      system: 'System Preset',
+      custom: 'User Custom',
+      template: 'Template Role'
+    },
+    type: {
+      all: 'All Types',
+      system: 'System Preset',
+      custom: 'User Custom',
+      template: 'Template Role'
+    },
+    card: {
+      code: 'Code',
+      capabilities: 'Capabilities',
+      sessions: 'Sessions',
+      tokens: 'Tokens',
+      latency: 'Latency',
+      run: 'Run',
+      chat: 'Chat',
+      edit: 'Edit',
+      copy: 'Copy',
+      delete: 'Delete',
+      pause: 'Pause',
+      activate: 'Activate',
+      disable: 'Disable',
+      enable: 'Enable',
+      share: 'Share',
+      mcpCount: '{count} MCP',
+      skillCount: '{count} Skills',
+      toolCount: '{count} Tools'
+    },
+    runtime: {
+      backToList: 'Back to List',
+      loading: 'Loading agent...',
+      loadFailed: 'Failed to load',
+      retry: 'Retry',
+      agentNotFound: 'Agent not found',
+      agentPaused: 'Agent Paused',
+      agentPausedDesc: 'This agent service is paused',
+      running: 'Running',
+      idle: 'Idle',
+      busy: 'Busy',
+      error: 'Error'
+    }
+  },
   model: {
     management: {
       title: 'Model Management',
+      description: 'Manage and configure AI models',
+      listTitle: 'Model List',
       addModel: 'Add Model',
       searchPlaceholder: 'Search model name, provider...',
       filterByProvider: 'Filter by Provider',

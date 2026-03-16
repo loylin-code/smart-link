@@ -1,50 +1,22 @@
 <template>
   <div class="mcp-management">
+    <!-- 页面头部 -->
     <div class="page-header">
-      <h1 class="page-title">{{ t('resource.mcpManagement') }}</h1>
-      <button class="create-btn" @click="showAddDialog = true">
-        <svg viewBox="0 0 24 24" fill="none">
-          <path
-            d="M12 5V19M5 12H19"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-        <span>{{ t('resource.createMCP') }}</span>
-      </button>
+      <div class="header-left">
+        <h1 class="page-title">{{ t('resource.mcpManagement') }}</h1>
+        <span class="page-desc">{{ t('resource.mcpDescription') }}</span>
+      </div>
     </div>
 
-    <!-- 搜索栏 -->
-    <div class="search-bar">
-      <svg viewBox="0 0 24 24" fill="none" class="search-icon">
-        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
-        <path
-          d="M21 21L16.65 16.65"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-        />
-      </svg>
-      <input
-        v-model="searchKeyword"
-        type="text"
-        class="search-input"
-        :placeholder="t('resource.searchMCP')"
-        @input="handleSearch"
-      />
-    </div>
-
-    <!-- 状态筛选 -->
+    <!-- 筛选标签 -->
     <div class="filter-section">
-      <span class="filter-label">{{ t('resource.filterByStatus') }}：</span>
+      <!-- 状态筛选 -->
       <div class="filter-tags">
         <button
           :class="['filter-tag', { active: statusFilter === undefined }]"
           @click="setStatusFilter(undefined)"
         >
-          {{ t('common.all') }}
+          <span class="tag-label">{{ t('common.all') }}</span>
           <span class="tag-count">{{ mcpStore.stats.total }}</span>
         </button>
         <button
@@ -52,7 +24,7 @@
           @click="setStatusFilter('connected')"
         >
           <span class="status-dot status-dot--connected"></span>
-          {{ t('mcp.status.connected') }}
+          <span class="tag-label">{{ t('mcp.status.connected') }}</span>
           <span class="tag-count">{{ mcpStore.stats.connected }}</span>
         </button>
         <button
@@ -60,7 +32,7 @@
           @click="setStatusFilter('connecting')"
         >
           <span class="status-dot status-dot--connecting"></span>
-          {{ t('mcp.status.connecting') }}
+          <span class="tag-label">{{ t('mcp.status.connecting') }}</span>
           <span class="tag-count">{{ mcpStore.stats.connecting }}</span>
         </button>
         <button
@@ -68,34 +40,56 @@
           @click="setStatusFilter('disconnected')"
         >
           <span class="status-dot status-dot--disconnected"></span>
-          {{ t('mcp.status.disconnected') }}
+          <span class="tag-label">{{ t('mcp.status.disconnected') }}</span>
           <span class="tag-count">{{ mcpStore.serversByStatus.disconnected.length }}</span>
         </button>
       </div>
-    </div>
 
-    <!-- 传输类型筛选 -->
-    <div class="filter-section">
-      <span class="filter-label">{{ t('resource.filterByTransport') }}：</span>
+      <!-- 传输类型筛选 -->
       <div class="filter-tags">
         <button
           :class="['filter-tag', { active: transportFilter === undefined }]"
           @click="setTransportFilter(undefined)"
         >
-          {{ t('common.all') }}
+          <span class="tag-label">{{ t('common.all') }}</span>
         </button>
         <button
           :class="['filter-tag', { active: transportFilter === 'stdio' }]"
           @click="setTransportFilter('stdio')"
         >
-          {{ t('mcp.transport.local') }} stdio
+          <span class="tag-label">{{ t('mcp.transport.local') }} stdio</span>
         </button>
         <button
           :class="['filter-tag', { active: transportFilter === 'http' }]"
           @click="setTransportFilter('http')"
         >
-          {{ t('mcp.transport.remote') }} HTTP
+          <span class="tag-label">{{ t('mcp.transport.remote') }} HTTP</span>
         </button>
+      </div>
+    </div>
+
+    <!-- 标题行 + 搜索框 -->
+    <div class="section-header">
+      <h2 class="section-title">
+        {{ t('mcp.listTitle') }}<span class="title-count">({{ filteredServers.length }})</span>
+      </h2>
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none">
+          <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+          <path
+            d="M21 21l-4.35-4.35"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+        <input
+          v-model="searchKeyword"
+          type="text"
+          class="search-input"
+          :placeholder="t('resource.searchMCP')"
+          @input="handleSearch"
+        />
       </div>
     </div>
 
@@ -166,6 +160,7 @@
           {{ t('mcp.lastActive') }}: {{ formatTime(server.lastActive) }}
         </div>
 
+        <!-- 悬浮操作按钮 -->
         <div class="card-actions" @click.stop>
           <button
             v-if="server.status === 'connected'"
@@ -179,7 +174,7 @@
           </button>
           <button
             v-else
-            class="action-btn"
+            class="action-btn primary"
             @click="startServer(server)"
             :disabled="testingIds.has(server.id)"
           >
@@ -320,102 +315,63 @@
   .mcp-management {
     height: 100%;
     padding: $spacing-xl;
+    background: $bg-secondary;
     overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $border-color-base;
+      border-radius: 3px;
+
+      &:hover {
+        background: $text-tertiary;
+      }
+    }
   }
 
+  // ================================
+  // 页面头部
+  // ================================
   .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-bottom: $spacing-xl;
   }
 
-  .page-title {
-    font-size: $font-size-3xl;
-    font-weight: $font-weight-bold;
-    color: $text-primary;
-  }
-
-  .create-btn {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-    padding: $spacing-sm $spacing-lg;
-    background: $primary-color;
-    border: 1px solid $primary-color;
-    border-radius: $border-radius-md;
-    color: #fff;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    cursor: pointer;
-    transition: all $transition-base ease;
-
-    svg {
-      width: 20px;
-      height: 20px;
+  .header-left {
+    .page-title {
+      font-size: $font-size-3xl;
+      font-weight: $font-weight-bold;
+      color: $text-primary;
+      margin: 0 0 $spacing-xs 0;
     }
 
-    &:hover {
-      background: $primary-light;
-      border-color: $primary-light;
-    }
-  }
-
-  .search-bar {
-    position: relative;
-    margin-bottom: $spacing-lg;
-  }
-
-  .search-icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    color: $text-tertiary;
-  }
-
-  .search-input {
-    width: 100%;
-    max-width: 400px;
-    padding: $spacing-sm $spacing-md $spacing-sm 40px;
-    background: $bg-secondary;
-    border: 1px solid $border-color-base;
-    border-radius: $border-radius-md;
-    color: $text-primary;
-    font-size: $font-size-sm;
-    outline: none;
-    transition: all $transition-base ease;
-
-    &::placeholder {
+    .page-desc {
+      font-size: $font-size-sm;
       color: $text-tertiary;
-    }
-
-    &:focus {
-      border-color: $primary-color;
-      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+      margin: 0;
     }
   }
 
+  // ================================
+  // 搜索和筛选
+  // ================================
   .filter-section {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: $spacing-md;
-    margin-bottom: $spacing-md;
-    flex-wrap: wrap;
-  }
-
-  .filter-label {
-    font-size: $font-size-sm;
-    color: $text-secondary;
-    font-weight: $font-weight-medium;
+    margin-bottom: $spacing-lg;
   }
 
   .filter-tags {
     display: flex;
-    gap: $spacing-sm;
     flex-wrap: wrap;
+    gap: $spacing-sm;
   }
 
   .filter-tag {
@@ -423,23 +379,42 @@
     align-items: center;
     gap: 6px;
     padding: $spacing-xs $spacing-md;
-    background: $bg-secondary;
-    border: 1px solid $border-color-light;
+    background: $bg-primary;
+    border: 1px solid transparent;
     border-radius: $border-radius-full;
-    color: $text-secondary;
     font-size: $font-size-sm;
+    color: $text-secondary;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all 0.2s ease;
+
+    .tag-label {
+      font-weight: $font-weight-medium;
+    }
+
+    .tag-count {
+      font-size: $font-size-xs;
+      background: $bg-tertiary;
+      border: 1px solid $border-color-light;
+      padding: 0 6px;
+      border-radius: $border-radius-full;
+      color: $text-tertiary;
+    }
 
     &:hover {
-      border-color: $primary-color;
+      background: $bg-tertiary;
       color: $text-primary;
     }
 
     &.active {
-      background: rgba(24, 144, 255, 0.1);
+      background: rgba(59, 130, 246, 0.1);
       border-color: $primary-color;
       color: $primary-color;
+
+      .tag-count {
+        background: rgba(59, 130, 246, 0.2);
+        border-color: rgba(59, 130, 246, 0.3);
+        color: $primary-color;
+      }
     }
   }
 
@@ -447,6 +422,7 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
+    flex-shrink: 0;
 
     &--connected {
       background: #52c41a;
@@ -465,48 +441,110 @@
     }
   }
 
-  .tag-count {
-    font-size: $font-size-xs;
-    background: $bg-tertiary;
-    border: 1px solid $border-color-light;
-    padding: 0 6px;
-    border-radius: $border-radius-full;
-    color: $text-tertiary;
-  }
-
-  .filter-tag.active .tag-count {
-    background: rgba(24, 144, 255, 0.2);
-    border-color: rgba(24, 144, 255, 0.3);
-    color: $primary-color;
-  }
-
-  .server-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  // ================================
+  // 区块标题（标题 + 搜索框）
+  // ================================
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: $spacing-lg;
-    margin-top: $spacing-xl;
+    margin-bottom: $spacing-lg;
   }
 
-  .server-card {
-    background: $bg-secondary;
-    border: 1px solid $border-color-light;
-    border-radius: $border-radius-lg;
-    padding: $spacing-lg;
-    cursor: pointer;
-    transition: all $transition-base ease;
+  .section-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
 
-    &:hover {
-      border-color: $primary-color;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      transform: translateY(-2px);
+    .title-count {
+      font-size: $font-size-base;
+      font-weight: $font-weight-normal;
+      color: $text-tertiary;
     }
   }
 
+  .section-header .search-box {
+    position: relative;
+    width: 280px;
+    flex-shrink: 0;
+  }
+
+  .section-header .search-icon {
+    position: absolute;
+    left: $spacing-md;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: $text-tertiary;
+    pointer-events: none;
+  }
+
+  .section-header .search-input {
+    width: 100%;
+    height: 40px;
+    padding: $spacing-sm $spacing-md $spacing-sm 40px;
+    background: $bg-primary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-lg;
+    font-size: $font-size-sm;
+    color: $text-primary;
+    transition: all 0.2s ease;
+
+    &::placeholder {
+      color: $text-tertiary;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+    }
+  }
+
+  // ================================
+  // MCP服务器卡片网格
+  // ================================
+  .server-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: $spacing-lg;
+    margin-bottom: $spacing-xl;
+  }
+
+  .server-card {
+    position: relative;
+    background: $bg-primary;
+    border-radius: $border-radius-lg;
+    border: 1px solid $border-color-base;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    overflow: hidden;
+
+    &:hover {
+      border-color: $primary-color;
+      box-shadow: 0 4px 16px rgba(59, 130, 246, 0.12);
+
+      .card-actions {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+
+  // ================================
+  // 卡片头部
+  // ================================
   .card-header {
     display: flex;
     align-items: center;
     gap: $spacing-sm;
-    margin-bottom: $spacing-md;
+    padding: $spacing-lg;
   }
 
   .status-indicator {
@@ -557,13 +595,14 @@
   .card-divider {
     height: 1px;
     background: $border-color-light;
-    margin: $spacing-md 0;
+    margin: 0 $spacing-lg;
   }
 
   .card-body {
     display: flex;
     flex-direction: column;
     gap: $spacing-sm;
+    padding: $spacing-md $spacing-lg;
   }
 
   .info-row {
@@ -595,6 +634,7 @@
     display: flex;
     gap: $spacing-md;
     flex-wrap: wrap;
+    padding: $spacing-md $spacing-lg;
   }
 
   .capability-item {
@@ -621,15 +661,30 @@
   .last-active {
     font-size: $font-size-xs;
     color: $text-tertiary;
-    margin-top: $spacing-sm;
+    padding: 0 $spacing-lg $spacing-md;
   }
 
+  // ================================
+  // 悬浮操作按钮
+  // ================================
   .card-actions {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: flex;
     gap: $spacing-sm;
-    margin-top: $spacing-md;
-    padding-top: $spacing-md;
-    border-top: 1px solid $border-color-light;
+    padding: $spacing-md;
+    background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(255, 255, 255, 0.95) 100%
+    );
+    border-top: 1px solid $border-color-lighter;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
   }
 
   .action-btn {
@@ -637,26 +692,35 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    padding: $spacing-xs $spacing-sm;
-    background: $bg-tertiary;
-    border: 1px solid $border-color-light;
+    gap: 6px;
+    padding: $spacing-sm $spacing-md;
+    background: $bg-secondary;
+    border: 1px solid $border-color-base;
     border-radius: $border-radius-md;
     color: $text-secondary;
     font-size: $font-size-xs;
     font-weight: $font-weight-medium;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all 0.2s ease;
 
     &:hover:not(:disabled) {
-      background: $primary-color;
       border-color: $primary-color;
-      color: #fff;
+      color: $primary-color;
     }
 
     &:disabled {
       opacity: 0.6;
       cursor: not-allowed;
+    }
+
+    &.primary {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-color: transparent;
+      color: #fff;
+
+      &:hover:not(:disabled) {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      }
     }
 
     &--danger:hover:not(:disabled) {
@@ -666,12 +730,16 @@
     }
   }
 
+  // ================================
+  // 空状态
+  // ================================
   .empty-state {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: $spacing-3xl;
+    text-align: center;
     color: $text-tertiary;
 
     svg {
@@ -682,6 +750,43 @@
 
     p {
       font-size: $font-size-base;
+    }
+  }
+
+  // ================================
+  // 响应式
+  // ================================
+  @media (max-width: 1200px) {
+    .server-grid {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+  }
+
+  @media (max-width: 768px) {
+    .mcp-management {
+      padding: $spacing-md;
+    }
+
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-md;
+
+      .search-box {
+        width: 100%;
+      }
+    }
+
+    .server-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .card-actions {
+      opacity: 1;
+      transform: translateY(0);
+      position: static;
+      background: $bg-secondary;
+      backdrop-filter: none;
     }
   }
 </style>

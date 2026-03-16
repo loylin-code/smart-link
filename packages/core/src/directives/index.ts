@@ -9,8 +9,7 @@ import type {
   RuntimeContext,
   LoopResult,
   ExpressionBinding,
-  StateBinding,
-  PropConfig
+  StateBinding
 } from '../types'
 
 /**

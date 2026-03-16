@@ -6,66 +6,56 @@
         <h1 class="page-title">{{ t('application.designList.title') }}</h1>
         <span class="page-desc">{{ t('application.designList.description') }}</span>
       </div>
-      <div class="header-right">
-        <button class="create-btn" @click="handleCreate">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path
-              d="M12 5V19M5 12H19"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
-          </svg>
-          <span>{{ t('application.designList.newApp') }}</span>
-        </button>
-      </div>
     </div>
 
-    <!-- 筛选栏 -->
-    <div class="filter-bar">
-      <div class="filter-left">
-        <div class="filter-item">
-          <label>{{ t('application.types.all') }}</label>
-          <select v-model="filter.type">
-            <option value="">{{ t('application.types.all') }}</option>
-            <option v-for="type in appTypes" :key="type.value" :value="type.value">
-              {{ type.label }}
-            </option>
-          </select>
-        </div>
-        <div class="filter-item">
-          <label>{{ t('application.status.all') }}</label>
-          <select v-model="filter.status">
-            <option value="">{{ t('application.status.all') }}</option>
-            <option value="draft">{{ t('application.status.draft') }}</option>
-            <option value="designing">{{ t('application.status.designing') }}</option>
-            <option value="published">{{ t('application.status.published') }}</option>
-          </select>
-        </div>
-      </div>
-      <div class="filter-right">
-        <div class="search-box">
-          <svg viewBox="0 0 24 24" fill="none">
-            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
-            <path
-              d="M21 21l-4.35-4.35"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
-          </svg>
-          <input
-            v-model="filter.keyword"
-            type="text"
-            :placeholder="t('application.designList.searchPlaceholder')"
+    <!-- 搜索和筛选 -->
+    <div class="filter-section">
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none">
+          <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+          <path
+            d="M21 21l-4.35-4.35"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
           />
-        </div>
+        </svg>
+        <input
+          v-model="filter.keyword"
+          type="text"
+          class="search-input"
+          :placeholder="t('application.designList.searchPlaceholder')"
+        />
+      </div>
+
+      <div class="filter-tags">
+        <button
+          class="filter-tag"
+          :class="{ active: !filter.type }"
+          @click="filter.type = undefined"
+        >
+          <span class="tag-label">{{ t('application.types.all') }}</span>
+        </button>
+        <button
+          v-for="type in appTypes"
+          :key="type.value"
+          class="filter-tag"
+          :class="{ active: filter.type === type.value }"
+          @click="filter.type = type.value"
+        >
+          <span class="tag-label">{{ type.label }}</span>
+        </button>
       </div>
     </div>
 
     <!-- 应用列表 -->
     <div class="app-grid">
-      <div v-for="app in filteredApps" :key="app.id" class="app-card">
+      <div
+        v-for="app in filteredApps"
+        :key="app.id"
+        class="app-card"
+        :class="{ disabled: app.status === AppStatus.ARCHIVED }"
+      >
         <div class="card-header">
           <div class="app-icon" :class="`type--${app.type}`">
             {{ getTypeIcon(app.type) }}
@@ -111,7 +101,9 @@
             </span>
           </div>
         </div>
-        <div class="card-footer">
+
+        <!-- 悬浮操作按钮 -->
+        <div class="card-actions" @click.stop>
           <button class="action-btn primary" @click="handleEdit(app)">
             <svg viewBox="0 0 24 24" fill="none">
               <path
@@ -127,9 +119,13 @@
                 stroke-linecap="round"
               />
             </svg>
-            {{ t('application.card.edit') }}
+            <span>{{ t('application.card.edit') }}</span>
           </button>
-          <button class="action-btn" @click="handleDuplicate(app)">
+          <button
+            class="action-btn"
+            @click="handleDuplicate(app)"
+            :title="t('application.card.copy')"
+          >
             <svg viewBox="0 0 24 24" fill="none">
               <rect
                 x="9"
@@ -146,9 +142,12 @@
                 stroke-width="2"
               />
             </svg>
-            {{ t('application.card.copy') }}
           </button>
-          <button class="action-btn danger" @click="handleDelete(app)">
+          <button
+            class="action-btn"
+            @click="handleDelete(app)"
+            :title="t('application.card.delete')"
+          >
             <svg viewBox="0 0 24 24" fill="none">
               <path
                 d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"
@@ -157,18 +156,28 @@
                 stroke-linecap="round"
               />
             </svg>
-            {{ t('application.card.delete') }}
           </button>
         </div>
       </div>
 
       <!-- 空状态 -->
       <div v-if="filteredApps.length === 0" class="empty-state">
-        <svg viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" />
-          <path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-        </svg>
-        <p>{{ t('application.designList.noApps') }}</p>
+        <div class="empty-icon-wrapper">
+          <span class="empty-icon">📦</span>
+        </div>
+        <h3>{{ t('application.designList.noApps') }}</h3>
+        <p>{{ t('application.designList.noAppsDesc') }}</p>
+        <button class="link-btn" @click="handleCreate">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 5v14M5 12h14"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+          {{ t('application.designList.newApp') }}
+        </button>
       </div>
     </div>
   </div>
@@ -188,7 +197,6 @@
   // 筛选条件
   const filter = ref<AppFilter>({
     type: undefined,
-    status: undefined,
     keyword: ''
   })
 
@@ -210,9 +218,6 @@
 
     if (filter.value.type) {
       result = result.filter((app) => app.type === filter.value.type)
-    }
-    if (filter.value.status) {
-      result = result.filter((app) => app.status === filter.value.status)
     }
     if (filter.value.keyword) {
       const keyword = filter.value.keyword.toLowerCase()
@@ -298,18 +303,35 @@
     padding: $spacing-xl;
     background: $bg-secondary;
     overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $border-color-base;
+      border-radius: 3px;
+
+      &:hover {
+        background: $text-tertiary;
+      }
+    }
   }
 
+  // ================================
+  // 页面头部
+  // ================================
   .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
     margin-bottom: $spacing-xl;
   }
 
   .header-left {
     .page-title {
-      font-size: $font-size-2xl;
+      font-size: $font-size-3xl;
       font-weight: $font-weight-bold;
       color: $text-primary;
       margin: 0 0 $spacing-xs 0;
@@ -322,101 +344,88 @@
     }
   }
 
-  .create-btn {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-    padding: $spacing-sm $spacing-lg;
-    background: $primary-color;
-    border: none;
-    border-radius: $border-radius-md;
-    color: #fff;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    cursor: pointer;
-    transition: all $transition-base ease;
-
-    svg {
-      width: 18px;
-      height: 18px;
-    }
-
-    &:hover {
-      background: $primary-light;
-    }
-  }
-
-  .filter-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: $spacing-lg;
-    padding: $spacing-md;
-    background: $bg-primary;
-    border-radius: $border-radius-lg;
-    box-shadow: $shadow-sm;
-  }
-
-  .filter-left {
-    display: flex;
-    gap: $spacing-md;
-  }
-
-  .filter-item {
+  // ================================
+  // 搜索和筛选
+  // ================================
+  .filter-section {
     display: flex;
     flex-direction: column;
-    gap: $spacing-xs;
-
-    label {
-      font-size: $font-size-xs;
-      color: $text-tertiary;
-    }
-
-    select {
-      padding: $spacing-sm $spacing-md;
-      min-width: 140px;
-      border: 1px solid $border-color-base;
-      border-radius: $border-radius-sm;
-      background: $bg-primary;
-      color: $text-primary;
-      font-size: $font-size-sm;
-      outline: none;
-
-      &:focus {
-        border-color: $primary-color;
-      }
-    }
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
   }
 
   .search-box {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-    padding: $spacing-sm $spacing-md;
-    border: 1px solid $border-color-base;
-    border-radius: $border-radius-sm;
-    background: $bg-primary;
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+  }
 
-    svg {
-      width: 18px;
-      height: 18px;
+  .search-icon {
+    position: absolute;
+    left: $spacing-md;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: $text-tertiary;
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: $spacing-sm $spacing-md $spacing-sm 44px;
+    background: $bg-primary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-lg;
+    font-size: $font-size-sm;
+    color: $text-primary;
+    transition: all 0.2s ease;
+
+    &::placeholder {
       color: $text-tertiary;
     }
 
-    input {
-      border: none;
+    &:focus {
       outline: none;
-      background: transparent;
-      color: $text-primary;
-      font-size: $font-size-sm;
-      width: 200px;
-
-      &::placeholder {
-        color: $text-tertiary;
-      }
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
     }
   }
 
+  .filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+  }
+
+  .filter-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: $spacing-xs $spacing-md;
+    background: $bg-primary;
+    border: 1px solid transparent;
+    border-radius: $border-radius-full;
+    font-size: $font-size-sm;
+    color: $text-secondary;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: $bg-tertiary;
+      color: $text-primary;
+    }
+
+    &.active {
+      background: rgba(59, 130, 246, 0.1);
+      border-color: $primary-color;
+      color: $primary-color;
+    }
+  }
+
+  // ================================
+  // 应用卡片网格
+  // ================================
   .app-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -424,14 +433,27 @@
   }
 
   .app-card {
+    position: relative;
     background: $bg-primary;
     border-radius: $border-radius-lg;
-    box-shadow: $shadow-sm;
-    transition: all $transition-base ease;
+    border: 1px solid $border-color-base;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    overflow: hidden;
 
     &:hover {
-      box-shadow: $shadow-md;
-      transform: translateY(-2px);
+      border-color: $primary-color;
+      box-shadow: 0 4px 16px rgba(59, 130, 246, 0.12);
+
+      .card-actions {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    &.disabled {
+      opacity: 0.6;
+      pointer-events: none;
     }
   }
 
@@ -533,11 +555,27 @@
     }
   }
 
-  .card-footer {
+  // ================================
+  // 悬浮操作按钮
+  // ================================
+  .card-actions {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: flex;
     gap: $spacing-sm;
     padding: $spacing-md;
+    background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(255, 255, 255, 0.95) 100%
+    );
     border-top: 1px solid $border-color-lighter;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
   }
 
   .action-btn {
@@ -545,15 +583,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: $spacing-xs;
-    padding: $spacing-sm;
+    gap: 6px;
+    padding: $spacing-sm $spacing-md;
     background: $bg-secondary;
     border: 1px solid $border-color-base;
-    border-radius: $border-radius-sm;
+    border-radius: $border-radius-md;
     color: $text-secondary;
     font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all 0.2s ease;
 
     svg {
       width: 14px;
@@ -566,21 +605,19 @@
     }
 
     &.primary {
-      background: $primary-color;
-      border-color: $primary-color;
+      background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+      border-color: transparent;
       color: #fff;
 
       &:hover {
-        background: $primary-light;
+        background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
       }
-    }
-
-    &.danger:hover {
-      border-color: $error;
-      color: $error;
     }
   }
 
+  // ================================
+  // 空状态
+  // ================================
   .empty-state {
     grid-column: 1 / -1;
     display: flex;
@@ -588,18 +625,89 @@
     align-items: center;
     justify-content: center;
     padding: $spacing-3xl;
-    color: $text-tertiary;
+    text-align: center;
 
-    svg {
-      width: 64px;
-      height: 64px;
-      margin-bottom: $spacing-md;
-      opacity: 0.5;
+    .empty-icon-wrapper {
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+      border-radius: 50%;
+      margin-bottom: $spacing-lg;
+    }
+
+    .empty-icon {
+      font-size: 40px;
+      opacity: 0.8;
+    }
+
+    h3 {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+      color: $text-primary;
+      margin: 0 0 $spacing-sm 0;
     }
 
     p {
-      margin: 0;
       font-size: $font-size-sm;
+      color: $text-tertiary;
+      margin: 0 0 $spacing-xl 0;
+    }
+  }
+
+  .link-btn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-sm $spacing-xl;
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    border: none;
+    border-radius: $border-radius-lg;
+    color: #fff;
+    text-decoration: none;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+    }
+  }
+
+  // ================================
+  // 响应式
+  // ================================
+  @media (max-width: 1200px) {
+    .app-grid {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+  }
+
+  @media (max-width: 768px) {
+    .app-design-list {
+      padding: $spacing-md;
+    }
+
+    .app-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .card-actions {
+      opacity: 1;
+      transform: translateY(0);
+      position: static;
+      background: $bg-secondary;
+      backdrop-filter: none;
     }
   }
 </style>

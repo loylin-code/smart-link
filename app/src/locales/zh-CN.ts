@@ -30,13 +30,14 @@ export default {
   },
   route: {
     explore: '探索',
-    application: '应用管理',
-    appList: '应用列表',
-    appDesign: '应用设计',
-    appCreate: '新建应用',
-    appOrchestration: '编排应用',
-    appEdit: '编辑应用',
-    appRuntime: '应用运行',
+    agentManagement: '智能体管理',
+    agentList: '智能体列表',
+    agentDesign: '智能体设计',
+    agentCreate: '新建智能体',
+    agentOrchestration: '编排智能体',
+    agentEdit: '编辑智能体',
+    agentRuntime: '智能体运行',
+    viewOrchestration: '视图编排',
     resource: '资源管理',
     components: '组件管理',
     componentDetail: '组件详情',
@@ -52,7 +53,15 @@ export default {
     settings: '系统设置',
     appearance: '外观设置',
     providers: '模型提供商',
-    notFound: '页面未找到'
+    notFound: '页面未找到',
+    // 保留旧的路由键以兼容
+    application: '智能体管理',
+    appList: '智能体列表',
+    appDesign: '智能体设计',
+    appCreate: '新建智能体',
+    appOrchestration: '编排智能体',
+    appEdit: '编辑智能体',
+    appRuntime: '智能体运行'
   },
   welcome: {
     slogan: '智能企业级 Agent 应用管理平台',
@@ -92,8 +101,8 @@ export default {
     regenerate: '重新生成'
   },
   sidebar: {
-    appOrchestration: '应用编排',
-    appManagement: '应用管理',
+    appOrchestration: '智能体编排',
+    agentManagement: '智能体管理',
     explore: '探索',
     componentManagement: '组件管理',
     skillsManagement: 'Skills管理',
@@ -105,9 +114,13 @@ export default {
     settings: '系统设置',
     appearance: '外观设置',
     providers: '模型提供商',
-    appList: '应用列表',
-    appDesign: '应用设计',
-    collapseSidebar: '收起侧边栏'
+    agentList: '智能体列表',
+    agentDesign: '智能体设计',
+    collapseSidebar: '收起侧边栏',
+    // 保留旧键以兼容
+    appManagement: '智能体管理',
+    appList: '智能体列表',
+    appDesign: '智能体设计'
   },
   orchestrator: {
     title: '应用编排',
@@ -143,9 +156,12 @@ export default {
     showingResults: '显示 {start}-{end} / 共 {total} 个',
     searchMCP: '搜索服务器名称...',
     filterByStatus: '按状态筛选',
-    filterByTransport: '按传输类型'
+    filterByTransport: '按传输类型',
+    componentManagement: '组件管理'
   },
   mcp: {
+    // List
+    listTitle: 'MCP服务器列表',
     // Status
     statusLabel: '状态',
     status: {
@@ -256,8 +272,39 @@ export default {
     pageNotExist: '抱歉，您访问的页面不存在',
     backHome: '返回首页'
   },
+  // 组件管理
+  component: {
+    total: '共 {count} 个组件',
+    searchPlaceholder: '搜索组件名称、类型...',
+    empty: '暂无组件数据',
+    managementDescription: '管理和配置系统组件',
+    componentList: '组件列表',
+    categories: {
+      all: '全部组件',
+      basic: '基础组件',
+      form: '表单组件',
+      layout: '布局组件',
+      data: '数据展示',
+      feedback: '反馈组件',
+      business: '业务组件'
+    },
+    card: {
+      type: '类型',
+      version: '版本',
+      author: '作者',
+      views: '访问量',
+      usage: '使用次数',
+      status: {
+        stable: '稳定',
+        beta: '测试版',
+        deprecated: '已废弃'
+      }
+    }
+  },
   skills: {
     title: 'Skills管理',
+    description: '管理和配置技能模块',
+    listTitle: 'Skills列表',
     create: '创建Skill',
     searchPlaceholder: '搜索Skills...',
     author: '作者',
@@ -520,6 +567,7 @@ export default {
   },
   settings: {
     appearance: '外观设置',
+    appearanceDesc: '自定义应用的外观和主题设置',
     providers: '模型提供商',
     systemSettings: '系统设置',
     themeMode: '主题模式',
@@ -531,21 +579,22 @@ export default {
       defaultBlue: '默认蓝',
       techGreen: '科技绿',
       elegantPurple: '优雅紫',
-      activeOrange: '活力橙'
+      activeOrange: '活力橙',
+      professionalBlue: '专业蓝',
+      emeraldGreen: '翠绿',
+      vibrantRed: '活力红'
     },
     fontSize: '字体大小',
     small: '小',
     medium: '中',
     large: '大',
     saveChanges: '保存更改',
-    appearanceSettings: {
-      title: '外观设置'
-    },
     modelProviders: {
       title: '模型提供商',
-      sectionTitle: '模型提供商配置',
+      subtitle: '管理 AI 模型提供商的 API 配置',
       configured: '已配置',
       unconfigured: '未配置',
+      available: '可用提供商',
       apiKey: 'API Key',
       baseUrl: 'Base URL',
       availableModels: '可用模型',
@@ -564,26 +613,26 @@ export default {
   },
   application: {
     runtimeList: {
-      title: '应用管理',
-      description: '运行和管理已发布的应用',
-      searchPlaceholder: '搜索应用...',
-      publishedApps: '已发布应用',
-      apps: '个应用',
-      noApps: '暂无已发布应用',
-      goToDesign: '前往应用设计'
+      title: '智能体管理',
+      description: '运行和管理已发布的智能体',
+      searchPlaceholder: '搜索智能体...',
+      publishedApps: '已发布智能体',
+      apps: '个智能体',
+      noApps: '暂无已发布智能体',
+      goToDesign: '前往智能体设计'
     },
     designList: {
-      title: '应用设计',
-      description: '设计和管理您的应用',
-      searchPlaceholder: '搜索应用...',
-      myApps: '我的应用',
-      newApp: '新建应用',
-      noApps: '暂无应用',
-      createFirst: '创建第一个应用',
-      confirmDelete: '确定要删除应用"{name}"吗？'
+      title: '智能体设计',
+      description: '设计和管理您的智能体',
+      searchPlaceholder: '搜索智能体...',
+      myApps: '我的智能体',
+      newApp: '新建智能体',
+      noApps: '暂无智能体',
+      createFirst: '创建第一个智能体',
+      confirmDelete: '确定要删除智能体"{name}"吗？'
     },
     stats: {
-      published: '已发布应用',
+      published: '已发布智能体',
       totalVisits: '总访问次数',
       totalUptime: '总运行时长'
     },
@@ -619,7 +668,7 @@ export default {
       delete: '删除'
     },
     share: {
-      title: '分享应用',
+      title: '分享智能体',
       accessLink: '访问链接',
       linkSettings: '链接设置',
       requirePassword: '需要密码访问',
@@ -629,20 +678,20 @@ export default {
       applySettings: '应用设置'
     },
     disable: {
-      title: '确认禁用应用',
+      title: '确认禁用智能体',
       confirmMessage: '确定要禁用「{name}」吗？',
       effects: '禁用后',
-      effect1: '用户将无法正常访问该应用',
+      effect1: '用户将无法正常访问该智能体',
       effect2: '分享链接将显示自定义提示页面',
       effect3: '可随时重新启用',
       customMessage: '自定义提示页（可选）',
-      customTitlePlaceholder: '应用暂时不可用',
-      customDescPlaceholder: '该应用正在维护中，请稍后再试...',
+      customTitlePlaceholder: '智能体暂时不可用',
+      customDescPlaceholder: '该智能体正在维护中，请稍后再试...',
       confirm: '确认禁用'
     },
     create: {
-      title: '新建应用',
-      selectType: '选择应用类型',
+      title: '新建智能体',
+      selectType: '选择智能体类型',
       orUseTemplate: '或从模板创建',
       select: '选择',
       useTemplate: '使用模板'
@@ -657,13 +706,13 @@ export default {
     },
     runtime: {
       backToList: '返回列表',
-      loading: '加载应用中...',
+      loading: '加载智能体中...',
       loadFailed: '加载失败',
       retry: '重试',
-      appNotFound: '应用不存在',
-      appNotPublished: '应用未发布',
-      appDisabled: '应用已禁用',
-      appDisabledDesc: '该应用正在维护中，暂时无法访问',
+      appNotFound: '智能体不存在',
+      appNotPublished: '智能体未发布',
+      appDisabled: '智能体已禁用',
+      appDisabledDesc: '该智能体正在维护中，暂时无法访问',
       running: '运行中',
       error: '异常',
       stopped: '已停止',
@@ -673,52 +722,100 @@ export default {
       errors: '错误次数'
     },
     wizard: {
-      title: '新建应用',
-      editTitle: '编辑应用 - {name}',
+      title: '新建智能体',
+      editTitle: '编辑智能体 - {name}',
       steps: {
         basic: '基本信息',
-        type: '类型选择',
+        persona: '系统提示词',
+        capabilities: '能力配置',
+        llm: 'LLM配置',
+        knowledge: '知识库配置',
         design: '页面设计',
         publish: '保存发布'
       },
       basic: {
         title: '基本信息',
-        name: '应用名称',
-        namePlaceholder: '请输入应用名称',
-        nameRequired: '应用名称不能为空',
-        nameMaxLength: '应用名称最多50个字符',
-        description: '应用描述',
-        descriptionPlaceholder: '请输入应用描述（选填）',
-        descriptionMaxLength: '应用描述最多200个字符',
-        icon: '应用图标',
+        name: '智能体名称',
+        namePlaceholder: '请输入智能体名称',
+        nameRequired: '智能体名称不能为空',
+        nameMaxLength: '智能体名称最多50个字符',
+        code: '唯一编码',
+        codePlaceholder: '请输入唯一编码（用于路由）',
+        description: '智能体描述',
+        descriptionPlaceholder: '请输入智能体描述（选填）',
+        descriptionMaxLength: '智能体描述最多200个字符',
+        avatar: '智能体头像',
         tags: '分类标签',
         tagsPlaceholder: '输入后按回车添加标签',
-        addTag: '添加标签'
+        addTag: '添加标签',
+        category: '分类'
       },
-      type: {
-        title: '选择类型',
-        selectType: '选择应用类型',
-        orTemplate: '或从模板创建',
-        types: {
-          workflow: '工作流',
-          workflowDesc: '流程编排型应用，支持复杂业务逻辑',
-          dashboard: '仪表盘',
-          dashboardDesc: '数据可视化仪表盘，多图表展示',
-          form: '表单',
-          formDesc: '数据收集表单，支持验证和提交',
-          chart: '图表',
-          chartDesc: '单一图表展示，支持多种图表类型',
-          custom: '自定义',
-          customDesc: '完全自定义应用，灵活配置'
-        },
-        templates: {
-          customerService: '智能客服助手模板',
-          customerServiceDesc: '预配置的客服对话流程，支持常见问题自动回复和人工转接',
-          dataAnalysis: '数据分析模板',
-          dataAnalysisDesc: '预配置的数据分析流程，支持数据清洗、分析和可视化报告生成',
-          survey: '问卷调查模板',
-          surveyDesc: '预配置的调查问卷表单，支持多种题型和数据统计'
-        }
+      persona: {
+        title: '系统提示词',
+        personaLabel: '人设提示词',
+        personaPlaceholder: '请输入智能体的人设和角色定义...',
+        personaHint: '定义智能体的身份、专业领域、行为准则等',
+        welcomeMessage: '欢迎语',
+        welcomePlaceholder: '请输入智能体的欢迎语...',
+        responsibilities: '职责定义',
+        addResponsibility: '添加职责',
+        responsibilityName: '职责名称',
+        responsibilityDesc: '职责描述',
+        priority: '优先级',
+        keywords: '关键词',
+        examples: '示例问法'
+      },
+      capabilities: {
+        title: '能力配置',
+        mcpBindings: 'MCP 绑定',
+        skillBindings: 'Skill 绑定',
+        toolBindings: 'Tool 绑定',
+        addMcp: '添加 MCP 服务',
+        addSkill: '添加 Skill',
+        addTool: '添加 Tool',
+        required: '必需',
+        enabled: '已启用',
+        fallbackAction: '降级策略',
+        fallbackSkip: '跳过',
+        fallbackError: '报错',
+        fallbackWait: '等待',
+        noMcpBindings: '暂无 MCP 绑定',
+        noSkillBindings: '暂无 Skill 绑定',
+        noToolBindings: '暂无 Tool 绑定'
+      },
+      llm: {
+        title: 'LLM 配置',
+        provider: '提供商',
+        model: '模型',
+        temperature: '温度',
+        maxTokens: '最大 Tokens',
+        topP: 'Top P',
+        systemPrompt: '系统提示词补充',
+        systemPromptPlaceholder: '可选，补充到人设提示词之后...'
+      },
+      knowledge: {
+        title: '知识库配置 (RAG)',
+        documents: '文档源',
+        databases: '数据库源',
+        apis: 'API 数据源',
+        searchConfig: '检索配置',
+        addDocument: '添加文档',
+        addDatabase: '添加数据库',
+        addApi: '添加 API',
+        documentType: '文档类型',
+        documentSource: '文档来源',
+        dbType: '数据库类型',
+        connectionString: '连接字符串',
+        apiEndpoint: 'API 端点',
+        apiMethod: '请求方法',
+        enabled: '已启用',
+        noDocuments: '暂无文档源',
+        noDatabases: '暂无数据库源',
+        noApis: '暂无 API 数据源',
+        searchEnabled: '启用检索',
+        topK: '返回数量 (Top K)',
+        similarityThreshold: '相似度阈值',
+        rerankEnabled: '启用重排序'
       },
       design: {
         title: '页面设计',
@@ -740,14 +837,14 @@ export default {
       },
       publish: {
         title: '保存发布',
-        summary: '应用摘要',
-        appName: '应用名称',
-        appType: '应用类型',
-        appDescription: '应用描述',
+        summary: '智能体摘要',
+        appName: '智能体名称',
+        appType: '智能体类型',
+        appDescription: '智能体描述',
         pageStructure: '页面结构',
         noDescription: '无描述',
         saveDraft: '保存为草稿',
-        publishApp: '发布应用',
+        publishApp: '发布智能体',
         saving: '保存中...',
         publishing: '发布中...',
         saveSuccess: '保存成功',
@@ -761,7 +858,7 @@ export default {
         cancel: '取消'
       },
       icons: {
-        app: '应用',
+        app: '智能体',
         dashboard: '仪表盘',
         chart: '图表',
         form: '表单',
@@ -781,9 +878,251 @@ export default {
       }
     }
   },
+  // 新增智能体相关国际化
+  agent: {
+    list: {
+      title: '智能体列表',
+      description: '运行和管理已发布的智能体',
+      searchPlaceholder: '搜索智能体...',
+      publishedAgents: '已发布智能体',
+      activeAgents: '活跃智能体',
+      agents: '个智能体',
+      noAgents: '暂无已发布智能体',
+      noAgentsDesc: '创建并发布您的第一个智能体应用',
+      noDescription: '暂无描述',
+      noCapabilities: '暂未配置能力',
+      goToDesign: '前往智能体设计'
+    },
+    designList: {
+      title: '智能体设计',
+      description: '设计和管理您的智能体',
+      searchPlaceholder: '搜索智能体...',
+      newAgent: '新建智能体',
+      agentList: '智能体列表',
+      noAgents: '暂无智能体',
+      noAgentsDesc: '点击"新建智能体"开始创建',
+      confirmDelete: '确定要删除智能体 "{name}" 吗？'
+    },
+    create: {
+      title: '新建智能体',
+      icon: '图标',
+      name: '智能体名称',
+      namePlaceholder: '请输入智能体名称',
+      code: '智能体编码',
+      codePlaceholder: '请输入唯一编码，如 agent_customer_service',
+      codeHint: '唯一标识符，用于API调用',
+      description: '描述',
+      descriptionPlaceholder: '请描述智能体的功能和用途',
+      type: '智能体类型',
+      tags: '标签',
+      tagsPlaceholder: '输入标签后按回车添加',
+      uploadAvatar: '上传头像',
+      confirm: '确定'
+    },
+    design: {
+      untitled: '未命名智能体',
+      preview: '预览',
+      save: '保存',
+      publish: '发布',
+      config: {
+        prompt: '系统提示词',
+        promptDesc: '定义智能体的角色、行为和能力',
+        skills: '技能',
+        skillsDesc: '配置智能体可使用的技能模块',
+        mcp: 'MCP 服务',
+        mcpDesc: '连接外部工具和数据源',
+        rag: 'RAG 知识库',
+        ragDesc: '配置检索增强生成',
+        llm: 'LLM 模型',
+        llmDesc: '配置语言模型参数',
+        view: '交互视图',
+        viewDesc: '通过 AGUI 生成图表页面展示响应信息'
+      },
+      prompt: {
+        soul: '人格定义',
+        memory: '记忆',
+        soulTitle: '人格定义 (SOUL)',
+        soulDesc: '定义智能体的性格、角色、行为模式和专业领域',
+        memoryTitle: '记忆 (Memory)',
+        memoryDesc: '智能体的持久记忆、上下文信息和知识库',
+        soulPlaceholder:
+          '## 角色定义\n你是一位专业的智能助手...\n\n### 性格特点\n- 专业、耐心、细致\n\n### 行为准则\n1. 保持专业态度\n2. 提供准确信息',
+        memoryPlaceholder:
+          '## 产品信息\n\n### 核心功能\n- 功能A\n- 功能B\n\n### 常见问题\nQ: 问题?\nA: 回答',
+        templates: '模板',
+        edit: '编辑',
+        preview: '预览',
+        chars: '字符',
+        words: '词'
+      },
+      skills: {
+        selected: '已添加技能',
+        emptySelected: '暂未添加技能，请从下方可用技能列表中选择',
+        available: '可用技能',
+        search: '搜索技能...',
+        noAvailable: '暂无可用技能',
+        enable: '启用',
+        disable: '禁用',
+        remove: '移除',
+        emptyTitle: '暂未配置技能',
+        emptyDesc: '添加技能可以扩展智能体的能力，支持数据分析、处理、调用和转换等多种能力',
+        addSkill: '添加技能',
+        addMore: '继续添加',
+        selectTitle: '选择技能',
+        noResults: '未找到匹配的技能',
+        selectedCount: '已选择 {count} 个技能',
+        confirmAdd: '确认添加',
+        alreadySelected: '已添加'
+      },
+      mcp: {
+        selected: '已添加服务',
+        emptyTitle: '暂未配置 MCP 服务',
+        emptyDesc: '添加 MCP 服务可以连接外部工具、数据库和 API，扩展智能体的能力边界',
+        addMCP: '添加 MCP 服务',
+        addMore: '继续添加',
+        selectTitle: '选择 MCP 服务',
+        search: '搜索 MCP 服务...',
+        noResults: '未找到匹配的服务',
+        selectedCount: '已选择 {count} 个服务',
+        confirmAdd: '确认添加',
+        alreadySelected: '已添加',
+        required: '设为必需',
+        optional: '设为可选',
+        remove: '移除'
+      },
+      promptPlaceholder: '你是一个专业的客服助手，负责回答用户关于产品的问题...',
+      noSkills: '暂未添加技能',
+      noSkillsDesc: '添加技能可以扩展智能体的能力',
+      addSkill: '添加技能',
+      noMCP: '暂未配置 MCP',
+      noMCPDesc: '配置 MCP 可以连接外部工具和服务',
+      addMCP: '添加 MCP',
+      rag: {
+        enable: '启用知识库检索',
+        topK: '检索数量',
+        threshold: '相似度阈值'
+      },
+      llm: {
+        provider: '模型提供商',
+        model: '模型',
+        temperature: '温度',
+        maxTokens: '最大输出 Tokens'
+      },
+      view: {
+        created: '已创建视图',
+        emptyTitle: '暂未创建交互视图',
+        emptyDesc: '通过 AGUI 技术让大模型生成匹配的图表页面，可视化展示响应信息',
+        addView: '添加视图',
+        createTitle: '创建交互视图',
+        viewName: '视图名称',
+        viewNamePlaceholder: '请输入视图名称',
+        viewDescription: '视图描述',
+        viewDescPlaceholder: '请描述该视图的用途和展示内容',
+        viewType: '视图类型',
+        createAndDesign: '创建并设计',
+        noDescription: '暂无描述',
+        types: {
+          dashboard: '仪表盘',
+          chart: '图表',
+          table: '表格',
+          form: '表单',
+          custom: '自定义'
+        },
+        untitled: '未命名视图',
+        components: '组件库',
+        charts: '图表',
+        widgets: '组件',
+        layouts: '布局',
+        canvasEmpty: '开始设计您的交互视图',
+        canvasEmptyDesc: '从左侧拖拽组件到画布中',
+        properties: '属性配置',
+        selectElement: '请选择一个组件进行配置',
+        elementName: '组件名称',
+        dataSource: '数据源',
+        staticData: '静态数据',
+        lineChart: '折线图',
+        barChart: '柱状图',
+        pieChart: '饼图',
+        areaChart: '面积图',
+        statCard: '统计卡片',
+        dataTable: '数据表格',
+        progressBar: '进度条',
+        textBlock: '文本块',
+        gridLayout: '网格布局',
+        flexRow: '横向布局',
+        flexCol: '纵向布局',
+        tabs: '标签页',
+        componentsCount: '个组件'
+      }
+    },
+    categories: {
+      conversational: '对话型',
+      workflow: '工作流型',
+      automation: '自动化型'
+    },
+    stats: {
+      active: '活跃智能体',
+      totalSessions: '总会话数',
+      totalTokens: '总Token消耗'
+    },
+    status: {
+      all: '全部状态',
+      draft: '草稿',
+      active: '激活',
+      paused: '暂停',
+      deprecated: '废弃'
+    },
+    types: {
+      all: '全部类型',
+      system: '系统预置',
+      custom: '用户自定义',
+      template: '模板角色'
+    },
+    type: {
+      all: '全部类型',
+      system: '系统预置',
+      custom: '用户自定义',
+      template: '模板角色'
+    },
+    card: {
+      code: '编码',
+      capabilities: '能力',
+      sessions: '会话',
+      tokens: 'Token',
+      latency: '延迟',
+      run: '运行',
+      chat: '对话',
+      edit: '编辑',
+      copy: '复制',
+      delete: '删除',
+      pause: '暂停',
+      activate: '激活',
+      disable: '禁用',
+      enable: '启用',
+      share: '分享',
+      mcpCount: '{count} MCP',
+      skillCount: '{count} Skills',
+      toolCount: '{count} Tools'
+    },
+    runtime: {
+      backToList: '返回列表',
+      loading: '加载智能体中...',
+      loadFailed: '加载失败',
+      retry: '重试',
+      agentNotFound: '智能体不存在',
+      agentPaused: '智能体已暂停',
+      agentPausedDesc: '该智能体服务已暂停',
+      running: '运行中',
+      idle: '空闲',
+      busy: '忙碌',
+      error: '异常'
+    }
+  },
   model: {
     management: {
       title: '模型管理',
+      description: '管理和配置AI模型',
+      listTitle: '模型列表',
       addModel: '添加模型',
       searchPlaceholder: '搜索模型名称、提供商...',
       filterByProvider: '按提供商筛选',

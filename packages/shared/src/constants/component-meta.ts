@@ -903,7 +903,7 @@ SlMessage.info('提示信息')`
 ]
 
 export const COMPONENT_CATEGORIES = [
-  { value: 'all', label: '全部' },
+  { value: 'all', label: '全部组件' },
   { value: 'basic', label: '基础组件' },
   { value: 'form', label: '表单组件' },
   { value: 'layout', label: '布局组件' },

@@ -323,7 +323,7 @@
   import { useRouter, useRoute } from 'vue-router'
   import { useI18n } from 'vue-i18n'
   import { applicationApi } from '@/services/application'
-  import { AppType, AppStatus, type Application, type PageSchema } from '@/types'
+  import { AppType, AppStatus, type PageSchema } from '@/types'
 
   interface Step {
     key: string
@@ -503,7 +503,7 @@
   }
 
   function handleBack() {
-    if (isFirstStep) {
+    if (isFirstStep.value) {
       handleCancel()
     } else {
       prevStep()

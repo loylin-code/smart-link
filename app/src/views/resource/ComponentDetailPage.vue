@@ -350,7 +350,7 @@
   const loadComponent = () => {
     const type = route.params.type as string
     const found = componentsStore.loadComponentDetail(type)
-    
+
     if (found) {
       initPreviewState()
     } else {

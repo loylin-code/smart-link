@@ -1,21 +1,41 @@
 <template>
   <div class="welcome-page">
-    <!-- 粒子背景 -->
-    <canvas ref="particleCanvas" class="particle-canvas"></canvas>
+    <!-- 背景装饰 -->
+    <div class="welcome-bg">
+      <div class="bg-gradient"></div>
+      <div class="bg-pattern"></div>
+    </div>
 
     <!-- 主要内容 -->
     <div class="welcome-content">
       <!-- Logo -->
       <div class="welcome-logo">
-        <div class="logo-icon">
-          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="40" cy="40" r="36" stroke="currentColor" stroke-width="2" opacity="0.3" />
-            <circle cx="40" cy="40" r="28" stroke="currentColor" stroke-width="2" opacity="0.5" />
-            <circle cx="40" cy="40" r="20" stroke="currentColor" stroke-width="2" />
-            <path
-              d="M32 40L38 46L48 34"
+        <div class="logo-mark">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect
+              x="4"
+              y="4"
+              width="40"
+              height="40"
+              rx="12"
               stroke="currentColor"
-              stroke-width="3"
+              stroke-width="1.5"
+              opacity="0.3"
+            />
+            <rect
+              x="10"
+              y="10"
+              width="28"
+              height="28"
+              rx="8"
+              stroke="currentColor"
+              stroke-width="1.5"
+              opacity="0.5"
+            />
+            <path
+              d="M16 24L22 30L32 18"
+              stroke="currentColor"
+              stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
@@ -29,43 +49,38 @@
       <p class="welcome-description">{{ t('welcome.description') }}</p>
 
       <!-- 按钮区域 -->
-      <div class="button-group">
-        <button class="start-button" @click="handleStart">
-          <span class="button-icon-left">🚀</span>
-          <span class="button-text">{{ t('welcome.startExplore') }}</span>
-          <svg class="button-icon-right" viewBox="0 0 24 24" fill="none">
+      <div class="welcome-actions">
+        <button class="primary-action" @click="handleStart">
+          <span>{{ t('welcome.startExplore') }}</span>
+          <svg viewBox="0 0 24 24" fill="none">
             <path
               d="M5 12H19M19 12L12 5M19 12L12 19"
               stroke="currentColor"
-              stroke-width="2"
+              stroke-width="1.5"
               stroke-linecap="round"
               stroke-linejoin="round"
             />
           </svg>
         </button>
+        <button class="secondary-action" @click="handleOpenClaw">
+          {{ t('welcome.experienceOpenClaw') }}
+        </button>
       </div>
-
-      <!-- 次级按钮 -->
-      <button class="secondary-button" @click="handleOpenClaw">
-        <span>{{ t('welcome.experienceOpenClaw') }}</span>
-      </button>
     </div>
 
     <!-- 底部信息 -->
-    <div class="welcome-footer">
-      <p class="footer-text">{{ t('welcome.poweredBy') }}</p>
-    </div>
+    <footer class="welcome-footer">
+      <p>{{ t('welcome.poweredBy') }}</p>
+    </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, onUnmounted } from 'vue'
   import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
 
   const router = useRouter()
   const { t } = useI18n()
-  const particleCanvas = ref<HTMLCanvasElement>()
 
   const handleStart = () => {
     router.push('/app/explore')
@@ -77,390 +92,256 @@
       '_blank'
     )
   }
-
-  // 粒子动画
-  let animationId: number
-  let resizeListener: () => void
-
-  onMounted(() => {
-    if (!particleCanvas.value) return
-
-    const canvas = particleCanvas.value
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    // 设置canvas尺寸
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
-    }
-    resizeCanvas()
-    resizeListener = resizeCanvas
-    window.addEventListener('resize', resizeListener)
-
-    // 粒子类
-    class Particle {
-      x: number
-      y: number
-      vx: number
-      vy: number
-      radius: number
-      opacity: number
-
-      constructor() {
-        this.x = Math.random() * canvas.width
-        this.y = Math.random() * canvas.height
-        this.vx = (Math.random() - 0.5) * 0.5
-        this.vy = (Math.random() - 0.5) * 0.5
-        this.radius = Math.random() * 2 + 1
-        this.opacity = Math.random() * 0.5 + 0.3
-      }
-
-      update() {
-        this.x += this.vx
-        this.y += this.vy
-
-        if (this.x < 0 || this.x > canvas.width) this.vx *= -1
-        if (this.y < 0 || this.y > canvas.height) this.vy *= -1
-      }
-
-      draw() {
-        ctx!.beginPath()
-        ctx!.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
-        ctx!.fillStyle = `rgba(24, 144, 255, ${this.opacity})`
-        ctx!.fill()
-      }
-    }
-
-    // 创建粒子
-    const particles: Particle[] = []
-    const particleCount = window.innerWidth < 768 ? 40 : 80
-    for (let i = 0; i < particleCount; i++) {
-      particles.push(new Particle())
-    }
-
-    // 动画循环
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-      // 更新和绘制粒子
-      particles.forEach((p) => {
-        p.update()
-        p.draw()
-      })
-
-      // 绘制连线
-      particles.forEach((p1, i) => {
-        particles.slice(i + 1).forEach((p2) => {
-          const dx = p1.x - p2.x
-          const dy = p1.y - p2.y
-          const dist = Math.sqrt(dx * dx + dy * dy)
-
-          if (dist < 120) {
-            ctx!.beginPath()
-            ctx!.moveTo(p1.x, p1.y)
-            ctx!.lineTo(p2.x, p2.y)
-            ctx!.strokeStyle = `rgba(24, 144, 255, ${0.15 * (1 - dist / 120)})`
-            ctx!.stroke()
-          }
-        })
-      })
-
-      animationId = requestAnimationFrame(animate)
-    }
-
-    animate()
-  })
-
-  // 清理
-  onUnmounted(() => {
-    if (animationId) {
-      cancelAnimationFrame(animationId)
-    }
-    if (resizeListener) {
-      window.removeEventListener('resize', resizeListener)
-    }
-  })
 </script>
 
 <style scoped lang="scss">
   .welcome-page {
     width: 100%;
     height: 100vh;
-    background: linear-gradient(135deg, #f0f5ff 0%, #e6f7ff 50%, #ffffff 100%);
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow: hidden;
+    background: $bg-primary;
   }
 
-  .particle-canvas {
+  // 背景装饰
+  .welcome-bg {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-  }
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    pointer-events: none;
 
-  .welcome-content {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    animation: fadeInUp 0.8s ease-out;
-    padding: 0 24px;
-  }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .welcome-logo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 32px;
-    animation: logoFadeIn 1s ease-out 0.2s both;
-
-    .logo-icon {
-      width: 120px;
-      height: 120px;
-      color: $primary-color;
-      animation:
-        glow 2s ease-in-out infinite alternate,
-        float 3s ease-in-out infinite;
-
-      svg {
-        width: 100%;
-        height: 100%;
-      }
+    .bg-gradient {
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 80%;
+      height: 150%;
+      background: radial-gradient(ellipse at center, rgba(30, 64, 175, 0.06) 0%, transparent 60%);
+      animation: float 20s ease-in-out infinite;
     }
 
-    .logo-text {
-      font-size: 56px;
-      font-weight: $font-weight-bold;
-      background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      letter-spacing: 2px;
-      margin: 0;
-
-      @media (max-width: 768px) {
-        font-size: 40px;
-      }
-    }
-  }
-
-  @keyframes glow {
-    from {
-      filter: drop-shadow(0 0 20px rgba($primary-color, 0.3));
-    }
-    to {
-      filter: drop-shadow(0 0 40px rgba($primary-color, 0.6));
+    .bg-pattern {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image:
+        radial-gradient(circle at 20% 80%, rgba(5, 150, 105, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(30, 64, 175, 0.03) 0%, transparent 50%);
     }
   }
 
   @keyframes float {
     0%,
     100% {
-      transform: translateY(0);
+      transform: translateY(0) rotate(0deg);
     }
     50% {
-      transform: translateY(-8px);
+      transform: translateY(-20px) rotate(2deg);
     }
   }
 
-  @keyframes logoFadeIn {
+  // 主内容
+  .welcome-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 600px;
+    padding: 0 $spacing-xl;
+    animation: fadeUp 0.6s $ease-out both;
+  }
+
+  @keyframes fadeUp {
     from {
       opacity: 0;
-      transform: scale(0.9);
+      transform: translateY(20px);
     }
     to {
       opacity: 1;
-      transform: scale(1);
+      transform: translateY(0);
     }
   }
 
-  .welcome-slogan {
-    font-size: 24px;
-    color: $text-primary;
-    margin-bottom: 8px;
-    font-weight: $font-weight-semibold;
-    animation: fadeInUp 0.8s ease-out 0.4s both;
+  // Logo
+  .welcome-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-md;
+    margin-bottom: $spacing-xl;
+    animation: fadeUp 0.6s $ease-out 0.1s both;
+  }
 
-    @media (max-width: 768px) {
-      font-size: 20px;
+  .logo-mark {
+    width: 80px;
+    height: 80px;
+    color: $primary-color;
+    transition: transform 0.3s $ease-out;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  .logo-text {
+    font-family: $font-family-display;
+    font-size: $font-size-5xl;
+    font-weight: $font-weight-bold;
+    color: $text-primary;
+    letter-spacing: -0.02em;
+    margin: 0;
+
+    @include respond-below(md) {
+      font-size: $font-size-4xl;
+    }
+  }
+
+  // 标语
+  .welcome-slogan {
+    font-family: $font-family;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+    margin-bottom: $spacing-sm;
+    animation: fadeUp 0.6s $ease-out 0.15s both;
+
+    @include respond-below(md) {
+      font-size: $font-size-lg;
     }
   }
 
   .welcome-description {
-    font-size: 18px;
-    color: $text-secondary;
-    margin-bottom: 48px;
-    animation: fadeInUp 0.8s ease-out 0.5s both;
+    font-size: $font-size-base;
+    color: $text-tertiary;
+    margin-bottom: $spacing-2xl;
+    line-height: $line-height-relaxed;
+    animation: fadeUp 0.6s $ease-out 0.2s both;
 
-    @media (max-width: 768px) {
-      font-size: 14px;
-      padding: 0 16px;
+    @include respond-below(md) {
+      font-size: $font-size-sm;
+      padding: 0 $spacing-md;
     }
   }
 
-  .button-group {
+  // 操作按钮
+  .welcome-actions {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 24px;
-    margin-bottom: 24px;
-    animation: fadeInUp 0.8s ease-out 0.6s both;
+    gap: $spacing-md;
+    animation: fadeUp 0.6s $ease-out 0.25s both;
   }
 
-  .start-button {
-    display: flex;
+  .primary-action {
+    display: inline-flex;
     align-items: center;
-    gap: 12px;
-    padding: 16px 48px;
-    background: linear-gradient(135deg, $primary-color 0%, $primary-dark 100%);
-    border: none;
-    border-radius: $border-radius-full;
-    color: #ffffff;
-    font-size: 18px;
+    gap: $spacing-sm;
+    padding: $spacing-md $spacing-2xl;
+    font-family: $font-family;
+    font-size: $font-size-base;
     font-weight: $font-weight-semibold;
+    color: $text-inverse;
+    background: $primary-color;
+    border: none;
+    border-radius: $border-radius-md;
     cursor: pointer;
-    transition: all $transition-base ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 14px rgba($primary-color, 0.25);
+    transition: all $transition-fast $ease-out;
 
-    &::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.2);
-      transform: translate(-50%, -50%);
-      transition:
-        width 0.6s,
-        height 0.6s;
+    svg {
+      width: 18px;
+      height: 18px;
+      transition: transform $transition-fast $ease-out;
     }
 
     &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba($primary-color, 0.4);
+      background: $primary-dark;
+      box-shadow: $shadow-primary;
 
-      &::before {
-        width: 400px;
-        height: 400px;
-      }
-
-      .button-icon-right {
-        transform: translateX(5px);
+      svg {
+        transform: translateX(4px);
       }
     }
 
     &:active {
-      transform: translateY(-1px);
+      transform: translateY(1px);
     }
 
-    .button-icon-left {
-      font-size: 20px;
-    }
-
-    .button-text {
-      position: relative;
-      z-index: 1;
-    }
-
-    .button-icon-right {
-      width: 20px;
-      height: 20px;
-      position: relative;
-      z-index: 1;
-      transition: transform $transition-base ease;
-    }
-
-    @media (max-width: 768px) {
-      padding: 14px 36px;
-      font-size: 16px;
+    @include respond-below(md) {
+      padding: $spacing-sm $spacing-xl;
+      font-size: $font-size-sm;
     }
   }
 
-  .secondary-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 32px;
-    background: transparent;
-    border: 1px solid rgba($primary-color, 0.5);
-    border-radius: $border-radius-full;
-    color: $primary-color;
-    font-size: 14px;
+  .secondary-action {
+    padding: $spacing-sm $spacing-lg;
+    font-family: $font-family;
+    font-size: $font-size-sm;
     font-weight: $font-weight-medium;
+    color: $text-secondary;
+    background: transparent;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-md;
     cursor: pointer;
-    transition: all $transition-base ease;
-    animation: fadeInUp 0.8s ease-out 0.7s both;
+    transition: all $transition-fast $ease-out;
 
     &:hover {
-      background: rgba($primary-color, 0.08);
       border-color: $primary-color;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba($primary-color, 0.15);
-    }
-
-    &:active {
-      transform: translateY(0);
+      color: $primary-color;
+      background: $primary-surface;
     }
   }
 
+  // 底部
   .welcome-footer {
     position: absolute;
-    bottom: 48px;
+    bottom: $spacing-2xl;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 2;
-    animation: fadeIn 1s ease-out 1s both;
+    text-align: center;
+    animation: fadeUp 0.6s $ease-out 0.4s both;
 
-    .footer-text {
-      font-size: 14px;
-      color: $text-tertiary;
+    p {
+      font-size: $font-size-xs;
+      color: $text-disabled;
       margin: 0;
     }
 
-    @media (max-width: 768px) {
-      bottom: 24px;
+    @include respond-below(md) {
+      bottom: $spacing-lg;
     }
   }
 
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
+  // 动画减少模式
+  @include reduced-motion {
+    .welcome-content,
+    .welcome-logo,
+    .welcome-slogan,
+    .welcome-description,
+    .welcome-actions,
+    .welcome-footer {
+      animation: none;
       opacity: 1;
+      transform: none;
     }
-  }
 
-  // 响应式调整
-  @media (max-width: 768px) {
-    .welcome-logo {
-      .logo-icon {
-        width: 80px;
-        height: 80px;
-      }
+    .bg-gradient {
+      animation: none;
     }
   }
 </style>

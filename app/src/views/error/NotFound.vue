@@ -54,21 +54,31 @@
   }
 
   .error-code {
+    font-family: $font-family-display;
     font-size: 120px;
     font-weight: $font-weight-bold;
-    background: linear-gradient(135deg, $primary-color, $secondary-color);
+    background: $gradient-primary;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     line-height: 1;
     margin-bottom: $spacing-md;
+
+    @include respond-below(md) {
+      font-size: 80px;
+    }
   }
 
   .error-message {
+    font-family: $font-family-display;
     font-size: $font-size-3xl;
     color: $text-primary;
     font-weight: $font-weight-semibold;
     margin-bottom: $spacing-sm;
+
+    @include respond-below(md) {
+      font-size: $font-size-2xl;
+    }
   }
 
   .error-description {
@@ -82,13 +92,14 @@
     align-items: center;
     gap: $spacing-sm;
     padding: $spacing-sm $spacing-xl;
-    background: linear-gradient(135deg, $primary-color, $primary-dark);
+    background: $primary-color;
+    border: none;
     border-radius: $border-radius-full;
-    color: $text-primary;
+    color: $text-inverse;
     font-size: $font-size-base;
     font-weight: $font-weight-medium;
     cursor: pointer;
-    transition: all $transition-base ease;
+    transition: all $transition-fast $ease-out;
 
     svg {
       width: 20px;
@@ -96,8 +107,24 @@
     }
 
     &:hover {
+      background: $primary-dark;
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+      box-shadow: $shadow-primary;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  // 动画减少模式
+  @include reduced-motion {
+    .back-btn {
+      transition: none;
+
+      &:hover {
+        transform: none;
+      }
     }
   }
 </style>

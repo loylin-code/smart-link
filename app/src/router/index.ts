@@ -28,87 +28,109 @@ const routes: RouteRecordRaw[] = [
         } as RouteMeta
       },
       {
-        path: 'application',
-        name: 'Application',
-        redirect: '/app/application/list',
+        path: 'agent',
+        name: 'Agent',
+        redirect: '/app/agent/list',
         meta: {
-          title: '应用管理',
-          titleKey: 'route.application',
+          title: '智能体管理',
+          titleKey: 'route.agentManagement',
           icon: 'app'
         } as RouteMeta,
         children: [
           {
             path: 'list',
-            name: 'AppList',
-            component: () => import('@/views/application/AppRuntimeList.vue'),
+            name: 'AgentList',
+            component: () => import('@/views/agent/AgentList.vue'),
             meta: {
-              title: '应用列表',
-              titleKey: 'route.appList',
+              title: '智能体列表',
+              titleKey: 'route.agentList',
               icon: 'app'
             } as RouteMeta
           },
           {
             path: 'design',
-            name: 'AppDesign',
-            component: () => import('@/views/application/AppDesignList.vue'),
+            name: 'AgentDesign',
+            component: () => import('@/views/agent/AgentDesignList.vue'),
             meta: {
-              title: '应用设计',
-              titleKey: 'route.appDesign',
+              title: '智能体设计',
+              titleKey: 'route.agentDesign',
               icon: 'app'
             } as RouteMeta
           },
           {
             path: 'design/wizard',
-            name: 'AppCreateWizard',
-            component: () => import('@/components/application/AppCreateWizard.vue'),
+            name: 'AgentCreateWizard',
+            component: () => import('@/components/agent/AgentCreateWizard.vue'),
             meta: {
-              title: '新建应用',
-              titleKey: 'route.appCreate',
+              title: '新建智能体',
+              titleKey: 'route.agentCreate',
+              icon: 'app',
+              hidden: true
+            } as RouteMeta
+          },
+          {
+            path: 'design/edit/:id',
+            name: 'AgentDesignEdit',
+            component: () => import('@/views/agent/AgentDesignPage.vue'),
+            meta: {
+              title: '编辑智能体',
+              titleKey: 'route.agentEdit',
               icon: 'app',
               hidden: true
             } as RouteMeta
           },
           {
             path: 'design/wizard/:id',
-            name: 'AppEditWizard',
-            component: () => import('@/components/application/AppCreateWizard.vue'),
+            name: 'AgentEditWizard',
+            component: () => import('@/components/agent/AgentCreateWizard.vue'),
             meta: {
-              title: '编辑应用',
-              titleKey: 'route.appEdit',
+              title: '编辑智能体',
+              titleKey: 'route.agentEdit',
               icon: 'app',
               hidden: true
             } as RouteMeta
           },
           {
             path: 'design/orchestration',
-            name: 'AppOrchestrationCreate',
-            component: () => import('@/views/application/AppOrchestration.vue'),
+            name: 'AgentOrchestrationCreate',
+            component: () => import('@/views/agent/AgentOrchestration.vue'),
             meta: {
-              title: '编排应用',
-              titleKey: 'route.appOrchestration',
+              title: '编排智能体',
+              titleKey: 'route.agentOrchestration',
               icon: 'flow',
               hidden: true
             } as RouteMeta
           },
           {
             path: 'design/orchestration/:id',
-            name: 'AppOrchestrationEdit',
-            component: () => import('@/views/application/AppOrchestration.vue'),
+            name: 'AgentOrchestrationEdit',
+            component: () => import('@/views/agent/AgentOrchestration.vue'),
             meta: {
-              title: '编排应用',
-              titleKey: 'route.appOrchestration',
+              title: '编排智能体',
+              titleKey: 'route.agentOrchestration',
               icon: 'flow',
               hidden: true
             } as RouteMeta
           },
           {
             path: 'runtime/:id',
-            name: 'AppRuntime',
-            component: () => import('@/views/application/AppRuntime.vue'),
+            name: 'AgentRuntime',
+            component: () => import('@/views/agent/AgentRuntime.vue'),
             meta: {
-              title: '应用运行',
-              titleKey: 'route.appRuntime',
+              title: '智能体运行',
+              titleKey: 'route.agentRuntime',
               icon: 'app',
+              hidden: true
+            } as RouteMeta
+          },
+          {
+            path: 'view/:viewId',
+            name: 'ViewOrchestration',
+            component: () => import('@/views/agent/ViewOrchestration.vue'),
+            meta: {
+              title: '视图编排',
+              titleKey: 'route.viewOrchestration',
+              icon: 'flow',
               hidden: true
             } as RouteMeta
           }

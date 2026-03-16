@@ -3,7 +3,7 @@
  * 对接后端 /api/v1/applications 接口
  */
 import http, { type PageParams, type PageResponse, type ApiResponse } from '@/utils/http'
-import type { Application, AppFilter, AppRuntimeStatus } from '@/types'
+import type { Application, AppRuntimeStatus } from '@/types'
 import { AppStatus, AppType } from '@/types'
 
 // ============================================================
