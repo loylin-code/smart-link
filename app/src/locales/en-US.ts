@@ -22,11 +22,19 @@ export default {
     config: 'Config',
     search: 'Search',
     filter: 'Filter',
+    moveUp: 'Move Up',
+    moveDown: 'Move Down',
+    dropHere: 'Drop here',
     justNow: 'Just now',
     minutesAgo: 'min ago',
     hoursAgo: 'hr ago',
     daysAgo: 'days ago',
-    never: 'Never'
+    never: 'Never',
+    preview: 'Preview',
+    next: 'Next',
+    undo: 'Undo',
+    redo: 'Redo',
+    yesterday: 'Yesterday'
   },
   route: {
     explore: 'Explore Center',
@@ -37,6 +45,7 @@ export default {
     agentOrchestration: 'Orchestrate Agent',
     agentEdit: 'Edit Agent',
     agentRuntime: 'Agent Runtime',
+    agentRunner: 'Agent Runner',
     viewOrchestration: 'View Orchestration',
     resource: 'Resource Management',
     components: 'Component Management',
@@ -142,6 +151,7 @@ export default {
     props: 'Props',
     copy: 'Copy',
     delete: 'Delete',
+    dropHere: 'Drop here to add component',
     categories: {
       all: 'All',
       basic: 'Basic Components',
@@ -735,13 +745,20 @@ export default {
       appNotPublished: 'Agent not published',
       appDisabled: 'Agent Disabled',
       appDisabledDesc: 'This agent is under maintenance and temporarily unavailable',
+      agentNotFound: 'Agent not found',
+      agentNotActive: 'Agent not active',
+      agentDisabled: 'Agent Disabled',
+      agentDisabledDesc: 'This agent is under maintenance and temporarily unavailable',
       running: 'Running',
       error: 'Error',
       stopped: 'Stopped',
       unknown: 'Unknown',
       visits: 'Visits',
       uptime: 'Uptime',
-      errors: 'Errors'
+      errors: 'Errors',
+      sessions: 'Sessions',
+      tokens: 'Tokens',
+      latency: 'Latency'
     },
     wizard: {
       title: 'New Agent',
@@ -1017,51 +1034,195 @@ export default {
         maxTokens: 'Max Output Tokens'
       },
       view: {
-        created: 'Created Views',
-        emptyTitle: 'No Interaction Views Created',
-        emptyDesc:
-          'Generate matching chart pages through AGUI technology to visualize response information',
-        addView: 'Add View',
+        title: 'Interaction View',
+        emptyTitle: 'No Interaction Views',
+        emptyDesc: 'Create interaction views to design the frontend interface for agents',
+        addView: 'New View',
         createTitle: 'Create Interaction View',
         viewName: 'View Name',
         viewNamePlaceholder: 'Enter view name',
         viewDescription: 'View Description',
-        viewDescPlaceholder: 'Describe the purpose and content of this view',
+        viewDescPlaceholder: 'Describe the purpose of this view',
         viewType: 'View Type',
         createAndDesign: 'Create & Design',
+        created: 'Created Views',
+        componentsCount: 'components',
         noDescription: 'No description',
+        untitled: 'Untitled View',
+        canvasEmpty: 'Canvas is empty',
+        canvasEmptyDesc: 'Drag components from the left panel to start designing',
+
+        // View Types
         types: {
+          dashboard: 'Dashboard',
+          chart: 'Chart Analysis',
+          table: 'Data Table',
+          form: 'Form Interaction',
+          custom: 'Custom'
+        },
+
+        // View Type Descriptions
+        typeDesc: {
+          dashboard: 'Multi-dimensional data display with charts, cards, and lists',
+          chart: 'Focused chart visualization with line, bar, pie charts',
+          table: 'Data table display with filtering, sorting, pagination',
+          form: 'Form interface for user input and data collection',
+          custom: 'Fully customizable layout with any component combination'
+        },
+
+        // Filter Labels
+        filters: {
+          all: 'All',
           dashboard: 'Dashboard',
           chart: 'Chart',
           table: 'Table',
           form: 'Form',
           custom: 'Custom'
         },
-        untitled: 'Untitled View',
-        components: 'Components',
+
+        // Type Selection
+        selectTypeDesc: 'Select a view type to start with',
+        selectedType: 'Selected',
+        changeType: 'Change Type',
+
+        // Component Library
+        components: 'Component Library',
+        searchComponents: 'Search components...',
+        searchPlaceholder: 'Search components...',
+        chartComponents: 'Chart Components',
+        dataComponents: 'Data Components',
+        formComponents: 'Form Components',
+        layoutComponents: 'Layout Components',
         charts: 'Charts',
-        widgets: 'Widgets',
+        forms: 'Forms',
         layouts: 'Layouts',
-        canvasEmpty: 'Start designing your interaction view',
-        canvasEmptyDesc: 'Drag components from the left panel to the canvas',
+        widgets: 'Data',
+        basic: 'Basic',
+        data: 'Data Display',
+        business: 'Agent Components',
+        noResults: 'No matching components found',
+
+        // Properties Panel
         properties: 'Properties',
-        selectElement: 'Select a component to configure',
+        selectElement: 'Please select a component',
         elementName: 'Component Name',
+        elementType: 'Component Type',
         dataSource: 'Data Source',
-        staticData: 'Static Data',
-        lineChart: 'Line Chart',
-        barChart: 'Bar Chart',
-        pieChart: 'Pie Chart',
-        areaChart: 'Area Chart',
-        statCard: 'Stat Card',
-        dataTable: 'Data Table',
-        progressBar: 'Progress Bar',
-        textBlock: 'Text Block',
-        gridLayout: 'Grid Layout',
-        flexRow: 'Flex Row',
-        flexCol: 'Flex Column',
-        tabs: 'Tabs',
-        componentsCount: 'components'
+        dataSourceType: 'Data Source Type',
+        dataBinding: 'Data Binding Field',
+        styleSettings: 'Style Settings',
+        eventBinding: 'Event Binding',
+        expandConfig: 'Expand Config...',
+
+        // Additional Properties Fields
+        basicInfo: 'Basic Info',
+        namePlaceholder: 'Enter component name',
+        bindingPlaceholder: 'e.g., data.fieldName',
+        bindingHint: 'Enter data field path, supports nested objects',
+
+        // Data Source Types
+        dataSourceTypes: {
+          llm: 'LLM Dynamic Data',
+          api: 'API Data',
+          static: 'Static Data',
+          database: 'Database Query'
+        },
+
+        // Canvas Operations
+        moveUp: 'Move Up',
+        moveDown: 'Move Down',
+        delete: 'Delete',
+        copy: 'Copy',
+        paste: 'Paste',
+        duplicate: 'Duplicate',
+
+        // Empty State
+        emptyComponents: '0 components',
+
+        // Layout Components
+        dropToLayout: 'Drop here to add child components',
+        layoutChildren: 'Child Components',
+
+        // Width Configuration
+        widthAuto: 'Auto',
+        customCols: 'Custom Columns',
+        widthConfig: 'Width Config',
+        heightConfig: 'Height Config',
+        marginConfig: 'Margin',
+        paddingConfig: 'Padding',
+        responsiveConfig: 'Responsive Settings',
+        desktop: 'Desktop',
+        tablet: 'Tablet',
+        mobile: 'Mobile',
+        gridColumns: 'Grid Columns',
+        gridVisible: 'Show Grid',
+        snapToGrid: 'Snap to Grid',
+
+        // Component Names
+        componentNames: {
+          // Basic Components
+          SlButton: 'Button',
+          SlIcon: 'Icon',
+          SlTag: 'Tag',
+          SlBadge: 'Badge',
+          SlAvatar: 'Avatar',
+          SlDivider: 'Divider',
+          SlLink: 'Link',
+          SlImage: 'Image',
+          // Form Components
+          SlInput: 'Input',
+          SlSelect: 'Select',
+          SlCheckbox: 'Checkbox',
+          SlRadio: 'Radio',
+          SlSwitch: 'Switch',
+          SlForm: 'Form',
+          SlFormItem: 'Form Item',
+          // Layout Components
+          SlContainer: 'Container',
+          SlRow: 'Row',
+          SlCol: 'Column',
+          SlCard: 'Card',
+          SlSpace: 'Space',
+          SlDrawer: 'Drawer',
+          SlModal: 'Modal',
+          SlMessage: 'Message',
+          SlTooltip: 'Tooltip',
+          // Data Components
+          SlChart: 'Chart',
+          SlTable: 'Table',
+          SlStatCard: 'Stat Card',
+          SlProgress: 'Progress',
+          SlList: 'List',
+          SlTreeView: 'Tree View',
+          SlTimeline: 'Timeline',
+          SlMarkdown: 'Markdown',
+          // Agent Components
+          SlChatInterface: 'Chat Interface',
+          SlMessageList: 'Message List',
+          SlInputBar: 'Input Bar',
+          SlThinkingProcess: 'Thinking Process',
+          SlToolCall: 'Tool Call',
+          SlAgentStatus: 'Agent Status',
+          SlMetricGrid: 'Metric Grid',
+          SlDashboardPanel: 'Dashboard Panel',
+          // Legacy compatibility
+          'line-chart': 'Line Chart',
+          'bar-chart': 'Bar Chart',
+          'pie-chart': 'Pie Chart',
+          'area-chart': 'Area Chart',
+          'stat-card': 'Stat Card',
+          'data-table': 'Data Table',
+          'progress-bar': 'Progress Bar',
+          'text-block': 'Text Block',
+          input: 'Input',
+          select: 'Select',
+          switch: 'Switch',
+          button: 'Button',
+          'grid-layout': 'Grid Layout',
+          'flex-row': 'Flex Row',
+          'flex-col': 'Flex Column',
+          tabs: 'Tabs'
+        }
       }
     },
     stats: {
@@ -1116,10 +1277,18 @@ export default {
       agentNotFound: 'Agent not found',
       agentPaused: 'Agent Paused',
       agentPausedDesc: 'This agent service is paused',
+      agentNotActive: 'Agent not active',
+      agentDisabled: 'Agent Disabled',
+      agentDisabledDesc: 'This agent is under maintenance and temporarily unavailable',
       running: 'Running',
       idle: 'Idle',
       busy: 'Busy',
-      error: 'Error'
+      error: 'Error',
+      stopped: 'Stopped',
+      unknown: 'Unknown',
+      sessions: 'Sessions',
+      tokens: 'Tokens',
+      latency: 'Latency'
     }
   },
   model: {

@@ -1,6 +1,6 @@
 <template>
   <div class="view-orchestration">
-    <!-- Header -->
+    <!-- Header Toolbar -->
     <header class="orchestration-header">
       <div class="header-left">
         <button class="back-btn" @click="handleBack">
@@ -21,42 +21,22 @@
       </div>
 
       <div class="header-center">
-        <div class="mode-switcher">
-          <button class="mode-btn" :class="{ active: mode === 'design' }" @click="mode = 'design'">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path
-                d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
-                stroke="currentColor"
-                stroke-width="2"
-              />
-              <path
-                d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
-                stroke="currentColor"
-                stroke-width="2"
-              />
-            </svg>
-            <span>{{ t('orchestrator.design') }}</span>
-          </button>
-          <button
-            class="mode-btn"
-            :class="{ active: mode === 'preview' }"
-            @click="mode = 'preview'"
-          >
-            <svg viewBox="0 0 24 24" fill="none">
-              <path
-                d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
-                stroke="currentColor"
-                stroke-width="2"
-              />
-              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" />
-            </svg>
-            <span>{{ t('orchestrator.preview') }}</span>
-          </button>
-        </div>
+        <DeviceSelector v-model="previewDevice" />
       </div>
 
       <div class="header-right">
-        <button class="action-btn" @click="handleSave">
+        <button class="action-btn" @click="handlePreview">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path
+              d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" />
+          </svg>
+          <span>{{ t('common.preview') }}</span>
+        </button>
+        <button class="action-btn action-btn--primary" @click="handleSave">
           <svg viewBox="0 0 24 24" fill="none">
             <path
               d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"
@@ -70,153 +50,81 @@
       </div>
     </header>
 
-    <!-- Main Content -->
+    <!-- Main Content Area -->
     <div class="orchestration-main">
       <!-- Left Panel - Component Library -->
-      <aside class="component-panel">
-        <div class="panel-header">
-          <h3>{{ t('agent.design.view.components') }}</h3>
-        </div>
-        <div class="panel-body">
-          <div class="component-category">
-            <div class="category-title">{{ t('agent.design.view.charts') }}</div>
-            <div class="component-list">
-              <div
-                v-for="comp in chartComponents"
-                :key="comp.type"
-                class="component-item"
-                draggable="true"
-                @dragstart="handleDragStart($event, comp)"
-              >
-                <span class="component-icon">{{ comp.icon }}</span>
-                <span class="component-name">{{ comp.name }}</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="component-category">
-            <div class="category-title">{{ t('agent.design.view.widgets') }}</div>
-            <div class="component-list">
-              <div
-                v-for="comp in widgetComponents"
-                :key="comp.type"
-                class="component-item"
-                draggable="true"
-                @dragstart="handleDragStart($event, comp)"
-              >
-                <span class="component-icon">{{ comp.icon }}</span>
-                <span class="component-name">{{ comp.name }}</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="component-category">
-            <div class="category-title">{{ t('agent.design.view.layouts') }}</div>
-            <div class="component-list">
-              <div
-                v-for="comp in layoutComponents"
-                :key="comp.type"
-                class="component-item"
-                draggable="true"
-                @dragstart="handleDragStart($event, comp)"
-              >
-                <span class="component-icon">{{ comp.icon }}</span>
-                <span class="component-name">{{ comp.name }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      <aside class="panel-left" :style="{ width: `${leftPanelWidth}px` }">
+        <ComponentLibrary @drag-start="handleDragStart" @add-component="handleAddComponent" />
       </aside>
 
-      <!-- Center - Design Canvas -->
-      <main class="design-canvas">
-        <div class="canvas-wrapper">
-          <div
-            v-if="canvasElements.length === 0"
-            class="canvas-empty"
-            @dragover.prevent
-            @drop="handleDrop"
-          >
-            <div class="empty-icon">🎨</div>
-            <h3>{{ t('agent.design.view.canvasEmpty') }}</h3>
-            <p>{{ t('agent.design.view.canvasEmptyDesc') }}</p>
-          </div>
+      <!-- Center - Canvas Area -->
+      <main class="panel-center">
+        <!-- Canvas Toolbar -->
+        <CanvasToolbar
+          v-model:show-grid="showGrid"
+          v-model:snap-enabled="snapEnabled"
+          v-model:zoom="canvasZoom"
+          @undo="handleUndo"
+          @redo="handleRedo"
+        />
 
-          <div v-else class="canvas-content" @dragover.prevent @drop="handleDrop">
-            <div
-              v-for="(element, index) in canvasElements"
-              :key="element.id"
-              class="canvas-element"
-              :class="{ selected: selectedElement === element.id }"
-              @click="selectedElement = element.id"
-            >
-              <div class="element-header">
-                <span class="element-icon">{{ element.icon }}</span>
-                <span class="element-name">{{ element.name }}</span>
-                <button class="element-remove" @click.stop="removeElement(index)">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" />
-                  </svg>
-                </button>
-              </div>
-              <div class="element-body">
-                <div class="element-placeholder">
-                  {{ element.name }}
-                </div>
-              </div>
-            </div>
-          </div>
+        <!-- Canvas Container (with device preview wrapper) -->
+        <div class="canvas-wrapper" :class="`device-${previewDevice}`" :style="canvasWrapperStyle">
+          <ViewCanvas @select-component="handleSelectComponent" @drop="handleDrop" />
         </div>
       </main>
 
-      <!-- Right Panel - Properties -->
-      <aside class="properties-panel">
-        <div class="panel-header">
-          <h3>{{ t('agent.design.view.properties') }}</h3>
-        </div>
-        <div class="panel-body">
-          <div v-if="!selectedElement" class="no-selection">
-            <p>{{ t('agent.design.view.selectElement') }}</p>
-          </div>
-          <div v-else class="properties-form">
-            <div class="form-group">
-              <label>{{ t('agent.design.view.elementName') }}</label>
-              <input v-model="getSelectedElement()!.name" type="text" class="form-input" />
-            </div>
-            <div class="form-group">
-              <label>{{ t('agent.design.view.dataSource') }}</label>
-              <select class="form-select">
-                <option value="llm">LLM Response</option>
-                <option value="api">API Data</option>
-                <option value="static">{{ t('agent.design.view.staticData') }}</option>
-              </select>
-            </div>
-          </div>
-        </div>
+      <!-- Right Panel - Property Panel -->
+      <aside class="panel-right" :style="{ width: `${rightPanelWidth}px` }">
+        <PropertyPanel @update-component="handleUpdateComponent" />
       </aside>
+    </div>
+
+    <!-- Keyboard Shortcuts Hint -->
+    <div class="shortcuts-hint">
+      <span>Ctrl+S {{ t('common.save') }}</span>
+      <span>Ctrl+Z {{ t('common.undo') }}</span>
+      <span>Ctrl+Y {{ t('common.redo') }}</span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, onMounted } from 'vue'
+  import { ref, computed, onMounted, onUnmounted } from 'vue'
   import { useRouter, useRoute } from 'vue-router'
   import { useI18n } from 'vue-i18n'
-  import { useViewStore } from '@/store/modules/view'
+  import { useViewStore, type ViewSchema, type ViewComponentNode } from '@/store/modules/view'
   import type { InteractionView } from '@/types'
+
+  // Subcomponents
+  import ComponentLibrary from '@/components/agent/view-orchestration/ComponentLibrary.vue'
+  import ViewCanvas from '@/components/agent/view-orchestration/ViewCanvas.vue'
+  import PropertyPanel from '@/components/agent/view-orchestration/PropertyPanel.vue'
+  import CanvasToolbar from '@/components/agent/view-orchestration/CanvasToolbar.vue'
+  import DeviceSelector from '@/components/agent/view-orchestration/DeviceSelector.vue'
 
   const router = useRouter()
   const route = useRoute()
   const { t } = useI18n()
   const viewStore = useViewStore()
 
-  // State
+  // Panel widths (configurable, will support drag resize in future)
+  const leftPanelWidth = ref(240)
+  const rightPanelWidth = ref(320)
+
+  // Mode: 'design' | 'preview'
   const mode = ref<'design' | 'preview'>('design')
-  const selectedElement = ref<string | null>(null)
-  const canvasElements = ref<Array<{ id: string; type: string; name: string; icon: string }>>([])
+
+  // Preview device
+  const previewDevice = ref<'desktop' | 'tablet' | 'mobile'>('desktop')
+
+  // Canvas settings
+  const showGrid = ref(true)
+  const snapEnabled = ref(true)
+  const canvasZoom = ref(100)
 
   // View data
-  const viewData = reactive<InteractionView>({
+  const viewData = ref<InteractionView>({
     id: '',
     name: '',
     description: '',
@@ -225,29 +133,33 @@
     updatedAt: Date.now()
   })
 
-  // Component library
-  const chartComponents = [
-    { type: 'line-chart', name: t('agent.design.view.lineChart'), icon: '📈' },
-    { type: 'bar-chart', name: t('agent.design.view.barChart'), icon: '📊' },
-    { type: 'pie-chart', name: t('agent.design.view.pieChart'), icon: '🥧' },
-    { type: 'area-chart', name: t('agent.design.view.areaChart'), icon: '📉' }
-  ]
+  // Computed: Canvas wrapper style for device preview
+  const canvasWrapperStyle = computed(() => {
+    if (previewDevice.value === 'desktop') {
+      return { width: '100%', transform: `scale(${canvasZoom.value / 100})` }
+    } else if (previewDevice.value === 'tablet') {
+      return { width: '768px', transform: `scale(${canvasZoom.value / 100})` }
+    } else {
+      return { width: '375px', transform: `scale(${canvasZoom.value / 100})` }
+    }
+  })
 
-  const widgetComponents = [
-    { type: 'stat-card', name: t('agent.design.view.statCard'), icon: '🔢' },
-    { type: 'data-table', name: t('agent.design.view.dataTable'), icon: '📋' },
-    { type: 'progress-bar', name: t('agent.design.view.progressBar'), icon: '📊' },
-    { type: 'text-block', name: t('agent.design.view.textBlock'), icon: '📝' }
-  ]
+  // Computed: Current schema from store
+  const currentSchema = computed<ViewSchema | null>(() => {
+    return viewStore.currentSchema
+  })
 
-  const layoutComponents = [
-    { type: 'grid-layout', name: t('agent.design.view.gridLayout'), icon: '⊞' },
-    { type: 'flex-row', name: t('agent.design.view.flexRow'), icon: '▤' },
-    { type: 'flex-col', name: t('agent.design.view.flexCol'), icon: '▥' },
-    { type: 'tabs', name: t('agent.design.view.tabs'), icon: '📑' }
-  ]
+  // Computed: Selected component ID from store
+  const selectedComponentId = computed(() => {
+    return viewStore.selectedComponentId
+  })
 
-  // View types
+  // Computed: Selected component details
+  const selectedComponent = computed<ViewComponentNode | null>(() => {
+    return viewStore.selectedComponent
+  })
+
+  // View types labels
   const viewTypes: { value: InteractionView['type']; label: string }[] = [
     { value: 'dashboard', label: t('agent.design.view.types.dashboard') },
     { value: 'chart', label: t('agent.design.view.types.chart') },
@@ -256,97 +168,186 @@
     { value: 'custom', label: t('agent.design.view.types.custom') }
   ]
 
-  // Methods
+  // Get view type label
   function getViewTypeLabel(type: InteractionView['type']): string {
-    return viewTypes.find((t) => t.value === type)?.label || type
+    return viewTypes.find((item) => item.value === type)?.label || type
   }
 
-  function getSelectedElement() {
-    return canvasElements.value.find((e) => e.id === selectedElement.value)
-  }
-
-  function handleDragStart(
-    event: DragEvent,
-    component: { type: string; name: string; icon: string }
-  ) {
-    if (event.dataTransfer) {
-      event.dataTransfer.setData('component', JSON.stringify(component))
+  // Handle drag start from component library
+  function handleDragStart(component: { type: string; name: string; icon: string }) {
+    // Store drag data for canvas drop
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.setItem('draggingComponent', JSON.stringify(component))
     }
   }
 
-  function handleDrop(event: DragEvent) {
-    const data = event.dataTransfer?.getData('component')
-    if (data) {
-      const component = JSON.parse(data)
-      canvasElements.value.push({
-        id: `element-${Date.now()}`,
-        type: component.type,
-        name: component.name,
-        icon: component.icon
-      })
+  // Handle add component directly
+  function handleAddComponent(component: Omit<ViewComponentNode, 'id'>) {
+    viewStore.addComponent(component)
+  }
+
+  // Handle component selection
+  function handleSelectComponent(componentId: string | null) {
+    viewStore.selectComponent(componentId)
+  }
+
+  // Handle drop on canvas (component already added by ViewCanvas)
+  function handleDrop(_component: Omit<ViewComponentNode, 'id'>, _parentId?: string) {
+    // Component is already added in ViewCanvas.handleDrop
+    // parentId is handled there as well
+  }
+
+  // Handle component update
+  function handleUpdateComponent(componentId: string, updates: Partial<ViewComponentNode>) {
+    viewStore.updateComponent(componentId, updates)
+  }
+
+  // Handle component deletion
+  function handleDeleteComponent(componentId: string) {
+    viewStore.removeComponent(componentId)
+  }
+
+  // Handle component move
+  function handleMoveComponent(componentId: string, direction: 'up' | 'down') {
+    viewStore.moveComponent(componentId, direction)
+  }
+
+  // Handle undo
+  function handleUndo() {
+    viewStore.undo()
+  }
+
+  // Handle redo
+  function handleRedo() {
+    viewStore.redo()
+  }
+
+  // Handle schema update
+  function handleUpdateSchema(schema: ViewSchema) {
+    if (viewData.value.id) {
+      viewStore.updateViewSchema(viewData.value.id, schema)
     }
   }
 
-  function removeElement(index: number) {
-    canvasElements.value.splice(index, 1)
-    if (
-      selectedElement.value &&
-      !canvasElements.value.find((e) => e.id === selectedElement.value)
-    ) {
-      selectedElement.value = null
-    }
-  }
-
+  // Handle back navigation
   function handleBack() {
-    // Navigate back to agent design page with view tab active
     router.push({
       path: '/app/agent/design',
       query: { tab: 'view' }
     })
   }
 
+  // Handle preview toggle
+  function handlePreview() {
+    mode.value = mode.value === 'design' ? 'preview' : 'design'
+  }
+
+  // Handle save
   function handleSave() {
-    // Save view schema
-    viewData.schema = {
-      elements: canvasElements.value
-    }
-    viewData.updatedAt = Date.now()
+    // Update view data
+    viewData.value.updatedAt = Date.now()
 
     // Save to store
-    viewStore.setView({ ...viewData })
+    viewStore.setView({ ...viewData.value })
 
-    // Navigate back to agent design page with the view tab active
+    // Navigate back
     router.push({
       path: '/app/agent/design',
       query: { tab: 'view' }
     })
+  }
+
+  // Keyboard shortcuts handler
+  function handleKeyboardShortcuts(event: KeyboardEvent) {
+    // Ctrl+S: Save
+    if (event.ctrlKey && event.key === 's') {
+      event.preventDefault()
+      handleSave()
+      return
+    }
+
+    // Ctrl+Z: Undo
+    if (event.ctrlKey && event.key === 'z' && !event.shiftKey) {
+      event.preventDefault()
+      viewStore.undo()
+      return
+    }
+
+    // Ctrl+Y or Ctrl+Shift+Z: Redo
+    if (
+      (event.ctrlKey && event.key === 'y') ||
+      (event.ctrlKey && event.shiftKey && event.key === 'z')
+    ) {
+      event.preventDefault()
+      viewStore.redo()
+      return
+    }
+
+    // Delete: Delete selected component
+    if (event.key === 'Delete' && selectedComponentId.value) {
+      event.preventDefault()
+      viewStore.removeComponent(selectedComponentId.value)
+      return
+    }
+
+    // Escape: Deselect component
+    if (event.key === 'Escape' && selectedComponentId.value) {
+      event.preventDefault()
+      viewStore.selectComponent(null)
+      return
+    }
   }
 
   // Initialize
   onMounted(() => {
     const viewId = route.params.viewId as string
 
-    // Load view data from store
+    // Load view data from store first
     const existingView = viewStore.getView(viewId)
 
     if (existingView) {
       // Load existing view data
-      Object.assign(viewData, existingView)
+      viewData.value = { ...existingView }
 
-      // Load canvas elements from schema
-      const schema = existingView.schema as { elements?: typeof canvasElements.value } | undefined
-      if (schema?.elements && Array.isArray(schema.elements)) {
-        canvasElements.value = [...schema.elements]
+      // Ensure schema exists
+      if (!viewData.value.schema) {
+        const defaultSchema = viewStore.createDefaultSchema(viewData.value.type)
+        viewData.value.schema = defaultSchema as unknown as Record<string, unknown>
+        viewStore.setView({ ...viewData.value })
       }
     } else {
       // New view - initialize with defaults
-      viewData.id = viewId || `view-${Date.now()}`
-      viewData.name = t('agent.design.view.untitled')
-      viewData.type = 'dashboard'
-      viewData.description = ''
-      viewData.createdAt = Date.now()
-      viewData.updatedAt = Date.now()
+      viewData.value = {
+        id: viewId || `view-${Date.now()}`,
+        name: t('agent.design.view.untitled'),
+        type: 'dashboard',
+        description: '',
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      }
+
+      // Create default schema for new view
+      const defaultSchema = viewStore.createDefaultSchema(viewData.value.type)
+      viewData.value.schema = defaultSchema as unknown as Record<string, unknown>
+
+      // Save to store
+      viewStore.setView({ ...viewData.value })
     }
+
+    // NOW set current view in store (after ensuring view exists)
+    viewStore.setCurrentView(viewData.value.id)
+
+    // Add keyboard event listener
+    document.addEventListener('keydown', handleKeyboardShortcuts)
+  })
+
+  // Cleanup
+  onUnmounted(() => {
+    // Remove keyboard event listener
+    document.removeEventListener('keydown', handleKeyboardShortcuts)
+
+    // Clear current view in store
+    viewStore.setCurrentView(null)
   })
 </script>
 
@@ -359,14 +360,15 @@
     overflow: hidden;
   }
 
-  // Header
+  // Header Toolbar
   .orchestration-header {
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: $spacing-md $spacing-lg;
+    padding: 0 $spacing-lg;
     background: $bg-primary;
-    border-bottom: 1px solid $border-color-lighter;
+    border-bottom: 1px solid $border-color-base;
     flex-shrink: 0;
   }
 
@@ -374,6 +376,7 @@
     display: flex;
     align-items: center;
     gap: $spacing-md;
+    flex-shrink: 0;
   }
 
   .back-btn {
@@ -387,7 +390,7 @@
     border-radius: $border-radius-md;
     color: $text-secondary;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all $transition-fast $ease-out;
 
     svg {
       width: 20px;
@@ -397,6 +400,11 @@
     &:hover {
       border-color: $primary-color;
       color: $primary-color;
+      background: $primary-surface;
+    }
+
+    &:active {
+      transform: scale(0.96);
     }
   }
 
@@ -411,19 +419,28 @@
     font-weight: $font-weight-semibold;
     color: $text-primary;
     margin: 0;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .view-type-tag {
     padding: 2px 10px;
-    background: rgba(168, 85, 247, 0.1);
-    color: #a855f7;
+    background: $primary-muted;
+    color: $primary-color;
     font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
     border-radius: $border-radius-full;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   .header-center {
     display: flex;
     align-items: center;
+    justify-content: center;
+    flex: 1;
   }
 
   .mode-switcher {
@@ -431,6 +448,7 @@
     background: $bg-secondary;
     border-radius: $border-radius-md;
     padding: 3px;
+    gap: 3px;
   }
 
   .mode-btn {
@@ -442,9 +460,10 @@
     border: none;
     border-radius: $border-radius-sm;
     font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
     color: $text-secondary;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all $transition-fast $ease-out;
 
     svg {
       width: 16px;
@@ -453,12 +472,13 @@
 
     &:hover {
       color: $text-primary;
+      background: $bg-overlay;
     }
 
     &.active {
       background: $bg-primary;
       color: $primary-color;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      box-shadow: $shadow-sm;
     }
   }
 
@@ -466,6 +486,7 @@
     display: flex;
     align-items: center;
     gap: $spacing-sm;
+    flex-shrink: 0;
   }
 
   .action-btn {
@@ -477,9 +498,10 @@
     border: 1px solid $border-color-base;
     border-radius: $border-radius-md;
     font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
     color: $text-secondary;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all $transition-fast $ease-out;
 
     svg {
       width: 16px;
@@ -489,279 +511,159 @@
     &:hover {
       border-color: $primary-color;
       color: $primary-color;
+      background: $primary-surface;
+    }
+
+    &:active {
+      transform: scale(0.96);
     }
 
     &--primary {
-      background: #a855f7;
-      border-color: #a855f7;
-      color: #fff;
+      background: $primary-color;
+      border-color: $primary-color;
+      color: $text-inverse;
 
       &:hover {
-        background: #9333ea;
+        background: $primary-dark;
+        border-color: $primary-dark;
+        color: $text-inverse;
+        box-shadow: $shadow-primary;
+      }
+
+      &:active {
+        background: $primary-dark;
+        transform: scale(0.96);
       }
     }
   }
 
-  // Main Content
+  // Main Content Area
   .orchestration-main {
     flex: 1;
     display: flex;
     overflow: hidden;
   }
 
-  // Component Panel
-  .component-panel {
-    width: 240px;
-    background: $bg-primary;
-    border-right: 1px solid $border-color-lighter;
-    display: flex;
-    flex-direction: column;
+  // Left Panel - Component Library
+  .panel-left {
     flex-shrink: 0;
-  }
-
-  .panel-header {
-    padding: $spacing-md;
-    border-bottom: 1px solid $border-color-lighter;
-
-    h3 {
-      font-size: $font-size-sm;
-      font-weight: $font-weight-semibold;
-      color: $text-primary;
-      margin: 0;
-    }
-  }
-
-  .panel-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: $spacing-md;
-  }
-
-  .component-category {
-    margin-bottom: $spacing-lg;
-  }
-
-  .category-title {
-    font-size: $font-size-xs;
-    font-weight: $font-weight-medium;
-    color: $text-tertiary;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: $spacing-sm;
-  }
-
-  .component-list {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-xs;
-  }
-
-  .component-item {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-    padding: $spacing-sm;
-    background: $bg-secondary;
-    border: 1px solid transparent;
-    border-radius: $border-radius-md;
-    cursor: grab;
-    transition: all 0.2s ease;
-
-    &:hover {
-      border-color: #a855f7;
-      background: rgba(168, 85, 247, 0.05);
-    }
-
-    &:active {
-      cursor: grabbing;
-    }
-  }
-
-  .component-icon {
-    font-size: 18px;
-  }
-
-  .component-name {
-    font-size: $font-size-sm;
-    color: $text-primary;
-  }
-
-  // Design Canvas
-  .design-canvas {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+    background: $bg-primary;
+    border-right: 1px solid $border-color-base;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: width $transition-base $ease-out;
   }
 
+  // Center Panel - View Canvas
+  .panel-center {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: $bg-secondary;
+  }
+
+  // Canvas Wrapper for device preview
   .canvas-wrapper {
     flex: 1;
-    padding: $spacing-lg;
     overflow: auto;
-  }
-
-  .canvas-empty {
-    height: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    background: $bg-primary;
-    border: 2px dashed $border-color-base;
-    border-radius: $border-radius-lg;
-
-    .empty-icon {
-      font-size: 48px;
-      margin-bottom: $spacing-md;
-      opacity: 0.5;
-    }
-
-    h3 {
-      font-size: $font-size-lg;
-      font-weight: $font-weight-medium;
-      color: $text-primary;
-      margin: 0 0 $spacing-xs 0;
-    }
-
-    p {
-      font-size: $font-size-sm;
-      color: $text-tertiary;
-      margin: 0;
-    }
-  }
-
-  .canvas-content {
-    min-height: 100%;
-    background: $bg-primary;
-    border-radius: $border-radius-lg;
     padding: $spacing-lg;
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-md;
-  }
-
-  .canvas-element {
-    background: $bg-secondary;
-    border: 2px solid $border-color-base;
-    border-radius: $border-radius-md;
-    overflow: hidden;
-    transition: all 0.2s ease;
-
-    &:hover {
-      border-color: $text-tertiary;
-    }
-
-    &.selected {
-      border-color: #a855f7;
-      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
-    }
-  }
-
-  .element-header {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-    padding: $spacing-sm $spacing-md;
     background: $bg-tertiary;
-    border-bottom: 1px solid $border-color-lighter;
-  }
+    transform-origin: top center;
+    transition: width $transition-base $ease-out;
 
-  .element-icon {
-    font-size: 16px;
-  }
-
-  .element-name {
-    flex: 1;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    color: $text-primary;
-  }
-
-  .element-remove {
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: none;
-    border-radius: $border-radius-sm;
-    color: $text-tertiary;
-    cursor: pointer;
-    transition: all 0.2s ease;
-
-    svg {
-      width: 14px;
-      height: 14px;
+    // Device preview modes
+    &.device-desktop {
+      background: $bg-secondary;
     }
 
-    &:hover {
-      background: rgba(220, 38, 38, 0.1);
-      color: $error;
+    &.device-tablet {
+      background: color-mix(in srgb, $bg-tertiary 98%, black);
+      box-shadow: inset 0 0 20px rgba($text-tertiary, 0.1);
+    }
+
+    &.device-mobile {
+      background: color-mix(in srgb, $bg-tertiary 96%, black);
+      box-shadow: inset 0 0 30px rgba($text-tertiary, 0.15);
     }
   }
 
-  .element-body {
-    padding: $spacing-xl;
-    min-height: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .element-placeholder {
-    font-size: $font-size-lg;
-    color: $text-tertiary;
-  }
-
-  // Properties Panel
-  .properties-panel {
-    width: 280px;
-    background: $bg-primary;
-    border-left: 1px solid $border-color-lighter;
-    display: flex;
-    flex-direction: column;
+  // Right Panel - Property Panel
+  .panel-right {
     flex-shrink: 0;
-  }
-
-  .no-selection {
-    padding: $spacing-lg;
-    text-align: center;
-    color: $text-tertiary;
-    font-size: $font-size-sm;
-  }
-
-  .properties-form {
-    padding: $spacing-md;
+    background: $bg-primary;
+    border-left: 1px solid $border-color-base;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
+    transition: width $transition-base $ease-out;
+  }
+
+  // Keyboard Shortcuts Hint
+  .shortcuts-hint {
+    position: fixed;
+    bottom: $spacing-md;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
     gap: $spacing-md;
-  }
+    padding: $spacing-xs $spacing-md;
+    background: $bg-primary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-full;
+    box-shadow: $shadow-md;
+    font-size: $font-size-xs;
+    color: $text-tertiary;
+    opacity: 0;
+    transition: opacity $transition-base $ease-out;
+    pointer-events: none;
+    z-index: 100;
 
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-xs;
-
-    label {
-      font-size: $font-size-xs;
-      font-weight: $font-weight-medium;
-      color: $text-secondary;
+    span {
+      white-space: nowrap;
     }
   }
 
-  .form-input,
-  .form-select {
-    padding: $spacing-sm;
-    background: $bg-secondary;
-    border: 1px solid $border-color-base;
-    border-radius: $border-radius-sm;
-    font-size: $font-size-sm;
-    color: $text-primary;
+  .view-orchestration:hover .shortcuts-hint {
+    opacity: 1;
+  }
 
-    &:focus {
-      outline: none;
-      border-color: #a855f7;
+  // Responsive adjustments
+  @include respond-below(lg) {
+    .header-center {
+      display: none;
+    }
+
+    .panel-left,
+    .panel-right {
+      position: absolute;
+      top: 60px;
+      bottom: 0;
+      z-index: 50;
+      box-shadow: $shadow-lg;
+      transform: translateX(-100%);
+      transition: transform $transition-base $ease-out;
+    }
+
+    .panel-left {
+      left: 0;
+    }
+
+    .panel-right {
+      right: 0;
+      left: auto;
+      transform: translateX(100%);
+    }
+  }
+
+  // Animation for mode transition
+  .panel-center {
+    ::v-deep(.canvas-wrapper) {
+      transition: opacity $transition-base $ease-out;
     }
   }
 </style>

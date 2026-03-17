@@ -1,5 +1,191 @@
 import type { ComponentMeta } from '../types/component-meta'
 
+// ============================================
+// 组件默认布局配置（用于视图编排）
+// ============================================
+export interface ComponentLayoutPreset {
+  width: {
+    preset: '1/4' | '1/3' | '1/2' | '2/3' | '3/4' | 'full'
+    desktop: number
+    tablet: number
+    mobile: number
+  }
+  height: {
+    mode: 'auto' | 'fixed'
+    value: number
+    minHeight: number
+  }
+}
+
+// 组件类型到布局预设的映射
+export const COMPONENT_LAYOUT_PRESETS: Record<string, ComponentLayoutPreset> = {
+  // 基础组件
+  SlButton: {
+    width: { preset: '1/4', desktop: 3, tablet: 4, mobile: 6 },
+    height: { mode: 'fixed', value: 56, minHeight: 40 }
+  },
+  SlIcon: {
+    width: { preset: '1/4', desktop: 3, tablet: 4, mobile: 6 },
+    height: { mode: 'fixed', value: 56, minHeight: 40 }
+  },
+  SlTag: {
+    width: { preset: '1/4', desktop: 3, tablet: 4, mobile: 6 },
+    height: { mode: 'fixed', value: 48, minHeight: 32 }
+  },
+  SlBadge: {
+    width: { preset: '1/4', desktop: 3, tablet: 4, mobile: 6 },
+    height: { mode: 'fixed', value: 56, minHeight: 40 }
+  },
+  SlAvatar: {
+    width: { preset: '1/4', desktop: 3, tablet: 4, mobile: 6 },
+    height: { mode: 'fixed', value: 80, minHeight: 48 }
+  },
+  SlDivider: {
+    width: { preset: 'full', desktop: 12, tablet: 12, mobile: 12 },
+    height: { mode: 'fixed', value: 24, minHeight: 24 }
+  },
+  SlLink: {
+    width: { preset: '1/3', desktop: 4, tablet: 6, mobile: 12 },
+    height: { mode: 'fixed', value: 40, minHeight: 32 }
+  },
+  SlImage: {
+    width: { preset: '1/2', desktop: 6, tablet: 6, mobile: 12 },
+    height: { mode: 'auto', value: 200, minHeight: 100 }
+  },
+  // 表单组件
+  SlInput: {
+    width: { preset: '1/2', desktop: 6, tablet: 6, mobile: 12 },
+    height: { mode: 'fixed', value: 80, minHeight: 60 }
+  },
+  SlSelect: {
+    width: { preset: '1/2', desktop: 6, tablet: 6, mobile: 12 },
+    height: { mode: 'fixed', value: 80, minHeight: 60 }
+  },
+  SlCheckbox: {
+    width: { preset: '1/4', desktop: 3, tablet: 4, mobile: 6 },
+    height: { mode: 'fixed', value: 48, minHeight: 32 }
+  },
+  SlRadio: {
+    width: { preset: '1/4', desktop: 3, tablet: 4, mobile: 6 },
+    height: { mode: 'fixed', value: 48, minHeight: 32 }
+  },
+  SlSwitch: {
+    width: { preset: '1/4', desktop: 3, tablet: 4, mobile: 6 },
+    height: { mode: 'fixed', value: 56, minHeight: 40 }
+  },
+  SlForm: {
+    width: { preset: 'full', desktop: 12, tablet: 12, mobile: 12 },
+    height: { mode: 'auto', value: 300, minHeight: 150 }
+  },
+  SlFormItem: {
+    width: { preset: 'full', desktop: 12, tablet: 12, mobile: 12 },
+    height: { mode: 'fixed', value: 80, minHeight: 60 }
+  },
+  // 布局组件
+  SlContainer: {
+    width: { preset: 'full', desktop: 12, tablet: 12, mobile: 12 },
+    height: { mode: 'auto', value: 300, minHeight: 100 }
+  },
+  SlRow: {
+    width: { preset: 'full', desktop: 12, tablet: 12, mobile: 12 },
+    height: { mode: 'auto', value: 120, minHeight: 60 }
+  },
+  SlCol: {
+    width: { preset: '1/2', desktop: 6, tablet: 6, mobile: 12 },
+    height: { mode: 'auto', value: 100, minHeight: 60 }
+  },
+  SlCard: {
+    width: { preset: '1/2', desktop: 6, tablet: 6, mobile: 12 },
+    height: { mode: 'auto', value: 200, minHeight: 120 }
+  },
+  SlSpace: {
+    width: { preset: 'full', desktop: 12, tablet: 12, mobile: 12 },
+    height: { mode: 'auto', value: 80, minHeight: 40 }
+  },
+  SlDrawer: {
+    width: { preset: 'full', desktop: 12, tablet: 12, mobile: 12 },
+    height: { mode: 'auto', value: 400, minHeight: 200 }
+  },
+  SlModal: {
+    width: { preset: '2/3', desktop: 8, tablet: 12, mobile: 12 },
+    height: { mode: 'auto', value: 300, minHeight: 200 }
+  },
+  SlMessage: {
+    width: { preset: 'full', desktop: 12, tablet: 12, mobile: 12 },
+    height: { mode: 'fixed', value: 48, minHeight: 48 }
+  },
+  SlTooltip: {
+    width: { preset: '1/4', desktop: 3, tablet: 4, mobile: 6 },
+    height: { mode: 'fixed', value: 40, minHeight: 32 }
+  },
+  // 数据展示组件（新增）
+  SlChart: {
+    width: { preset: '2/3', desktop: 8, tablet: 12, mobile: 12 },
+    height: { mode: 'fixed', value: 320, minHeight: 250 }
+  },
+  SlTable: {
+    width: { preset: 'full', desktop: 12, tablet: 12, mobile: 12 },
+    height: { mode: 'fixed', value: 360, minHeight: 200 }
+  },
+  SlStatCard: {
+    width: { preset: '1/4', desktop: 3, tablet: 6, mobile: 6 },
+    height: { mode: 'fixed', value: 140, minHeight: 100 }
+  },
+  SlProgress: {
+    width: { preset: '1/2', desktop: 6, tablet: 6, mobile: 12 },
+    height: { mode: 'fixed', value: 80, minHeight: 60 }
+  },
+  SlList: {
+    width: { preset: '1/2', desktop: 6, tablet: 6, mobile: 12 },
+    height: { mode: 'auto', value: 300, minHeight: 150 }
+  },
+  SlTreeView: {
+    width: { preset: '1/3', desktop: 4, tablet: 6, mobile: 12 },
+    height: { mode: 'auto', value: 300, minHeight: 150 }
+  },
+  SlTimeline: {
+    width: { preset: '1/2', desktop: 6, tablet: 6, mobile: 12 },
+    height: { mode: 'auto', value: 300, minHeight: 150 }
+  },
+  SlMarkdown: {
+    width: { preset: '2/3', desktop: 8, tablet: 12, mobile: 12 },
+    height: { mode: 'auto', value: 200, minHeight: 100 }
+  },
+  // 智能体专用组件（新增）
+  SlChatInterface: {
+    width: { preset: 'full', desktop: 12, tablet: 12, mobile: 12 },
+    height: { mode: 'auto', value: 500, minHeight: 400 }
+  },
+  SlMessageList: {
+    width: { preset: 'full', desktop: 12, tablet: 12, mobile: 12 },
+    height: { mode: 'auto', value: 400, minHeight: 300 }
+  },
+  SlInputBar: {
+    width: { preset: 'full', desktop: 12, tablet: 12, mobile: 12 },
+    height: { mode: 'fixed', value: 100, minHeight: 80 }
+  },
+  SlThinkingProcess: {
+    width: { preset: 'full', desktop: 12, tablet: 12, mobile: 12 },
+    height: { mode: 'auto', value: 200, minHeight: 100 }
+  },
+  SlToolCall: {
+    width: { preset: 'full', desktop: 12, tablet: 12, mobile: 12 },
+    height: { mode: 'auto', value: 150, minHeight: 80 }
+  },
+  SlAgentStatus: {
+    width: { preset: 'full', desktop: 12, tablet: 12, mobile: 12 },
+    height: { mode: 'fixed', value: 60, minHeight: 48 }
+  },
+  SlMetricGrid: {
+    width: { preset: 'full', desktop: 12, tablet: 12, mobile: 12 },
+    height: { mode: 'fixed', value: 140, minHeight: 100 }
+  },
+  SlDashboardPanel: {
+    width: { preset: 'full', desktop: 12, tablet: 12, mobile: 12 },
+    height: { mode: 'auto', value: 400, minHeight: 300 }
+  }
+}
+
 export const COMPONENT_META_LIST: ComponentMeta[] = [
   // Basic Components
   {
@@ -897,6 +1083,488 @@ SlMessage.info('提示信息')`
 <SlTooltip content="右侧提示" placement="right">
   <SlButton>右</SlButton>
 </SlTooltip>`
+      }
+    ]
+  },
+  // ============================================
+  // 数据展示组件 (Data Components)
+  // ============================================
+  {
+    type: 'SlChart',
+    name: '图表',
+    category: 'data',
+    description: '数据可视化图表组件，支持折线图、柱状图、饼图等多种类型',
+    icon: 'chart',
+    props: [
+      {
+        name: 'chartType',
+        type: 'string',
+        default: 'line',
+        description: '图表类型',
+        options: ['line', 'bar', 'pie', 'area', 'radar']
+      },
+      { name: 'dataSource', type: 'object', description: '数据源' },
+      { name: 'title', type: 'string', description: '图表标题' },
+      { name: 'showLegend', type: 'boolean', default: true, description: '是否显示图例' },
+      { name: 'smooth', type: 'boolean', default: true, description: '是否平滑曲线' },
+      { name: 'colors', type: 'string[]', description: '自定义颜色' }
+    ],
+    events: [{ name: 'click', params: 'data: any', description: '点击图表元素时触发' }],
+    slots: [],
+    examples: [
+      {
+        title: '折线图',
+        code: `<SlChart 
+  chartType="line" 
+  title="趋势分析"
+  :dataSource="chartData"
+  smooth
+/>`
+      },
+      {
+        title: '柱状图',
+        code: `<SlChart 
+  chartType="bar" 
+  title="数据对比"
+  :dataSource="chartData"
+/>`
+      }
+    ]
+  },
+  {
+    type: 'SlTable',
+    name: '数据表格',
+    category: 'data',
+    description: '数据展示表格，支持排序、筛选、分页',
+    icon: 'table',
+    props: [
+      { name: 'dataSource', type: 'array', description: '数据源' },
+      { name: 'columns', type: 'array', description: '列配置' },
+      { name: 'pageSize', type: 'number', default: 10, description: '每页条数' },
+      { name: 'striped', type: 'boolean', default: true, description: '是否显示斑马纹' },
+      { name: 'hoverable', type: 'boolean', default: true, description: '是否悬停高亮' },
+      { name: 'bordered', type: 'boolean', default: false, description: '是否显示边框' }
+    ],
+    events: [
+      { name: 'rowClick', params: 'row: any', description: '点击行时触发' },
+      { name: 'sortChange', params: 'sort: object', description: '排序变化时触发' }
+    ],
+    slots: [
+      { name: 'empty', description: '空数据时的内容' },
+      { name: 'action', description: '操作列' }
+    ],
+    examples: [
+      {
+        title: '基础表格',
+        code: `<SlTable 
+  :dataSource="tableData" 
+  :columns="columns"
+  :pageSize="10"
+/>`
+      }
+    ]
+  },
+  {
+    type: 'SlStatCard',
+    name: '指标卡片',
+    category: 'data',
+    description: '展示关键指标数据的卡片组件',
+    icon: 'stat-card',
+    props: [
+      { name: 'title', type: 'string', description: '指标名称' },
+      { name: 'value', type: 'string | number', description: '指标值' },
+      { name: 'unit', type: 'string', description: '单位' },
+      { name: 'trend', type: 'string', description: '趋势', options: ['up', 'down', 'flat'] },
+      { name: 'trendValue', type: 'string', description: '趋势值' },
+      { name: 'icon', type: 'string', description: '图标' },
+      { name: 'color', type: 'string', description: '主题色' }
+    ],
+    events: [{ name: 'click', params: '', description: '点击时触发' }],
+    slots: [{ name: 'extra', description: '额外内容' }],
+    examples: [
+      {
+        title: '基础用法',
+        code: `<SlStatCard 
+  title="总用户数" 
+  value="12,345" 
+  trend="up" 
+  trendValue="+12.5%"
+/>`
+      }
+    ]
+  },
+  {
+    type: 'SlProgress',
+    name: '进度条',
+    category: 'data',
+    description: '展示操作进度或数据占比',
+    icon: 'progress',
+    props: [
+      { name: 'percentage', type: 'number', default: 0, description: '百分比' },
+      {
+        name: 'status',
+        type: 'string',
+        description: '状态',
+        options: ['success', 'exception', 'warning']
+      },
+      { name: 'strokeWidth', type: 'number', default: 6, description: '线条宽度' },
+      { name: 'showText', type: 'boolean', default: true, description: '是否显示文字' },
+      {
+        name: 'type',
+        type: 'string',
+        default: 'line',
+        description: '类型',
+        options: ['line', 'circle', 'dashboard']
+      }
+    ],
+    events: [],
+    slots: [],
+    examples: [
+      {
+        title: '基础用法',
+        code: `<SlProgress :percentage="50" />
+<SlProgress :percentage="80" status="success" />
+<SlProgress :percentage="30" status="warning" />`
+      }
+    ]
+  },
+  {
+    type: 'SlList',
+    name: '列表',
+    category: 'data',
+    description: '通用列表组件，支持多种布局',
+    icon: 'list',
+    props: [
+      { name: 'dataSource', type: 'array', description: '数据源' },
+      {
+        name: 'layout',
+        type: 'string',
+        default: 'vertical',
+        description: '布局方式',
+        options: ['horizontal', 'vertical']
+      },
+      { name: 'split', type: 'boolean', default: true, description: '是否显示分割线' },
+      {
+        name: 'size',
+        type: 'string',
+        default: 'medium',
+        description: '列表尺寸',
+        options: ['small', 'medium', 'large']
+      }
+    ],
+    events: [{ name: 'itemClick', params: 'item: any', description: '点击列表项时触发' }],
+    slots: [
+      { name: 'default', description: '列表项内容' },
+      { name: 'header', description: '列表头部' },
+      { name: 'footer', description: '列表底部' }
+    ],
+    examples: [
+      {
+        title: '基础列表',
+        code: `<SlList :dataSource="items">
+  <template #default="{ item }">
+    <span>{{ item.title }}</span>
+  </template>
+</SlList>`
+      }
+    ]
+  },
+  {
+    type: 'SlTreeView',
+    name: '树形控件',
+    category: 'data',
+    description: '层级结构展示组件',
+    icon: 'tree',
+    props: [
+      { name: 'data', type: 'array', description: '树形数据' },
+      { name: 'showLine', type: 'boolean', default: false, description: '是否显示连接线' },
+      {
+        name: 'defaultExpandAll',
+        type: 'boolean',
+        default: false,
+        description: '是否默认展开所有节点'
+      },
+      { name: 'selectable', type: 'boolean', default: true, description: '是否可选中' }
+    ],
+    events: [
+      { name: 'select', params: 'node: any', description: '选中节点时触发' },
+      { name: 'expand', params: 'node: any', description: '展开/收起节点时触发' }
+    ],
+    slots: [{ name: 'title', description: '自定义节点标题' }],
+    examples: [
+      {
+        title: '基础用法',
+        code: `<SlTreeView :data="treeData" defaultExpandAll />`
+      }
+    ]
+  },
+  {
+    type: 'SlTimeline',
+    name: '时间轴',
+    category: 'data',
+    description: '按时间顺序展示信息',
+    icon: 'timeline',
+    props: [
+      { name: 'items', type: 'array', description: '时间轴数据' },
+      {
+        name: 'mode',
+        type: 'string',
+        default: 'left',
+        description: '模式',
+        options: ['left', 'right', 'alternate']
+      },
+      { name: 'pending', type: 'boolean', default: false, description: '是否显示幽灵节点' }
+    ],
+    events: [],
+    slots: [{ name: 'dot', description: '自定义时间轴点' }],
+    examples: [
+      {
+        title: '基础用法',
+        code: `<SlTimeline :items="timelineItems" />`
+      }
+    ]
+  },
+  {
+    type: 'SlMarkdown',
+    name: 'Markdown渲染',
+    category: 'data',
+    description: '渲染Markdown格式内容',
+    icon: 'markdown',
+    props: [
+      { name: 'content', type: 'string', description: 'Markdown内容' },
+      {
+        name: 'theme',
+        type: 'string',
+        default: 'light',
+        description: '主题',
+        options: ['light', 'dark']
+      }
+    ],
+    events: [],
+    slots: [],
+    examples: [
+      {
+        title: '基础用法',
+        code: `<SlMarkdown :content="markdownText" />`
+      }
+    ]
+  },
+  // ============================================
+  // 智能体专用组件 (Agent Components)
+  // ============================================
+  {
+    type: 'SlChatInterface',
+    name: '对话界面',
+    category: 'business',
+    description: '智能体对话交互界面，包含消息列表和输入框',
+    icon: 'chat',
+    props: [
+      { name: 'messages', type: 'array', description: '消息列表' },
+      { name: 'placeholder', type: 'string', default: '输入消息...', description: '输入框占位符' },
+      { name: 'showAvatar', type: 'boolean', default: true, description: '是否显示头像' },
+      { name: 'agentName', type: 'string', description: '智能体名称' },
+      { name: 'userName', type: 'string', default: '用户', description: '用户名称' },
+      { name: 'disabled', type: 'boolean', default: false, description: '是否禁用输入' }
+    ],
+    events: [
+      { name: 'send', params: 'message: string', description: '发送消息时触发' },
+      { name: 'clear', params: '', description: '清空消息时触发' }
+    ],
+    slots: [
+      { name: 'message', description: '自定义消息渲染' },
+      { name: 'input-prefix', description: '输入框前缀' },
+      { name: 'input-suffix', description: '输入框后缀' }
+    ],
+    examples: [
+      {
+        title: '基础用法',
+        code: `<SlChatInterface 
+  :messages="messageList"
+  agentName="AI助手"
+  @send="handleSend"
+/>`
+      }
+    ]
+  },
+  {
+    type: 'SlMessageList',
+    name: '消息列表',
+    category: 'business',
+    description: '对话消息展示列表',
+    icon: 'message-list',
+    props: [
+      { name: 'messages', type: 'array', description: '消息数据' },
+      { name: 'showAvatar', type: 'boolean', default: true, description: '是否显示头像' },
+      { name: 'showTimestamp', type: 'boolean', default: true, description: '是否显示时间戳' },
+      { name: 'maxHeight', type: 'string', description: '最大高度' }
+    ],
+    events: [{ name: 'messageClick', params: 'message: any', description: '点击消息时触发' }],
+    slots: [{ name: 'message', description: '自定义消息内容' }],
+    examples: [
+      {
+        title: '基础用法',
+        code: `<SlMessageList :messages="messages" />`
+      }
+    ]
+  },
+  {
+    type: 'SlInputBar',
+    name: '输入栏',
+    category: 'business',
+    description: '消息输入组件，支持文本、语音等输入方式',
+    icon: 'input-bar',
+    props: [
+      { name: 'placeholder', type: 'string', default: '输入消息...', description: '占位符' },
+      { name: 'disabled', type: 'boolean', default: false, description: '是否禁用' },
+      { name: 'maxLength', type: 'number', description: '最大输入长度' },
+      { name: 'showVoice', type: 'boolean', default: false, description: '是否显示语音按钮' },
+      { name: 'showAttachment', type: 'boolean', default: false, description: '是否显示附件按钮' }
+    ],
+    events: [
+      { name: 'send', params: 'message: string', description: '发送消息时触发' },
+      { name: 'voice', params: 'blob: Blob', description: '语音录制完成时触发' },
+      { name: 'attachment', params: 'files: File[]', description: '选择附件时触发' }
+    ],
+    slots: [
+      { name: 'prefix', description: '前缀内容' },
+      { name: 'suffix', description: '后缀内容' }
+    ],
+    examples: [
+      {
+        title: '基础用法',
+        code: `<SlInputBar 
+  placeholder="输入您的问题..."
+  @send="handleSend"
+/>`
+      }
+    ]
+  },
+  {
+    type: 'SlThinkingProcess',
+    name: '思考过程',
+    category: 'business',
+    description: '展示智能体思考和推理过程',
+    icon: 'thinking',
+    props: [
+      { name: 'steps', type: 'array', description: '思考步骤' },
+      { name: 'collapsed', type: 'boolean', default: false, description: '是否折叠' },
+      { name: 'showDuration', type: 'boolean', default: true, description: '是否显示耗时' }
+    ],
+    events: [{ name: 'expand', params: 'expanded: boolean', description: '展开/折叠时触发' }],
+    slots: [{ name: 'step', description: '自定义步骤渲染' }],
+    examples: [
+      {
+        title: '基础用法',
+        code: `<SlThinkingProcess :steps="thinkingSteps" />`
+      }
+    ]
+  },
+  {
+    type: 'SlToolCall',
+    name: '工具调用',
+    category: 'business',
+    description: '展示智能体工具调用过程和结果',
+    icon: 'tool-call',
+    props: [
+      { name: 'toolName', type: 'string', description: '工具名称' },
+      { name: 'toolIcon', type: 'string', description: '工具图标' },
+      {
+        name: 'status',
+        type: 'string',
+        default: 'pending',
+        description: '调用状态',
+        options: ['pending', 'running', 'success', 'error']
+      },
+      { name: 'input', type: 'object', description: '输入参数' },
+      { name: 'output', type: 'object', description: '输出结果' },
+      { name: 'duration', type: 'number', description: '耗时（毫秒）' }
+    ],
+    events: [{ name: 'retry', params: '', description: '重试时触发' }],
+    slots: [{ name: 'detail', description: '自定义详情内容' }],
+    examples: [
+      {
+        title: '基础用法',
+        code: `<SlToolCall 
+  toolName="搜索工具"
+  status="success"
+  :input="{ query: '天气' }"
+  :output="{ result: '晴天' }"
+/>`
+      }
+    ]
+  },
+  {
+    type: 'SlAgentStatus',
+    name: '智能体状态',
+    category: 'business',
+    description: '展示智能体运行状态',
+    icon: 'agent-status',
+    props: [
+      {
+        name: 'status',
+        type: 'string',
+        default: 'idle',
+        description: '状态',
+        options: ['idle', 'thinking', 'executing', 'waiting', 'error']
+      },
+      { name: 'message', type: 'string', description: '状态消息' },
+      { name: 'progress', type: 'number', description: '进度百分比' }
+    ],
+    events: [],
+    slots: [],
+    examples: [
+      {
+        title: '基础用法',
+        code: `<SlAgentStatus status="thinking" message="正在分析问题..." />`
+      }
+    ]
+  },
+  {
+    type: 'SlMetricGrid',
+    name: '指标网格',
+    category: 'business',
+    description: '多指标数据展示网格，适合仪表板',
+    icon: 'metric-grid',
+    props: [
+      { name: 'metrics', type: 'array', description: '指标数据数组' },
+      { name: 'columns', type: 'number', default: 4, description: '每行显示列数' },
+      { name: 'gap', type: 'number', default: 16, description: '间距' }
+    ],
+    events: [{ name: 'click', params: 'metric: any', description: '点击指标时触发' }],
+    slots: [{ name: 'metric', description: '自定义指标渲染' }],
+    examples: [
+      {
+        title: '基础用法',
+        code: `<SlMetricGrid 
+  :metrics="[
+    { title: '用户数', value: 12345, trend: 'up', trendValue: '+12%' },
+    { title: '活跃率', value: '89.5%', trend: 'up', trendValue: '+5%' }
+  ]"
+/>`
+      }
+    ]
+  },
+  {
+    type: 'SlDashboardPanel',
+    name: '仪表板面板',
+    category: 'business',
+    description: '可配置的数据仪表板容器',
+    icon: 'dashboard',
+    props: [
+      { name: 'layout', type: 'array', description: '布局配置' },
+      { name: 'editable', type: 'boolean', default: false, description: '是否可编辑' },
+      { name: 'columns', type: 'number', default: 12, description: '栅格列数' },
+      { name: 'gap', type: 'number', default: 16, description: '间距' }
+    ],
+    events: [
+      { name: 'layoutChange', params: 'layout: array', description: '布局变化时触发' },
+      { name: 'widgetClick', params: 'widget: any', description: '点击组件时触发' }
+    ],
+    slots: [{ name: 'widget', description: '自定义组件渲染' }],
+    examples: [
+      {
+        title: '基础用法',
+        code: `<SlDashboardPanel :layout="dashboardLayout" />`
       }
     ]
   }

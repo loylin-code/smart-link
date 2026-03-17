@@ -22,11 +22,19 @@ export default {
     config: '配置',
     search: '搜索',
     filter: '筛选',
+    moveUp: '上移',
+    moveDown: '下移',
+    dropHere: '放置到这里',
     justNow: '刚刚',
     minutesAgo: '分钟前',
     hoursAgo: '小时前',
     daysAgo: '天前',
-    never: '从未'
+    never: '从未',
+    preview: '预览',
+    next: '下一步',
+    undo: '撤销',
+    redo: '重做',
+    yesterday: '昨天'
   },
   route: {
     explore: '探索中心',
@@ -37,6 +45,7 @@ export default {
     agentOrchestration: '编排智能体',
     agentEdit: '编辑智能体',
     agentRuntime: '智能体运行',
+    agentRunner: '智能体运行',
     viewOrchestration: '视图编排',
     resource: '资源管理',
     components: '组件管理',
@@ -144,6 +153,7 @@ export default {
     props: '属性',
     copy: '复制',
     delete: '删除',
+    dropHere: '拖放到此处添加组件',
     categories: {
       all: '全部',
       basic: '基础组件',
@@ -731,13 +741,20 @@ export default {
       appNotPublished: '智能体未发布',
       appDisabled: '智能体已禁用',
       appDisabledDesc: '该智能体正在维护中，暂时无法访问',
+      agentNotFound: '智能体不存在',
+      agentNotActive: '智能体未激活',
+      agentDisabled: '智能体已禁用',
+      agentDisabledDesc: '该智能体正在维护中，暂时无法访问',
       running: '运行中',
       error: '异常',
       stopped: '已停止',
       unknown: '未知',
       visits: '访问次数',
       uptime: '运行时长',
-      errors: '错误次数'
+      errors: '错误次数',
+      sessions: '会话数',
+      tokens: 'Tokens',
+      latency: '延迟'
     },
     wizard: {
       title: '新建智能体',
@@ -1027,50 +1044,195 @@ export default {
         maxTokens: '最大输出 Tokens'
       },
       view: {
-        created: '已创建视图',
-        emptyTitle: '暂未创建交互视图',
-        emptyDesc: '通过 AGUI 技术让大模型生成匹配的图表页面，可视化展示响应信息',
-        addView: '添加视图',
-        createTitle: '创建交互视图',
+        title: '交互视图',
+        emptyTitle: '暂无交互视图',
+        emptyDesc: '创建交互视图来设计智能体的前端展示界面',
+        addView: '新建视图',
+        createTitle: '新建交互视图',
         viewName: '视图名称',
         viewNamePlaceholder: '请输入视图名称',
         viewDescription: '视图描述',
-        viewDescPlaceholder: '请描述该视图的用途和展示内容',
+        viewDescPlaceholder: '请描述视图用途',
         viewType: '视图类型',
-        createAndDesign: '创建并设计',
+        createAndDesign: '创建并编排',
+        created: '已创建视图',
+        componentsCount: '个组件',
         noDescription: '暂无描述',
+        untitled: '未命名视图',
+        canvasEmpty: '画布为空',
+        canvasEmptyDesc: '从左侧组件库拖拽组件到此处开始设计',
+
+        // 视图类型
         types: {
-          dashboard: '仪表盘',
-          chart: '图表',
-          table: '表格',
-          form: '表单',
+          dashboard: '数据看板',
+          chart: '图表分析',
+          table: '数据表格',
+          form: '表单交互',
           custom: '自定义'
         },
-        untitled: '未命名视图',
+
+        // 视图类型描述
+        typeDesc: {
+          dashboard: '多维度数据指标展示，支持图表、卡片、列表自由组合',
+          chart: '专注图表可视化，折线图、柱状图、饼图等',
+          table: '数据表格展示，支持筛选、排序、分页',
+          form: '表单交互界面，收集用户输入和数据',
+          custom: '完全自定义布局，支持任意组件组合'
+        },
+
+        // 筛选标签
+        filters: {
+          all: '全部',
+          dashboard: 'Dashboard',
+          chart: 'Chart',
+          table: 'Table',
+          form: 'Form',
+          custom: 'Custom'
+        },
+
+        // 类型选择
+        selectTypeDesc: '选择一个视图类型作为起点',
+        selectedType: '已选择',
+        changeType: '更改类型',
+
+        // 组件库
         components: '组件库',
+        searchComponents: '搜索组件...',
+        searchPlaceholder: '搜索组件...',
+        chartComponents: '图表组件',
+        dataComponents: '数据组件',
+        formComponents: '表单组件',
+        layoutComponents: '布局组件',
         charts: '图表',
-        widgets: '组件',
-        layouts: '布局',
-        canvasEmpty: '开始设计您的交互视图',
-        canvasEmptyDesc: '从左侧拖拽组件到画布中',
+        forms: '表单',
+        layouts: '布局组件',
+        widgets: '数据',
+        basic: '基础组件',
+        data: '数据展示',
+        business: '智能体组件',
+        noResults: '未找到匹配的组件',
+
+        // 属性面板
         properties: '属性配置',
-        selectElement: '请选择一个组件进行配置',
+        selectElement: '请选择一个组件',
         elementName: '组件名称',
-        dataSource: '数据源',
-        staticData: '静态数据',
-        lineChart: '折线图',
-        barChart: '柱状图',
-        pieChart: '饼图',
-        areaChart: '面积图',
-        statCard: '统计卡片',
-        dataTable: '数据表格',
-        progressBar: '进度条',
-        textBlock: '文本块',
-        gridLayout: '网格布局',
-        flexRow: '横向布局',
-        flexCol: '纵向布局',
-        tabs: '标签页',
-        componentsCount: '个组件'
+        elementType: '组件类型',
+        dataSource: '数据来源',
+        dataSourceType: '数据源类型',
+        dataBinding: '数据绑定字段',
+        styleSettings: '样式设置',
+        eventBinding: '事件绑定',
+        expandConfig: '展开配置...',
+
+        // 新增属性面板字段
+        basicInfo: '基本信息',
+        namePlaceholder: '请输入组件名称',
+        bindingPlaceholder: '如：data.fieldName',
+        bindingHint: '输入数据字段路径，支持嵌套对象',
+
+        // 数据源类型
+        dataSourceTypes: {
+          llm: 'LLM 动态数据',
+          api: 'API 数据',
+          static: '静态数据',
+          database: '数据库查询'
+        },
+
+        // 画布操作
+        moveUp: '上移',
+        moveDown: '下移',
+        delete: '删除',
+        copy: '复制',
+        paste: '粘贴',
+        duplicate: '复制',
+
+        // 空状态
+        emptyComponents: '0 个组件',
+
+        // 布局组件
+        dropToLayout: '拖放到此处添加子组件',
+        layoutChildren: '子组件',
+
+        // 宽度配置
+        widthAuto: '自动',
+        customCols: '自定义栅格',
+        widthConfig: '宽度配置',
+        heightConfig: '高度配置',
+        marginConfig: '外边距',
+        paddingConfig: '内边距',
+        responsiveConfig: '响应式设置',
+        desktop: '桌面端',
+        tablet: '平板端',
+        mobile: '移动端',
+        gridColumns: '栅格列数',
+        gridVisible: '显示栅格',
+        snapToGrid: '吸附栅格',
+
+        // 组件名称
+        componentNames: {
+          // 基础组件
+          SlButton: '按钮',
+          SlIcon: '图标',
+          SlTag: '标签',
+          SlBadge: '徽标',
+          SlAvatar: '头像',
+          SlDivider: '分割线',
+          SlLink: '链接',
+          SlImage: '图片',
+          // 表单组件
+          SlInput: '输入框',
+          SlSelect: '选择器',
+          SlCheckbox: '复选框',
+          SlRadio: '单选框',
+          SlSwitch: '开关',
+          SlForm: '表单',
+          SlFormItem: '表单项',
+          // 布局组件
+          SlContainer: '容器',
+          SlRow: '行',
+          SlCol: '列',
+          SlCard: '卡片',
+          SlSpace: '间距',
+          SlDrawer: '抽屉',
+          SlModal: '对话框',
+          SlMessage: '消息提示',
+          SlTooltip: '文字提示',
+          // 数据组件
+          SlChart: '图表',
+          SlTable: '数据表格',
+          SlStatCard: '指标卡片',
+          SlProgress: '进度条',
+          SlList: '列表',
+          SlTreeView: '树形控件',
+          SlTimeline: '时间轴',
+          SlMarkdown: 'Markdown渲染',
+          // 智能体组件
+          SlChatInterface: '对话界面',
+          SlMessageList: '消息列表',
+          SlInputBar: '输入栏',
+          SlThinkingProcess: '思考过程',
+          SlToolCall: '工具调用',
+          SlAgentStatus: '智能体状态',
+          SlMetricGrid: '指标网格',
+          SlDashboardPanel: '仪表板面板',
+          // 兼容旧组件名
+          'line-chart': '折线图',
+          'bar-chart': '柱状图',
+          'pie-chart': '饼图',
+          'area-chart': '面积图',
+          'stat-card': '指标卡片',
+          'data-table': '数据表格',
+          'progress-bar': '进度条',
+          'text-block': '文本块',
+          input: '输入框',
+          select: '选择器',
+          switch: '开关',
+          button: '按钮',
+          'grid-layout': '栅格布局',
+          'flex-row': '横向分栏',
+          'flex-col': '纵向分栏',
+          tabs: '标签页'
+        }
       }
     },
     categories: {
@@ -1130,10 +1292,18 @@ export default {
       agentNotFound: '智能体不存在',
       agentPaused: '智能体已暂停',
       agentPausedDesc: '该智能体服务已暂停',
+      agentNotActive: '智能体未激活',
+      agentDisabled: '智能体已禁用',
+      agentDisabledDesc: '该智能体正在维护中，暂时无法访问',
       running: '运行中',
       idle: '空闲',
       busy: '忙碌',
-      error: '异常'
+      error: '异常',
+      stopped: '已停止',
+      unknown: '未知',
+      sessions: '会话数',
+      tokens: 'Tokens',
+      latency: '延迟'
     }
   },
   model: {
