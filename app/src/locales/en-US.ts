@@ -16,6 +16,8 @@ export default {
     create: 'Create',
     reset: 'Reset',
     delete: 'Delete',
+    copy: 'Copy',
+    duplicate: 'Duplicate',
     actions: 'Actions',
     test: 'Test',
     start: 'Start',

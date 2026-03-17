@@ -16,6 +16,8 @@ export default {
     create: '创建',
     reset: '重置',
     delete: '删除',
+    copy: '复制',
+    duplicate: '复制',
     actions: '操作',
     test: '测试',
     start: '启动',
