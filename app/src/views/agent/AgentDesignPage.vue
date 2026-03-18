@@ -90,7 +90,7 @@
       <main class="editor-area">
         <div class="editor-container">
           <!-- Soul Editor (人格定义) -->
-          <div v-if="activeConfig === 'soul'" class="editor-panel full-height" data-config="soul">
+          <div v-if="activeConfig === 'soul'" class="editor-panel" data-config="soul">
             <div class="panel-header">
               <div class="panel-header-left">
                 <div class="panel-icon">🧬</div>
@@ -152,11 +152,7 @@
           </div>
 
           <!-- Memory Editor (记忆) -->
-          <div
-            v-if="activeConfig === 'memory'"
-            class="editor-panel full-height"
-            data-config="memory"
-          >
+          <div v-if="activeConfig === 'memory'" class="editor-panel" data-config="memory">
             <div class="panel-header">
               <div class="panel-header-left">
                 <div class="panel-icon">🧠</div>
@@ -218,11 +214,7 @@
           </div>
 
           <!-- Skills Editor -->
-          <div
-            v-if="activeConfig === 'skills'"
-            class="editor-panel full-height"
-            data-config="skills"
-          >
+          <div v-if="activeConfig === 'skills'" class="editor-panel" data-config="skills">
             <div class="panel-header">
               <div class="panel-header-left">
                 <div class="panel-icon">🎯</div>
@@ -244,7 +236,7 @@
           </div>
 
           <!-- MCP Editor -->
-          <div v-if="activeConfig === 'mcp'" class="editor-panel full-height" data-config="mcp">
+          <div v-if="activeConfig === 'mcp'" class="editor-panel" data-config="mcp">
             <div class="panel-header">
               <div class="panel-header-left">
                 <div class="panel-icon">🔌</div>
@@ -364,7 +356,7 @@
           </div>
 
           <!-- Interaction View Editor -->
-          <div v-if="activeConfig === 'view'" class="editor-panel full-height" data-config="view">
+          <div v-if="activeConfig === 'view'" class="editor-panel" data-config="view">
             <div class="panel-header">
               <div class="panel-header-left">
                 <div class="panel-icon">🎨</div>
@@ -935,19 +927,13 @@ A: 回答2`
   // 统一的面板样式
   // ============================================
   .editor-panel {
-    max-width: 900px;
-    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     background: $bg-primary;
     border-radius: $border-radius-lg;
     border: 1px solid $border-color-lighter;
     overflow: hidden;
-
-    &.full-height {
-      max-width: none;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
   }
 
   // 面板头部 - 统一结构
@@ -1063,10 +1049,16 @@ A: 回答2`
 
     // 如果是代码编辑器，移除padding（编辑器自带padding）
     > .code-editor {
-      padding: 0;
       margin: (-$spacing-lg);
       flex: 1;
     }
+  }
+
+  // 设置面板内容区 - 不拉伸
+  .editor-panel[data-config='rag'] .panel-body,
+  .editor-panel[data-config='llm'] .panel-body {
+    flex: none;
+    overflow: visible;
   }
 
   // 代码编辑器
