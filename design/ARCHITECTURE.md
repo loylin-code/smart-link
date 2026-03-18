@@ -1,10 +1,10 @@
 # SmartLink Enterprise Agent Platform - 完整架构设计文档
 
-> **文档版本**: 2.0  
-> **设计日期**: 2026-03-12  
-> **设计状态**: 架构设计完成  
+> **文档版本**: 2.1  
+> **更新日期**: 2026-03-18  
+> **设计状态**: 架构设计完成，已根据前端实现更新  
 > **架构模式**: 基于 Role 的数字员工智能体管理平台  
-> **整合来源**: ROLE-BASED-AGENT-ARCHITECTURE.md + ARCHITECTURE.md
+> **整合来源**: ROLE-BASED-AGENT-ARCHITECTURE.md + ARCHITECTURE.md + 前端实现代码
 
 ---
 
@@ -1223,12 +1223,357 @@ interface ToolRegistry {
 
 ## 13. API 接口设计
 
-### 13.1 REST API
+> **注意**: 以下API接口基于前端 `app/src/services/` 目录下的实现代码定义，后端开发应遵循此规范。
+
+### 13.1 通用规范
+
+#### 基础 URL
+
+```
+生产环境: https://api.smartlink.com/api/v1
+开发环境: http://localhost:8000/api/v1
+```
+
+#### 请求头
+
+```http
+Content-Type: application/json
+Authorization: Bearer <token>
+X-API-Key: <api_key>
+X-Tenant-Id: <tenant_id>
+```
+
+#### 响应格式
+
+```typescript
+// 成功响应
+interface ApiResponse<T> {
+  code: number // 0 或 200 表示成功
+  message: string
+  data: T
+  timestamp: number
+}
+
+// 分页响应
+interface PageResponse<T> {
+  list: T[]
+  total: number
+  page: number
+  page_size: number
+}
+
+// 错误响应
+interface ApiError {
+  code: number
+  message: string
+  detail?: string
+}
+```
+
+#### 状态码约定
+
+| HTTP 状态码 | 业务码 | 含义              |
+| ----------- | ------ | ----------------- |
+| 200         | 0/200  | 成功              |
+| 400         | 400001 | 请求参数错误      |
+| 401         | 401001 | 未授权/Token 过期 |
+| 403         | 403001 | 无权限            |
+| 404         | 404001 | 资源不存在        |
+| 429         | 429001 | 请求频率超限      |
+| 500         | 500001 | 服务器内部错误    |
+
+### 13.2 Agent API (智能体管理)
+
+#### 数据模型
+
+```typescript
+// 智能体状态
+enum AgentStatus {
+  DRAFT = 'draft', // 草稿
+  ACTIVE = 'active', // 激活可用
+  PAUSED = 'paused', // 暂停
+  DEPRECATED = 'deprecated' // 废弃
+}
+
+// 智能体类型
+enum AgentType {
+  SYSTEM = 'system', // 系统预置
+  CUSTOM = 'custom', // 用户自定义
+  TEMPLATE = 'template' // 模板（可复制）
+}
+
+// 核心智能体模型
+interface Agent {
+  id: string
+  type: AgentType
+  status: AgentStatus
+
+  // 身份定义
+  identity: AgentIdentity
+
+  // 能力定义
+  capabilities: AgentCapabilities
+
+  // 知识库 (RAG)
+  knowledge: AgentKnowledge
+
+  // 页面设计 Schema
+  pageSchema?: PageSchema
+
+  // 元数据
+  createdAt: number
+  updatedAt: number
+  tags: string[]
+  version: string
+  creator?: string
+  category?: string
+}
+```
+
+#### API 端点
+
+| 方法   | 路径                        | 描述                   |
+| ------ | --------------------------- | ---------------------- |
+| GET    | `/agents/`                  | 获取智能体列表（分页） |
+| POST   | `/agents/`                  | 创建智能体             |
+| GET    | `/agents/{id}`              | 获取智能体详情         |
+| PUT    | `/agents/{id}`              | 更新智能体             |
+| DELETE | `/agents/{id}`              | 删除智能体             |
+| POST   | `/agents/{id}/activate`     | 激活智能体             |
+| POST   | `/agents/{id}/pause`        | 暂停智能体             |
+| PUT    | `/agents/{id}/capabilities` | 更新能力配置           |
+| PUT    | `/agents/{id}/knowledge`    | 更新知识库配置         |
+
+#### 请求/响应示例
+
+**获取智能体列表**
+
+```http
+GET /api/v1/agents/?page=1&page_size=20&status=active&type=custom&keyword=客服
+
+Response:
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "list": [
+      {
+        "id": "agent_001",
+        "name": "智能客服",
+        "code": "smart_customer_service",
+        "status": "active",
+        "type": "custom",
+        ...
+      }
+    ],
+    "total": 100,
+    "page": 1,
+    "page_size": 20
+  },
+  "timestamp": 1708234567890
+}
+```
+
+**创建智能体**
+
+```http
+POST /api/v1/agents/
+Content-Type: application/json
+
+{
+  "name": "智能客服",
+  "code": "smart_customer_service",
+  "description": "智能客服助手",
+  "avatar": "https://example.com/avatar.png",
+  "persona": "你是一个专业的客服助手...",
+  "welcome_message": "您好，有什么可以帮您？",
+  "tags": ["客服", "智能"],
+  "category": "service"
+}
+```
+
+### 13.3 Application API (应用管理)
+
+#### 数据模型
+
+```typescript
+enum AppStatus {
+  DRAFT = 'draft', // 草稿
+  DESIGNING = 'designing', // 设计中
+  PUBLISHED = 'published', // 已发布
+  ARCHIVED = 'archived' // 已归档
+}
+
+enum AppType {
+  WORKFLOW = 'workflow', // 工作流应用
+  CHART = 'chart', // 图表应用
+  FORM = 'form', // 表单应用
+  DASHBOARD = 'dashboard', // 仪表盘
+  CUSTOM = 'custom' // 自定义应用
+}
+
+interface Application {
+  id: string
+  name: string
+  description: string
+  icon: string
+  type: AppType
+  status: AppStatus
+  version: string
+  tags?: string[]
+  schema?: PageSchema // 应用 Schema
+  createdAt: number
+  updatedAt: number
+  publishedAt?: number
+  isEnabled?: boolean
+}
+```
+
+#### API 端点
+
+| 方法   | 路径                         | 描述         |
+| ------ | ---------------------------- | ------------ |
+| GET    | `/applications/`             | 获取应用列表 |
+| POST   | `/applications/`             | 创建应用     |
+| GET    | `/applications/{id}`         | 获取应用详情 |
+| PUT    | `/applications/{id}`         | 更新应用     |
+| DELETE | `/applications/{id}`         | 删除应用     |
+| POST   | `/applications/{id}/publish` | 发布应用     |
+| POST   | `/applications/{id}/run`     | 运行应用     |
+
+### 13.4 Conversation API (对话管理)
+
+#### 数据模型
+
+```typescript
+interface ChatConversation {
+  id: string
+  title: string
+  appId?: string
+  userId?: string
+  status: 'active' | 'archived'
+  messageCount: number
+  lastMessageAt?: number
+  messages?: ChatMessage[]
+  createdAt: number
+  updatedAt: number
+}
+
+interface ChatMessage {
+  id: string
+  conversationId: string
+  role: 'user' | 'assistant'
+  content: string
+  timestamp: number
+  components?: ChatComponent[] // 动态组件
+  attachments?: MessageAttachment[] // 附件
+  tokens?: { input: number; output: number }
+}
+
+interface ChatComponent {
+  id: string
+  type: 'stats-card' | 'form' | 'chart' | 'table' | 'list' | 'code' | 'image' | 'confirm'
+  props: Record<string, any>
+  events?: Record<string, string>
+}
+```
+
+#### API 端点
+
+| 方法   | 路径                           | 描述         |
+| ------ | ------------------------------ | ------------ |
+| GET    | `/conversations/`              | 获取对话列表 |
+| POST   | `/conversations/`              | 创建对话     |
+| GET    | `/conversations/{id}`          | 获取对话详情 |
+| PUT    | `/conversations/{id}`          | 更新对话     |
+| DELETE | `/conversations/{id}`          | 删除对话     |
+| GET    | `/conversations/{id}/messages` | 获取消息历史 |
+| POST   | `/conversations/{id}/archive`  | 归档对话     |
+| POST   | `/conversations/{id}/restore`  | 恢复对话     |
+
+### 13.5 Resource API (资源管理)
+
+#### Skills API
+
+| 方法   | 路径                          | 描述         |
+| ------ | ----------------------------- | ------------ |
+| GET    | `/resources/skills`           | 获取技能列表 |
+| POST   | `/resources/skills`           | 创建技能     |
+| GET    | `/resources/skills/{id}`      | 获取技能详情 |
+| PUT    | `/resources/skills/{id}`      | 更新技能     |
+| DELETE | `/resources/skills/{id}`      | 删除技能     |
+| POST   | `/resources/skills/{id}/test` | 测试技能     |
+
+#### MCP Server API
+
+| 方法   | 路径                          | 描述                |
+| ------ | ----------------------------- | ------------------- |
+| GET    | `/resources/mcp`              | 获取 MCP 服务器列表 |
+| POST   | `/resources/mcp`              | 创建 MCP 服务器     |
+| GET    | `/resources/mcp/{id}`         | 获取详情            |
+| PUT    | `/resources/mcp/{id}`         | 更新配置            |
+| DELETE | `/resources/mcp/{id}`         | 删除服务器          |
+| POST   | `/resources/mcp/{id}/test`    | 测试连接            |
+| POST   | `/resources/mcp/{id}/refresh` | 刷新能力列表        |
+
+#### Components API
+
+| 方法 | 路径                    | 描述         |
+| ---- | ----------------------- | ------------ |
+| GET  | `/resources/components` | 获取组件列表 |
+
+### 13.6 WebSocket API
+
+#### 连接端点
+
+```
+ws://localhost:8000/ws/chat/{clientId}
+```
+
+#### 消息格式
+
+```typescript
+interface WSMessage<T = unknown> {
+  type: 'chat' | 'stream' | 'ping' | 'pong' | 'tool_call' | 'status' | 'error'
+  data: T
+  timestamp?: number
+}
+
+// 聊天消息
+interface ChatMessageData {
+  message: string
+  conversation_id?: string
+  app_id?: string
+  attachments?: File[]
+}
+
+// 流式响应
+interface StreamResponseData {
+  delta: string
+  done: boolean
+  conversation_id?: string
+  message_id?: string
+  component?: ChatComponent
+}
+```
+
+#### 心跳机制
+
+- 客户端每 30 秒发送 `ping` 消息
+- 服务端响应 `pong` 消息
+- 超时未响应则触发重连
+
+#### 重连策略
+
+- 最大重连次数: 5
+- 重连间隔: 3 秒（指数退避）
+
+### 13.7 旧版 API (向后兼容)
 
 ```
 基础 URL: /api/v1
 
-Role 管理
+Role 管理 (已废弃，请使用 Agent API)
 ─────────────────────────────────────────────────────────────────────────
 GET    /roles                   获取角色列表
 POST   /roles                   创建角色
@@ -1253,92 +1598,6 @@ POST   /push/rules              创建推送规则
 PUT    /push/rules/:id          更新推送规则
 DELETE /push/rules/:id          删除推送规则
 POST   /push/test               测试推送
-
-工具管理
-─────────────────────────────────────────────────────────────────────────
-GET    /mcp-servers             获取 MCP 服务器列表
-POST   /mcp-servers             创建 MCP 服务器
-GET    /mcp-servers/:id         获取 MCP 服务器详情
-PUT    /mcp-servers/:id         更新 MCP 服务器
-DELETE /mcp-servers/:id         删除 MCP 服务器
-POST   /mcp-servers/:id/test    测试 MCP 服务器连接
-
-GET    /skills                  获取 Skill 列表
-POST   /skills                  创建 Skill
-GET    /skills/:id              获取 Skill 详情
-PUT    /skills/:id              更新 Skill
-DELETE /skills/:id              删除 Skill
-
-GET    /tools                   获取工具列表
-POST   /tools/:id/execute       执行工具
-```
-
-### 13.2 WebSocket API
-
-```
-WebSocket 端点：/ws/v1
-
-连接消息
-─────────────────────────────────────────────────────────────────────────
-Client -> Server:
-  {
-    "type": "connect",
-    "payload": {
-      "sessionKey": "xxx",
-      "tenantId": "xxx",
-      "userId": "xxx"
-    }
-  }
-
-Server -> Client:
-  {
-    "type": "connected",
-    "payload": { "sessionId": "xxx" }
-  }
-
-执行消息
-─────────────────────────────────────────────────────────────────────────
-Client -> Server:
-  {
-    "type": "execute",
-    "payload": {
-      "roleId": "xxx",
-      "input": { ... }
-    }
-  }
-
-Server -> Client (流式):
-  {
-    "type": "chunk",
-    "payload": { "content": "xxx" }
-  }
-
-Server -> Client (完成):
-  {
-    "type": "complete",
-    "payload": {
-      "result": { ... },
-      "renderSchema": { ... }
-    }
-  }
-
-推送消息
-─────────────────────────────────────────────────────────────────────────
-Server -> Client:
-  {
-    "type": "push",
-    "payload": {
-      "messageId": "xxx",
-      "type": "alert" | "notification" | "report",
-      "content": { ... },
-      "priority": "high" | "normal" | "low"
-    }
-  }
-
-心跳消息
-─────────────────────────────────────────────────────────────────────────
-Client -> Server: {"type": "ping"}
-Server -> Client: {"type": "pong"}
 ```
 
 ---
@@ -1807,6 +2066,311 @@ Phase 5 - 生产加固（1 周）
 
 ---
 
+## 24. 前端模块架构（基于当前实现）
+
+> 本节基于 `app/src/` 目录下的代码实现，描述前端的实际架构。
+
+### 24.1 Monorepo 结构
+
+```
+smart-link/
+├── packages/                    # 可发布的 npm 包
+│   ├── core/                    # @smart-link/core - 渲染引擎
+│   ├── ui/                      # @smart-link/ui - UI 组件库
+│   ├── shared/                  # @smart-link/shared - 共享类型/工具
+│   ├── hooks/                   # @smart-link/hooks - Vue 组合式函数
+│   └── theme/                   # @smart-link/theme - 主题样式
+│
+├── app/                         # 主应用
+│   └── src/
+│       ├── services/            # API 服务层
+│       │   ├── agent.ts         # 智能体 API
+│       │   ├── ai.ts            # AI 服务 (OpenAI/Claude/Ollama)
+│       │   ├── application.ts   # 应用 API
+│       │   ├── conversation.ts  # 对话 API
+│       │   ├── resource.ts      # 资源管理 API
+│       │   └── websocket.ts     # WebSocket 服务
+│       ├── store/               # Pinia 状态管理
+│       │   └── modules/
+│       │       ├── agent.ts     # 智能体状态
+│       │       ├── application.ts # 应用状态
+│       │       ├── ai.ts        # AI 服务状态
+│       │       ├── mcp.ts       # MCP 状态
+│       │       ├── skills.ts    # Skills 状态
+│       │       └── ...          # 其他模块
+│       ├── components/          # 业务组件
+│       ├── views/               # 页面视图
+│       │   ├── agent/           # 智能体管理
+│       │   ├── resource/        # 资源管理
+│       │   ├── explore/         # 探索中心
+│       │   └── settings/        # 系统设置
+│       ├── router/              # 路由配置
+│       ├── utils/               # 工具函数
+│       │   └── http.ts          # Axios HTTP 客户端
+│       └── types/               # 类型定义
+│
+├── play/                        # 组件调试环境
+├── docs/                        # VitePress 文档站点
+└── internal/build/              # 共享构建配置
+```
+
+### 24.2 技术栈
+
+| 层级        | 技术                                |
+| ----------- | ----------------------------------- |
+| 前端框架    | Vue 3.4+ (Composition API)          |
+| 类型系统    | TypeScript 5.0+                     |
+| 状态管理    | Pinia + pinia-plugin-persistedstate |
+| 路由        | Vue Router 4.x                      |
+| HTTP 客户端 | Axios                               |
+| 实时通信    | WebSocket                           |
+| 构建工具    | Vite 5.0 + Rollup                   |
+| 包管理      | pnpm monorepo + Turborepo           |
+| 样式        | SCSS                                |
+| 国际化      | vue-i18n                            |
+
+### 24.3 核心模块职责
+
+#### @smart-link/core - 渲染引擎
+
+```
+packages/core/src/
+├── types/           # 核心类型定义 (PageSchema, ComponentNode 等)
+├── evaluator/       # 表达式求值器 (动态属性绑定)
+├── state/           # 状态管理器 (运行时状态)
+├── registry/        # 组件注册表 (组件元数据管理)
+├── events/          # 事件处理器 (内置动作 + 自定义事件)
+├── directives/      # 指令处理器 (v-if, v-for, v-model)
+└── renderer/        # 核心渲染器 (Schema → VNode)
+```
+
+### 24.4 状态管理架构
+
+```typescript
+// Store 模块划分 (app/src/store/modules/)
+├── agent.ts           // 智能体状态
+├── application.ts     // 应用状态
+├── ai.ts              // AI 服务状态
+├── mcp.ts             // MCP 服务器状态
+├── skills.ts          // Skills 状态
+├── model.ts           // 模型状态
+├── orchestrator.ts    // 编排器状态
+├── datamodel.ts       // 数据模型状态
+├── explore.ts         // 探索中心状态
+├── settings.ts        // 设置状态
+├── view.ts            // 视图状态
+└── components.ts      // 组件状态
+```
+
+### 24.5 HTTP 客户端配置
+
+```typescript
+// app/src/utils/http.ts
+const client = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api/v1',
+  timeout: 30000,
+  headers: { 'Content-Type': 'application/json' }
+})
+
+// 请求拦截器 - 自动添加认证头
+config.headers['X-API-Key'] = apiKey // API Key 认证
+config.headers['Authorization'] = `Bearer ${token}` // JWT Token
+config.headers['X-Tenant-Id'] = tenantId // 租户隔离
+```
+
+---
+
+## 25. 后端开发建议
+
+### 25.1 推荐技术栈
+
+| 组件       | 推荐技术                                                 |
+| ---------- | -------------------------------------------------------- |
+| Web 框架   | FastAPI (Python) / NestJS (Node.js) / Spring Boot (Java) |
+| 数据库     | PostgreSQL                                               |
+| 缓存       | Redis                                                    |
+| 向量数据库 | Milvus / Pinecone                                        |
+| 消息队列   | RabbitMQ / Kafka                                         |
+| 容器化     | Docker + Kubernetes                                      |
+
+### 25.2 API 开发优先级
+
+1. **P0 - 核心功能**
+   - Agent CRUD + 激活/暂停
+   - Conversation 消息收发
+   - WebSocket 流式响应
+
+2. **P1 - 资源管理**
+   - Skills 管理
+   - MCP 服务器管理
+   - Components 列表
+
+3. **P2 - 高级功能**
+   - 知识库 RAG
+   - 模型管理
+   - 数据模型
+
+### 25.3 数据库表设计建议
+
+```sql
+-- 智能体表
+CREATE TABLE agents (
+  id UUID PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  code VARCHAR(100) UNIQUE NOT NULL,
+  type VARCHAR(50) NOT NULL,
+  status VARCHAR(50) NOT NULL DEFAULT 'draft',
+  identity JSONB NOT NULL,
+  capabilities JSONB,
+  knowledge JSONB,
+  page_schema JSONB,
+  tags TEXT[],
+  version VARCHAR(50),
+  creator VARCHAR(255),
+  category VARCHAR(100),
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- 对话表
+CREATE TABLE conversations (
+  id UUID PRIMARY KEY,
+  title VARCHAR(500),
+  app_id UUID,
+  user_id VARCHAR(255),
+  status VARCHAR(50) DEFAULT 'active',
+  message_count INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- 消息表
+CREATE TABLE messages (
+  id UUID PRIMARY KEY,
+  conversation_id UUID REFERENCES conversations(id),
+  role VARCHAR(50) NOT NULL,
+  content TEXT NOT NULL,
+  components JSONB,
+  attachments JSONB,
+  tokens JSONB,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- MCP 服务器表
+CREATE TABLE mcp_servers (
+  id UUID PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  unique_id VARCHAR(100) UNIQUE NOT NULL,
+  version VARCHAR(50),
+  description TEXT,
+  transport VARCHAR(50) NOT NULL,
+  status VARCHAR(50) DEFAULT 'disconnected',
+  config JSONB NOT NULL,
+  capabilities JSONB,
+  tools JSONB,
+  resources JSONB,
+  prompts JSONB,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Skills 表
+CREATE TABLE skills (
+  id UUID PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  display_name VARCHAR(255),
+  version VARCHAR(50),
+  category VARCHAR(50) NOT NULL,
+  status VARCHAR(50) DEFAULT 'disabled',
+  description TEXT,
+  tags TEXT[],
+  risk_level VARCHAR(50) DEFAULT 'low',
+  requires_approval BOOLEAN DEFAULT FALSE,
+  input_schema JSONB,
+  output_schema JSONB,
+  config JSONB,
+  dependencies JSONB,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+### 25.4 前端期望的数据格式示例
+
+```typescript
+// 智能体列表响应示例
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "list": [
+      {
+        "id": "agent_001",
+        "name": "智能客服",
+        "code": "smart_customer_service",
+        "type": "custom",
+        "status": "active",
+        "avatar": "https://example.com/avatar.png",
+        "description": "专业的智能客服助手",
+        "persona": "你是一个专业的客服助手...",
+        "welcome_message": "您好，有什么可以帮您？",
+        "tags": ["客服", "智能"],
+        "category": "service",
+        "version": "1.0.0",
+        "created_at": "2024-01-15T10:30:00Z",
+        "updated_at": "2024-01-15T10:30:00Z"
+      }
+    ],
+    "total": 100,
+    "page": 1,
+    "page_size": 20
+  },
+  "timestamp": 1708234567890
+}
+
+// WebSocket 流式响应消息
+{
+  "type": "stream",
+  "data": {
+    "delta": "您好",
+    "done": false,
+    "conversation_id": "conv_001",
+    "message_id": "msg_001"
+  },
+  "timestamp": 1708234567890
+}
+
+// 完成消息
+{
+  "type": "stream",
+  "data": {
+    "delta": "",
+    "done": true,
+    "conversation_id": "conv_001",
+    "message_id": "msg_001",
+    "component": {
+      "id": "comp_001",
+      "type": "table",
+      "props": {
+        "columns": [...],
+        "data": [...]
+      }
+    }
+  },
+  "timestamp": 1708234567890
+}
+
+// 错误响应格式
+{
+  "code": 400001,
+  "message": "请求参数错误",
+  "detail": "name 字段不能为空",
+  "timestamp": 1708234567890
+}
+```
+
+---
+
 ## 总结
 
 ### 核心亮点
@@ -1834,13 +2398,17 @@ Phase 5 - 生产加固（1 周）
 
 ---
 
-_文档版本：2.0_  
-_设计完成日期：2026-03-12_  
-_设计状态：架构设计完成，待评审_
+_文档版本：2.1_  
+_更新日期：2026-03-18_  
+_设计状态：架构设计完成，已根据前端实现更新_
 
 _本文档整合自：_
 
 - _ROLE-BASED-AGENT-ARCHITECTURE.md (1,018 行)_
 - _ARCHITECTURE.md (1,973 行)_
+- _前端实现代码 (app/src/services/, app/src/types/, app/src/store/)_
 
-_总计：约 3,000 行设计文档内容_
+_更新记录：_
+
+- _v2.1 (2026-03-18): 更新API接口设计，添加前端模块架构、后端开发建议章节_
+- _v2.0 (2026-03-12): 整合 Role 模型设计，完善架构文档_

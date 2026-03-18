@@ -1,11 +1,12 @@
 # SmartLink Enterprise Agent Platform - UX 设计方案
 
 > 基于 DESIGN.md 的完整 UX 设计文档，包括菜单结构和每个页面的详细设计  
-> 版本：1.2  
-> 更新日期：2026-03-13
+> 版本：1.3  
+> 更新日期：2026-03-18
 
 **变更记录：**
 
+- v1.3: 添加后端开发建议章节，更新动态组件数据结构
 - v1.2: 应用管理模块升级为智能体管理模块，智能体设计增加系统Prompt、MCP、Skill、Tool、LLM、RAG等配置
 - v1.1: 精简菜单结构，移除重复功能模块
 - v1.0: 初始版本
@@ -3879,6 +3880,187 @@ Skills 是 AI Agent 的可复用能力模块，支持组合成复杂的工作流
 
 ---
 
-**文档版本**：1.1  
-**最后更新**：2026-03-05  
+## 七、后端开发建议
+
+> 本节为后端开发提供前端期望的数据格式和交互规范，基于 `app/src/services/` 和 `app/src/types/` 的实现。
+
+### 7.1 前端期望的数据格式
+
+#### 7.1.1 智能体列表响应
+
+```json
+{
+  "code": 0,
+  "message": "success",
+  "data": {
+    "list": [
+      {
+        "id": "agent_001",
+        "name": "智能客服",
+        "code": "smart_customer_service",
+        "type": "custom",
+        "status": "active",
+        "avatar": "https://example.com/avatar.png",
+        "description": "专业的智能客服助手",
+        "persona": "你是一个专业的客服助手...",
+        "welcome_message": "您好，有什么可以帮您？",
+        "tags": ["客服", "智能"],
+        "category": "service",
+        "version": "1.0.0",
+        "created_at": "2024-01-15T10:30:00Z",
+        "updated_at": "2024-01-15T10:30:00Z"
+      }
+    ],
+    "total": 100,
+    "page": 1,
+    "page_size": 20
+  },
+  "timestamp": 1708234567890
+}
+```
+
+#### 7.1.2 对话消息响应
+
+```json
+{
+  "id": "msg_001",
+  "conversation_id": "conv_001",
+  "role": "assistant",
+  "content": "您好，以下是最近的订单列表：",
+  "created_at": "2024-01-15T10:35:00Z",
+  "components": [
+    {
+      "id": "comp_001",
+      "type": "table",
+      "props": {
+        "columns": [
+          { "key": "order_id", "title": "订单号" },
+          { "key": "status", "title": "状态" },
+          { "key": "amount", "title": "金额" }
+        ],
+        "data": [
+          { "order_id": "ORD001", "status": "已发货", "amount": "¥299" },
+          { "order_id": "ORD002", "status": "配送中", "amount": "¥159" }
+        ]
+      }
+    }
+  ],
+  "tokens": {
+    "input": 150,
+    "output": 280
+  }
+}
+```
+
+### 7.2 WebSocket 消息格式
+
+#### 7.2.1 流式响应消息
+
+```json
+{
+  "type": "stream",
+  "data": {
+    "delta": "您好",
+    "done": false,
+    "conversation_id": "conv_001",
+    "message_id": "msg_001"
+  },
+  "timestamp": 1708234567890
+}
+```
+
+#### 7.2.2 完成消息（包含组件）
+
+```json
+{
+  "type": "stream",
+  "data": {
+    "delta": "",
+    "done": true,
+    "conversation_id": "conv_001",
+    "message_id": "msg_001",
+    "component": {
+      "id": "comp_001",
+      "type": "stats-card",
+      "props": {
+        "title": "销售概览",
+        "metrics": [
+          { "label": "总销售额", "value": "¥1,234,567", "trend": "up" },
+          { "label": "订单数", "value": "1,234", "trend": "up" },
+          { "label": "客单价", "value": "¥1,000", "trend": "down" }
+        ]
+      }
+    }
+  },
+  "timestamp": 1708234567890
+}
+```
+
+### 7.3 错误响应格式
+
+```json
+{
+  "code": 400001,
+  "message": "请求参数错误",
+  "detail": "name 字段不能为空",
+  "timestamp": 1708234567890
+}
+```
+
+### 7.4 动态组件类型定义
+
+前端支持以下动态组件类型，后端可根据业务场景返回：
+
+| 组件类型 | type 值      | 使用场景          |
+| -------- | ------------ | ----------------- |
+| 统计卡片 | `stats-card` | 展示关键指标、KPI |
+| 表格     | `table`      | 数据列表展示      |
+| 表单     | `form`       | 用户输入收集      |
+| 图表     | `chart`      | 数据可视化        |
+| 列表     | `list`       | 简单列表展示      |
+| 代码块   | `code`       | 代码展示          |
+| 图片     | `image`      | 图片展示          |
+| 确认框   | `confirm`    | 用户确认操作      |
+
+### 7.5 组件交互事件处理
+
+当用户在动态组件上进行交互（如提交表单、点击按钮），前端会发送事件到后端：
+
+```json
+{
+  "type": "component_event",
+  "data": {
+    "conversation_id": "conv_001",
+    "message_id": "msg_001",
+    "component_id": "comp_001",
+    "event_type": "form_submit",
+    "event_data": {
+      "name": "张三",
+      "phone": "13800138000",
+      "question": "我想咨询产品价格"
+    }
+  },
+  "timestamp": 1708234567890
+}
+```
+
+后端处理事件后，返回新的消息：
+
+```json
+{
+  "type": "stream",
+  "data": {
+    "delta": "感谢您的提交，张三先生/女士。我们已收到您的咨询请求...",
+    "done": true,
+    "conversation_id": "conv_001",
+    "message_id": "msg_002"
+  },
+  "timestamp": 1708234567890
+}
+```
+
+---
+
+**文档版本**：1.3  
+**最后更新**：2026-03-18  
 **维护者**：SmartLink Design Team
