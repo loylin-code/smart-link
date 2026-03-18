@@ -1059,6 +1059,14 @@ A: 回答2`
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    padding: $spacing-lg;
+
+    // 如果是代码编辑器，移除padding（编辑器自带padding）
+    > .code-editor {
+      padding: 0;
+      margin: (-$spacing-lg);
+      flex: 1;
+    }
   }
 
   // 代码编辑器
@@ -1148,7 +1156,6 @@ A: 回答2`
     display: flex;
     flex-direction: column;
     gap: $spacing-lg;
-    padding: $spacing-lg;
   }
 
   .setting-item {
