@@ -89,13 +89,126 @@
       <!-- Editor Area -->
       <main class="editor-area">
         <div class="editor-container">
-          <!-- System Prompt Editor -->
-          <div v-if="activeConfig === 'prompt'" class="editor-panel full-height">
-            <SystemPromptEditor
-              :soul="agentData.persona.soul"
-              :memory="agentData.persona.memory"
-              @update="handlePromptUpdate"
-            />
+          <!-- Soul Editor (人格定义) -->
+          <div v-if="activeConfig === 'soul'" class="editor-panel full-height">
+            <div class="prompt-editor">
+              <div class="section-header">
+                <div class="header-info">
+                  <h3>{{ t('agent.design.prompt.soulTitle') }}</h3>
+                  <p>{{ t('agent.design.prompt.soulDesc') }}</p>
+                </div>
+                <div class="header-actions">
+                  <button class="template-btn" @click="showSoulTemplates = !showSoulTemplates">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                    </svg>
+                    {{ t('agent.design.prompt.templates') }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- Templates Dropdown -->
+              <Transition name="slide">
+                <div v-if="showSoulTemplates" class="templates-panel">
+                  <div
+                    v-for="template in soulTemplates"
+                    :key="template.id"
+                    class="template-item"
+                    @click="applyTemplate('soul', template)"
+                  >
+                    <span class="template-icon">{{ template.icon }}</span>
+                    <div class="template-info">
+                      <span class="template-name">{{ template.name }}</span>
+                      <span class="template-desc">{{ template.description }}</span>
+                    </div>
+                  </div>
+                </div>
+              </Transition>
+
+              <div class="editor-content">
+                <textarea
+                  v-model="agentData.persona.soul"
+                  class="code-editor"
+                  :placeholder="t('agent.design.prompt.soulPlaceholder')"
+                />
+              </div>
+
+              <div class="editor-stats">
+                <span
+                  >{{ t('agent.design.prompt.chars') }}:
+                  {{ agentData.persona.soul?.length || 0 }}</span
+                >
+                <span
+                  >{{ t('agent.design.prompt.words') }}:
+                  {{ countWords(agentData.persona.soul) }}</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Memory Editor (记忆) -->
+          <div v-if="activeConfig === 'memory'" class="editor-panel full-height">
+            <div class="prompt-editor">
+              <div class="section-header">
+                <div class="header-info">
+                  <h3>{{ t('agent.design.prompt.memoryTitle') }}</h3>
+                  <p>{{ t('agent.design.prompt.memoryDesc') }}</p>
+                </div>
+                <div class="header-actions">
+                  <button class="template-btn" @click="showMemoryTemplates = !showMemoryTemplates">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                    </svg>
+                    {{ t('agent.design.prompt.templates') }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- Templates Dropdown -->
+              <Transition name="slide">
+                <div v-if="showMemoryTemplates" class="templates-panel">
+                  <div
+                    v-for="template in memoryTemplates"
+                    :key="template.id"
+                    class="template-item"
+                    @click="applyTemplate('memory', template)"
+                  >
+                    <span class="template-icon">{{ template.icon }}</span>
+                    <div class="template-info">
+                      <span class="template-name">{{ template.name }}</span>
+                      <span class="template-desc">{{ template.description }}</span>
+                    </div>
+                  </div>
+                </div>
+              </Transition>
+
+              <div class="editor-content">
+                <textarea
+                  v-model="agentData.persona.memory"
+                  class="code-editor"
+                  :placeholder="t('agent.design.prompt.memoryPlaceholder')"
+                />
+              </div>
+
+              <div class="editor-stats">
+                <span
+                  >{{ t('agent.design.prompt.chars') }}:
+                  {{ agentData.persona.memory?.length || 0 }}</span
+                >
+                <span
+                  >{{ t('agent.design.prompt.words') }}:
+                  {{ countWords(agentData.persona.memory) }}</span
+                >
+              </div>
+            </div>
           </div>
 
           <!-- Skills Editor -->
@@ -261,7 +374,6 @@
   import { useI18n } from 'vue-i18n'
   import { useAgentStore } from '@/store/modules/agent'
   import { useViewStore } from '@/store/modules/view'
-  import SystemPromptEditor from '@/components/agent/SystemPromptEditor.vue'
   import SkillSelector from '@/components/agent/SkillSelector.vue'
   import MCPSelector from '@/components/agent/MCPSelector.vue'
   import InteractionViewSelector from '@/components/agent/InteractionViewSelector.vue'
@@ -273,17 +385,161 @@
   const agentStore = useAgentStore()
   const viewStore = useViewStore()
 
+  // Template visibility
+  const showSoulTemplates = ref(false)
+  const showMemoryTemplates = ref(false)
+
+  // Soul templates
+  const soulTemplates = [
+    {
+      id: 'professional',
+      icon: '💼',
+      name: '专业顾问',
+      description: '适合客服、咨询场景',
+      content: `## 角色定义
+你是一位专业的智能助手，具备以下特质：
+
+### 性格特点
+- 专业、耐心、细致
+- 善于倾听和理解用户需求
+- 用简洁清晰的语言表达
+
+### 行为准则
+1. 始终保持专业态度
+2. 提供准确、有价值的信息
+3. 遇到不确定的问题，坦诚说明
+
+### 沟通风格
+- 使用礼貌用语
+- 避免过度使用表情符号
+- 保持回答简洁有力`
+    },
+    {
+      id: 'creative',
+      icon: '🎨',
+      name: '创意助手',
+      description: '适合设计、创作场景',
+      content: `## 角色定义
+你是一位富有创造力的智能助手：
+
+### 性格特点
+- 思维活跃、充满想象
+- 善于发现问题和机会
+- 鼓励探索和尝试
+
+### 核心能力
+- 创意构思与头脑风暴
+- 提供多角度思考
+- 给出具体可行的建议
+
+### 沟通风格
+- 使用生动有趣的语言
+- 适时提出启发式问题
+- 鼓励用户表达想法`
+    },
+    {
+      id: 'technical',
+      icon: '🔧',
+      name: '技术专家',
+      description: '适合开发、运维场景',
+      content: `## 角色定义
+你是一位技术领域的专家助手：
+
+### 专业领域
+- 软件开发与架构
+- 系统运维与优化
+- 技术方案设计
+
+### 行为准则
+1. 提供准确的技术信息
+2. 给出代码示例时确保可运行
+3. 解释技术概念时循序渐进
+
+### 输出规范
+- 代码使用标准格式
+- 关键步骤添加注释
+- 给出最佳实践建议`
+    }
+  ]
+
+  // Memory templates
+  const memoryTemplates = [
+    {
+      id: 'product',
+      icon: '📦',
+      name: '产品知识库',
+      description: '产品信息和功能说明',
+      content: `## 产品信息
+
+### 核心功能
+- 功能A：描述...
+- 功能B：描述...
+
+### 使用限制
+- 限制1
+- 限制2
+
+### 常见问题
+Q: 问题1?
+A: 回答1
+
+Q: 问题2?
+A: 回答2`
+    },
+    {
+      id: 'user',
+      icon: '👤',
+      name: '用户画像',
+      description: '目标用户特征信息',
+      content: `## 用户信息
+
+### 基本特征
+- 用户群体：...
+- 主要需求：...
+- 使用场景：...
+
+### 行为偏好
+- 偏好1
+- 偏好2
+
+### 历史记录
+- 最近交互：...
+- 已解决问题：...`
+    },
+    {
+      id: 'context',
+      icon: '📋',
+      name: '上下文记忆',
+      description: '对话上下文信息',
+      content: `## 上下文信息
+
+### 当前状态
+- 会话主题：...
+- 用户意图：...
+- 进度状态：...
+
+### 已确认信息
+- 信息1
+- 信息2
+
+### 待处理事项
+- [ ] 事项1
+- [ ] 事项2`
+    }
+  ]
+
   // Config items
   const configItems = [
-    { key: 'prompt', icon: '💬' },
+    { key: 'soul', icon: '🧬' },
+    { key: 'memory', icon: '🧠' },
     { key: 'skills', icon: '🎯' },
     { key: 'mcp', icon: '🔌' },
     { key: 'rag', icon: '📚' },
-    { key: 'llm', icon: '🧠' },
+    { key: 'llm', icon: '⚙️' },
     { key: 'view', icon: '🎨' }
   ]
 
-  const activeConfig = ref('prompt')
+  const activeConfig = ref('soul')
 
   // Agent data - split persona into soul and memory
   const agentData = reactive({
@@ -335,20 +591,32 @@
 
   function getConfigStatus(key: string): string {
     const statusMap: Record<string, boolean> = {
-      prompt: !!(agentData.persona.soul || agentData.persona.memory),
+      soul: !!agentData.persona.soul,
+      memory: !!agentData.persona.memory,
       llm: !!agentData.llm.model,
       rag: agentData.knowledge.searchConfig.enabled
     }
     return statusMap[key] ? 'configured' : ''
   }
 
-  function handlePreview() {
-    // Preview logic
+  function applyTemplate(type: 'soul' | 'memory', template: (typeof soulTemplates)[0]) {
+    agentData.persona[type] = template.content
+    if (type === 'soul') {
+      showSoulTemplates.value = false
+    } else {
+      showMemoryTemplates.value = false
+    }
   }
 
-  function handlePromptUpdate(data: { soul: string; memory: string }) {
-    agentData.persona.soul = data.soul
-    agentData.persona.memory = data.memory
+  function countWords(text: string): number {
+    if (!text) return 0
+    const chinese = (text.match(/[\u4e00-\u9fa5]/g) || []).length
+    const english = (text.match(/[a-zA-Z]+/g) || []).length
+    return chinese + english
+  }
+
+  function handlePreview() {
+    // Preview logic
   }
 
   function handleSkillsUpdate(bindings: SkillBinding[]) {
@@ -970,5 +1238,165 @@
     flex: 1;
     overflow: hidden;
     padding: $spacing-lg;
+  }
+
+  // Prompt Editor Styles
+  .prompt-editor {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: $bg-primary;
+    border-radius: $border-radius-lg;
+    border: 1px solid $border-color-lighter;
+    overflow: hidden;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-lg $spacing-xl;
+    background: $bg-secondary;
+    border-bottom: 1px solid $border-color-lighter;
+    flex-shrink: 0;
+  }
+
+  .header-info {
+    h3 {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+      color: $text-primary;
+      margin: 0 0 $spacing-xs 0;
+    }
+
+    p {
+      font-size: $font-size-sm;
+      color: $text-tertiary;
+      margin: 0;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+
+  .template-btn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-sm $spacing-md;
+    background: $bg-primary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-md;
+    font-size: $font-size-sm;
+    color: $text-secondary;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover {
+      border-color: $primary-color;
+      color: $primary-color;
+    }
+  }
+
+  .templates-panel {
+    padding: $spacing-md;
+    background: $bg-tertiary;
+    border-bottom: 1px solid $border-color-lighter;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-sm;
+  }
+
+  .template-item {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-sm;
+    padding: $spacing-md;
+    background: $bg-primary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: $primary-color;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+    }
+  }
+
+  .template-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .template-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .template-name {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $text-primary;
+  }
+
+  .template-desc {
+    font-size: $font-size-xs;
+    color: $text-tertiary;
+  }
+
+  .editor-content {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  .code-editor {
+    flex: 1;
+    padding: $spacing-lg;
+    background: $bg-primary;
+    border: none;
+    outline: none;
+    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+    font-size: $font-size-sm;
+    line-height: 1.7;
+    color: $text-primary;
+    resize: none;
+
+    &::placeholder {
+      color: $text-tertiary;
+    }
+  }
+
+  .editor-stats {
+    display: flex;
+    gap: $spacing-lg;
+    padding: $spacing-sm $spacing-lg;
+    background: $bg-secondary;
+    border-top: 1px solid $border-color-lighter;
+    font-size: $font-size-xs;
+    color: $text-tertiary;
+    flex-shrink: 0;
+  }
+
+  // Transitions
+  .slide-enter-active,
+  .slide-leave-active {
+    transition: all 0.2s ease;
+  }
+
+  .slide-enter-from,
+  .slide-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
   }
 </style>

@@ -962,8 +962,10 @@ export default {
       save: '保存',
       publish: '发布',
       config: {
-        prompt: '系统提示词',
-        promptDesc: '定义智能体的角色、行为和能力',
+        soul: '人格定义',
+        soulDesc: '定义智能体的性格、角色、行为模式',
+        memory: '记忆',
+        memoryDesc: '智能体的持久记忆、上下文信息',
         skills: '技能',
         skillsDesc: '配置智能体可使用的技能模块',
         mcp: 'MCP 服务',

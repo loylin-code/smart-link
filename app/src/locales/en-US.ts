@@ -950,8 +950,10 @@ export default {
       save: 'Save',
       publish: 'Publish',
       config: {
-        prompt: 'System Prompt',
-        promptDesc: 'Define agent role, behavior and capabilities',
+        soul: 'Soul Definition',
+        soulDesc: 'Define agent personality, role, behavior patterns',
+        memory: 'Memory',
+        memoryDesc: 'Persistent memory and context information',
         skills: 'Skills',
         skillsDesc: 'Configure skill modules available to the agent',
         mcp: 'MCP Service',
