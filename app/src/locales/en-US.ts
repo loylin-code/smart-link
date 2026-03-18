@@ -1042,7 +1042,8 @@ export default {
         emptyTitle: 'No Interaction Views',
         emptyDesc: 'Create interaction views to design the frontend interface for agents',
         addView: 'New View',
-        createTitle: 'Create Interaction View',
+        createTitle: 'New View',
+        createDesc: 'Select a view type and fill in basic information',
         viewName: 'View Name',
         viewNamePlaceholder: 'Enter view name',
         viewDescription: 'View Description',
@@ -1053,8 +1054,15 @@ export default {
         componentsCount: 'components',
         noDescription: 'No description',
         untitled: 'Untitled View',
+        unnamed: 'Unnamed',
         canvasEmpty: 'Canvas is empty',
         canvasEmptyDesc: 'Drag components from the left panel to start designing',
+        emptyComponents: 'Empty',
+        basicInfo: 'Basic Info',
+        selectType: 'Select Type',
+        preview: 'Preview',
+        emptyFilterTitle: 'No {type} views',
+        emptyFilterDesc: 'Create a {type} view to start designing',
 
         // View Types
         types: {
@@ -1072,6 +1080,15 @@ export default {
           table: 'Data table display with filtering, sorting, pagination',
           form: 'Form interface for user input and data collection',
           custom: 'Fully customizable layout with any component combination'
+        },
+
+        // View Type Short Descriptions
+        shortDesc: {
+          dashboard: 'Multi-dimensional data display',
+          chart: 'Chart visualization analysis',
+          table: 'Data table display',
+          form: 'Form data collection',
+          custom: 'Free layout design'
         },
 
         // Filter Labels
@@ -1119,7 +1136,6 @@ export default {
         expandConfig: 'Expand Config...',
 
         // Additional Properties Fields
-        basicInfo: 'Basic Info',
         namePlaceholder: 'Enter component name',
         bindingPlaceholder: 'e.g., data.fieldName',
         bindingHint: 'Enter data field path, supports nested objects',
@@ -1139,9 +1155,6 @@ export default {
         copy: 'Copy',
         paste: 'Paste',
         duplicate: 'Duplicate',
-
-        // Empty State
-        emptyComponents: '0 components',
 
         // Layout Components
         dropToLayout: 'Drop here to add child components',

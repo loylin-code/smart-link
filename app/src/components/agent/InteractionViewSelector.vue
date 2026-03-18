@@ -167,7 +167,10 @@
             aria-labelledby="dialog-title"
           >
             <div class="modal-header">
-              <h2 id="dialog-title">{{ t('agent.design.view.createTitle') }}</h2>
+              <div class="header-content">
+                <h2 id="dialog-title">{{ t('agent.design.view.createTitle') }}</h2>
+                <p class="header-subtitle">{{ t('agent.design.view.createDesc') }}</p>
+              </div>
               <button class="close-btn" @click="closeCreateDialog" aria-label="Close">
                 <svg viewBox="0 0 24 24" fill="none">
                   <path
@@ -181,70 +184,99 @@
             </div>
 
             <div class="modal-body">
-              <!-- Step 1: Select Type -->
-              <div v-if="createStep === 1" class="create-step">
-                <p class="step-description">{{ t('agent.design.view.selectTypeDesc') }}</p>
-                <div class="type-cards-grid">
-                  <button
-                    v-for="type in viewTypeCards"
-                    :key="type.value"
-                    class="type-card"
-                    :class="{ active: newView.type === type.value }"
-                    @click="selectType(type.value)"
-                  >
-                    <div class="type-card-gradient" :class="`gradient--${type.value}`"></div>
-                    <div class="type-card-content">
-                      <span class="type-card-icon">{{ type.icon }}</span>
-                      <h4>{{ type.label }}</h4>
-                      <p>{{ type.description }}</p>
-                    </div>
-                    <div class="type-card-check" v-if="newView.type === type.value">
-                      <svg viewBox="0 0 24 24" fill="none">
-                        <path
-                          d="M5 13l4 4L19 7"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </div>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Step 2: Configure Details -->
-              <div v-else class="create-step">
-                <div class="form-group">
-                  <label>{{ t('agent.design.view.viewName') }}</label>
-                  <input
-                    ref="nameInputRef"
-                    v-model="newView.name"
-                    type="text"
-                    :placeholder="t('agent.design.view.viewNamePlaceholder')"
-                    @keydown.enter="createView"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label>{{ t('agent.design.view.viewDescription') }}</label>
-                  <textarea
-                    v-model="newView.description"
-                    :placeholder="t('agent.design.view.viewDescPlaceholder')"
-                    rows="3"
-                    @keydown.enter.prevent="createView"
-                  />
-                </div>
-
-                <div class="selected-type-preview">
-                  <span class="preview-label">{{ t('agent.design.view.selectedType') }}</span>
-                  <div class="preview-badge" :class="`badge--${newView.type}`">
-                    <span>{{ getViewTypeIcon(newView.type) }}</span>
-                    <span>{{ getViewTypeLabel(newView.type) }}</span>
+              <div class="create-form">
+                <!-- 左侧：视图类型选择 -->
+                <div class="form-section types-section">
+                  <div class="section-title">
+                    <span class="section-icon">🎨</span>
+                    <span>{{ t('agent.design.view.selectType') }}</span>
                   </div>
-                  <button class="change-type-btn" @click="createStep = 1">
-                    {{ t('agent.design.view.changeType') }}
-                  </button>
+                  <div class="type-grid">
+                    <button
+                      v-for="type in viewTypeCards"
+                      :key="type.value"
+                      class="type-option"
+                      :class="{ active: newView.type === type.value }"
+                      @click="newView.type = type.value"
+                    >
+                      <div class="type-preview" :class="`preview--${type.value}`">
+                        <span class="preview-icon">{{ type.icon }}</span>
+                      </div>
+                      <div class="type-info">
+                        <span class="type-name">{{ type.label }}</span>
+                        <span class="type-desc">{{ type.shortDesc }}</span>
+                      </div>
+                      <div v-if="newView.type === type.value" class="type-check">
+                        <svg viewBox="0 0 24 24" fill="none">
+                          <path
+                            d="M5 13l4 4L19 7"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 右侧：基本信息 -->
+                <div class="form-section info-section">
+                  <div class="section-title">
+                    <span class="section-icon">📝</span>
+                    <span>{{ t('agent.design.view.basicInfo') }}</span>
+                  </div>
+
+                  <div class="form-fields">
+                    <div class="field-group">
+                      <label class="field-label">{{ t('agent.design.view.viewName') }}</label>
+                      <div class="field-input-wrapper">
+                        <input
+                          ref="nameInputRef"
+                          v-model="newView.name"
+                          type="text"
+                          class="field-input"
+                          :placeholder="t('agent.design.view.viewNamePlaceholder')"
+                          @keydown.enter="createView"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="field-group">
+                      <label class="field-label">{{
+                        t('agent.design.view.viewDescription')
+                      }}</label>
+                      <div class="field-input-wrapper">
+                        <textarea
+                          v-model="newView.description"
+                          class="field-textarea"
+                          :placeholder="t('agent.design.view.viewDescPlaceholder')"
+                          rows="3"
+                        />
+                      </div>
+                    </div>
+
+                    <!-- 预览卡片 -->
+                    <div class="preview-card">
+                      <div class="preview-header">
+                        <span class="preview-label">{{ t('agent.design.view.preview') }}</span>
+                      </div>
+                      <div class="preview-content">
+                        <div class="mini-card" :class="`mini--${newView.type}`">
+                          <div class="mini-thumb">
+                            <span>{{ getViewTypeIcon(newView.type) }}</span>
+                          </div>
+                          <div class="mini-body">
+                            <span class="mini-name">{{
+                              newView.name || t('agent.design.view.unnamed')
+                            }}</span>
+                            <span class="mini-type">{{ getViewTypeLabel(newView.type) }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -253,22 +285,17 @@
               <button class="cancel-btn" @click="closeCreateDialog">
                 {{ t('common.cancel') }}
               </button>
-              <div class="step-buttons">
-                <button v-if="createStep === 2" class="back-btn" @click="createStep = 1">
-                  {{ t('common.back') }}
-                </button>
-                <button v-if="createStep === 1" class="next-btn" @click="createStep = 2">
-                  {{ t('common.next') }}
-                </button>
-                <button
-                  v-else
-                  class="confirm-btn"
-                  :disabled="!newView.name.trim()"
-                  @click="createView"
-                >
-                  {{ t('agent.design.view.createAndDesign') }}
-                </button>
-              </div>
+              <button class="confirm-btn" :disabled="!newView.name.trim()" @click="createView">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 5v14M5 12h14"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+                {{ t('agent.design.view.createAndDesign') }}
+              </button>
             </div>
           </div>
         </div>
@@ -303,7 +330,6 @@
   // State
   const views = ref<InteractionView[]>([...props.modelValue])
   const showCreateDialog = ref(false)
-  const createStep = ref(1)
   const deletingId = ref<string | null>(null)
   const activeFilter = ref<InteractionView['type'] | 'all'>('all')
   const nameInputRef = ref<HTMLInputElement | null>(null)
@@ -320,6 +346,7 @@
       value: 'dashboard' as InteractionView['type'],
       icon: '📊',
       label: t('agent.design.view.types.dashboard'),
+      shortDesc: t('agent.design.view.shortDesc.dashboard'),
       description: t('agent.design.view.typeDesc.dashboard'),
       color: '#3b82f6'
     },
@@ -327,6 +354,7 @@
       value: 'chart' as InteractionView['type'],
       icon: '📈',
       label: t('agent.design.view.types.chart'),
+      shortDesc: t('agent.design.view.shortDesc.chart'),
       description: t('agent.design.view.typeDesc.chart'),
       color: '#10b981'
     },
@@ -334,6 +362,7 @@
       value: 'table' as InteractionView['type'],
       icon: '📋',
       label: t('agent.design.view.types.table'),
+      shortDesc: t('agent.design.view.shortDesc.table'),
       description: t('agent.design.view.typeDesc.table'),
       color: '#f59e0b'
     },
@@ -341,6 +370,7 @@
       value: 'form' as InteractionView['type'],
       icon: '📝',
       label: t('agent.design.view.types.form'),
+      shortDesc: t('agent.design.view.shortDesc.form'),
       description: t('agent.design.view.typeDesc.form'),
       color: '#ec4899'
     },
@@ -348,6 +378,7 @@
       value: 'custom' as InteractionView['type'],
       icon: '🎨',
       label: t('agent.design.view.types.custom'),
+      shortDesc: t('agent.design.view.shortDesc.custom'),
       description: t('agent.design.view.typeDesc.custom'),
       color: '#a855f7'
     }
@@ -421,26 +452,19 @@
 
   function openCreateDialog() {
     showCreateDialog.value = true
-    createStep.value = 1
     newView.name = ''
     newView.description = ''
     newView.type = 'dashboard'
+    nextTick(() => {
+      nameInputRef.value?.focus()
+    })
   }
 
   function closeCreateDialog() {
     showCreateDialog.value = false
-    createStep.value = 1
     newView.name = ''
     newView.description = ''
     newView.type = 'dashboard'
-  }
-
-  function selectType(type: InteractionView['type']) {
-    newView.type = type
-    createStep.value = 2
-    nextTick(() => {
-      nameInputRef.value?.focus()
-    })
   }
 
   function createView() {
@@ -1055,8 +1079,8 @@
   .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1066,36 +1090,45 @@
 
   .modal-container {
     width: 100%;
-    max-width: 600px;
+    max-width: 880px;
     background: $bg-primary;
     border-radius: $border-radius-xl;
-    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
     overflow: hidden;
   }
 
   .modal-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    padding: $spacing-lg $spacing-xl;
+    padding: $spacing-xl;
     border-bottom: 1px solid $border-color-lighter;
+    background: linear-gradient(180deg, $bg-secondary 0%, $bg-primary 100%);
 
-    h2 {
-      font-size: $font-size-xl;
-      font-weight: $font-weight-semibold;
-      color: $text-primary;
-      margin: 0;
+    .header-content {
+      h2 {
+        font-size: $font-size-2xl;
+        font-weight: $font-weight-bold;
+        color: $text-primary;
+        margin: 0 0 $spacing-xs 0;
+      }
+
+      .header-subtitle {
+        font-size: $font-size-sm;
+        color: $text-tertiary;
+        margin: 0;
+      }
     }
   }
 
   .close-btn {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: $bg-secondary;
-    border: none;
+    background: $bg-primary;
+    border: 1px solid $border-color-base;
     border-radius: $border-radius-md;
     color: $text-tertiary;
     cursor: pointer;
@@ -1108,117 +1141,150 @@
 
     &:hover {
       background: $bg-tertiary;
+      border-color: $text-tertiary;
       color: $text-primary;
     }
   }
 
   .modal-body {
-    padding: $spacing-xl;
+    padding: 0;
   }
 
-  .create-step {
-    animation: step-enter 0.3s ease;
-  }
-
-  @keyframes step-enter {
-    from {
-      opacity: 0;
-      transform: translateX(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  .step-description {
-    font-size: $font-size-sm;
-    color: $text-secondary;
-    margin: 0 0 $spacing-lg 0;
-  }
-
-  .type-cards-grid {
+  .create-form {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: $spacing-md;
+    grid-template-columns: 1fr 1fr;
+    min-height: 420px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
   }
 
-  .type-card {
-    position: relative;
+  .form-section {
+    padding: $spacing-xl;
     display: flex;
     flex-direction: column;
-    background: $bg-secondary;
-    border: 2px solid transparent;
+
+    &:first-child {
+      border-right: 1px solid $border-color-lighter;
+      background: $bg-secondary;
+
+      @media (max-width: 768px) {
+        border-right: none;
+        border-bottom: 1px solid $border-color-lighter;
+      }
+    }
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-lg;
+
+    .section-icon {
+      font-size: 20px;
+    }
+
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+  }
+
+  // Type selection grid
+  .type-grid {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+    flex: 1;
+  }
+
+  .type-option {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    padding: $spacing-md $spacing-lg;
+    background: $bg-primary;
+    border: 2px solid $border-color-base;
     border-radius: $border-radius-lg;
-    padding: $spacing-lg;
     cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
     text-align: left;
-    overflow: hidden;
+    position: relative;
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      border-color: $text-tertiary;
+      transform: translateX(4px);
     }
 
     &.active {
       border-color: $primary-color;
-      box-shadow: 0 4px 16px rgba($primary-color, 0.2);
-    }
+      background: rgba($primary-color, 0.05);
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
 
-    .type-card-gradient {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-
-      &.gradient--dashboard {
-        background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
-      }
-
-      &.gradient--chart {
-        background: linear-gradient(90deg, #10b981 0%, #3b82f6 100%);
-      }
-
-      &.gradient--table {
-        background: linear-gradient(90deg, #f59e0b 0%, #ef4444 100%);
-      }
-
-      &.gradient--form {
-        background: linear-gradient(90deg, #ec4899 0%, #a855f7 100%);
-      }
-
-      &.gradient--custom {
-        background: linear-gradient(90deg, #a855f7 0%, #ec4899 100%);
+      .type-preview {
+        transform: scale(1.05);
       }
     }
 
-    .type-card-content {
-      .type-card-icon {
-        font-size: 36px;
-        margin-bottom: $spacing-sm;
+    .type-preview {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: $border-radius-md;
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+
+      .preview-icon {
+        font-size: 24px;
       }
 
-      h4 {
+      &.preview--dashboard {
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      }
+
+      &.preview--chart {
+        background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      }
+
+      &.preview--table {
+        background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+      }
+
+      &.preview--form {
+        background: linear-gradient(135deg, #ec4899 0%, #a855f7 100%);
+      }
+
+      &.preview--custom {
+        background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+      }
+    }
+
+    .type-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+
+      .type-name {
         font-size: $font-size-base;
-        font-weight: $font-weight-semibold;
+        font-weight: $font-weight-medium;
         color: $text-primary;
-        margin: 0 0 $spacing-xs 0;
       }
 
-      p {
+      .type-desc {
         font-size: $font-size-xs;
         color: $text-tertiary;
-        margin: 0;
-        line-height: 1.4;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
 
-    .type-card-check {
-      position: absolute;
-      top: $spacing-sm;
-      right: $spacing-sm;
+    .type-check {
       width: 24px;
       height: 24px;
       background: $primary-color;
@@ -1227,7 +1293,8 @@
       align-items: center;
       justify-content: center;
       color: #fff;
-      animation: check-pop 0.3s ease;
+      flex-shrink: 0;
+      animation: check-scale 0.2s ease;
 
       svg {
         width: 14px;
@@ -1236,11 +1303,11 @@
     }
   }
 
-  @keyframes check-pop {
+  @keyframes check-scale {
     0% {
       transform: scale(0);
     }
-    70% {
+    50% {
       transform: scale(1.2);
     }
     100% {
@@ -1248,108 +1315,146 @@
     }
   }
 
-  .form-group {
+  // Form fields
+  .form-fields {
     display: flex;
     flex-direction: column;
-    gap: $spacing-sm;
-    margin-bottom: $spacing-lg;
+    gap: $spacing-lg;
+    flex: 1;
+  }
 
-    label {
-      font-size: $font-size-sm;
-      font-weight: $font-weight-medium;
-      color: $text-primary;
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+
+  .field-label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $text-primary;
+  }
+
+  .field-input-wrapper {
+    position: relative;
+  }
+
+  .field-input,
+  .field-textarea {
+    width: 100%;
+    padding: $spacing-md $spacing-lg;
+    background: $bg-secondary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-md;
+    font-size: $font-size-base;
+    color: $text-primary;
+    outline: none;
+    transition: all 0.2s ease;
+
+    &::placeholder {
+      color: $text-tertiary;
     }
 
-    input,
-    textarea {
-      padding: $spacing-sm $spacing-md;
-      background: $bg-secondary;
-      border: 1px solid $border-color-base;
-      border-radius: $border-radius-md;
-      font-size: $font-size-sm;
-      color: $text-primary;
-      outline: none;
-      transition: all 0.2s ease;
-
-      &::placeholder {
-        color: $text-tertiary;
-      }
-
-      &:focus {
-        border-color: $primary-color;
-        box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
-      }
-    }
-
-    textarea {
-      resize: none;
-      min-height: 80px;
+    &:focus {
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+      background: $bg-primary;
     }
   }
 
-  .selected-type-preview {
+  .field-textarea {
+    resize: none;
+    min-height: 100px;
+    line-height: 1.6;
+  }
+
+  // Preview card
+  .preview-card {
+    margin-top: auto;
+    padding: $spacing-lg;
+    background: $bg-secondary;
+    border-radius: $border-radius-lg;
+    border: 1px solid $border-color-lighter;
+  }
+
+  .preview-header {
+    margin-bottom: $spacing-md;
+
+    .preview-label {
+      font-size: $font-size-xs;
+      font-weight: $font-weight-medium;
+      color: $text-tertiary;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .preview-content {
+    display: flex;
+    justify-content: center;
+  }
+
+  .mini-card {
     display: flex;
     align-items: center;
     gap: $spacing-md;
     padding: $spacing-md;
-    background: $bg-secondary;
+    background: $bg-primary;
     border-radius: $border-radius-md;
+    border: 1px solid $border-color-base;
+    width: 100%;
+    max-width: 240px;
 
-    .preview-label {
-      font-size: $font-size-sm;
-      color: $text-secondary;
-    }
-
-    .preview-badge {
+    .mini-thumb {
+      width: 40px;
+      height: 40px;
       display: flex;
       align-items: center;
-      gap: $spacing-xs;
-      padding: $spacing-xs $spacing-sm;
-      border-radius: $border-radius-md;
-      font-size: $font-size-xs;
-      font-weight: $font-weight-medium;
+      justify-content: center;
+      border-radius: $border-radius-sm;
+      font-size: 20px;
+    }
 
-      &.badge--dashboard {
-        background: rgba(#3b82f6, 0.1);
-        color: #3b82f6;
+    .mini-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+
+      .mini-name {
+        font-size: $font-size-sm;
+        font-weight: $font-weight-medium;
+        color: $text-primary;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
-      &.badge--chart {
-        background: rgba(#10b981, 0.1);
-        color: #10b981;
-      }
-
-      &.badge--table {
-        background: rgba(#f59e0b, 0.1);
-        color: #f59e0b;
-      }
-
-      &.badge--form {
-        background: rgba(#ec4899, 0.1);
-        color: #ec4899;
-      }
-
-      &.badge--custom {
-        background: rgba(#a855f7, 0.1);
-        color: #a855f7;
+      .mini-type {
+        font-size: $font-size-xs;
+        color: $text-tertiary;
       }
     }
 
-    .change-type-btn {
-      margin-left: auto;
-      padding: $spacing-xs $spacing-sm;
-      background: transparent;
-      border: 1px solid $border-color-base;
-      border-radius: $border-radius-sm;
-      font-size: $font-size-xs;
-      color: $text-secondary;
-      cursor: pointer;
-      transition: all 0.2s ease;
+    &.mini--dashboard .mini-thumb {
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    }
 
-      &:hover {
-        border-color: $primary-color;
-        color: $primary-color;
-      }
+    &.mini--chart .mini-thumb {
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+    }
+
+    &.mini--table .mini-thumb {
+      background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+    }
+
+    &.mini--form .mini-thumb {
+      background: linear-gradient(135deg, #ec4899 0%, #a855f7 100%);
+    }
+
+    &.mini--custom .mini-thumb {
+      background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
     }
   }
 
@@ -1357,18 +1462,19 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: $spacing-sm;
-    padding: $spacing-md $spacing-xl;
+    gap: $spacing-md;
+    padding: $spacing-lg $spacing-xl;
     border-top: 1px solid $border-color-lighter;
     background: $bg-secondary;
   }
 
   .cancel-btn {
-    padding: $spacing-sm $spacing-lg;
+    padding: $spacing-sm $spacing-xl;
     background: $bg-primary;
     border: 1px solid $border-color-base;
     border-radius: $border-radius-md;
     font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
     color: $text-secondary;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -1379,31 +1485,11 @@
     }
   }
 
-  .step-buttons {
-    display: flex;
-    gap: $spacing-sm;
-  }
-
-  .back-btn,
-  .next-btn {
-    padding: $spacing-sm $spacing-lg;
-    background: $bg-primary;
-    border: 1px solid $border-color-base;
-    border-radius: $border-radius-md;
-    font-size: $font-size-sm;
-    color: $text-primary;
-    cursor: pointer;
-    transition: all 0.2s ease;
-
-    &:hover {
-      border-color: $primary-color;
-      color: $primary-color;
-    }
-  }
-
-  .next-btn,
   .confirm-btn {
-    padding: $spacing-sm $spacing-lg;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-sm $spacing-xl;
     background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
     border: none;
     border-radius: $border-radius-md;
@@ -1413,13 +1499,18 @@
     cursor: pointer;
     transition: all 0.2s ease;
 
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
 
     &:not(:disabled):hover {
-      box-shadow: 0 4px 12px rgba($primary-color, 0.4);
+      box-shadow: 0 4px 16px rgba($primary-color, 0.4);
       transform: translateY(-1px);
     }
   }

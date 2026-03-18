@@ -1052,7 +1052,8 @@ export default {
         emptyTitle: '暂无交互视图',
         emptyDesc: '创建交互视图来设计智能体的前端展示界面',
         addView: '新建视图',
-        createTitle: '新建交互视图',
+        createTitle: '新建视图',
+        createDesc: '选择视图类型并填写基本信息',
         viewName: '视图名称',
         viewNamePlaceholder: '请输入视图名称',
         viewDescription: '视图描述',
@@ -1063,8 +1064,15 @@ export default {
         componentsCount: '个组件',
         noDescription: '暂无描述',
         untitled: '未命名视图',
+        unnamed: '未命名',
         canvasEmpty: '画布为空',
         canvasEmptyDesc: '从左侧组件库拖拽组件到此处开始设计',
+        emptyComponents: '空',
+        basicInfo: '基本信息',
+        selectType: '选择类型',
+        preview: '预览',
+        emptyFilterTitle: '暂无{type}视图',
+        emptyFilterDesc: '创建{type}视图开始设计',
 
         // 视图类型
         types: {
@@ -1082,6 +1090,15 @@ export default {
           table: '数据表格展示，支持筛选、排序、分页',
           form: '表单交互界面，收集用户输入和数据',
           custom: '完全自定义布局，支持任意组件组合'
+        },
+
+        // 视图类型简短描述
+        shortDesc: {
+          dashboard: '多维度数据指标展示',
+          chart: '图表可视化分析',
+          table: '数据表格展示',
+          form: '表单数据收集',
+          custom: '自由布局设计'
         },
 
         // 筛选标签
@@ -1129,7 +1146,6 @@ export default {
         expandConfig: '展开配置...',
 
         // 新增属性面板字段
-        basicInfo: '基本信息',
         namePlaceholder: '请输入组件名称',
         bindingPlaceholder: '如：data.fieldName',
         bindingHint: '输入数据字段路径，支持嵌套对象',
@@ -1149,9 +1165,6 @@ export default {
         copy: '复制',
         paste: '粘贴',
         duplicate: '复制',
-
-        // 空状态
-        emptyComponents: '0 个组件',
 
         // 布局组件
         dropToLayout: '拖放到此处添加子组件',
