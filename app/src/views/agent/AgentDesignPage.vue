@@ -90,179 +90,194 @@
       <main class="editor-area">
         <div class="editor-container">
           <!-- Soul Editor (人格定义) -->
-          <div v-if="activeConfig === 'soul'" class="editor-panel full-height">
-            <div class="prompt-editor">
-              <div class="section-header">
-                <div class="header-info">
-                  <h3>{{ t('agent.design.prompt.soulTitle') }}</h3>
-                  <p>{{ t('agent.design.prompt.soulDesc') }}</p>
-                </div>
-                <div class="header-actions">
-                  <button class="template-btn" @click="showSoulTemplates = !showSoulTemplates">
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      />
-                    </svg>
-                    {{ t('agent.design.prompt.templates') }}
-                  </button>
+          <div v-if="activeConfig === 'soul'" class="editor-panel full-height" data-config="soul">
+            <div class="panel-header">
+              <div class="panel-header-left">
+                <div class="panel-icon">🧬</div>
+                <div class="panel-info">
+                  <h2 class="panel-title">{{ t('agent.design.config.soul') }}</h2>
+                  <p class="panel-desc">{{ t('agent.design.config.soulDesc') }}</p>
                 </div>
               </div>
+              <div class="panel-header-right">
+                <button class="template-btn" @click="showSoulTemplates = !showSoulTemplates">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    />
+                  </svg>
+                  {{ t('agent.design.prompt.templates') }}
+                </button>
+              </div>
+            </div>
 
-              <!-- Templates Dropdown -->
-              <Transition name="slide">
-                <div v-if="showSoulTemplates" class="templates-panel">
-                  <div
-                    v-for="template in soulTemplates"
-                    :key="template.id"
-                    class="template-item"
-                    @click="applyTemplate('soul', template)"
-                  >
-                    <span class="template-icon">{{ template.icon }}</span>
-                    <div class="template-info">
-                      <span class="template-name">{{ template.name }}</span>
-                      <span class="template-desc">{{ template.description }}</span>
-                    </div>
+            <!-- Templates Dropdown -->
+            <Transition name="slide">
+              <div v-if="showSoulTemplates" class="templates-panel">
+                <div
+                  v-for="template in soulTemplates"
+                  :key="template.id"
+                  class="template-item"
+                  @click="applyTemplate('soul', template)"
+                >
+                  <span class="template-icon">{{ template.icon }}</span>
+                  <div class="template-info">
+                    <span class="template-name">{{ template.name }}</span>
+                    <span class="template-desc">{{ template.description }}</span>
                   </div>
                 </div>
-              </Transition>
-
-              <div class="editor-content">
-                <textarea
-                  v-model="agentData.persona.soul"
-                  class="code-editor"
-                  :placeholder="t('agent.design.prompt.soulPlaceholder')"
-                />
               </div>
+            </Transition>
 
-              <div class="editor-stats">
-                <span
-                  >{{ t('agent.design.prompt.chars') }}:
-                  {{ agentData.persona.soul?.length || 0 }}</span
-                >
-                <span
-                  >{{ t('agent.design.prompt.words') }}:
-                  {{ countWords(agentData.persona.soul) }}</span
-                >
-              </div>
+            <div class="panel-body">
+              <textarea
+                v-model="agentData.persona.soul"
+                class="code-editor"
+                :placeholder="t('agent.design.prompt.soulPlaceholder')"
+              />
+            </div>
+
+            <div class="panel-footer">
+              <span
+                >{{ t('agent.design.prompt.chars') }}:
+                {{ agentData.persona.soul?.length || 0 }}</span
+              >
+              <span
+                >{{ t('agent.design.prompt.words') }}:
+                {{ countWords(agentData.persona.soul) }}</span
+              >
             </div>
           </div>
 
           <!-- Memory Editor (记忆) -->
-          <div v-if="activeConfig === 'memory'" class="editor-panel full-height">
-            <div class="prompt-editor">
-              <div class="section-header">
-                <div class="header-info">
-                  <h3>{{ t('agent.design.prompt.memoryTitle') }}</h3>
-                  <p>{{ t('agent.design.prompt.memoryDesc') }}</p>
-                </div>
-                <div class="header-actions">
-                  <button class="template-btn" @click="showMemoryTemplates = !showMemoryTemplates">
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      />
-                    </svg>
-                    {{ t('agent.design.prompt.templates') }}
-                  </button>
+          <div
+            v-if="activeConfig === 'memory'"
+            class="editor-panel full-height"
+            data-config="memory"
+          >
+            <div class="panel-header">
+              <div class="panel-header-left">
+                <div class="panel-icon">🧠</div>
+                <div class="panel-info">
+                  <h2 class="panel-title">{{ t('agent.design.config.memory') }}</h2>
+                  <p class="panel-desc">{{ t('agent.design.config.memoryDesc') }}</p>
                 </div>
               </div>
+              <div class="panel-header-right">
+                <button class="template-btn" @click="showMemoryTemplates = !showMemoryTemplates">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    />
+                  </svg>
+                  {{ t('agent.design.prompt.templates') }}
+                </button>
+              </div>
+            </div>
 
-              <!-- Templates Dropdown -->
-              <Transition name="slide">
-                <div v-if="showMemoryTemplates" class="templates-panel">
-                  <div
-                    v-for="template in memoryTemplates"
-                    :key="template.id"
-                    class="template-item"
-                    @click="applyTemplate('memory', template)"
-                  >
-                    <span class="template-icon">{{ template.icon }}</span>
-                    <div class="template-info">
-                      <span class="template-name">{{ template.name }}</span>
-                      <span class="template-desc">{{ template.description }}</span>
-                    </div>
+            <!-- Templates Dropdown -->
+            <Transition name="slide">
+              <div v-if="showMemoryTemplates" class="templates-panel">
+                <div
+                  v-for="template in memoryTemplates"
+                  :key="template.id"
+                  class="template-item"
+                  @click="applyTemplate('memory', template)"
+                >
+                  <span class="template-icon">{{ template.icon }}</span>
+                  <div class="template-info">
+                    <span class="template-name">{{ template.name }}</span>
+                    <span class="template-desc">{{ template.description }}</span>
                   </div>
                 </div>
-              </Transition>
-
-              <div class="editor-content">
-                <textarea
-                  v-model="agentData.persona.memory"
-                  class="code-editor"
-                  :placeholder="t('agent.design.prompt.memoryPlaceholder')"
-                />
               </div>
+            </Transition>
 
-              <div class="editor-stats">
-                <span
-                  >{{ t('agent.design.prompt.chars') }}:
-                  {{ agentData.persona.memory?.length || 0 }}</span
-                >
-                <span
-                  >{{ t('agent.design.prompt.words') }}:
-                  {{ countWords(agentData.persona.memory) }}</span
-                >
-              </div>
+            <div class="panel-body">
+              <textarea
+                v-model="agentData.persona.memory"
+                class="code-editor"
+                :placeholder="t('agent.design.prompt.memoryPlaceholder')"
+              />
+            </div>
+
+            <div class="panel-footer">
+              <span
+                >{{ t('agent.design.prompt.chars') }}:
+                {{ agentData.persona.memory?.length || 0 }}</span
+              >
+              <span
+                >{{ t('agent.design.prompt.words') }}:
+                {{ countWords(agentData.persona.memory) }}</span
+              >
             </div>
           </div>
 
           <!-- Skills Editor -->
-          <div v-if="activeConfig === 'skills'" class="editor-panel full-height skills-panel">
-            <div class="skills-header">
-              <div class="header-content">
-                <div class="header-icon">🎯</div>
-                <div class="header-info">
-                  <h2>{{ t('agent.design.config.skills') }}</h2>
-                  <p>{{ t('agent.design.config.skillsDesc') }}</p>
+          <div
+            v-if="activeConfig === 'skills'"
+            class="editor-panel full-height"
+            data-config="skills"
+          >
+            <div class="panel-header">
+              <div class="panel-header-left">
+                <div class="panel-icon">🎯</div>
+                <div class="panel-info">
+                  <h2 class="panel-title">{{ t('agent.design.config.skills') }}</h2>
+                  <p class="panel-desc">{{ t('agent.design.config.skillsDesc') }}</p>
                 </div>
               </div>
-              <div class="header-stats">
-                <div class="stat-item">
+              <div class="panel-header-right">
+                <div class="panel-stat">
                   <span class="stat-value">{{ agentData.skills.length }}</span>
                   <span class="stat-label">{{ t('agent.design.skills.selected') }}</span>
                 </div>
               </div>
             </div>
-            <div class="skills-body">
+            <div class="panel-body">
               <SkillSelector :bindings="agentData.skills" @update="handleSkillsUpdate" />
             </div>
           </div>
 
           <!-- MCP Editor -->
-          <div v-if="activeConfig === 'mcp'" class="editor-panel full-height mcp-panel">
-            <div class="mcp-header">
-              <div class="header-content">
-                <div class="header-icon">🔌</div>
-                <div class="header-info">
-                  <h2>{{ t('agent.design.config.mcp') }}</h2>
-                  <p>{{ t('agent.design.config.mcpDesc') }}</p>
+          <div v-if="activeConfig === 'mcp'" class="editor-panel full-height" data-config="mcp">
+            <div class="panel-header">
+              <div class="panel-header-left">
+                <div class="panel-icon">🔌</div>
+                <div class="panel-info">
+                  <h2 class="panel-title">{{ t('agent.design.config.mcp') }}</h2>
+                  <p class="panel-desc">{{ t('agent.design.config.mcpDesc') }}</p>
                 </div>
               </div>
-              <div class="header-stats">
-                <div class="stat-item">
+              <div class="panel-header-right">
+                <div class="panel-stat">
                   <span class="stat-value">{{ agentData.mcpServers.length }}</span>
                   <span class="stat-label">{{ t('agent.design.mcp.selected') }}</span>
                 </div>
               </div>
             </div>
-            <div class="mcp-body">
+            <div class="panel-body">
               <MCPSelector :bindings="agentData.mcpServers" @update="handleMCPUpdate" />
             </div>
           </div>
 
           <!-- RAG Editor -->
-          <div v-if="activeConfig === 'rag'" class="editor-panel">
-            <div class="editor-header">
-              <h2>{{ t('agent.design.config.rag') }}</h2>
-              <p>{{ t('agent.design.config.ragDesc') }}</p>
+          <div v-if="activeConfig === 'rag'" class="editor-panel" data-config="rag">
+            <div class="panel-header">
+              <div class="panel-header-left">
+                <div class="panel-icon">📚</div>
+                <div class="panel-info">
+                  <h2 class="panel-title">{{ t('agent.design.config.rag') }}</h2>
+                  <p class="panel-desc">{{ t('agent.design.config.ragDesc') }}</p>
+                </div>
+              </div>
             </div>
-            <div class="editor-body">
-              <div class="rag-settings">
+            <div class="panel-body">
+              <div class="settings-grid">
                 <div class="setting-item">
                   <label>{{ t('agent.design.rag.enable') }}</label>
                   <input v-model="agentData.knowledge.searchConfig.enabled" type="checkbox" />
@@ -291,13 +306,18 @@
           </div>
 
           <!-- LLM Editor -->
-          <div v-if="activeConfig === 'llm'" class="editor-panel">
-            <div class="editor-header">
-              <h2>{{ t('agent.design.config.llm') }}</h2>
-              <p>{{ t('agent.design.config.llmDesc') }}</p>
+          <div v-if="activeConfig === 'llm'" class="editor-panel" data-config="llm">
+            <div class="panel-header">
+              <div class="panel-header-left">
+                <div class="panel-icon">⚙️</div>
+                <div class="panel-info">
+                  <h2 class="panel-title">{{ t('agent.design.config.llm') }}</h2>
+                  <p class="panel-desc">{{ t('agent.design.config.llmDesc') }}</p>
+                </div>
+              </div>
             </div>
-            <div class="editor-body">
-              <div class="llm-settings">
+            <div class="panel-body">
+              <div class="settings-grid">
                 <div class="setting-item">
                   <label>{{ t('agent.design.llm.provider') }}</label>
                   <select v-model="agentData.llm.provider">
@@ -318,14 +338,16 @@
                 </div>
                 <div class="setting-item">
                   <label>{{ t('agent.design.llm.temperature') }}</label>
-                  <input
-                    v-model.number="agentData.llm.temperature"
-                    type="range"
-                    min="0"
-                    max="2"
-                    step="0.1"
-                  />
-                  <span class="value">{{ agentData.llm.temperature }}</span>
+                  <div class="slider-group">
+                    <input
+                      v-model.number="agentData.llm.temperature"
+                      type="range"
+                      min="0"
+                      max="2"
+                      step="0.1"
+                    />
+                    <span class="slider-value">{{ agentData.llm.temperature }}</span>
+                  </div>
                 </div>
                 <div class="setting-item">
                   <label>{{ t('agent.design.llm.maxTokens') }}</label>
@@ -342,23 +364,23 @@
           </div>
 
           <!-- Interaction View Editor -->
-          <div v-if="activeConfig === 'view'" class="editor-panel full-height view-panel">
-            <div class="view-header">
-              <div class="header-content">
-                <div class="header-icon">🎨</div>
-                <div class="header-info">
-                  <h2>{{ t('agent.design.config.view') }}</h2>
-                  <p>{{ t('agent.design.config.viewDesc') }}</p>
+          <div v-if="activeConfig === 'view'" class="editor-panel full-height" data-config="view">
+            <div class="panel-header">
+              <div class="panel-header-left">
+                <div class="panel-icon">🎨</div>
+                <div class="panel-info">
+                  <h2 class="panel-title">{{ t('agent.design.config.view') }}</h2>
+                  <p class="panel-desc">{{ t('agent.design.config.viewDesc') }}</p>
                 </div>
               </div>
-              <div class="header-stats">
-                <div class="stat-item">
+              <div class="panel-header-right">
+                <div class="panel-stat">
                   <span class="stat-value">{{ agentData.views.length }}</span>
                   <span class="stat-label">{{ t('agent.design.view.created') }}</span>
                 </div>
               </div>
             </div>
-            <div class="view-body">
+            <div class="panel-body">
               <InteractionViewSelector v-model="agentData.views" />
             </div>
           </div>
@@ -909,9 +931,16 @@ A: 回答2`
     padding: $spacing-xl;
   }
 
+  // ============================================
+  // 统一的面板样式
+  // ============================================
   .editor-panel {
     max-width: 900px;
     margin: 0 auto;
+    background: $bg-primary;
+    border-radius: $border-radius-lg;
+    border: 1px solid $border-color-lighter;
+    overflow: hidden;
 
     &.full-height {
       max-width: none;
@@ -921,175 +950,8 @@ A: 回答2`
     }
   }
 
-  .editor-header {
-    margin-bottom: $spacing-xl;
-
-    h2 {
-      font-size: $font-size-xl;
-      font-weight: $font-weight-semibold;
-      color: $text-primary;
-      margin: 0 0 $spacing-xs 0;
-    }
-
-    p {
-      font-size: $font-size-sm;
-      color: $text-tertiary;
-      margin: 0;
-    }
-  }
-
-  .editor-body {
-    background: $bg-primary;
-    border-radius: $border-radius-lg;
-    border: 1px solid $border-color-lighter;
-    padding: $spacing-xl;
-  }
-
-  // Empty State
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: $spacing-3xl;
-    text-align: center;
-  }
-
-  .empty-icon {
-    font-size: 48px;
-    margin-bottom: $spacing-md;
-    opacity: 0.6;
-  }
-
-  .empty-state h3 {
-    font-size: $font-size-lg;
-    font-weight: $font-weight-medium;
-    color: $text-primary;
-    margin: 0 0 $spacing-xs 0;
-  }
-
-  .empty-state p {
-    font-size: $font-size-sm;
-    color: $text-tertiary;
-    margin: 0 0 $spacing-lg 0;
-  }
-
-  .add-btn {
-    display: flex;
-    align-items: center;
-    gap: $spacing-xs;
-    padding: $spacing-sm $spacing-lg;
-    background: $primary-color;
-    border: none;
-    border-radius: $border-radius-md;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    color: #fff;
-    cursor: pointer;
-    transition: all 0.2s ease;
-
-    svg {
-      width: 16px;
-      height: 16px;
-    }
-
-    &:hover {
-      background: $primary-light;
-    }
-  }
-
-  // Settings
-  .rag-settings,
-  .llm-settings {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-lg;
-  }
-
-  .setting-item {
-    display: flex;
-    align-items: center;
-    gap: $spacing-md;
-
-    label {
-      width: 120px;
-      font-size: $font-size-sm;
-      font-weight: $font-weight-medium;
-      color: $text-primary;
-      flex-shrink: 0;
-    }
-
-    select,
-    input[type='number'] {
-      flex: 1;
-      padding: $spacing-sm $spacing-md;
-      background: $bg-secondary;
-      border: 1px solid $border-color-base;
-      border-radius: $border-radius-md;
-      font-size: $font-size-sm;
-      color: $text-primary;
-
-      &:focus {
-        outline: none;
-        border-color: $primary-color;
-      }
-    }
-
-    input[type='range'] {
-      flex: 1;
-    }
-
-    .value {
-      width: 40px;
-      font-size: $font-size-sm;
-      color: $text-secondary;
-      text-align: right;
-    }
-
-    input[type='checkbox'] {
-      width: 18px;
-      height: 18px;
-      cursor: pointer;
-    }
-  }
-
-  // Design Editor
-  .design-editor {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .design-placeholder {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: $text-tertiary;
-
-    .placeholder-icon {
-      font-size: 64px;
-      margin-bottom: $spacing-md;
-      opacity: 0.4;
-    }
-
-    p {
-      font-size: $font-size-sm;
-    }
-  }
-
-  // Skills Panel
-  .skills-panel {
-    display: flex;
-    flex-direction: column;
-    background: $bg-primary;
-    border-radius: $border-radius-lg;
-    border: 1px solid $border-color-lighter;
-    overflow: hidden;
-  }
-
-  .skills-header {
+  // 面板头部 - 统一结构
+  .panel-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1099,13 +961,13 @@ A: 回答2`
     flex-shrink: 0;
   }
 
-  .header-content {
+  .panel-header-left {
     display: flex;
     align-items: center;
     gap: $spacing-md;
   }
 
-  .header-icon {
+  .panel-icon {
     width: 48px;
     height: 48px;
     display: flex;
@@ -1114,35 +976,43 @@ A: 回答2`
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
     border-radius: $border-radius-lg;
     font-size: 24px;
+    flex-shrink: 0;
   }
 
-  .header-info {
-    h2 {
-      font-size: $font-size-lg;
-      font-weight: $font-weight-semibold;
-      color: $text-primary;
-      margin: 0 0 $spacing-xs 0;
-    }
-
-    p {
-      font-size: $font-size-sm;
-      color: $text-tertiary;
-      margin: 0;
-    }
-  }
-
-  .header-stats {
+  .panel-info {
     display: flex;
-    gap: $spacing-lg;
+    flex-direction: column;
+    gap: 2px;
   }
 
-  .stat-item {
+  .panel-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+    margin: 0;
+  }
+
+  .panel-desc {
+    font-size: $font-size-sm;
+    color: $text-tertiary;
+    margin: 0;
+  }
+
+  .panel-header-right {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+
+  // 面板统计
+  .panel-stat {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: $spacing-sm $spacing-lg;
     background: $bg-primary;
     border-radius: $border-radius-md;
+    min-width: 80px;
   }
 
   .stat-value {
@@ -1158,130 +1028,7 @@ A: 回答2`
     margin-top: $spacing-xs;
   }
 
-  .skills-body {
-    flex: 1;
-    overflow: hidden;
-    padding: $spacing-lg;
-  }
-
-  // MCP Panel
-  .mcp-panel {
-    display: flex;
-    flex-direction: column;
-    background: $bg-primary;
-    border-radius: $border-radius-lg;
-    border: 1px solid $border-color-lighter;
-    overflow: hidden;
-
-    .header-icon {
-      background: linear-gradient(
-        135deg,
-        rgba(16, 185, 129, 0.15) 0%,
-        rgba(59, 130, 246, 0.15) 100%
-      );
-    }
-
-    .stat-value {
-      color: #10b981;
-    }
-  }
-
-  .mcp-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: $spacing-lg $spacing-xl;
-    background: $bg-secondary;
-    border-bottom: 1px solid $border-color-lighter;
-    flex-shrink: 0;
-  }
-
-  .mcp-body {
-    flex: 1;
-    overflow: hidden;
-    padding: $spacing-lg;
-  }
-
-  // View Panel
-  .view-panel {
-    display: flex;
-    flex-direction: column;
-    background: $bg-primary;
-    border-radius: $border-radius-lg;
-    border: 1px solid $border-color-lighter;
-    overflow: hidden;
-
-    .header-icon {
-      background: linear-gradient(
-        135deg,
-        rgba(168, 85, 247, 0.15) 0%,
-        rgba(236, 72, 153, 0.15) 100%
-      );
-    }
-
-    .stat-value {
-      color: #a855f7;
-    }
-  }
-
-  .view-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: $spacing-lg $spacing-xl;
-    background: $bg-secondary;
-    border-bottom: 1px solid $border-color-lighter;
-    flex-shrink: 0;
-  }
-
-  .view-body {
-    flex: 1;
-    overflow: hidden;
-    padding: $spacing-lg;
-  }
-
-  // Prompt Editor Styles
-  .prompt-editor {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    background: $bg-primary;
-    border-radius: $border-radius-lg;
-    border: 1px solid $border-color-lighter;
-    overflow: hidden;
-  }
-
-  .section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: $spacing-lg $spacing-xl;
-    background: $bg-secondary;
-    border-bottom: 1px solid $border-color-lighter;
-    flex-shrink: 0;
-  }
-
-  .header-info {
-    h3 {
-      font-size: $font-size-lg;
-      font-weight: $font-weight-semibold;
-      color: $text-primary;
-      margin: 0 0 $spacing-xs 0;
-    }
-
-    p {
-      font-size: $font-size-sm;
-      color: $text-tertiary;
-      margin: 0;
-    }
-  }
-
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: $spacing-sm;
-  }
-
+  // 模板按钮
   .template-btn {
     display: flex;
     align-items: center;
@@ -1306,6 +1053,45 @@ A: 回答2`
     }
   }
 
+  // 面板内容区
+  .panel-body {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  // 代码编辑器
+  .code-editor {
+    flex: 1;
+    padding: $spacing-lg;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+    font-size: $font-size-sm;
+    line-height: 1.7;
+    color: $text-primary;
+    resize: none;
+
+    &::placeholder {
+      color: $text-tertiary;
+    }
+  }
+
+  // 面板底部
+  .panel-footer {
+    display: flex;
+    gap: $spacing-lg;
+    padding: $spacing-sm $spacing-lg;
+    background: $bg-secondary;
+    border-top: 1px solid $border-color-lighter;
+    font-size: $font-size-xs;
+    color: $text-tertiary;
+    flex-shrink: 0;
+  }
+
+  // 模板面板
   .templates-panel {
     padding: $spacing-md;
     background: $bg-tertiary;
@@ -1313,6 +1099,7 @@ A: 回答2`
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: $spacing-sm;
+    flex-shrink: 0;
   }
 
   .template-item {
@@ -1354,41 +1141,154 @@ A: 回答2`
     color: $text-tertiary;
   }
 
-  .editor-content {
-    flex: 1;
+  // ============================================
+  // 设置表单样式
+  // ============================================
+  .settings-grid {
     display: flex;
-    overflow: hidden;
+    flex-direction: column;
+    gap: $spacing-lg;
+    padding: $spacing-lg;
   }
 
-  .code-editor {
-    flex: 1;
-    padding: $spacing-lg;
-    background: $bg-primary;
-    border: none;
-    outline: none;
-    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
-    font-size: $font-size-sm;
-    line-height: 1.7;
-    color: $text-primary;
-    resize: none;
+  .setting-item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
 
-    &::placeholder {
-      color: $text-tertiary;
+    label {
+      width: 120px;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+      color: $text-primary;
+      flex-shrink: 0;
+    }
+
+    select,
+    input[type='number'] {
+      flex: 1;
+      padding: $spacing-sm $spacing-md;
+      background: $bg-secondary;
+      border: 1px solid $border-color-base;
+      border-radius: $border-radius-md;
+      font-size: $font-size-sm;
+      color: $text-primary;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+      }
+    }
+
+    input[type='checkbox'] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
     }
   }
 
-  .editor-stats {
+  .slider-group {
+    flex: 1;
     display: flex;
-    gap: $spacing-lg;
-    padding: $spacing-sm $spacing-lg;
-    background: $bg-secondary;
-    border-top: 1px solid $border-color-lighter;
-    font-size: $font-size-xs;
-    color: $text-tertiary;
-    flex-shrink: 0;
+    align-items: center;
+    gap: $spacing-sm;
+
+    input[type='range'] {
+      flex: 1;
+    }
+
+    .slider-value {
+      width: 40px;
+      font-size: $font-size-sm;
+      color: $text-secondary;
+      text-align: right;
+    }
   }
 
-  // Transitions
+  // ============================================
+  // 不同配置项的图标颜色
+  // ============================================
+  .editor-panel {
+    // Soul - 紫色
+    &[data-config='soul'] .panel-icon {
+      background: linear-gradient(
+        135deg,
+        rgba(139, 92, 246, 0.15) 0%,
+        rgba(236, 72, 153, 0.15) 100%
+      );
+    }
+
+    // Memory - 青色
+    &[data-config='memory'] .panel-icon {
+      background: linear-gradient(
+        135deg,
+        rgba(6, 182, 212, 0.15) 0%,
+        rgba(59, 130, 246, 0.15) 100%
+      );
+    }
+
+    // Skills - 蓝色
+    &[data-config='skills'] .panel-icon {
+      background: linear-gradient(
+        135deg,
+        rgba(59, 130, 246, 0.15) 0%,
+        rgba(99, 102, 241, 0.15) 100%
+      );
+    }
+
+    // MCP - 绿色
+    &[data-config='mcp'] .panel-icon {
+      background: linear-gradient(
+        135deg,
+        rgba(16, 185, 129, 0.15) 0%,
+        rgba(34, 197, 94, 0.15) 100%
+      );
+    }
+
+    // RAG - 橙色
+    &[data-config='rag'] .panel-icon {
+      background: linear-gradient(
+        135deg,
+        rgba(249, 115, 22, 0.15) 0%,
+        rgba(234, 179, 8, 0.15) 100%
+      );
+    }
+
+    // LLM - 灰色
+    &[data-config='llm'] .panel-icon {
+      background: linear-gradient(
+        135deg,
+        rgba(100, 116, 139, 0.15) 0%,
+        rgba(71, 85, 105, 0.15) 100%
+      );
+    }
+
+    // View - 粉色
+    &[data-config='view'] .panel-icon {
+      background: linear-gradient(
+        135deg,
+        rgba(236, 72, 153, 0.15) 0%,
+        rgba(244, 114, 182, 0.15) 100%
+      );
+    }
+  }
+
+  // 统计值的颜色
+  .editor-panel[data-config='skills'] .stat-value {
+    color: $primary-color;
+  }
+
+  .editor-panel[data-config='mcp'] .stat-value {
+    color: #10b981;
+  }
+
+  .editor-panel[data-config='view'] .stat-value {
+    color: #a855f7;
+  }
+
+  // ============================================
+  // 动画过渡
+  // ============================================
   .slide-enter-active,
   .slide-leave-active {
     transition: all 0.2s ease;
