@@ -118,17 +118,18 @@
 
 <style scoped lang="scss">
   .component-card {
-    background: $bg-secondary;
+    background: $bg-primary;
     border: 1px solid $border-color-light;
     border-radius: $border-radius-lg;
     cursor: pointer;
     transition: all $transition-base ease;
     overflow: hidden;
+    box-shadow: $shadow-card;
 
     &:hover {
-      border-color: rgba(24, 144, 255, 0.5);
+      border-color: rgba(59, 130, 255, 0.5);
       transform: translateY(-4px);
-      box-shadow: $shadow-md;
+      box-shadow: $shadow-card-hover;
 
       .preview-area {
         background: $bg-tertiary;
