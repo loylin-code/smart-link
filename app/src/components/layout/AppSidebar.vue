@@ -329,7 +329,7 @@
     display: flex;
     align-items: center;
     gap: $spacing-sm;
-    height: 40px;
+    height: 48px;
     padding: 0 $spacing-md;
     border-radius: $border-radius-md;
     color: $text-secondary;
@@ -430,7 +430,7 @@
   .nav-child {
     display: flex;
     align-items: center;
-    height: 36px;
+    height: 40px;
     padding: 0 $spacing-md;
     border-radius: $border-radius-md;
     color: $text-tertiary;
