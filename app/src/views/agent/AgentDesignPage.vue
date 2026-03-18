@@ -1332,7 +1332,7 @@ A: 回答2`
   }
 
   .section-label {
-    font-size: $font-size-xs;
+    font-size: $font-size-sm;
     font-weight: $font-weight-semibold;
     color: $text-tertiary;
     text-transform: uppercase;
@@ -1357,13 +1357,13 @@ A: 回答2`
   }
 
   .toggle-label {
-    font-size: $font-size-sm;
+    font-size: $font-size-base;
     font-weight: $font-weight-medium;
     color: $text-primary;
   }
 
   .toggle-hint {
-    font-size: $font-size-xs;
+    font-size: $font-size-sm;
     color: $text-tertiary;
   }
 
@@ -1439,13 +1439,13 @@ A: 回答2`
   }
 
   .param-name {
-    font-size: $font-size-sm;
+    font-size: $font-size-base;
     font-weight: $font-weight-medium;
     color: $text-primary;
   }
 
   .param-value {
-    font-size: $font-size-lg;
+    font-size: $font-size-xl;
     font-weight: $font-weight-bold;
     color: $primary-color;
     font-variant-numeric: tabular-nums;
@@ -1527,16 +1527,16 @@ A: 回答2`
     margin-top: $spacing-xs;
 
     span {
-      font-size: 10px;
+      font-size: $font-size-xs;
       color: $text-tertiary;
     }
   }
 
   .param-desc {
-    font-size: $font-size-xs;
+    font-size: $font-size-sm;
     color: $text-tertiary;
     margin: 0;
-    line-height: 1.4;
+    line-height: 1.5;
   }
 
   // ============================================
@@ -1561,7 +1561,7 @@ A: 回答2`
   }
 
   .select-label {
-    font-size: $font-size-xs;
+    font-size: $font-size-sm;
     font-weight: $font-weight-medium;
     color: $text-secondary;
   }
@@ -1571,11 +1571,11 @@ A: 回答2`
 
     select {
       width: 100%;
-      padding: $spacing-sm $spacing-xl $spacing-sm $spacing-md;
+      padding: $spacing-md $spacing-xl $spacing-md $spacing-md;
       background: $bg-secondary;
       border: 1px solid $border-color-base;
       border-radius: $border-radius-md;
-      font-size: $font-size-sm;
+      font-size: $font-size-base;
       font-weight: $font-weight-medium;
       color: $text-primary;
       cursor: pointer;
@@ -1612,11 +1612,11 @@ A: 回答2`
 
   .token-input {
     width: 100%;
-    padding: $spacing-sm $spacing-md;
+    padding: $spacing-md $spacing-lg;
     background: $bg-tertiary;
     border: 1px solid $border-color-base;
     border-radius: $border-radius-md;
-    font-size: $font-size-base;
+    font-size: $font-size-lg;
     font-weight: $font-weight-semibold;
     color: $text-primary;
     font-variant-numeric: tabular-nums;
@@ -1637,11 +1637,11 @@ A: 回答2`
 
   .preset-btn {
     flex: 1;
-    padding: $spacing-xs $spacing-sm;
+    padding: $spacing-sm $spacing-md;
     background: $bg-tertiary;
     border: 1px solid $border-color-base;
     border-radius: $border-radius-sm;
-    font-size: $font-size-xs;
+    font-size: $font-size-sm;
     font-weight: $font-weight-medium;
     color: $text-secondary;
     cursor: pointer;
