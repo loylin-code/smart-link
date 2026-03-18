@@ -134,7 +134,7 @@ const routes: RouteRecordRaw[] = [
             } as RouteMeta
           },
           {
-            path: 'view/:viewId',
+            path: 'view/:agentId/:viewId',
             name: 'ViewOrchestration',
             component: () => import('@/views/agent/ViewOrchestration.vue'),
             meta: {

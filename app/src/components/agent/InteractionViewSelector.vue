@@ -306,7 +306,7 @@
 
 <script setup lang="ts">
   import { ref, reactive, watch, onMounted, computed, nextTick } from 'vue'
-  import { useRouter } from 'vue-router'
+  import { useRouter, useRoute } from 'vue-router'
   import { useI18n } from 'vue-i18n'
   import { useViewStore } from '@/store/modules/view'
   import type { InteractionView } from '@/types'
@@ -325,7 +325,11 @@
 
   const { t } = useI18n()
   const router = useRouter()
+  const route = useRoute()
   const viewStore = useViewStore()
+
+  // Get agentId from route params
+  const agentId = computed(() => route.params.id as string)
 
   // State
   const views = ref<InteractionView[]>([...props.modelValue])
@@ -489,13 +493,13 @@
     closeCreateDialog()
 
     router.push({
-      path: `/app/agent/view/${view.id}`
+      path: `/app/agent/view/${agentId.value}/${view.id}`
     })
   }
 
   function editView(view: InteractionView) {
     router.push({
-      path: `/app/agent/view/${view.id}`
+      path: `/app/agent/view/${agentId.value}/${view.id}`
     })
   }
 

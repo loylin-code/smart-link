@@ -231,8 +231,9 @@
 
   // Handle back navigation
   function handleBack() {
+    const agentId = route.params.agentId as string
     router.push({
-      path: '/app/agent/design',
+      path: `/app/agent/design/edit/${agentId}`,
       query: { tab: 'view' }
     })
   }
@@ -250,9 +251,10 @@
     // Save to store
     viewStore.setView({ ...viewData.value })
 
-    // Navigate back
+    // Navigate back to agent edit page
+    const agentId = route.params.agentId as string
     router.push({
-      path: '/app/agent/design',
+      path: `/app/agent/design/edit/${agentId}`,
       query: { tab: 'view' }
     })
   }
