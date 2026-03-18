@@ -8,6 +8,118 @@ import { AgentStatus, AgentType } from '@/types'
 
 export const mockAgents: Agent[] = [
   {
+    id: 'agent-000',
+    type: AgentType.SYSTEM,
+    status: AgentStatus.ACTIVE,
+    version: '1.0.0',
+    tags: ['资源', '容量', '操盘'],
+    createdAt: Date.now() - 86400000 * 10,
+    updatedAt: Date.now() - 600000,
+    creator: '资源团队',
+    category: 'resource-ops',
+    identity: {
+      name: '资源操盘Agent',
+      code: 'resource_operator',
+      avatar: '🎯',
+      description: '智能资源操盘、容量分析以及操盘推荐',
+      persona:
+        '你是一位专业的资源操盘专家，擅长资源调度、容量规划和优化决策，能够基于数据做出精准的操盘建议。',
+      welcomeMessage:
+        '您好！我是资源操盘Agent，可以帮您进行智能资源操盘、容量分析以及提供操盘推荐。请问有什么可以帮助您的？',
+      responsibilities: [
+        {
+          id: 'r1',
+          name: '资源操盘',
+          description: '智能调度和优化资源配置',
+          priority: 1,
+          keywords: ['操盘', '调度', '优化', '配置'],
+          examples: ['帮我优化资源配置', '当前资源调度建议']
+        },
+        {
+          id: 'r2',
+          name: '容量分析',
+          description: '分析系统容量和资源使用情况',
+          priority: 2,
+          keywords: ['容量', '分析', '预测', '规划'],
+          examples: ['分析当前容量', '预测下季度资源需求']
+        },
+        {
+          id: 'r3',
+          name: '操盘推荐',
+          description: '基于数据提供操盘决策建议',
+          priority: 3,
+          keywords: ['推荐', '建议', '决策', '策略'],
+          examples: ['给我操盘建议', '分析最优策略']
+        }
+      ]
+    },
+    capabilities: {
+      mcpServers: [
+        { serverId: 'mcp-resource-manager', required: true, fallbackAction: 'error' },
+        { serverId: 'mcp-capacity-monitor', required: false, fallbackAction: 'skip' }
+      ],
+      skills: [
+        { skillId: 'capacity-forecast', version: '1.0.0', enabled: true, parameters: {} },
+        { skillId: 'resource-optimizer', version: '2.0.0', enabled: true, parameters: {} }
+      ],
+      tools: [
+        { toolId: 'analyze-capacity', enabled: true },
+        { toolId: 'optimize-resource', enabled: true },
+        { toolId: 'generate-report', enabled: true }
+      ],
+      llm: {
+        provider: 'openai',
+        model: 'gpt-4o',
+        temperature: 0.4,
+        maxTokens: 4096,
+        topP: 0.9,
+        systemPrompt: '你是一个专业的资源操盘专家...'
+      }
+    },
+    knowledge: {
+      documents: [
+        {
+          id: 'doc1',
+          name: '资源操盘手册',
+          type: 'file',
+          source: '/docs/resource-ops-manual.pdf',
+          enabled: true
+        },
+        {
+          id: 'doc2',
+          name: '容量规划指南',
+          type: 'file',
+          source: '/docs/capacity-planning.md',
+          enabled: true
+        }
+      ],
+      databases: [
+        {
+          id: 'db1',
+          name: '资源配置库',
+          type: 'postgresql',
+          connectionString: '***',
+          enabled: true
+        }
+      ],
+      apis: [
+        {
+          id: 'api1',
+          name: '资源监控API',
+          endpoint: '/api/resource/monitor',
+          method: 'GET',
+          enabled: true
+        }
+      ],
+      searchConfig: {
+        enabled: true,
+        topK: 10,
+        similarityThreshold: 0.75,
+        rerankEnabled: true
+      }
+    }
+  },
+  {
     id: 'agent-001',
     type: AgentType.SYSTEM,
     status: AgentStatus.ACTIVE,
@@ -672,6 +784,14 @@ export const mockAgents: Agent[] = [
  */
 export const mockRuntimeStatus: AgentRuntimeStatus[] = [
   {
+    agentId: 'agent-000',
+    status: 'idle',
+    sessionCount: 856,
+    lastActiveAt: Date.now() - 120000,
+    tokensConsumed: 1200000,
+    avgLatency: 1.5
+  },
+  {
     agentId: 'agent-001',
     status: 'idle',
     sessionCount: 1523,
@@ -726,6 +846,7 @@ export const mockRuntimeStatus: AgentRuntimeStatus[] = [
  * 智能体分类
  */
 export const mockAgentCategories = [
+  { id: 'resource-ops', name: '资源操盘', icon: '🎯', count: 1 },
   { id: 'customer-service', name: '客服支持', icon: '🤖', count: 3 },
   { id: 'analytics', name: '数据分析', icon: '📊', count: 2 },
   { id: 'development', name: '研发工具', icon: '👨‍💻', count: 2 },
