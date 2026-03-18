@@ -269,29 +269,75 @@
               </div>
             </div>
             <div class="panel-body">
-              <div class="settings-grid">
-                <div class="setting-item">
-                  <label>{{ t('agent.design.rag.enable') }}</label>
-                  <input v-model="agentData.knowledge.searchConfig.enabled" type="checkbox" />
+              <div class="rag-config">
+                <!-- 启用开关 -->
+                <div class="config-section">
+                  <div class="enable-toggle">
+                    <div class="toggle-info">
+                      <span class="toggle-label">{{ t('agent.design.rag.enable') }}</span>
+                      <span class="toggle-hint">启用后智能体将检索知识库内容增强回答</span>
+                    </div>
+                    <label class="toggle-switch">
+                      <input v-model="agentData.knowledge.searchConfig.enabled" type="checkbox" />
+                      <span class="toggle-slider" />
+                    </label>
+                  </div>
                 </div>
-                <div class="setting-item">
-                  <label>{{ t('agent.design.rag.topK') }}</label>
-                  <input
-                    v-model.number="agentData.knowledge.searchConfig.topK"
-                    type="number"
-                    min="1"
-                    max="20"
-                  />
-                </div>
-                <div class="setting-item">
-                  <label>{{ t('agent.design.rag.threshold') }}</label>
-                  <input
-                    v-model.number="agentData.knowledge.searchConfig.similarityThreshold"
-                    type="number"
-                    min="0"
-                    max="1"
-                    step="0.1"
-                  />
+
+                <!-- 参数配置 -->
+                <div
+                  class="config-section"
+                  :class="{ disabled: !agentData.knowledge.searchConfig.enabled }"
+                >
+                  <div class="section-label">检索参数</div>
+                  <div class="params-grid">
+                    <div class="param-card">
+                      <div class="param-header">
+                        <span class="param-name">检索数量 (Top K)</span>
+                        <span class="param-value">{{ agentData.knowledge.searchConfig.topK }}</span>
+                      </div>
+                      <div class="param-control">
+                        <input
+                          v-model.number="agentData.knowledge.searchConfig.topK"
+                          type="range"
+                          min="1"
+                          max="20"
+                          class="param-slider"
+                        />
+                        <div class="slider-marks">
+                          <span>1</span>
+                          <span>10</span>
+                          <span>20</span>
+                        </div>
+                      </div>
+                      <p class="param-desc">每次检索返回的最大文档片段数</p>
+                    </div>
+
+                    <div class="param-card">
+                      <div class="param-header">
+                        <span class="param-name">相似度阈值</span>
+                        <span class="param-value">{{
+                          agentData.knowledge.searchConfig.similarityThreshold
+                        }}</span>
+                      </div>
+                      <div class="param-control">
+                        <input
+                          v-model.number="agentData.knowledge.searchConfig.similarityThreshold"
+                          type="range"
+                          min="0"
+                          max="1"
+                          step="0.05"
+                          class="param-slider threshold"
+                        />
+                        <div class="slider-marks">
+                          <span>0</span>
+                          <span>0.5</span>
+                          <span>1.0</span>
+                        </div>
+                      </div>
+                      <p class="param-desc">仅返回相似度高于此阈值的内容</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -309,47 +355,110 @@
               </div>
             </div>
             <div class="panel-body">
-              <div class="settings-grid">
-                <div class="setting-item">
-                  <label>{{ t('agent.design.llm.provider') }}</label>
-                  <select v-model="agentData.llm.provider">
-                    <option value="openai">OpenAI</option>
-                    <option value="anthropic">Anthropic</option>
-                    <option value="ollama">Ollama</option>
-                  </select>
-                </div>
-                <div class="setting-item">
-                  <label>{{ t('agent.design.llm.model') }}</label>
-                  <select v-model="agentData.llm.model">
-                    <option value="gpt-4o">GPT-4o</option>
-                    <option value="gpt-4">GPT-4</option>
-                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                    <option value="claude-3-opus">Claude 3 Opus</option>
-                    <option value="claude-3-sonnet">Claude 3 Sonnet</option>
-                  </select>
-                </div>
-                <div class="setting-item">
-                  <label>{{ t('agent.design.llm.temperature') }}</label>
-                  <div class="slider-group">
-                    <input
-                      v-model.number="agentData.llm.temperature"
-                      type="range"
-                      min="0"
-                      max="2"
-                      step="0.1"
-                    />
-                    <span class="slider-value">{{ agentData.llm.temperature }}</span>
+              <div class="llm-config">
+                <!-- 模型选择 -->
+                <div class="config-section">
+                  <div class="section-label">模型选择</div>
+                  <div class="model-selector">
+                    <div class="select-group">
+                      <label class="select-label">提供商</label>
+                      <div class="select-wrapper">
+                        <select v-model="agentData.llm.provider">
+                          <option value="openai">OpenAI</option>
+                          <option value="anthropic">Anthropic</option>
+                          <option value="ollama">Ollama</option>
+                        </select>
+                        <svg class="select-arrow" viewBox="0 0 24 24" fill="none">
+                          <path
+                            d="M6 9l6 6 6-6"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="select-group">
+                      <label class="select-label">模型</label>
+                      <div class="select-wrapper">
+                        <select v-model="agentData.llm.model">
+                          <option value="gpt-4o">GPT-4o</option>
+                          <option value="gpt-4">GPT-4</option>
+                          <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                          <option value="claude-3-opus">Claude 3 Opus</option>
+                          <option value="claude-3-sonnet">Claude 3 Sonnet</option>
+                        </select>
+                        <svg class="select-arrow" viewBox="0 0 24 24" fill="none">
+                          <path
+                            d="M6 9l6 6 6-6"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                          />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div class="setting-item">
-                  <label>{{ t('agent.design.llm.maxTokens') }}</label>
-                  <input
-                    v-model.number="agentData.llm.maxTokens"
-                    type="number"
-                    min="100"
-                    max="128000"
-                    step="100"
-                  />
+
+                <!-- 参数调节 -->
+                <div class="config-section">
+                  <div class="section-label">参数调节</div>
+                  <div class="params-grid">
+                    <div class="param-card">
+                      <div class="param-header">
+                        <span class="param-name">Temperature</span>
+                        <span class="param-value highlight">{{ agentData.llm.temperature }}</span>
+                      </div>
+                      <div class="param-control">
+                        <input
+                          v-model.number="agentData.llm.temperature"
+                          type="range"
+                          min="0"
+                          max="2"
+                          step="0.1"
+                          class="param-slider temperature"
+                        />
+                        <div class="slider-marks">
+                          <span>精确 (0)</span>
+                          <span>平衡 (1)</span>
+                          <span>创意 (2)</span>
+                        </div>
+                      </div>
+                      <p class="param-desc">控制回答的随机性与创造性</p>
+                    </div>
+
+                    <div class="param-card">
+                      <div class="param-header">
+                        <span class="param-name">最大 Token</span>
+                        <span class="param-value">{{
+                          agentData.llm.maxTokens.toLocaleString()
+                        }}</span>
+                      </div>
+                      <div class="param-control token-control">
+                        <input
+                          v-model.number="agentData.llm.maxTokens"
+                          type="number"
+                          min="100"
+                          max="128000"
+                          step="100"
+                          class="token-input"
+                        />
+                        <div class="token-presets">
+                          <button
+                            v-for="preset in [2048, 4096, 8192]"
+                            :key="preset"
+                            class="preset-btn"
+                            :class="{ active: agentData.llm.maxTokens === preset }"
+                            @click="agentData.llm.maxTokens = preset"
+                          >
+                            {{ preset >= 1024 ? `${preset / 1024}K` : preset }}
+                          </button>
+                        </div>
+                      </div>
+                      <p class="param-desc">限制单次回复的最大长度</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1201,6 +1310,353 @@ A: 回答2`
       font-size: $font-size-sm;
       color: $text-secondary;
       text-align: right;
+    }
+  }
+
+  // ============================================
+  // RAG 配置面板样式
+  // ============================================
+  .rag-config {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xl;
+  }
+
+  .config-section {
+    position: relative;
+
+    &.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+
+  .section-label {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    color: $text-tertiary;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: $spacing-md;
+  }
+
+  .enable-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-md $spacing-lg;
+    background: $bg-secondary;
+    border-radius: $border-radius-lg;
+    border: 1px solid $border-color-lighter;
+  }
+
+  .toggle-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .toggle-label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $text-primary;
+  }
+
+  .toggle-hint {
+    font-size: $font-size-xs;
+    color: $text-tertiary;
+  }
+
+  .toggle-switch {
+    position: relative;
+    width: 48px;
+    height: 26px;
+    cursor: pointer;
+
+    input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+
+      &:checked + .toggle-slider {
+        background: $primary-color;
+
+        &::before {
+          transform: translateX(22px);
+        }
+      }
+    }
+
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: $border-color-base;
+      border-radius: 13px;
+      transition: background 0.2s ease;
+
+      &::before {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        left: 3px;
+        top: 3px;
+        background: white;
+        border-radius: 50%;
+        transition: transform 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      }
+    }
+  }
+
+  .params-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-md;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .param-card {
+    padding: $spacing-lg;
+    background: $bg-secondary;
+    border-radius: $border-radius-lg;
+    border: 1px solid $border-color-lighter;
+    transition: border-color 0.2s ease;
+
+    &:hover {
+      border-color: $border-color-base;
+    }
+  }
+
+  .param-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-md;
+  }
+
+  .param-name {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $text-primary;
+  }
+
+  .param-value {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: $primary-color;
+    font-variant-numeric: tabular-nums;
+
+    &.highlight {
+      background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+
+  .param-control {
+    margin-bottom: $spacing-sm;
+  }
+
+  .param-slider {
+    width: 100%;
+    height: 6px;
+    appearance: none;
+    background: $bg-tertiary;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+
+    &::-webkit-slider-thumb {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      background: $primary-color;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba($primary-color, 0.3);
+      transition: transform 0.15s ease;
+
+      &:hover {
+        transform: scale(1.15);
+      }
+    }
+
+    &::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      background: $primary-color;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba($primary-color, 0.3);
+    }
+
+    &.temperature {
+      &::-webkit-slider-thumb {
+        background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+        box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+      }
+
+      &::-moz-range-thumb {
+        background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+        box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+      }
+    }
+
+    &.threshold {
+      &::-webkit-slider-thumb {
+        background: linear-gradient(135deg, #f97316 0%, #eab308 100%);
+        box-shadow: 0 2px 6px rgba(249, 115, 22, 0.3);
+      }
+
+      &::-moz-range-thumb {
+        background: linear-gradient(135deg, #f97316 0%, #eab308 100%);
+        box-shadow: 0 2px 6px rgba(249, 115, 22, 0.3);
+      }
+    }
+  }
+
+  .slider-marks {
+    display: flex;
+    justify-content: space-between;
+    margin-top: $spacing-xs;
+
+    span {
+      font-size: 10px;
+      color: $text-tertiary;
+    }
+  }
+
+  .param-desc {
+    font-size: $font-size-xs;
+    color: $text-tertiary;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  // ============================================
+  // LLM 配置面板样式
+  // ============================================
+  .llm-config {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xl;
+  }
+
+  .model-selector {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-md;
+  }
+
+  .select-group {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+
+  .select-label {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    color: $text-secondary;
+  }
+
+  .select-wrapper {
+    position: relative;
+
+    select {
+      width: 100%;
+      padding: $spacing-sm $spacing-xl $spacing-sm $spacing-md;
+      background: $bg-secondary;
+      border: 1px solid $border-color-base;
+      border-radius: $border-radius-md;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+      color: $text-primary;
+      cursor: pointer;
+      appearance: none;
+      transition: border-color 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+      }
+
+      &:hover {
+        border-color: $text-tertiary;
+      }
+    }
+
+    .select-arrow {
+      position: absolute;
+      right: $spacing-sm;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: $text-tertiary;
+      pointer-events: none;
+    }
+  }
+
+  .token-control {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+
+  .token-input {
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    background: $bg-tertiary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-md;
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    color: $text-primary;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      background: $bg-secondary;
+    }
+  }
+
+  .token-presets {
+    display: flex;
+    gap: $spacing-xs;
+  }
+
+  .preset-btn {
+    flex: 1;
+    padding: $spacing-xs $spacing-sm;
+    background: $bg-tertiary;
+    border: 1px solid $border-color-base;
+    border-radius: $border-radius-sm;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    color: $text-secondary;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background: $bg-secondary;
+      border-color: $text-tertiary;
+      color: $text-primary;
+    }
+
+    &.active {
+      background: $primary-color;
+      border-color: $primary-color;
+      color: white;
     }
   }
 
