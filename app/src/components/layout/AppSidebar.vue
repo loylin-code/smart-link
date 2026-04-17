@@ -200,21 +200,8 @@
     },
     {
       path: '/app/agent',
-      title: t('sidebar.agentManagement'),
-      icon: AppIcon,
-      children: [
-        { path: '/app/agent/list', title: t('sidebar.agentList') },
-        { path: '/app/agent/design', title: t('sidebar.agentDesign') }
-      ]
-    },
-    {
-      path: '/app/resource',
-      title: t('sidebar.resource'),
-      icon: ResourceIcon,
-      children: [
-        { path: '/app/resource/components', title: t('sidebar.componentManagement') },
-        { path: '/app/resource/datamodel', title: t('sidebar.dataModel') }
-      ]
+      title: t('sidebar.agent'),
+      icon: AppIcon
     },
     {
       path: '/app/tool',
@@ -224,6 +211,15 @@
         { path: '/app/tool/mcp', title: t('sidebar.mcpManagement') },
         { path: '/app/tool/skills', title: t('sidebar.skillsManagement') },
         { path: '/app/tool/models', title: t('sidebar.modelManagement') }
+      ]
+    },
+    {
+      path: '/app/resource',
+      title: t('sidebar.resource'),
+      icon: ResourceIcon,
+      children: [
+        { path: '/app/resource/components', title: t('sidebar.componentManagement') },
+        { path: '/app/resource/datamodel', title: t('sidebar.dataModel') }
       ]
     },
     {

@@ -17,7 +17,7 @@ const routes: RouteRecordRaw[] = [
     name: 'AgentRunner',
     component: () => import('@/views/agent/AgentRunner.vue'),
     meta: {
-      title: '智能体运行',
+      title: '数字员工运行',
       titleKey: 'route.agentRunner',
       hidden: true
     } as RouteMeta
@@ -40,85 +40,30 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'agent',
         name: 'Agent',
-        redirect: '/app/agent/list',
         meta: {
-          title: '智能体管理',
+          title: '数字员工管理',
           titleKey: 'route.agentManagement',
           icon: 'app'
         } as RouteMeta,
         children: [
           {
-            path: 'list',
-            name: 'AgentList',
-            component: () => import('@/views/agent/AgentList.vue'),
+            path: '',
+            name: 'AgentManagement',
+            component: () => import('@/views/agent/AgentManagement.vue'),
             meta: {
-              title: '智能体列表',
-              titleKey: 'route.agentList',
+              title: '数字员工管理',
+              titleKey: 'route.agentManagement',
               icon: 'app'
             } as RouteMeta
           },
           {
-            path: 'design',
-            name: 'AgentDesign',
-            component: () => import('@/views/agent/AgentDesignList.vue'),
-            meta: {
-              title: '智能体设计',
-              titleKey: 'route.agentDesign',
-              icon: 'app'
-            } as RouteMeta
-          },
-          {
-            path: 'design/wizard',
-            name: 'AgentCreateWizard',
-            component: () => import('@/components/agent/AgentCreateWizard.vue'),
-            meta: {
-              title: '新建智能体',
-              titleKey: 'route.agentCreate',
-              icon: 'app',
-              hidden: true
-            } as RouteMeta
-          },
-          {
-            path: 'design/edit/:id',
+            path: 'edit/:id',
             name: 'AgentDesignEdit',
             component: () => import('@/views/agent/AgentDesignPage.vue'),
             meta: {
-              title: '编辑智能体',
+              title: '编辑数字员工',
               titleKey: 'route.agentEdit',
               icon: 'app',
-              hidden: true
-            } as RouteMeta
-          },
-          {
-            path: 'design/wizard/:id',
-            name: 'AgentEditWizard',
-            component: () => import('@/components/agent/AgentCreateWizard.vue'),
-            meta: {
-              title: '编辑智能体',
-              titleKey: 'route.agentEdit',
-              icon: 'app',
-              hidden: true
-            } as RouteMeta
-          },
-          {
-            path: 'design/orchestration',
-            name: 'AgentOrchestrationCreate',
-            component: () => import('@/views/agent/AgentOrchestration.vue'),
-            meta: {
-              title: '编排智能体',
-              titleKey: 'route.agentOrchestration',
-              icon: 'flow',
-              hidden: true
-            } as RouteMeta
-          },
-          {
-            path: 'design/orchestration/:id',
-            name: 'AgentOrchestrationEdit',
-            component: () => import('@/views/agent/AgentOrchestration.vue'),
-            meta: {
-              title: '编排智能体',
-              titleKey: 'route.agentOrchestration',
-              icon: 'flow',
               hidden: true
             } as RouteMeta
           },
@@ -127,7 +72,7 @@ const routes: RouteRecordRaw[] = [
             name: 'AgentRuntime',
             component: () => import('@/views/agent/AgentRuntime.vue'),
             meta: {
-              title: '智能体运行',
+              title: '数字员工运行',
               titleKey: 'route.agentRuntime',
               icon: 'app',
               hidden: true

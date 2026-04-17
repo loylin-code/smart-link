@@ -211,6 +211,34 @@ export enum AgentStatus {
   DEPRECATED = 'deprecated' // 废弃
 }
 
+// 数字员工领域枚举
+export enum AgentDomain {
+  RESOURCE = 'resource', // 资源领域
+  ASSET = 'asset', // 资产领域
+  OPERATION = 'operation', // 运维领域
+  INFRASTRUCTURE = 'infrastructure' // 基础服务
+}
+
+// 领域配置（用于UI展示）
+export const AgentDomainConfig: Record<AgentDomain, { icon: string; color: string }> = {
+  [AgentDomain.RESOURCE]: {
+    icon: '📊',
+    color: '#10b981' // 绿色
+  },
+  [AgentDomain.ASSET]: {
+    icon: '💰',
+    color: '#f59e0b' // 橙色
+  },
+  [AgentDomain.OPERATION]: {
+    icon: '🔧',
+    color: '#8b5cf6' // 紫色
+  },
+  [AgentDomain.INFRASTRUCTURE]: {
+    icon: '🏗️',
+    color: '#3b82f6' // 蓝色
+  }
+}
+
 // 智能体类型枚举
 export enum AgentType {
   SYSTEM = 'system', // 系统预置角色
@@ -351,6 +379,7 @@ export interface Agent {
   id: string
   type: AgentType
   status: AgentStatus
+  domain: AgentDomain // 领域属性
 
   // 身份定义
   identity: AgentIdentity
@@ -377,6 +406,7 @@ export interface Agent {
 export interface AgentFilter {
   type?: AgentType | ''
   status?: AgentStatus | ''
+  domain?: AgentDomain | '' // 新增领域筛选
   keyword?: string
   category?: string
   sortBy?: string
@@ -400,6 +430,7 @@ export interface AgentCreateParams {
   welcomeMessage?: string
   tags?: string[]
   category?: string
+  domain?: AgentDomain // 新增领域
 }
 
 // 智能体更新参数

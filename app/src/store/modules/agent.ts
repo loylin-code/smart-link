@@ -7,7 +7,7 @@ import type {
   AgentCreateParams,
   AgentUpdateParams
 } from '@/types'
-import { AgentStatus, AgentType } from '@/types'
+import { AgentStatus, AgentType, AgentDomain } from '@/types'
 import { agentApi } from '@/services/agent'
 import { mockAgents, mockRuntimeStatus } from '@/mocks/agent'
 
@@ -80,13 +80,14 @@ export const useAgentStore = defineStore('agent', {
       return state.agents.filter((agent) => agent.status === AgentStatus.PAUSED)
     },
 
-    // Stats
+    // Stats - 按领域统计
     stats: (state) => ({
       total: state.pagination.total,
-      active: state.agents.filter((agent) => agent.status === AgentStatus.ACTIVE).length,
-      draft: state.agents.filter((agent) => agent.status === AgentStatus.DRAFT).length,
-      paused: state.agents.filter((agent) => agent.status === AgentStatus.PAUSED).length,
-      deprecated: state.agents.filter((agent) => agent.status === AgentStatus.DEPRECATED).length
+      resource: state.agents.filter((agent) => agent.domain === AgentDomain.RESOURCE).length,
+      asset: state.agents.filter((agent) => agent.domain === AgentDomain.ASSET).length,
+      operation: state.agents.filter((agent) => agent.domain === AgentDomain.OPERATION).length,
+      infrastructure: state.agents.filter((agent) => agent.domain === AgentDomain.INFRASTRUCTURE)
+        .length
     })
   },
 
@@ -180,6 +181,7 @@ export const useAgentStore = defineStore('agent', {
             id: `agent-${Date.now()}`,
             type: AgentType.CUSTOM,
             status: AgentStatus.DRAFT,
+            domain: params.domain || AgentDomain.RESOURCE,
             version: '0.1.0',
             tags: params.tags || [],
             createdAt: Date.now(),

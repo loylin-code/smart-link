@@ -78,6 +78,26 @@
                 </div>
               </div>
 
+              <!-- Domain -->
+              <div class="form-section">
+                <label class="section-label required">{{ t('agent.domain.label') }}</label>
+                <div class="domain-cards">
+                  <div
+                    v-for="domain in agentDomains"
+                    :key="domain.value"
+                    class="domain-card"
+                    :class="{ active: formData.domain === domain.value }"
+                    :style="{
+                      borderColor: formData.domain === domain.value ? domain.color : 'transparent'
+                    }"
+                    @click="formData.domain = domain.value"
+                  >
+                    <span class="domain-icon">{{ domain.icon }}</span>
+                    <span class="domain-name">{{ domain.label }}</span>
+                  </div>
+                </div>
+              </div>
+
               <!-- Tags -->
               <div class="form-section">
                 <label class="section-label">{{ t('agent.create.tags') }}</label>
@@ -135,6 +155,7 @@
 <script setup lang="ts">
   import { ref, computed, watch } from 'vue'
   import { useI18n } from 'vue-i18n'
+  import { AgentDomain } from '@/types'
 
   interface FormData {
     name: string
@@ -142,6 +163,7 @@
     description: string
     avatar: string
     category: string
+    domain: AgentDomain
     tags: string[]
   }
 
@@ -163,6 +185,7 @@
     description: '',
     avatar: '',
     category: 'conversational',
+    domain: AgentDomain.RESOURCE,
     tags: []
   })
 
@@ -191,9 +214,42 @@
     }
   ]
 
+  // Agent domains
+  const agentDomains = [
+    {
+      value: AgentDomain.RESOURCE,
+      icon: '📊',
+      label: '资源领域',
+      color: '#10b981'
+    },
+    {
+      value: AgentDomain.ASSET,
+      icon: '💰',
+      label: '资产领域',
+      color: '#f59e0b'
+    },
+    {
+      value: AgentDomain.OPERATION,
+      icon: '🔧',
+      label: '运维领域',
+      color: '#8b5cf6'
+    },
+    {
+      value: AgentDomain.INFRASTRUCTURE,
+      icon: '🏗️',
+      label: '基础服务',
+      color: '#3b82f6'
+    }
+  ]
+
   // Form validation
   const isFormValid = computed(() => {
-    return formData.value.name.trim() && formData.value.code.trim() && formData.value.category
+    return (
+      formData.value.name.trim() &&
+      formData.value.code.trim() &&
+      formData.value.category &&
+      formData.value.domain
+    )
   })
 
   // Methods
@@ -242,6 +298,7 @@
           description: '',
           avatar: '',
           category: 'conversational',
+          domain: AgentDomain.RESOURCE,
           tags: []
         }
         tagInput.value = ''
@@ -530,12 +587,52 @@
     }
   }
 
+  // Domain cards
+  .domain-cards {
+    flex: 1;
+    display: flex;
+    gap: $spacing-sm;
+  }
+
+  .domain-card {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-xs;
+    padding: $spacing-xs $spacing-sm;
+    background: $bg-secondary;
+    border: 2px solid transparent;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: $bg-tertiary;
+    }
+
+    &.active {
+      background: rgba(59, 130, 246, 0.08);
+    }
+  }
+
   .type-icon {
     font-size: 18px;
     flex-shrink: 0;
   }
 
   .type-name {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $text-primary;
+  }
+
+  .domain-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .domain-name {
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
     color: $text-primary;

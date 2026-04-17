@@ -4,7 +4,7 @@
  */
 import http, { type PageParams, type PageResponse, type ApiResponse } from '@/utils/http'
 import type { Agent, AgentRuntimeStatus, AgentCreateParams, AgentUpdateParams } from '@/types'
-import { AgentStatus, AgentType } from '@/types'
+import { AgentStatus, AgentType, AgentDomain } from '@/types'
 
 // ============================================================
 // Agent API Types
@@ -232,6 +232,7 @@ export const agentApi = {
       id: apiAgent.id,
       type: apiAgent.type || AgentType.CUSTOM,
       status: apiAgent.status || AgentStatus.DRAFT,
+      domain: apiAgent.domain || AgentDomain.INFRASTRUCTURE,
       version: apiAgent.version || '0.1.0',
       tags: apiAgent.tags || [],
       createdAt: apiAgent.created_at ? new Date(apiAgent.created_at).getTime() : Date.now(),
