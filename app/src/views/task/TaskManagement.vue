@@ -428,7 +428,7 @@ onMounted(() => {
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   border: none;
-  border-radius: $radius-md;
+  border-radius: $border-radius-md;
   cursor: pointer;
   transition: all $transition-base;
 
@@ -481,7 +481,7 @@ onMounted(() => {
   gap: $spacing-md;
   padding: $spacing-lg;
   background: $bg-surface;
-  border-radius: $radius-lg;
+  border-radius: $border-radius-lg;
   box-shadow: $shadow-card;
   transition: box-shadow $transition-base;
 
@@ -496,7 +496,7 @@ onMounted(() => {
   justify-content: center;
   width: 48px;
   height: 48px;
-  border-radius: $radius-md;
+  border-radius: $border-radius-md;
 
   svg {
     width: 24px;
@@ -550,7 +550,7 @@ onMounted(() => {
   margin-bottom: $spacing-xl;
   padding: $spacing-md $spacing-lg;
   background: $bg-secondary;
-  border-radius: $radius-md;
+  border-radius: $border-radius-md;
 }
 
 .filter-group {
@@ -571,7 +571,7 @@ onMounted(() => {
   color: $text-primary;
   background: $bg-surface;
   border: 1px solid $border-color-base;
-  border-radius: $radius-sm;
+  border-radius: $border-radius-sm;
   cursor: pointer;
   transition: border-color $transition-base;
 
@@ -592,7 +592,7 @@ onMounted(() => {
   color: $text-primary;
   background: $bg-surface;
   border: 1px solid $border-color-base;
-  border-radius: $radius-sm;
+  border-radius: $border-radius-sm;
   width: 240px;
   transition: border-color $transition-base;
 
@@ -665,7 +665,7 @@ onMounted(() => {
   color: $text-inverse;
   background: $primary-color;
   border: none;
-  border-radius: $radius-md;
+  border-radius: $border-radius-md;
   cursor: pointer;
   transition: all $transition-base;
 
@@ -711,7 +711,7 @@ onMounted(() => {
   color: $text-inverse;
   background: $primary-color;
   border: none;
-  border-radius: $radius-md;
+  border-radius: $border-radius-md;
   cursor: pointer;
   transition: all $transition-base;
 
@@ -724,7 +724,7 @@ onMounted(() => {
 // Task Table
 .task-table-container {
   background: $bg-surface;
-  border-radius: $radius-lg;
+  border-radius: $border-radius-lg;
   box-shadow: $shadow-card;
   overflow: hidden;
 }
@@ -773,7 +773,7 @@ onMounted(() => {
   padding: $spacing-xs $spacing-sm;
   font-size: $font-size-xs;
   font-weight: $font-weight-medium;
-  border-radius: $radius-full;
+  border-radius: $border-radius-full;
   white-space: nowrap;
 
   .status-dot {
@@ -859,7 +859,7 @@ onMounted(() => {
   font-size: $font-size-xs;
   font-weight: $font-weight-semibold;
   padding: $spacing-xs $spacing-sm;
-  border-radius: $radius-sm;
+  border-radius: $border-radius-sm;
 
   &.rate-high {
     background: $success-bg;
@@ -893,7 +893,7 @@ onMounted(() => {
   padding: 0;
   background: transparent;
   border: none;
-  border-radius: $radius-sm;
+  border-radius: $border-radius-sm;
   cursor: pointer;
   color: $text-tertiary;
   transition: all $transition-fast;
