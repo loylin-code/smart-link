@@ -389,7 +389,7 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-@import '@/styles/variables';
+@use '@/assets/styles/variables' as *;
 
 .task-management {
   height: 100%;
