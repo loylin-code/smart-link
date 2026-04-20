@@ -36,7 +36,13 @@ export default {
     next: 'Next',
     undo: 'Undo',
     redo: 'Redo',
-    yesterday: 'Yesterday'
+    yesterday: 'Yesterday',
+    refresh: 'Refresh',
+    viewAll: 'View All',
+    normal: 'Normal',
+    today: 'Today',
+    thisWeek: 'This Week',
+    thisMonth: 'This Month'
   },
   route: {
     overview: 'Platform Overview',
@@ -75,6 +81,7 @@ export default {
     runLog: 'Run Logs',
     operationLog: 'Operation Logs',
     apiManagement: 'API Management',
+    api: 'API',
     agent: 'Digital Worker',
     // Keep old keys for compatibility
     application: 'Digital Worker Management',
@@ -1573,7 +1580,12 @@ export default {
       aliases: 'Aliases/Synonyms',
       definition: 'Definition',
       examples: 'Usage Examples',
-      priority: 'Priority'
+      priority: 'Priority',
+      categoryNoun: 'Noun',
+      categoryVerb: 'Verb',
+      categoryAdjective: 'Adjective',
+      categoryPhrase: 'Phrase',
+      description: 'Manage domain vocabulary and semantic definitions'
     },
     config: {
       title: 'Semantic Configuration',
@@ -1664,7 +1676,13 @@ export default {
       beforeAfter: 'Data Comparison'
     },
     export: 'Export Logs',
-    filter: 'Filter'
+    filter: 'Filter',
+    pagination: {
+      perPage: 'Per Page',
+      showing: 'Showing',
+      total: 'Total',
+      items: 'items'
+    }
   },
   task: {
     title: 'Scheduled Tasks',

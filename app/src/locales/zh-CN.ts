@@ -36,7 +36,13 @@ export default {
     next: '下一步',
     undo: '撤销',
     redo: '重做',
-    yesterday: '昨天'
+    yesterday: '昨天',
+    refresh: '刷新',
+    viewAll: '查看全部',
+    normal: '正常',
+    today: '今天',
+    thisWeek: '本周',
+    thisMonth: '本月'
   },
   route: {
     overview: '平台概览',
@@ -75,6 +81,7 @@ export default {
     runLog: '运行日志',
     operationLog: '操作日志',
     apiManagement: 'API 管理',
+    api: 'API 管理',
     agent: '数字员工',
     // 保留旧的路由键以兼容
     application: '数字员工管理',
@@ -1587,7 +1594,12 @@ export default {
       aliases: '别名/同义词',
       definition: '定义',
       examples: '使用示例',
-      priority: '优先级'
+      priority: '优先级',
+      categoryNoun: '名词',
+      categoryVerb: '动词',
+      categoryAdjective: '形容词',
+      categoryPhrase: '短语',
+      description: '管理业务领域词汇和语义定义'
     },
     config: {
       title: '语义配置',
@@ -1678,7 +1690,13 @@ export default {
       beforeAfter: '数据对比'
     },
     export: '导出日志',
-    filter: '筛选'
+    filter: '筛选',
+    pagination: {
+      perPage: '每页显示',
+      showing: '显示',
+      total: '共',
+      items: '条'
+    }
   },
   task: {
     title: '定时任务',
