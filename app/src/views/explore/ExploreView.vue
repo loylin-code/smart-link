@@ -633,6 +633,9 @@
   import TrendAnalysis from '@/components/chat/TrendAnalysis.vue'
   import DataSummary from '@/components/chat/DataSummary.vue'
 
+  // 引入 UI 组件库
+  import { SlStatCard, SlChart, SlTable, SlProgress } from '@smart-link/ui'
+
   const { t } = useI18n()
   const exploreStore = useExploreStore()
 
@@ -856,13 +859,29 @@
   }
 
   const getComponentRenderer = (type: string) => {
-    const componentMap: Record<string, any> = {
+    // 1. 现有聊天组件（保持兼容）
+    const chatComponents: Record<string, any> = {
       chart: markRaw(ChartCard),
       confirm: markRaw(ConfirmDialog),
       'trend-analysis': markRaw(TrendAnalysis),
       'data-summary': markRaw(DataSummary)
     }
-    return componentMap[type] || 'div'
+
+    // 2. UI 组件库映射
+    const uiComponents: Record<string, any> = {
+      SlStatCard: markRaw(SlStatCard),
+      SlChart: markRaw(SlChart),
+      SlTable: markRaw(SlTable),
+      SlProgress: markRaw(SlProgress),
+      // 别名映射（支持简写）
+      'stat-card': markRaw(SlStatCard),
+      statcard: markRaw(SlStatCard),
+      table: markRaw(SlTable),
+      progress: markRaw(SlProgress)
+    }
+
+    // 3. 合并查找（聊天组件优先，保持向后兼容）
+    return chatComponents[type] || uiComponents[type] || uiComponents[`Sl${type}`] || 'div'
   }
 
   const renderMarkdown = (content: string): string => {
