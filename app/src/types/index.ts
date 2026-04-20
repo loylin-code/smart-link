@@ -29,22 +29,19 @@ export interface MessageAttachment {
   base64?: string
 }
 
+// 组件事件配置
+export interface ComponentEvent {
+  name: string // 事件名称：'click' | 'rowClick' | 'select'
+  action: string // 动作类型：'sendMessage' | 'navigate' | 'callback'
+  payload?: any // 附加数据
+}
+
 // 动态组件类型（用于聊天消息中的动态组件渲染）
 export interface ChatComponent {
   id: string
-  type:
-    | 'stats-card'
-    | 'form'
-    | 'chart'
-    | 'table'
-    | 'list'
-    | 'code'
-    | 'image'
-    | 'confirm'
-    | 'trend-analysis'
-    | 'data-summary'
+  type: string // 支持任意组件类型：'SlStatCard' | 'SlChart' | 等
   props: Record<string, any>
-  events?: Record<string, string>
+  events?: ComponentEvent[] // 改为数组结构
 }
 
 // 消息交互事件
