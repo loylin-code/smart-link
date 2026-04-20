@@ -333,92 +333,83 @@
     {
       key: 'overview',
       icon: DashboardIcon,
-      label: t('route.overview'),
-      titleKey: 'route.overview',
+      title: t('route.overview'),
       path: '/app/overview'
     },
     {
       key: 'explore',
       icon: ChatIcon,
-      label: t('route.explore'),
-      titleKey: 'route.explore',
+      title: t('route.explore'),
       path: '/app/explore'
     },
     {
       key: 'agent',
       icon: AppIcon,
-      label: t('sidebar.agent'),
-      titleKey: 'route.agent',
+      title: t('sidebar.agent'),
       path: '/app/agent',
       children: [
-        { key: 'agent-management', label: t('sidebar.agentManagement'), path: '/app/agent' }
+        { key: 'agent-management', title: t('sidebar.agentManagement'), path: '/app/agent' }
       ]
     },
     {
       key: 'tool',
       icon: ToolIcon,
-      label: t('sidebar.toolManagement'),
-      titleKey: 'route.tool',
+      title: t('sidebar.toolManagement'),
       path: '/app/tool',
       children: [
-        { key: 'skills', label: t('sidebar.skillsManagement'), path: '/app/tool/skills' },
-        { key: 'mcp', label: t('sidebar.mcpManagement'), path: '/app/tool/mcp' }
+        { key: 'skills', title: t('sidebar.skillsManagement'), path: '/app/tool/skills' },
+        { key: 'mcp', title: t('sidebar.mcpManagement'), path: '/app/tool/mcp' }
       ]
     },
     {
       key: 'resource',
       icon: ResourceIcon,
-      label: t('sidebar.resource'),
-      titleKey: 'route.resource',
+      title: t('sidebar.resource'),
       path: '/app/resource',
       children: [
         {
           key: 'components',
-          label: t('sidebar.componentManagement'),
+          title: t('sidebar.componentManagement'),
           path: '/app/resource/components'
         },
-        { key: 'datamodel', label: t('sidebar.dataModel'), path: '/app/resource/datamodel' },
-        { key: 'api', label: t('route.apiManagement'), path: '/app/resource/api' }
+        { key: 'datamodel', title: t('sidebar.dataModel'), path: '/app/resource/datamodel' },
+        { key: 'api', title: t('route.apiManagement'), path: '/app/resource/api' }
       ]
     },
     {
       key: 'semantic',
       icon: SemanticIcon,
-      label: t('route.semantic'),
-      titleKey: 'route.semantic',
+      title: t('route.semantic'),
       path: '/app/semantic',
       children: [
-        { key: 'vocabulary', label: t('route.vocabulary'), path: '/app/semantic/vocabulary' },
-        { key: 'semantic-config', label: t('route.semanticConfig'), path: '/app/semantic/config' }
+        { key: 'vocabulary', title: t('route.vocabulary'), path: '/app/semantic/vocabulary' },
+        { key: 'semantic-config', title: t('route.semanticConfig'), path: '/app/semantic/config' }
       ]
     },
     {
       key: 'log',
       icon: LogIcon,
-      label: t('route.log'),
-      titleKey: 'route.log',
+      title: t('route.log'),
       path: '/app/log',
       children: [
-        { key: 'agent-log', label: t('route.agentLog'), path: '/app/log/agent' },
-        { key: 'system-log', label: t('route.systemLog'), path: '/app/log/system' }
+        { key: 'agent-log', title: t('route.agentLog'), path: '/app/log/agent' },
+        { key: 'system-log', title: t('route.systemLog'), path: '/app/log/system' }
       ]
     },
     {
       key: 'task',
       icon: ScheduleIcon,
-      label: t('route.task'),
-      titleKey: 'route.task',
+      title: t('route.task'),
       path: '/app/task'
     },
     {
       key: 'settings',
       icon: SettingsIcon,
-      label: t('sidebar.settings'),
-      titleKey: 'route.settings',
+      title: t('sidebar.settings'),
       path: '/app/settings',
       children: [
-        { key: 'providers', label: t('sidebar.providers'), path: '/app/settings/providers' },
-        { key: 'models', label: t('sidebar.modelManagement'), path: '/app/settings/models' }
+        { key: 'providers', title: t('sidebar.providers'), path: '/app/settings/providers' },
+        { key: 'models', title: t('sidebar.modelManagement'), path: '/app/settings/models' }
       ]
     }
   ])
