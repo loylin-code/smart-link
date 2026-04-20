@@ -346,10 +346,7 @@
       key: 'agent',
       icon: AppIcon,
       title: t('sidebar.agent'),
-      path: '/app/agent',
-      children: [
-        { key: 'agent-management', title: t('sidebar.agentManagement'), path: '/app/agent' }
-      ]
+      path: '/app/agent'
     },
     {
       key: 'tool',
