@@ -920,7 +920,7 @@ export const useExploreStore = defineStore('explore', {
                 const parsed = parseAIComponentOutput(aiMsg.content)
                 if (parsed.components && parsed.components.length > 0) {
                   aiMsg.components = createChatComponents(parsed.components)
-                  aiMsg.content = parsed.content || aiMsg.content // 更新为纯文本内容
+                  aiMsg.content = parsed.text || aiMsg.content // 更新为纯文本内容
                 }
               } catch (e) {
                 console.warn('[explore] Failed to parse AI components:', e)

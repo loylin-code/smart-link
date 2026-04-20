@@ -16,6 +16,11 @@
     emptyText?: string
   }
 
+  interface RowData {
+    row: Record<string, any>
+    index: number
+  }
+
   const props = withDefaults(defineProps<Props>(), {
     striped: true,
     hoverable: true,
@@ -27,9 +32,17 @@
     rowClick: [row: Record<string, any>]
   }>()
 
-  const isEmpty = computed(() => props.dataSource.length === 0)
+  const isEmpty = computed<boolean>(() => props.dataSource.length === 0)
 
-  const handleRowClick = (row: Record<string, any>) => {
+  const tableRows = computed<RowData[]>(() =>
+    props.dataSource.map((row: Record<string, any>, index: number) => ({ row, index }))
+  )
+
+  const isStripedRow = (index: number): boolean => {
+    return props.striped && index % 2 === 1
+  }
+
+  const handleRowClick = (row: Record<string, any>): void => {
     emit('rowClick', row)
   }
 </script>
@@ -66,17 +79,17 @@
         </template>
         <template v-else>
           <tr
-            v-for="(row, index) in dataSource"
-            :key="index"
+            v-for="rowData in tableRows"
+            :key="rowData.index"
             class="sl-table__row"
             :class="{
-              'sl-table__row--striped': striped && index % 2 === 1,
+              'sl-table__row--striped': isStripedRow(rowData.index),
               'sl-table__row--hoverable': hoverable
             }"
-            @click="handleRowClick(row)"
+            @click="handleRowClick(rowData.row)"
           >
             <td v-for="col in columns" :key="col.key" class="sl-table__cell sl-table__cell--body">
-              {{ row[col.key] }}
+              {{ rowData.row[col.key] }}
             </td>
           </tr>
         </template>

@@ -16,15 +16,15 @@
         <path
           v-if="computedLinePath"
           :d="computedAreaPath"
-          :stroke="computedColors[0]"
-          :fill="`${computedColors[0]}20`"
+          :stroke="colorAt(0)"
+          :fill="colorAtWithOpacity(0, '20')"
           fill-rule="evenodd"
         />
         <!-- 折线路径 -->
         <path
           v-if="computedLinePath"
           :d="computedLinePath"
-          :stroke="computedColors[0]"
+          :stroke="colorAt(0)"
           stroke-width="2"
           fill="none"
           stroke-linecap="round"
@@ -32,20 +32,20 @@
         />
         <!-- 数据点 -->
         <circle
-          v-for="(point, index) in dataPoints"
-          :key="index"
+          v-for="(point, pIndex) in dataPoints"
+          :key="pIndex"
           :cx="point.x"
           :cy="point.y"
           r="4"
-          :fill="computedColors[0]"
+          :fill="colorAt(0)"
           :stroke="bgColor"
           stroke-width="2"
         />
         <!-- X 轴标签 -->
         <text
-          v-for="(label, index) in visibleLabels"
-          :key="index"
-          :x="labelXPosition(index)"
+          v-for="(label, lIndex) in visibleLabels"
+          :key="lIndex"
+          :x="labelXPosition(lIndex)"
           :y="svgHeight - 10"
           text-anchor="middle"
           font-size="10"
@@ -57,14 +57,14 @@
 
       <!-- 柱状图 -->
       <div v-else-if="chartType === 'bar'" class="sl-chart__bar-container">
-        <div v-for="(bar, index) in barData" :key="index" class="sl-chart__bar-item">
+        <div v-for="(bar, bIndex) in barData" :key="bIndex" class="sl-chart__bar-item">
           <div class="sl-chart__bar-label">{{ bar.label }}</div>
           <div class="sl-chart__bar-wrapper">
             <div
               class="sl-chart__bar"
               :style="{
                 width: `${bar.width}%`,
-                backgroundColor: computedColors[index % computedColors.length]
+                backgroundColor: colorAt(bIndex)
               }"
             >
               <span class="sl-chart__bar-value">{{ formatValue(bar.value) }}</span>
@@ -81,17 +81,17 @@
           preserveAspectRatio="xMidYMid meet"
         >
           <path
-            v-for="(segment, index) in pieSegments"
-            :key="index"
+            v-for="(segment, sIndex) in pieSegments"
+            :key="sIndex"
             :d="segment.path"
-            :fill="computedColors[index % computedColors.length]"
+            :fill="colorAt(sIndex)"
           />
         </svg>
         <div v-if="showLegend" class="sl-chart__legend">
-          <div v-for="(item, index) in pieData" :key="index" class="sl-chart__legend-item">
+          <div v-for="(item, pieIndex) in pieData" :key="pieIndex" class="sl-chart__legend-item">
             <span
               class="sl-chart__legend-dot"
-              :style="{ backgroundColor: computedColors[index % computedColors.length] }"
+              :style="{ backgroundColor: colorAt(pieIndex) }"
             ></span>
             <span class="sl-chart__legend-label">{{ item.label }}</span>
             <span class="sl-chart__legend-value">{{ formatValue(item.value) }}</span>
@@ -103,22 +103,21 @@
     <!-- 图例 -->
     <div v-if="showLegend && chartType !== 'pie'" class="sl-chart__legend">
       <div
-        v-for="(dataset, index) in dataSource?.datasets"
-        :key="index"
+        v-for="(dataset, dsIndex) in legendDatasets"
+        :key="dsIndex"
         class="sl-chart__legend-item"
       >
-        <span
-          class="sl-chart__legend-dot"
-          :style="{ backgroundColor: computedColors[index % computedColors.length] }"
-        ></span>
-        <span class="sl-chart__legend-label">{{ dataset.label || `数据${index + 1}` }}</span>
+        <span class="sl-chart__legend-dot" :style="{ backgroundColor: colorAt(dsIndex) }"></span>
+        <span class="sl-chart__legend-label">{{
+          dataset.label || `数据${Number(dsIndex) + 1}`
+        }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { computed } from 'vue'
+  import { computed, ref, watch } from 'vue'
 
   interface DataSet {
     label?: string
@@ -133,16 +132,37 @@
 
   interface Props {
     chartType: 'line' | 'bar' | 'pie'
-    dataSource: ChartData
+    dataSource?: ChartData
     title?: string
     showLegend?: boolean
     smooth?: boolean
     colors?: string[]
   }
 
+  interface DataPoint {
+    x: number
+    y: number
+  }
+
+  interface BarItem {
+    label: string
+    value: number
+    width: number
+  }
+
+  interface PieItem {
+    label: string
+    value: number
+  }
+
+  interface PieSegment {
+    path: string
+  }
+
   const props = withDefaults(defineProps<Props>(), {
     showLegend: true,
-    smooth: true
+    smooth: true,
+    dataSource: () => ({})
   })
 
   const svgWidth = 400
@@ -151,60 +171,80 @@
   const chartWidth = svgWidth - padding.left - padding.right
   const chartHeight = svgHeight - padding.top - padding.bottom - padding.bottom
 
-  const defaultColors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']
+  const defaultColors: string[] = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']
   const bgColor = '#ffffff'
   const textColor = '#6b7280'
 
-  const computedColors = computed(() => props.colors || defaultColors)
+  const computedColors = computed<string[]>(() => props.colors || defaultColors)
 
-  // 获取数据值
-  const dataValues = computed(() => {
+  const colorAt = (index: number): string => {
+    const colors = computedColors.value
+    return colors[index % colors.length]
+  }
+
+  const colorAtWithOpacity = (index: number, opacity: string): string => {
+    return `${colorAt(index)}${opacity}`
+  }
+
+  const dataValues = computed<number[]>(() => {
     if (props.dataSource?.datasets?.[0]?.data) {
       return props.dataSource.datasets[0].data
     }
     return props.dataSource?.values || []
   })
 
-  // 获取标签
-  const labels = computed(() => props.dataSource?.labels || [])
+  const labels = computed<string[]>(() => props.dataSource?.labels || [])
 
-  // 计算可见标签 (避免重叠)
-  const visibleLabels = computed(() => {
+  const legendDatasets = computed<DataSet[]>(() => props.dataSource?.datasets || [])
+
+  const visibleLabels = computed<string[]>(() => {
     const allLabels = labels.value
     if (allLabels.length <= 6) return allLabels
     const step = Math.ceil(allLabels.length / 6)
-    return allLabels.filter((_, i) => i % step === 0)
+    return allLabels.filter((_label: string, i: number) => i % step === 0)
   })
 
-  // 计算极值
-  const { minVal, maxVal } = computed(() => {
+  const minVal = ref<number>(0)
+  const maxVal = ref<number>(0)
+
+  const calculateMinMax = (): void => {
     const values = dataValues.value
-    if (values.length === 0) return { minVal: 0, maxVal: 0 }
+    if (values.length === 0) {
+      minVal.value = 0
+      maxVal.value = 0
+      return
+    }
     const min = Math.min(...values)
     const max = Math.max(...values)
-    const padding = (max - min) * 0.1 || 1
-    return { minVal: min - padding, maxVal: max + padding }
-  })
+    const pad = (max - min) * 0.1 || 1
+    minVal.value = min - pad
+    maxVal.value = max + pad
+  }
 
-  // 折线图数据点
-  const dataPoints = computed(() => {
+  watch(
+    () => props.dataSource,
+    () => {
+      calculateMinMax()
+    },
+    { immediate: true }
+  )
+
+  const dataPoints = computed<DataPoint[]>(() => {
     const values = dataValues.value
     const step = chartWidth / (values.length - 1 || 1)
     const range = maxVal.value - minVal.value || 1
 
-    return values.map((val, i) => ({
+    return values.map((val: number, i: number) => ({
       x: padding.left + (values.length === 1 ? chartWidth / 2 : i * step),
       y: padding.top + chartHeight - ((val - minVal.value) / range) * chartHeight
     }))
   })
 
-  // 折线线路径
-  const computedLinePath = computed(() => {
+  const computedLinePath = computed<string>(() => {
     const points = dataPoints.value
     if (points.length === 0) return ''
 
     if (props.smooth && points.length > 2) {
-      // 平滑曲线
       let path = `M ${points[0].x} ${points[0].y}`
       for (let i = 1; i < points.length; i++) {
         const prev = points[i - 1]
@@ -218,12 +258,10 @@
       return path
     }
 
-    // 折线
-    return points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ')
+    return points.map((p: DataPoint, i: number) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ')
   })
 
-  // 区域填充路径
-  const computedAreaPath = computed(() => {
+  const computedAreaPath = computed<string>(() => {
     const points = dataPoints.value
     if (points.length === 0) return ''
 
@@ -235,51 +273,47 @@
     return `${linePath} L ${lastPoint.x} ${baseline} L ${firstPoint.x} ${baseline} Z`
   })
 
-  // X 轴标签位置
-  const labelXPosition = (index: number) => {
+  const labelXPosition = (index: number): number => {
     const step = labels.value.length <= 6 ? 1 : Math.ceil(labels.value.length / 6)
     return padding.left + index * step * (chartWidth / (labels.value.length - 1 || 1))
   }
 
-  // 柱状图数据
-  const barData = computed(() => {
+  const barData = computed<BarItem[]>(() => {
     const values = dataValues.value
-    const _max = maxVal.value || 1
+    const max = maxVal.value || 1
 
-    return values.map((val, i) => ({
+    return values.map((val: number, i: number) => ({
       label: labels.value[i] || `${i + 1}`,
       value: val,
-      width: (val / _max) * 100
+      width: (val / max) * 100
     }))
   })
 
-  // 饼图数据
-  const pieData = computed(() => {
+  const pieData = computed<PieItem[]>(() => {
     if (props.dataSource?.datasets?.[0]?.data) {
-      return props.dataSource.datasets[0].data.map((val, i) => ({
-        label: props.dataSource.labels?.[i] || `数据${i + 1}`,
+      return props.dataSource.datasets[0].data.map((val: number, i: number) => ({
+        label: props.dataSource?.labels?.[i] || `数据${i + 1}`,
         value: val
       }))
     }
     const values = props.dataSource?.values || []
-    return values.map((val, i) => ({
-      label: props.dataSource.labels?.[i] || `数据${i + 1}`,
+    return values.map((val: number, i: number) => ({
+      label: props.dataSource?.labels?.[i] || `数据${i + 1}`,
       value: val
     }))
   })
 
-  // 饼图分段路径
-  const pieSegments = computed(() => {
+  const pieSegments = computed<PieSegment[]>(() => {
     const data = pieData.value
-    const total = data.reduce((sum, item) => sum + item.value, 0) || 1
+    const total = data.reduce((sum: number, item: PieItem) => sum + item.value, 0) || 1
     const centerX = svgWidth / 2
     const centerY = svgHeight / 2 - 10
     const radius = Math.min(centerX, centerY) - 40
 
     let currentAngle = -Math.PI / 2
-    const segments: { path: string }[] = []
+    const segments: PieSegment[] = []
 
-    data.forEach((item) => {
+    data.forEach((item: PieItem) => {
       const angle = (item.value / total) * Math.PI * 2
       const endAngle = currentAngle + angle
 
@@ -299,7 +333,6 @@
     return segments
   })
 
-  // 格式化数值
   const formatValue = (value: number): string => {
     if (value >= 1000000) {
       return `${(value / 1000000).toFixed(1)}M`
@@ -340,7 +373,7 @@
       display: block;
     }
 
-    // 柱状图样式
+    /* bar chart styles */
     &__bar-container {
       display: flex;
       flex-direction: column;
@@ -386,7 +419,7 @@
       font-weight: 500;
     }
 
-    // 饼图样式
+    /* pie chart styles */
     &__pie-container {
       display: flex;
       flex-direction: column;
@@ -394,7 +427,7 @@
       gap: 16px;
     }
 
-    // 图例样式
+    /* legend styles */
     &__legend {
       display: flex;
       flex-wrap: wrap;
@@ -429,10 +462,10 @@
       margin-left: 4px;
     }
 
-    // 平滑效果
+    /* smooth effect */
     &.is-smooth {
       .sl-chart__svg path {
-        transition: d 0.3s ease;
+        transition: all 0.3s ease;
       }
     }
   }

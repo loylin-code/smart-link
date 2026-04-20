@@ -1,10 +1,6 @@
 <template>
   <div class="language-switcher">
-    <button 
-      class="lang-btn" 
-      :title="currentLangLabel"
-      @click="toggleDropdown"
-    >
+    <button class="lang-btn" :title="currentLangLabel" @click="toggleDropdown">
       <svg viewBox="0 0 24 24" fill="none" class="lang-icon">
         <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
         <path d="M2 12H22" stroke="currentColor" stroke-width="2" />

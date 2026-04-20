@@ -870,7 +870,10 @@
         // 将 payload.template 中的变量替换后发送新消息
         if (payload?.template) {
           const template = payload.template
-          const message = template.replace(/\{(\w+)\}/g, (_, key) => payload[key] || '')
+          const message = template.replace(
+            /\{(\w+)\}/g,
+            (_: string, key: string) => payload[key as keyof typeof payload] || ''
+          )
           if (activeConversationId.value) {
             sendUserMessage(message, activeConversationId.value)
           }
