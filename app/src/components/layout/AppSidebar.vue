@@ -349,6 +349,12 @@
       path: '/app/agent'
     },
     {
+      key: 'task',
+      icon: ScheduleIcon,
+      title: t('route.task'),
+      path: '/app/task'
+    },
+    {
       key: 'tool',
       icon: ToolIcon,
       title: t('sidebar.toolManagement'),
@@ -387,12 +393,6 @@
         { key: 'run-log', title: t('route.runLog'), path: '/app/log/operation' },
         { key: 'operation-log', title: t('route.operationLog'), path: '/app/log/system' }
       ]
-    },
-    {
-      key: 'task',
-      icon: ScheduleIcon,
-      title: t('route.task'),
-      path: '/app/task'
     },
     {
       key: 'settings',
