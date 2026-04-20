@@ -696,7 +696,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, onMounted, reactive } from 'vue'
+  import { ref, onMounted, reactive } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
   import { useModelStore } from '@/store/modules/model'

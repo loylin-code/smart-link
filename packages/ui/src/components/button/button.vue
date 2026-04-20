@@ -22,8 +22,6 @@
 </template>
 
 <script setup lang="ts">
-  import { computed } from 'vue'
-
   interface Props {
     type?: 'primary' | 'default' | 'danger' | 'warning' | 'success'
     size?: 'small' | 'medium' | 'large'

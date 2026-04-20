@@ -625,7 +625,7 @@
   import { ref, computed, watch, nextTick, onMounted, markRaw } from 'vue'
   import { useExploreStore } from '@/store'
   import { useI18n } from 'vue-i18n'
-  import type { ChatTemplate, MessageAttachment } from '@/types'
+  import type { ChatTemplate } from '@/types'
 
   // 引入聊天组件
   import ChartCard from '@/components/chat/ChartCard.vue'
@@ -647,8 +647,10 @@
   const searchQuery = ref('')
   const collapsedGroups = ref<string[]>([])
   const pendingAttachments = ref<File[]>([])
-  const isGenerating = ref(false)
   const isSidebarCollapsed = ref(false)
+
+  // SSE streaming state (sync with store)
+  const isGenerating = computed(() => exploreStore.isCurrentlyStreaming())
 
   // 快速建议
   const quickSuggestions = [
@@ -765,19 +767,23 @@
       content
     })
 
-    // 模拟 AI 回复
-    isGenerating.value = true
+    // 使用 SSE 流式接口发送消息
+    // 默认使用探索中心的通用助手 Agent
+    // TODO: 可以从配置或用户选择获取 agentId
+    const defaultAgentId = 'explore-assistant'
 
-    setTimeout(() => {
-      const response = getSimulatedResponse(content)
+    try {
+      await exploreStore.sendSSEMessage(content, defaultAgentId, conversationId)
+    } catch (error) {
+      console.error('SSE message failed:', error)
+      // 添加错误提示
       exploreStore.addMessage(conversationId, {
         role: 'assistant',
-        content: response.content,
-        components: response.components
+        content: '抱歉，消息发送失败，请稍后重试。'
       })
-      isGenerating.value = false
+    } finally {
       scrollToBottom()
-    }, 1000)
+    }
   }
 
   const sendMessage = async () => {
@@ -790,59 +796,29 @@
     inputMessage.value = ''
     pendingAttachments.value = []
 
-    // 添加用户消息
-    const userMessage: any = {
-      role: 'user' as const,
-      content
-    }
-
-    // 处理附件
+    // 处理附件（TODO: 暂不支持附件，后续扩展）
     if (attachments.length > 0) {
-      userMessage.attachments = await Promise.all(
-        attachments.map(async (file) => {
-          const attachment: MessageAttachment = {
-            id: `attach-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-            name: file.name,
-            type: file.type,
-            size: file.size
-          }
-
-          // 如果是图片，转换为 base64
-          if (file.type.startsWith('image/')) {
-            attachment.base64 = await fileToBase64(file)
-          }
-
-          return attachment
-        })
-      )
+      // 附件处理逻辑
+      console.warn('Attachments not supported in SSE mode yet')
     }
 
-    exploreStore.addMessage(activeConversationId.value, userMessage)
+    // 使用 SSE 流式接口
+    // 默认 Agent ID
+    const defaultAgentId = 'explore-assistant'
 
-    // 模拟 AI 回复
-    isGenerating.value = true
-
-    setTimeout(() => {
+    try {
+      await exploreStore.sendSSEMessage(content, defaultAgentId, activeConversationId.value)
+    } catch (error) {
+      console.error('SSE message failed:', error)
       if (activeConversationId.value) {
-        const response = getSimulatedResponse(content)
         exploreStore.addMessage(activeConversationId.value, {
           role: 'assistant',
-          content: response.content,
-          components: response.components
+          content: '抱歉，消息发送失败，请稍后重试。'
         })
       }
-      isGenerating.value = false
+    } finally {
       scrollToBottom()
-    }, 1500)
-  }
-
-  const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.onload = () => resolve(reader.result as string)
-      reader.onerror = reject
-    })
+    }
   }
 
   const triggerFileUpload = () => {
@@ -892,198 +868,6 @@
   const renderMarkdown = (content: string): string => {
     // TODO: 实现 Markdown 渲染
     return content.replace(/\n/g, '<br>')
-  }
-
-  const getSimulatedResponse = (userMessage: string): { content: string; components?: any[] } => {
-    const msg = userMessage.toLowerCase()
-
-    // 智能体使用情况
-    if (
-      msg.includes('智能体') &&
-      (msg.includes('使用') || msg.includes('情况') || msg.includes('分析'))
-    ) {
-      return {
-        content: '📊 **智能体使用分析报告**\n\n根据最近的数据统计，以下是关键指标：',
-        components: [
-          {
-            id: `comp-${Date.now()}-1`,
-            type: 'data-summary',
-            props: {
-              title: '核心指标概览',
-              status: 'success',
-              items: [
-                {
-                  icon: '🤖',
-                  label: '活跃智能体',
-                  value: '12',
-                  unit: '个',
-                  change: '↑ 2',
-                  changeClass: 'positive'
-                },
-                {
-                  icon: '📞',
-                  label: '总调用次数',
-                  value: '1,234',
-                  unit: '次',
-                  change: '↑ 15%',
-                  changeClass: 'positive'
-                },
-                {
-                  icon: '⚡',
-                  label: '平均响应',
-                  value: '1.2',
-                  unit: '秒',
-                  change: '↓ 0.3s',
-                  changeClass: 'positive'
-                },
-                {
-                  icon: '✅',
-                  label: '成功率',
-                  value: '98.5',
-                  unit: '%',
-                  change: '稳定',
-                  changeClass: 'neutral'
-                }
-              ],
-              description: '数据更新时间：刚刚'
-            }
-          }
-        ]
-      }
-    }
-
-    // 资源/容量查询
-    if (msg.includes('资源') || msg.includes('容量') || msg.includes('查询')) {
-      return {
-        content: '📈 **资源使用情况**\n\n当前系统资源状态良好：',
-        components: [
-          {
-            id: `comp-${Date.now()}-2`,
-            type: 'trend-analysis',
-            props: {
-              title: '资源使用趋势',
-              summaries: [
-                {
-                  label: 'CPU 使用率',
-                  value: '45%',
-                  change: '正常',
-                  trend: 'flat',
-                  color: '#10b981'
-                },
-                { label: '内存使用', value: '68%', change: '↑ 5%', trend: 'up', color: '#f59e0b' },
-                { label: '磁盘空间', value: '52%', change: '充足', trend: 'flat', color: '#3b82f6' }
-              ],
-              chartData: [42, 45, 48, 44, 46, 45, 45],
-              chartLabels: ['1h前', '50分', '40分', '30分', '20分', '10分', '现在'],
-              insights: [
-                { type: 'positive', text: 'CPU 使用率稳定在 45% 左右，运行状态良好' },
-                { type: 'neutral', text: '内存使用略有上升，建议关注' },
-                { type: 'positive', text: '磁盘空间充足，无需清理' }
-              ]
-            }
-          }
-        ]
-      }
-    }
-
-    // 创建智能体
-    if (msg.includes('创建') && msg.includes('智能体')) {
-      return {
-        content: '好的，我可以帮您创建新的智能体。请确认以下配置：',
-        components: [
-          {
-            id: `comp-${Date.now()}-3`,
-            type: 'confirm',
-            props: {
-              title: '确认创建智能体',
-              description: '将使用以下默认配置创建新的智能体',
-              variant: 'info',
-              items: ['名称：新智能体', '模型：GPT-4o', '类型：通用助手', '自动保存：开启'],
-              confirmText: '确认创建',
-              cancelText: '修改配置'
-            }
-          }
-        ]
-      }
-    }
-
-    // 模型配置
-    if (msg.includes('模型') && (msg.includes('配置') || msg.includes('设置'))) {
-      return {
-        content: '📊 **当前模型使用分布**\n\n各模型调用占比：',
-        components: [
-          {
-            id: `comp-${Date.now()}-4`,
-            type: 'chart',
-            props: {
-              title: '模型使用占比',
-              type: 'pie',
-              data: [45, 30, 15, 10],
-              labels: ['GPT-4o', 'Claude 3.5', '通义千问', 'Gemini'],
-              legend: ['GPT-4o', 'Claude', '通义', 'Gemini']
-            }
-          }
-        ]
-      }
-    }
-
-    // 数据分析
-    if (msg.includes('数据') && msg.includes('分析')) {
-      return {
-        content: '📈 **数据分析报告**\n\n根据您的数据，我为您生成以下分析：',
-        components: [
-          {
-            id: `comp-${Date.now()}-5`,
-            type: 'trend-analysis',
-            props: {
-              title: '数据趋势分析',
-              summaries: [
-                { label: '总量', value: '8.5K', change: '↑ 23%', trend: 'up', color: '#3b82f6' },
-                { label: '平均值', value: '1,214', change: '↑ 15%', trend: 'up', color: '#10b981' },
-                { label: '峰值', value: '1,580', change: '周三', trend: 'up', color: '#8b5cf6' }
-              ],
-              chartData: [820, 932, 1580, 934, 1290, 1330, 1120],
-              chartLabels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-              insights: [
-                { type: 'positive', text: '整体数据呈上升趋势，增长 23%' },
-                { type: 'neutral', text: '周三达到峰值 1,580' },
-                { type: 'positive', text: '周末数据略有回落' }
-              ]
-            }
-          }
-        ]
-      }
-    }
-
-    // 客服相关
-    if (msg.includes('客服') || msg.includes('服务')) {
-      return {
-        content: '🤖 **智能客服功能介绍**\n\n智能客服可以帮助您：',
-        components: [
-          {
-            id: `comp-${Date.now()}-6`,
-            type: 'data-summary',
-            props: {
-              title: '客服功能概览',
-              status: 'info',
-              items: [
-                { icon: '💬', label: '自动回复', value: '7x24', unit: '小时' },
-                { icon: '📚', label: '知识库', value: '500+', unit: '条' },
-                { icon: '🔄', label: '转人工', value: '智能', unit: '判断' },
-                { icon: '⭐', label: '满意度', value: '95', unit: '%' }
-              ],
-              description: '支持多渠道接入：网页、微信、APP'
-            }
-          }
-        ]
-      }
-    }
-
-    // 默认回复
-    return {
-      content: `我理解您想要了解"${userMessage.slice(0, 30)}..."。让我来帮您分析这个问题。\n\n请问您需要更详细的信息吗？`,
-      components: undefined
-    }
   }
 
   const scrollToBottom = () => {

@@ -117,7 +117,7 @@ ${style}`
   private exportReactJSX(
     schema: PageSchema,
     componentName: string,
-    options: ExportOptions
+    _options: ExportOptions
   ): ExportResult {
     const jsx = this.generateReactJSX(schema.root)
     const imports = this.generateReactImports(schema)
@@ -151,7 +151,7 @@ export default ${componentName}`
   private exportHTML(
     schema: PageSchema,
     componentName: string,
-    options: ExportOptions
+    _options: ExportOptions
   ): ExportResult {
     const html = this.generateHTML(schema.root)
 
@@ -398,7 +398,7 @@ ${indent}}`)
   /**
    * 获取状态返回列表
    */
-  private getStateReturns(schema: PageSchema): string {
+  private getStateReturns(_schema: PageSchema): string {
     const indent = this.indent.repeat(3)
     const returns = ['loading', 'handleSubmit', 'handleReset']
     return returns.map((r) => `${indent}${r}`).join(',\n')

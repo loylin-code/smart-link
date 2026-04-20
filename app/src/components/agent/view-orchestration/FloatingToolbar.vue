@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { computed } from 'vue'
   import { useI18n } from 'vue-i18n'
-  import { useViewStore, WIDTH_PRESET_TO_COLS, type WidthPreset } from '@/store/modules/view'
+  import { useViewStore, type WidthPreset } from '@/store/modules/view'
 
   const { t } = useI18n()
   const viewStore = useViewStore()
@@ -13,7 +13,7 @@
     selectedCount: number
   }
 
-  const props = withDefaults(defineProps<Props>(), {
+  withDefaults(defineProps<Props>(), {
     visible: false,
     selectedCount: 1
   })

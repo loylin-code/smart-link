@@ -451,10 +451,7 @@ export const useLogStore = defineStore('log', {
           ? state.agentLogs.reduce((sum, log) => sum + log.duration, 0) / state.agentLogs.length
           : 0
 
-      const totalTokens = state.agentLogs.reduce(
-        (sum, log) => sum + log.tokens.total,
-        0
-      )
+      const totalTokens = state.agentLogs.reduce((sum, log) => sum + log.tokens.total, 0)
 
       return {
         totalAgentLogs,
@@ -669,15 +666,7 @@ export const useLogStore = defineStore('log', {
           }
 
           if (format === 'csv' && type === 'system') {
-            const headers = [
-              'ID',
-              'User',
-              'Operation',
-              'Resource',
-              'Timestamp',
-              'Result',
-              'Error'
-            ]
+            const headers = ['ID', 'User', 'Operation', 'Resource', 'Timestamp', 'Result', 'Error']
             const rows = this.filteredSystemLogs.map((log) => [
               log.id,
               log.userName,

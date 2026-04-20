@@ -94,7 +94,7 @@
     resolvedText?: string
   }
 
-  const props = withDefaults(defineProps<Props>(), {
+  withDefaults(defineProps<Props>(), {
     variant: 'info',
     confirmText: '确认',
     cancelText: '取消',

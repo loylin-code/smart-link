@@ -206,7 +206,7 @@
   })
 
   // 点击处理
-  function handleClick(event: MouseEvent) {
+  function handleClick(_event: MouseEvent) {
     emit('select', props.node.id)
   }
 

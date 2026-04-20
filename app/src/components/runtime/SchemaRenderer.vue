@@ -46,11 +46,7 @@
 <script setup lang="ts">
   import { ref, watch, onMounted, onUnmounted, type VNode } from 'vue'
   import type { PageSchema, Renderer, RuntimeContext } from '@smart-link/core'
-  import {
-    createFullRenderer,
-    createStateManagerWithComputed,
-    getGlobalRegistry
-  } from '@smart-link/core'
+  import { createFullRenderer, createStateManagerWithComputed } from '@smart-link/core'
 
   // ============================================================
   // Types
@@ -162,14 +158,6 @@
   }
 
   /**
-   * Wrap component with interaction logging
-   */
-  function wrapWithInteractionLogging(component: any, nodeId: string): any {
-    // For now, just log to console - can be extended for more complex tracking
-    return component
-  }
-
-  /**
    * Render the schema
    */
   function renderSchema(schema: PageSchema): void {
@@ -182,11 +170,11 @@
       const eventProcessor = (renderer as any).events
       if (eventProcessor) {
         const originalHandle = eventProcessor.handle.bind(eventProcessor)
-        eventProcessor.handle = async (binding: any, context: any, event: any) => {
+        eventProcessor.handle = async (binding: any, context: any, _event: any) => {
           // Log interaction
           const eventType = binding.event as InteractionEvent['type']
-          logInteraction(eventType, schema.root.id, { event: binding.event, originalEvent: event })
-          return originalHandle(binding, context, event)
+          logInteraction(eventType, schema.root.id, { event: binding.event, originalEvent: _event })
+          return originalHandle(binding, context, _event)
         }
       }
 
@@ -218,8 +206,6 @@
       const fullRenderer = createFullRenderer()
       renderer = fullRenderer
 
-      // Set up global registry with component wrapping
-      const registry = fullRenderer.registry
       // Components are already registered in @smart-link/ui
 
       // Create runtime context

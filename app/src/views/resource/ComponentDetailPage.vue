@@ -240,7 +240,6 @@
 <script setup lang="ts">
   import { ref, computed, reactive, watch, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
-  import { useI18n } from 'vue-i18n'
   import { COMPONENT_CATEGORIES } from '@smart-link/shared'
   import type { ComponentMeta, ExampleMeta } from '@smart-link/core'
   import { useComponentsStore } from '@/store/modules/components'
@@ -295,7 +294,6 @@
 
   const route = useRoute()
   const router = useRouter()
-  const { t } = useI18n()
   const componentsStore = useComponentsStore()
 
   const component = computed<ComponentMeta | null>(() => componentsStore.currentComponent)
@@ -369,7 +367,7 @@
     })
   }
 
-  const getExampleProps = (example: ExampleMeta): Record<string, any> => {
+  const getExampleProps = (_example: ExampleMeta): Record<string, any> => {
     const result: Record<string, any> = {}
     if (component.value) {
       component.value.props.forEach((prop) => {

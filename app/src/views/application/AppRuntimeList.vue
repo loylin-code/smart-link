@@ -456,7 +456,7 @@
     }
   }
 
-  async function confirmDisable(disableInfo: { title: string; description: string }) {
+  async function confirmDisable(_disableInfo: { title: string; description: string }) {
     if (!selectedApp.value) return
 
     // TODO: 调用 API 禁用应用

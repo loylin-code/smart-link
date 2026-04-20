@@ -3,8 +3,8 @@
     <!-- 页面头部 - 放在最上方 -->
     <header class="page-header">
       <div class="header-left">
-        <h1 class="page-title">{{ t('datamodel.title') }}</h1>
-        <span class="page-desc">{{ t('datamodel.pageDesc') }}</span>
+        <h1 class="page-title">{{ t('configModel.title') }}</h1>
+        <span class="page-desc">{{ t('configModel.pageDesc') }}</span>
       </div>
       <div class="header-right">
         <button class="create-btn" @click="showCreateDialog = true">
@@ -16,7 +16,7 @@
               stroke-linecap="round"
             />
           </svg>
-          <span>{{ t('datamodel.createModel') }}</span>
+          <span>{{ t('configModel.createModel') }}</span>
         </button>
       </div>
     </header>
@@ -26,7 +26,7 @@
       <!-- 左侧分类树 -->
       <aside class="category-sidebar">
         <div class="sidebar-header">
-          <span class="sidebar-title">{{ t('datamodel.categoryTitle') }}</span>
+          <span class="sidebar-title">{{ t('configModel.categoryTitle') }}</span>
         </div>
 
         <div class="category-list">
@@ -53,7 +53,7 @@
                 stroke-linejoin="round"
               />
             </svg>
-            {{ t('datamodel.newCategory') }}
+            {{ t('configModel.newCategory') }}
           </button>
         </div>
       </aside>
@@ -63,7 +63,7 @@
         <!-- 列表标题 + 搜索框 -->
         <div class="section-header">
           <h2 class="section-title">
-            {{ t('datamodel.modelList')
+            {{ t('configModel.modelList')
             }}<span class="title-count">({{ filteredModels.length }})</span>
           </h2>
           <div class="search-box">
@@ -80,7 +80,7 @@
               v-model="searchKeyword"
               type="text"
               class="search-input"
-              :placeholder="t('datamodel.searchPlaceholder')"
+              :placeholder="t('configModel.searchPlaceholder')"
               @input="handleSearch"
             />
           </div>
@@ -127,21 +127,21 @@
             </div>
             <div class="card-stats">
               <div class="stat-row">
-                <span class="stat-label">{{ t('datamodel.fieldCount') }}:</span>
+                <span class="stat-label">{{ t('configModel.fieldCount') }}:</span>
                 <span class="stat-value"
-                  >{{ model.fields.length }} {{ t('datamodel.fields') }}</span
+                  >{{ model.fields.length }} {{ t('configModel.fields') }}</span
                 >
               </div>
               <div class="stat-row">
-                <span class="stat-label">{{ t('datamodel.relationCount') }}:</span>
+                <span class="stat-label">{{ t('configModel.relationCount') }}:</span>
                 <span class="stat-value"
-                  >{{ model.relations.length }} {{ t('datamodel.models') }}</span
+                  >{{ model.relations.length }} {{ t('configModel.models') }}</span
                 >
               </div>
             </div>
             <div class="card-footer">
               <span class="update-time"
-                >{{ t('datamodel.updated') }}: {{ formatTime(model.updatedAt) }}</span
+                >{{ t('configModel.updated') }}: {{ formatTime(model.updatedAt) }}</span
               >
             </div>
 
@@ -195,14 +195,14 @@
               stroke-width="2"
             />
           </svg>
-          <p>{{ t('datamodel.noModels') }}</p>
+          <p>{{ t('configModel.noModels') }}</p>
         </div>
 
         <!-- 分页 -->
         <div v-if="displayModels.length" class="pagination">
           <span class="pagination-info">
-            {{ t('datamodel.showing') }} {{ paginationStart }}-{{ paginationEnd }} /
-            {{ t('datamodel.total') }} {{ totalCount }} {{ t('datamodel.items') }}
+            {{ t('configModel.showing') }} {{ paginationStart }}-{{ paginationEnd }} /
+            {{ t('configModel.total') }} {{ totalCount }} {{ t('configModel.items') }}
           </span>
           <div class="pagination-controls">
             <button class="page-btn" :disabled="currentPage === 1" @click="currentPage--">
@@ -228,28 +228,28 @@
     <div v-if="showCreateDialog" class="dialog-overlay" @click.self="showCreateDialog = false">
       <div class="dialog">
         <div class="dialog-header">
-          <h3>{{ t('datamodel.createModelTitle') }}</h3>
+          <h3>{{ t('configModel.createModelTitle') }}</h3>
           <button class="close-btn" @click="showCreateDialog = false">✕</button>
         </div>
         <div class="dialog-body">
           <div class="form-group">
-            <label>{{ t('datamodel.modelName') }} <span class="required">*</span></label>
+            <label>{{ t('configModel.modelName') }} <span class="required">*</span></label>
             <input
               v-model="newModel.name"
               type="text"
-              :placeholder="t('datamodel.modelNamePlaceholder')"
+              :placeholder="t('configModel.modelNamePlaceholder')"
             />
           </div>
           <div class="form-group">
-            <label>{{ t('datamodel.displayName') }} <span class="required">*</span></label>
+            <label>{{ t('configModel.displayName') }} <span class="required">*</span></label>
             <input
               v-model="newModel.displayName"
               type="text"
-              :placeholder="t('datamodel.displayNamePlaceholder')"
+              :placeholder="t('configModel.displayNamePlaceholder')"
             />
           </div>
           <div class="form-group">
-            <label>{{ t('datamodel.modelType') }} <span class="required">*</span></label>
+            <label>{{ t('configModel.modelType') }} <span class="required">*</span></label>
             <div class="radio-group">
               <label v-for="type in modelTypes" :key="type.value" class="radio-label">
                 <input v-model="newModel.type" type="radio" :value="type.value" />
@@ -260,7 +260,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label>{{ t('datamodel.category') }} <span class="required">*</span></label>
+            <label>{{ t('configModel.category') }} <span class="required">*</span></label>
             <select v-model="newModel.category">
               <option v-for="cat in categories" :key="cat.id" :value="cat.id">
                 {{ cat.icon }} {{ cat.name }}
@@ -268,11 +268,11 @@
             </select>
           </div>
           <div class="form-group">
-            <label>{{ t('datamodel.description') }}</label>
+            <label>{{ t('configModel.description') }}</label>
             <textarea
               v-model="newModel.description"
               rows="3"
-              :placeholder="t('datamodel.descriptionPlaceholder')"
+              :placeholder="t('configModel.descriptionPlaceholder')"
             ></textarea>
           </div>
         </div>
@@ -281,7 +281,7 @@
             {{ t('common.cancel') }}
           </button>
           <button class="btn btn-primary" @click="createModel">
-            {{ t('datamodel.createAndEdit') }}
+            {{ t('configModel.createAndEdit') }}
           </button>
         </div>
       </div>
@@ -295,28 +295,28 @@
     >
       <div class="dialog dialog-small">
         <div class="dialog-header">
-          <h3>{{ t('datamodel.newCategoryTitle') }}</h3>
+          <h3>{{ t('configModel.newCategoryTitle') }}</h3>
           <button class="close-btn" @click="showNewCategoryDialog = false">✕</button>
         </div>
         <div class="dialog-body">
           <div class="form-group">
-            <label>{{ t('datamodel.categoryName') }} <span class="required">*</span></label>
+            <label>{{ t('configModel.categoryName') }} <span class="required">*</span></label>
             <input
               v-model="newCategory.name"
               type="text"
-              :placeholder="t('datamodel.categoryNamePlaceholder')"
+              :placeholder="t('configModel.categoryNamePlaceholder')"
             />
           </div>
           <div class="form-group">
-            <label>{{ t('datamodel.categoryIcon') }}</label>
+            <label>{{ t('configModel.categoryIcon') }}</label>
             <input v-model="newCategory.icon" type="text" placeholder="📁" maxlength="2" />
           </div>
           <div class="form-group">
-            <label>{{ t('datamodel.categoryDescription') }}</label>
+            <label>{{ t('configModel.categoryDescription') }}</label>
             <textarea
               v-model="newCategory.description"
               rows="2"
-              :placeholder="t('datamodel.categoryDescriptionPlaceholder')"
+              :placeholder="t('configModel.categoryDescriptionPlaceholder')"
             ></textarea>
           </div>
         </div>
@@ -369,34 +369,34 @@
 
   // Constants
   const categories = computed(() => [
-    { id: 'all', name: t('datamodel.allModels'), icon: '📂' },
+    { id: 'all', name: t('configModel.allModels'), icon: '📂' },
     ...dataModelStore.categories
   ])
 
   const modelTypes = [
     {
       value: 'entity' as DataModelType,
-      label: t('datamodel.type.entity'),
+      label: t('configModel.type.entity'),
       icon: '📄',
-      description: t('datamodel.type.entityDesc')
+      description: t('configModel.type.entityDesc')
     },
     {
       value: 'input' as DataModelType,
-      label: t('datamodel.type.input'),
+      label: t('configModel.type.input'),
       icon: '📥',
-      description: t('datamodel.type.inputDesc')
+      description: t('configModel.type.inputDesc')
     },
     {
       value: 'output' as DataModelType,
-      label: t('datamodel.type.output'),
+      label: t('configModel.type.output'),
       icon: '📤',
-      description: t('datamodel.type.outputDesc')
+      description: t('configModel.type.outputDesc')
     },
     {
       value: 'intermediate' as DataModelType,
-      label: t('datamodel.type.intermediate'),
+      label: t('configModel.type.intermediate'),
       icon: '🔄',
-      description: t('datamodel.type.intermediateDesc')
+      description: t('configModel.type.intermediateDesc')
     }
   ]
 
@@ -462,14 +462,12 @@
     dataModelStore.setFilter({ category: categoryId === 'all' ? undefined : categoryId })
   }
 
+  // Get model count for a category
   const getCategoryModelCount = (categoryId: string): number => {
-    if (categoryId === 'all') return dataModelStore.models.length
+    if (categoryId === 'all') {
+      return dataModelStore.models.length
+    }
     return dataModelStore.models.filter((m) => m.category === categoryId).length
-  }
-
-  const getCurrentCategoryName = (): string => {
-    const cat = categories.value.find((c) => c.id === selectedCategory.value)
-    return cat?.name || t('datamodel.allModels')
   }
 
   const handleSearch = () => {
@@ -516,7 +514,7 @@
   }
 
   const openDetail = (model: DataModel) => {
-    router.push(`/app/resource/datamodel/${model.id}`)
+    router.push(`/app/semantic/configModel/${model.id}`)
   }
 
   const createModel = () => {
@@ -549,7 +547,7 @@
     }
 
     // 跳转到详情页
-    router.push(`/app/resource/datamodel/${model.id}`)
+    router.push(`/app/semantic/configModel/${model.id}`)
   }
 
   const createCategory = () => {
@@ -568,7 +566,7 @@
   }
 
   const handleDelete = (model: DataModel) => {
-    if (confirm(t('datamodel.confirmDelete'))) {
+    if (confirm(t('configModel.confirmDelete'))) {
       dataModelStore.deleteModel(model.id)
     }
   }

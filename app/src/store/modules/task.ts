@@ -83,9 +83,7 @@ export const useTaskStore = defineStore('task', {
     // Pending tasks (running && nextRunTime > now)
     pendingTasks: (state) => {
       const now = Date.now()
-      return state.tasks.filter(
-        (task) => task.status === 'running' && task.nextRunTime > now
-      )
+      return state.tasks.filter((task) => task.status === 'running' && task.nextRunTime > now)
     },
 
     // Stats
@@ -237,7 +235,12 @@ export const useTaskStore = defineStore('task', {
     /**
      * 创建定时任务
      */
-    async createTask(task: Omit<ScheduledTask, 'id' | 'createdAt' | 'updatedAt' | 'runCount' | 'successCount' | 'failCount'>): Promise<ScheduledTask | null> {
+    async createTask(
+      task: Omit<
+        ScheduledTask,
+        'id' | 'createdAt' | 'updatedAt' | 'runCount' | 'successCount' | 'failCount'
+      >
+    ): Promise<ScheduledTask | null> {
       this.loading = true
       this.error = null
 

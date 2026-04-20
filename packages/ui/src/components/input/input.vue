@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue'
+  import { ref } from 'vue'
 
   interface Props {
     modelValue?: string | number
@@ -46,7 +46,7 @@
     rows?: number
   }
 
-  const props = withDefaults(defineProps<Props>(), {
+  withDefaults(defineProps<Props>(), {
     type: 'text',
     placeholder: '',
     disabled: false,

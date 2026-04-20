@@ -20,7 +20,7 @@
     rules?: any[]
   }
 
-  const props = withDefaults(defineProps<Props>(), {
+  withDefaults(defineProps<Props>(), {
     required: false
   })
 

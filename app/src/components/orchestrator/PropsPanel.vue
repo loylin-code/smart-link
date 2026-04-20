@@ -433,7 +433,6 @@
   import { useI18n } from 'vue-i18n'
   import { useOrchestratorStore } from '@/store/modules/orchestrator'
   import { COMPONENT_META_LIST, type ComponentMeta } from '@smart-link/shared'
-  import type { EventHandler } from '@smart-link/core'
 
   const { t } = useI18n()
   const store = useOrchestratorStore()
@@ -540,47 +539,6 @@
     eventConfigs.value[eventName].action = ''
     eventConfigs.value[eventName].params = ''
     eventConfigs.value[eventName].code = ''
-  }
-
-  // 更新事件
-  function _updateEvent(eventName: string) {
-    if (!node.value) return
-
-    const config = eventConfigs.value[eventName]
-    if (!config || !config.type) {
-      // 移除事件
-      const events = node.value.events?.filter((e) => e.event !== eventName) || []
-      // 直接更新节点的events属性
-      node.value.events = events.length > 0 ? events : undefined
-      return
-    }
-
-    const handler: EventHandler = {
-      type: config.type as any
-    }
-
-    if (config.type === 'builtin' && config.action) {
-      handler.action = config.action as any
-      if (config.params) {
-        handler.params = { value: config.params }
-      }
-    } else if (config.type === 'custom' && config.code) {
-      handler.code = config.code
-    }
-
-    const events = node.value.events || []
-    const existingIndex = events.findIndex((e) => e.event === eventName)
-
-    if (existingIndex >= 0) {
-      events[existingIndex] = { event: eventName, handler }
-    } else {
-      events.push({ event: eventName, handler })
-    }
-
-    // 直接更新节点的events属性
-    node.value.events = events
-    // 触发历史记录
-    store.updateStaticProp(node.value.id, '__event_update__', Date.now())
   }
 
   // 复制

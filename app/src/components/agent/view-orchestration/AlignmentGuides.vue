@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+  import { ref, watch, onMounted } from 'vue'
   import type { ViewComponentNode } from '@/store/modules/view'
 
   // Props
@@ -15,11 +15,6 @@
     enabled: true,
     threshold: 5
   })
-
-  // Emits
-  const emit = defineEmits<{
-    align: [axis: 'x' | 'y', position: number]
-  }>()
 
   // Guide lines state
   interface GuideLine {

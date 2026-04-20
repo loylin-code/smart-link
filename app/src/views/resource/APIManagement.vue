@@ -26,7 +26,15 @@
       <div class="stat-card">
         <div class="stat-icon total">
           <svg viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" />
+            <rect
+              x="3"
+              y="3"
+              width="18"
+              height="18"
+              rx="2"
+              stroke="currentColor"
+              stroke-width="2"
+            />
             <path d="M3 9h18M9 21V9" stroke="currentColor" stroke-width="2" />
           </svg>
         </div>
@@ -73,7 +81,12 @@
         <div class="stat-icon unavailable">
           <svg viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
-            <path d="M4.93 4.93l14.14 14.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path
+              d="M4.93 4.93l14.14 14.14"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
           </svg>
         </div>
         <div class="stat-content">
@@ -147,12 +160,7 @@
 
     <!-- API 卡片网格 -->
     <div v-if="filteredAPIs.length" class="api-grid">
-      <div
-        v-for="api in filteredAPIs"
-        :key="api.id"
-        class="api-card"
-        @click="openDetail(api)"
-      >
+      <div v-for="api in filteredAPIs" :key="api.id" class="api-card" @click="openDetail(api)">
         <!-- 卡片头部 -->
         <div class="card-header">
           <div class="api-icon">{{ getCategoryIcon(api.category) }}</div>
@@ -236,7 +244,12 @@
                 stroke-width="2"
                 stroke-linecap="round"
               />
-              <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              <path
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
             </svg>
           </button>
           <button class="action-btn" @click="handleDelete(api)" :title="t('common.delete')">
@@ -579,11 +592,7 @@
     }
 
     &.unavailable {
-      background: linear-gradient(
-        135deg,
-        rgba(220, 38, 38, 0.15) 0%,
-        rgba(239, 68, 68, 0.15) 100%
-      );
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.15) 0%, rgba(239, 68, 68, 0.15) 100%);
       color: $error;
     }
   }

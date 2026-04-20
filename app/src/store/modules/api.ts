@@ -22,14 +22,14 @@ export interface APIParam {
  */
 export interface ExternalAPI {
   id: string
-  name: string                    // API 名称
-  category: string                // 分类：weather/payment/map/notification/other
-  provider: string                // 服务提供商
-  endpoint: string                // API 端点 URL
+  name: string // API 名称
+  category: string // 分类：weather/payment/map/notification/other
+  provider: string // 服务提供商
+  endpoint: string // API 端点 URL
   method: 'GET' | 'POST' | 'PUT' | 'DELETE'
   authType: 'none' | 'apiKey' | 'oauth2' | 'basic' | 'jwt'
   authConfig: {
-    apiKey?: string               // API Key（加密存储）
+    apiKey?: string // API Key（加密存储）
     apiKeyHeader?: string
     oauthClientId?: string
     oauthClientSecret?: string
@@ -38,8 +38,8 @@ export interface ExternalAPI {
     jwtToken?: string
   }
   requestParams: APIParam[]
-  timeout: number                 // 默认 10000
-  retryConfig: { maxRetries: number, retryDelay: number }
+  timeout: number // 默认 10000
+  retryConfig: { maxRetries: number; retryDelay: number }
   status: 'available' | 'degraded' | 'unavailable'
   stats: {
     totalCalls: number
@@ -60,8 +60,8 @@ export interface ExternalAPI {
 export interface APIState {
   apis: ExternalAPI[]
   currentAPI: ExternalAPI | null
-  filter: { category?: string, status?: string, keyword?: string }
-  pagination: { page: number, pageSize: number, total: number }
+  filter: { category?: string; status?: string; keyword?: string }
+  pagination: { page: number; pageSize: number; total: number }
   loading: boolean
   error: string | null
 }
@@ -88,11 +88,11 @@ export const useAPIStore = defineStore('api', {
     /**
      * 计算 API 统计信息
      */
-    stats(): { total: number, available: number, degraded: number, unavailable: number } {
+    stats(): { total: number; available: number; degraded: number; unavailable: number } {
       const total = this.apis.length
-      const available = this.apis.filter(api => api.status === 'available').length
-      const degraded = this.apis.filter(api => api.status === 'degraded').length
-      const unavailable = this.apis.filter(api => api.status === 'unavailable').length
+      const available = this.apis.filter((api) => api.status === 'available').length
+      const degraded = this.apis.filter((api) => api.status === 'degraded').length
+      const unavailable = this.apis.filter((api) => api.status === 'unavailable').length
       return { total, available, degraded, unavailable }
     },
 
@@ -100,7 +100,7 @@ export const useAPIStore = defineStore('api', {
      * 获取过滤后的 API 列表
      */
     filteredAPIs(): ExternalAPI[] {
-      return this.apis.filter(api => {
+      return this.apis.filter((api) => {
         if (this.filter.category && api.category !== this.filter.category) {
           return false
         }
@@ -109,9 +109,11 @@ export const useAPIStore = defineStore('api', {
         }
         if (this.filter.keyword) {
           const keyword = this.filter.keyword.toLowerCase()
-          return api.name.toLowerCase().includes(keyword) ||
-                 api.provider.toLowerCase().includes(keyword) ||
-                 api.description?.toLowerCase().includes(keyword)
+          return (
+            api.name.toLowerCase().includes(keyword) ||
+            api.provider.toLowerCase().includes(keyword) ||
+            api.description?.toLowerCase().includes(keyword)
+          )
         }
         return true
       })
@@ -148,8 +150,8 @@ export const useAPIStore = defineStore('api', {
       this.error = null
       try {
         // Mock 延迟
-        await new Promise(resolve => setTimeout(resolve, 500))
-        
+        await new Promise((resolve) => setTimeout(resolve, 500))
+
         // Mock 数据
         this.apis = [
           {
@@ -165,8 +167,21 @@ export const useAPIStore = defineStore('api', {
               apiKeyHeader: 'Authorization'
             },
             requestParams: [
-              { name: 'q', type: 'string', required: true, location: 'query', description: '城市名称' },
-              { name: 'units', type: 'string', required: false, location: 'query', defaultValue: 'metric', description: '温度单位' }
+              {
+                name: 'q',
+                type: 'string',
+                required: true,
+                location: 'query',
+                description: '城市名称'
+              },
+              {
+                name: 'units',
+                type: 'string',
+                required: false,
+                location: 'query',
+                defaultValue: 'metric',
+                description: '温度单位'
+              }
             ],
             timeout: 10000,
             retryConfig: { maxRetries: 3, retryDelay: 1000 },
@@ -195,9 +210,28 @@ export const useAPIStore = defineStore('api', {
               apiKeyHeader: 'Authorization'
             },
             requestParams: [
-              { name: 'amount', type: 'number', required: true, location: 'body', description: '支付金额（分）' },
-              { name: 'currency', type: 'string', required: true, location: 'body', defaultValue: 'usd', description: '货币类型' },
-              { name: 'source', type: 'string', required: true, location: 'body', description: '支付来源 ID' }
+              {
+                name: 'amount',
+                type: 'number',
+                required: true,
+                location: 'body',
+                description: '支付金额（分）'
+              },
+              {
+                name: 'currency',
+                type: 'string',
+                required: true,
+                location: 'body',
+                defaultValue: 'usd',
+                description: '货币类型'
+              },
+              {
+                name: 'source',
+                type: 'string',
+                required: true,
+                location: 'body',
+                description: '支付来源 ID'
+              }
             ],
             timeout: 15000,
             retryConfig: { maxRetries: 2, retryDelay: 2000 },
@@ -226,8 +260,20 @@ export const useAPIStore = defineStore('api', {
               apiKeyHeader: 'Authorization'
             },
             requestParams: [
-              { name: 'address', type: 'string', required: true, location: 'query', description: '地址' },
-              { name: 'key', type: 'string', required: true, location: 'query', description: 'API 密钥' }
+              {
+                name: 'address',
+                type: 'string',
+                required: true,
+                location: 'query',
+                description: '地址'
+              },
+              {
+                name: 'key',
+                type: 'string',
+                required: true,
+                location: 'query',
+                description: 'API 密钥'
+              }
             ],
             timeout: 10000,
             retryConfig: { maxRetries: 3, retryDelay: 1000 },
@@ -245,7 +291,7 @@ export const useAPIStore = defineStore('api', {
             updatedAt: Date.now() - 1800000
           }
         ]
-        
+
         this.pagination.total = this.apis.length
       } catch (err) {
         this.error = err instanceof Error ? err.message : '获取 API 列表失败'
@@ -258,7 +304,7 @@ export const useAPIStore = defineStore('api', {
      * 测试 API 连接（Mock 模式）
      */
     async testConnection(apiId: string) {
-      const api = this.apis.find(a => a.id === apiId)
+      const api = this.apis.find((a) => a.id === apiId)
       if (!api) {
         throw new Error('API 不存在')
       }
@@ -267,15 +313,17 @@ export const useAPIStore = defineStore('api', {
       this.error = null
       try {
         // Mock 延迟
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+
         // Mock 测试结果（随机成功/失败）
         const success = Math.random() > 0.2
         if (success) {
           api.status = 'available'
           api.stats.successCalls++
           api.stats.totalCalls++
-          api.stats.avgLatency = Math.round((api.stats.avgLatency * api.stats.successCalls + 200) / api.stats.totalCalls)
+          api.stats.avgLatency = Math.round(
+            (api.stats.avgLatency * api.stats.successCalls + 200) / api.stats.totalCalls
+          )
           api.stats.lastCallTime = Date.now()
         } else {
           api.status = 'unavailable'
@@ -284,7 +332,7 @@ export const useAPIStore = defineStore('api', {
           api.stats.lastCallTime = Date.now()
           api.stats.lastError = 'Connection timeout'
         }
-        
+
         api.updatedAt = Date.now()
         return success
       } catch (err) {

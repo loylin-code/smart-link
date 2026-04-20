@@ -1,5 +1,13 @@
 import { defineStore } from 'pinia'
-import type { Skill, SkillCategory, SkillStatus, SkillRiskLevel } from '@/types'
+import type {
+  Skill,
+  SkillCategory,
+  SkillStatus,
+  SkillRiskLevel,
+  SkillDomain,
+  SkillFileNode,
+  SkillVersion
+} from '@/types'
 import { skillsApi, type SkillCreateParams, type SkillUpdateParams } from '@/services/resource'
 
 // Mock 数据
@@ -105,12 +113,12 @@ const mockSkills: Skill[] = [
   {
     id: 'skill_003',
     name: 'api_connector',
-    displayName: 'API连接器',
+    displayName: 'API 连接器',
     version: '3.0.1',
     category: 'invoker',
     status: 'enabled',
     author: 'Integration Team',
-    description: '通用API调用技能，支持REST/GraphQL API的自动发现、参数验证和响应解析。',
+    description: '通用 API 调用技能，支持 REST/GraphQL API 的自动发现、参数验证和响应解析。',
     tags: ['API', '集成', 'REST', 'GraphQL'],
     riskLevel: 'medium',
     requiresApproval: true,
@@ -157,7 +165,7 @@ const mockSkills: Skill[] = [
     category: 'transform',
     status: 'enabled',
     author: 'Data Engineering',
-    description: '灵活的数据格式转换技能，支持JSON/XML/CSV/YAML等格式互转，以及自定义映射规则。',
+    description: '灵活的数据格式转换技能，支持 JSON/XML/CSV/YAML 等格式互转，以及自定义映射规则。',
     tags: ['数据转换', 'ETL', '格式转换'],
     riskLevel: 'low',
     requiresApproval: false,
@@ -354,7 +362,7 @@ const mockSkills: Skill[] = [
     category: 'analytics',
     status: 'enabled',
     author: 'Vision Team',
-    description: '智能图像分析技能，支持物体检测、场景识别、OCR文字提取和图像描述生成。',
+    description: '智能图像分析技能，支持物体检测、场景识别、OCR 文字提取和图像描述生成。',
     tags: ['图像', '视觉', 'OCR', '检测'],
     riskLevel: 'low',
     requiresApproval: false,
@@ -409,6 +417,7 @@ interface SkillsState {
   }
   filter: {
     category?: SkillCategory
+    domain?: SkillDomain
     riskLevel?: SkillRiskLevel
     status?: 'active' | 'inactive'
     keyword: string
@@ -427,13 +436,18 @@ export const useSkillsStore = defineStore('skills', {
       total: mockSkills.length
     },
     filter: {
-      keyword: ''
+      keyword: '',
+      domain: undefined
     }
   }),
 
   getters: {
     filteredSkills(state): Skill[] {
       let result = state.skills
+
+      if (state.filter.domain) {
+        result = result.filter((s) => s.domain === state.filter.domain)
+      }
 
       if (state.filter.category) {
         result = result.filter((s) => s.category === state.filter.category)
@@ -701,6 +715,26 @@ export const useSkillsStore = defineStore('skills', {
       }
     },
 
+    async fetchSkillFiles(skillId: string): Promise<SkillFileNode[]> {
+      try {
+        const response = await skillsApi.getFiles(skillId)
+        return response.tree || []
+      } catch (error) {
+        console.error('Failed to fetch skill files:', error)
+        return []
+      }
+    },
+
+    async fetchSkillVersions(skillId: string): Promise<SkillVersion[]> {
+      try {
+        const response = await skillsApi.getVersions(skillId)
+        return response.versions || []
+      } catch (error) {
+        console.error('Failed to fetch skill versions:', error)
+        return []
+      }
+    },
+
     /**
      * 转换后端技能数据格式到前端格式
      * 后端 Skill 模型：id, name, description, type, status, config
@@ -712,7 +746,7 @@ export const useSkillsStore = defineStore('skills', {
       if (apiSkill.config?.riskLevel) {
         riskLevel = apiSkill.config.riskLevel
       } else if (apiSkill.type === 'custom') {
-        riskLevel = 'medium'
+        ;('medium')
       }
 
       // 计算状态

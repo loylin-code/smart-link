@@ -1,4 +1,4 @@
-import { ref, computed, onMounted, onUnmounted, type Ref } from 'vue'
+import { ref, computed, type Ref } from 'vue'
 import { useViewStore, type ViewComponentNode } from '@/store/modules/view'
 
 export interface AlignmentLine {
@@ -29,10 +29,6 @@ export function useCanvasInteraction(canvasRef: Ref<HTMLElement | null>) {
   const selectedComponentIds = ref<Set<string>>(new Set())
   const isMultiSelectMode = ref(false)
 
-  // Drag state
-  const isDragging = ref(false)
-  const dragStartPos = ref({ x: 0, y: 0 })
-
   // Clipboard for copy/paste
   const clipboard = ref<ViewComponentNode[]>([])
 
@@ -51,7 +47,7 @@ export function useCanvasInteraction(canvasRef: Ref<HTMLElement | null>) {
     const componentCenterX = componentRect.left + componentRect.width / 2
     const componentCenterY = componentRect.top + componentRect.height / 2
 
-    for (const { id, rect } of allRects) {
+    for (const { rect } of allRects) {
       // Skip self
       if (rect === componentRect) continue
 

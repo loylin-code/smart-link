@@ -5,11 +5,7 @@
     useViewStore,
     type ViewComponentNode,
     type DataBinding,
-    type WidthConfig,
-    WIDTH_PRESET_TO_COLS,
-    type WidthPreset,
-    type ComponentLayout,
-    type StyleConfig
+    type WidthConfig
   } from '@/store/modules/view'
   import WidthSelector from './WidthSelector.vue'
   import StyleConfigPanel from './StyleConfig.vue'

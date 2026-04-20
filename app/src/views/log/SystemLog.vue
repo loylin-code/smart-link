@@ -20,13 +20,41 @@
 
   // 操作类型配置
   const operationConfig = {
-    login: { label: t('log.operation.login'), color: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.1)' },
-    logout: { label: t('log.operation.logout'), color: '#6b7280', bgColor: 'rgba(107, 114, 128, 0.1)' },
-    create: { label: t('log.operation.create'), color: '#10b981', bgColor: 'rgba(16, 185, 129, 0.1)' },
-    update: { label: t('log.operation.update'), color: '#f59e0b', bgColor: 'rgba(245, 158, 11, 0.1)' },
-    delete: { label: t('log.operation.delete'), color: '#ef4444', bgColor: 'rgba(239, 68, 68, 0.1)' },
-    publish: { label: t('log.operation.publish'), color: '#8b5cf6', bgColor: 'rgba(139, 92, 246, 0.1)' },
-    config_change: { label: t('log.operation.config'), color: '#0284c7', bgColor: 'rgba(2, 132, 199, 0.1)' }
+    login: {
+      label: t('log.operation.login'),
+      color: '#3b82f6',
+      bgColor: 'rgba(59, 130, 246, 0.1)'
+    },
+    logout: {
+      label: t('log.operation.logout'),
+      color: '#6b7280',
+      bgColor: 'rgba(107, 114, 128, 0.1)'
+    },
+    create: {
+      label: t('log.operation.create'),
+      color: '#10b981',
+      bgColor: 'rgba(16, 185, 129, 0.1)'
+    },
+    update: {
+      label: t('log.operation.update'),
+      color: '#f59e0b',
+      bgColor: 'rgba(245, 158, 11, 0.1)'
+    },
+    delete: {
+      label: t('log.operation.delete'),
+      color: '#ef4444',
+      bgColor: 'rgba(239, 68, 68, 0.1)'
+    },
+    publish: {
+      label: t('log.operation.publish'),
+      color: '#8b5cf6',
+      bgColor: 'rgba(139, 92, 246, 0.1)'
+    },
+    config_change: {
+      label: t('log.operation.config'),
+      color: '#0284c7',
+      bgColor: 'rgba(2, 132, 199, 0.1)'
+    }
   }
 
   // 资源类型配置
@@ -43,7 +71,11 @@
 
   // 结果状态配置
   const resultConfig = {
-    success: { label: t('log.result.success'), color: '#10b981', bgColor: 'rgba(16, 185, 129, 0.1)' },
+    success: {
+      label: t('log.result.success'),
+      color: '#10b981',
+      bgColor: 'rgba(16, 185, 129, 0.1)'
+    },
     failed: { label: t('log.result.failed'), color: '#ef4444', bgColor: 'rgba(239, 68, 68, 0.1)' }
   }
 
@@ -93,15 +125,6 @@
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit'
-    })
-  }
-
-  // 格式化日期（仅日期）
-  function formatDate(timestamp: number): string {
-    return new Date(timestamp).toLocaleDateString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
     })
   }
 
@@ -177,13 +200,25 @@
       <div class="header-right">
         <button class="export-btn" @click="exportLogs('csv')">
           <svg viewBox="0 0 24 24" fill="none" class="btn-icon">
-            <path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path
+              d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
           <span>{{ t('log.export.csv') }}</span>
         </button>
         <button class="export-btn secondary" @click="exportLogs('json')">
           <svg viewBox="0 0 24 24" fill="none" class="btn-icon">
-            <path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path
+              d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
           <span>{{ t('log.export.json') }}</span>
         </button>
@@ -195,8 +230,22 @@
       <div class="stat-card">
         <div class="stat-icon total">
           <svg viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
-            <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect
+              x="3"
+              y="3"
+              width="18"
+              height="18"
+              rx="2"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+            <path
+              d="M9 12l2 2 4-4"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
         </div>
         <div class="stat-content">
@@ -207,8 +256,21 @@
       <div class="stat-card">
         <div class="stat-icon today">
           <svg viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
-            <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <rect
+              x="3"
+              y="4"
+              width="18"
+              height="18"
+              rx="2"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+            <path
+              d="M16 2v4M8 2v4M3 10h18"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
           </svg>
         </div>
         <div class="stat-content">
@@ -219,8 +281,13 @@
       <div class="stat-card">
         <div class="stat-icon failed">
           <svg viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
-            <path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" />
+            <path
+              d="M15 9l-6 6M9 9l6 6"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
           </svg>
         </div>
         <div class="stat-content">
@@ -297,14 +364,25 @@
           />
           <button class="search-btn" @click="applyFilters">
             <svg viewBox="0 0 24 24" fill="none">
-              <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
-              <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+              <path
+                d="M21 21l-4.35-4.35"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
             </svg>
           </button>
         </div>
         <button class="reset-btn" @click="resetFilters">
           <svg viewBox="0 0 24 24" fill="none">
-            <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
           {{ t('common.reset') }}
         </button>
@@ -319,8 +397,8 @@
       </div>
       <div v-else-if="logStore.systemLogs.length === 0" class="empty-state">
         <svg viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
-          <path d="M9 12h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" />
+          <path d="M9 12h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
         </svg>
         <p>{{ t('log.noData') }}</p>
       </div>
@@ -357,10 +435,16 @@
             </td>
             <td class="col-resource">
               <div class="resource-info">
-                <span class="resource-icon">{{ resourceTypeConfig[log.resourceType]?.icon || '📄' }}</span>
+                <span class="resource-icon">{{
+                  resourceTypeConfig[log.resourceType]?.icon || '📄'
+                }}</span>
                 <div class="resource-text">
-                  <span class="resource-type">{{ resourceTypeConfig[log.resourceType]?.label || log.resourceType }}</span>
-                  <span class="resource-name" :title="log.resourceName">{{ log.resourceName }}</span>
+                  <span class="resource-type">{{
+                    resourceTypeConfig[log.resourceType]?.label || log.resourceType
+                  }}</span>
+                  <span class="resource-name" :title="log.resourceName">{{
+                    log.resourceName
+                  }}</span>
                 </div>
               </div>
             </td>
@@ -372,11 +456,27 @@
                   color: resultConfig[log.result].color
                 }"
               >
-                <svg v-if="log.result === 'success'" viewBox="0 0 24 24" fill="none" class="result-icon">
-                  <path d="M5 12l5 5 9-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg
+                  v-if="log.result === 'success'"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  class="result-icon"
+                >
+                  <path
+                    d="M5 12l5 5 9-9"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
                 </svg>
                 <svg v-else viewBox="0 0 24 24" fill="none" class="result-icon">
-                  <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path
+                    d="M6 18L18 6M6 6l12 12"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
                 </svg>
                 {{ resultConfig[log.result].label }}
               </span>
@@ -384,8 +484,16 @@
             <td class="col-actions">
               <button class="action-btn" @click="viewDetail(log)">
                 <svg viewBox="0 0 24 24" fill="none">
-                  <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="2"/>
-                  <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2"/>
+                  <path
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
+                  <path
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  />
                 </svg>
                 {{ t('log.viewDetail') }}
               </button>
@@ -401,11 +509,7 @@
         {{ t('log.pagination.total', { total: totalLogs }) }}
       </div>
       <div class="pagination-controls">
-        <button
-          class="page-btn"
-          :disabled="currentPage === 1"
-          @click="currentPage--"
-        >
+        <button class="page-btn" :disabled="currentPage === 1" @click="currentPage--">
           {{ t('log.pagination.prev') }}
         </button>
         <span class="page-info">{{ currentPage }} / {{ Math.ceil(totalLogs / pageSize) }}</span>
@@ -431,7 +535,12 @@
           <h3>{{ t('log.detail.title') }}</h3>
           <button class="close-btn" @click="closeDetail">
             <svg viewBox="0 0 24 24" fill="none">
-              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path
+                d="M18 6L6 18M6 6l12 12"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
             </svg>
           </button>
         </div>
@@ -450,7 +559,9 @@
               </div>
               <div class="detail-item">
                 <span class="detail-label">{{ t('log.detail.user') }}</span>
-                <span class="detail-value">{{ selectedLog.userName }} ({{ selectedLog.userRole }})</span>
+                <span class="detail-value"
+                  >{{ selectedLog.userName }} ({{ selectedLog.userRole }})</span
+                >
               </div>
               <div class="detail-item">
                 <span class="detail-label">{{ t('log.detail.operation') }}</span>
@@ -468,7 +579,9 @@
                 <span class="detail-label">{{ t('log.detail.resourceType') }}</span>
                 <span class="detail-value">
                   {{ resourceTypeConfig[selectedLog.resourceType]?.icon || '📄' }}
-                  {{ resourceTypeConfig[selectedLog.resourceType]?.label || selectedLog.resourceType }}
+                  {{
+                    resourceTypeConfig[selectedLog.resourceType]?.label || selectedLog.resourceType
+                  }}
                 </span>
               </div>
               <div class="detail-item">
@@ -507,11 +620,15 @@
             <div class="comparison-grid">
               <div v-if="selectedLog.beforeValue" class="comparison-block">
                 <span class="comparison-title">{{ t('log.detail.before') }}</span>
-                <pre class="comparison-content">{{ JSON.stringify(selectedLog.beforeValue, null, 2) }}</pre>
+                <pre class="comparison-content">{{
+                  JSON.stringify(selectedLog.beforeValue, null, 2)
+                }}</pre>
               </div>
               <div v-if="selectedLog.afterValue" class="comparison-block">
                 <span class="comparison-title">{{ t('log.detail.after') }}</span>
-                <pre class="comparison-content">{{ JSON.stringify(selectedLog.afterValue, null, 2) }}</pre>
+                <pre class="comparison-content">{{
+                  JSON.stringify(selectedLog.afterValue, null, 2)
+                }}</pre>
               </div>
             </div>
           </div>

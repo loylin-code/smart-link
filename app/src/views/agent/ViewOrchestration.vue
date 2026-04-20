@@ -93,7 +93,7 @@
   import { ref, computed, onMounted, onUnmounted } from 'vue'
   import { useRouter, useRoute } from 'vue-router'
   import { useI18n } from 'vue-i18n'
-  import { useViewStore, type ViewSchema, type ViewComponentNode } from '@/store/modules/view'
+  import { useViewStore, type ViewComponentNode } from '@/store/modules/view'
   import type { InteractionView } from '@/types'
 
   // Subcomponents
@@ -144,19 +144,9 @@
     }
   })
 
-  // Computed: Current schema from store
-  const currentSchema = computed<ViewSchema | null>(() => {
-    return viewStore.currentSchema
-  })
-
   // Computed: Selected component ID from store
   const selectedComponentId = computed(() => {
     return viewStore.selectedComponentId
-  })
-
-  // Computed: Selected component details
-  const selectedComponent = computed<ViewComponentNode | null>(() => {
-    return viewStore.selectedComponent
   })
 
   // View types labels
@@ -202,16 +192,6 @@
     viewStore.updateComponent(componentId, updates)
   }
 
-  // Handle component deletion
-  function handleDeleteComponent(componentId: string) {
-    viewStore.removeComponent(componentId)
-  }
-
-  // Handle component move
-  function handleMoveComponent(componentId: string, direction: 'up' | 'down') {
-    viewStore.moveComponent(componentId, direction)
-  }
-
   // Handle undo
   function handleUndo() {
     viewStore.undo()
@@ -220,13 +200,6 @@
   // Handle redo
   function handleRedo() {
     viewStore.redo()
-  }
-
-  // Handle schema update
-  function handleUpdateSchema(schema: ViewSchema) {
-    if (viewData.value.id) {
-      viewStore.updateViewSchema(viewData.value.id, schema)
-    }
   }
 
   // Handle back navigation

@@ -69,10 +69,6 @@
     }
     return map[props.status]
   })
-
-  const emit = defineEmits<{
-    (e: 'event', data: { type: string; action: string }): void
-  }>()
 </script>
 
 <style scoped lang="scss">

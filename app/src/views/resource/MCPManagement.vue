@@ -233,7 +233,6 @@
   const statusFilter = ref<MCPServerStatus | undefined>(undefined)
   const transportFilter = ref<'stdio' | 'http' | undefined>(undefined)
   const testingIds = ref<Set<string>>(new Set())
-  const showAddDialog = ref(false)
 
   // Fetch servers on mount
   onMounted(async () => {

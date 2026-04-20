@@ -278,7 +278,7 @@ export const useOrchestratorStore = defineStore('orchestrator', {
     addComponent(
       componentType: string,
       parentId: string | null,
-      slotName: string = 'default',
+      _slotName: string = 'default',
       index: number = -1
     ): ComponentNode | null {
       if (!this.currentSchema) return null

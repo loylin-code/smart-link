@@ -126,7 +126,7 @@ export function createComponentRegistry(): ComponentRegistry {
   function getByCategory(category: string): ComponentMeta[] {
     const result: ComponentMeta[] = []
 
-    for (const [type, meta] of metas) {
+    for (const [, meta] of metas) {
       if (meta.category === category) {
         result.push(meta)
       }

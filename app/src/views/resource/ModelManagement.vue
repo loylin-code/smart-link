@@ -287,18 +287,6 @@
     modelStore.setFilter({ [key]: value })
   }
 
-  const getProviderCount = (provider: ModelProvider) => {
-    return modelStore.models.filter((m) => m.provider === provider).length
-  }
-
-  const getTypeCount = (type: ModelType) => {
-    return modelStore.models.filter((m) => m.type === type).length
-  }
-
-  const getStatusCount = (status: ModelStatus) => {
-    return modelStore.models.filter((m) => m.status === status).length
-  }
-
   const getProviderIcon = (provider: ModelProvider) => {
     const icons: Record<ModelProvider, string> = {
       openai: '🟢',

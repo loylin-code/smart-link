@@ -3,7 +3,15 @@
  * 对接后端 /api/v1/resources 接口
  */
 import http, { type PageParams, type PageResponse, type ApiResponse } from '@/utils/http'
-import type { Skill, MCPServer, Component, SkillCategory, MCPServerStatus } from '@/types'
+import type {
+  Skill,
+  MCPServer,
+  Component,
+  SkillCategory,
+  MCPServerStatus,
+  SkillFileNode,
+  SkillVersion
+} from '@/types'
 
 // ============================================================
 // Skills API
@@ -103,6 +111,26 @@ export const skillsApi = {
         error?: string
       }>
     >(`/resources/skills/${skillId}/test`, params)
+    return response.data.data
+  },
+
+  /**
+   * 获取技能文件列表
+   */
+  async getFiles(skillId: string): Promise<{ tree: SkillFileNode[] }> {
+    const response = await http.get<ApiResponse<{ tree: SkillFileNode[] }>>(
+      `/resources/skills/${skillId}/files`
+    )
+    return response.data.data
+  },
+
+  /**
+   * 获取技能版本列表
+   */
+  async getVersions(skillId: string): Promise<{ versions: SkillVersion[] }> {
+    const response = await http.get<ApiResponse<{ versions: SkillVersion[] }>>(
+      `/resources/skills/${skillId}/versions`
+    )
     return response.data.data
   }
 }

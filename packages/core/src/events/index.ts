@@ -161,7 +161,7 @@ export function createEventProcessor(): EventProcessor {
         context.setState(config.path, value)
         break
 
-      case 'push':
+      case 'push': {
         const arr = context.getState(config.path)
         if (Array.isArray(arr)) {
           arr.push(value)
@@ -169,26 +169,30 @@ export function createEventProcessor(): EventProcessor {
           context.setState(config.path, [value])
         }
         break
+      }
 
-      case 'pop':
+      case 'pop': {
         const arrPop = context.getState(config.path)
         if (Array.isArray(arrPop)) {
           arrPop.pop()
         }
         break
+      }
 
-      case 'splice':
+      case 'splice': {
         const arrSplice = context.getState(config.path)
         if (Array.isArray(arrSplice)) {
           const index = typeof value === 'number' ? value : arrSplice.length - 1
           arrSplice.splice(index, 1)
         }
         break
+      }
 
-      case 'merge':
+      case 'merge': {
         const obj = context.getState(config.path) || {}
         context.setState(config.path, { ...obj, ...value })
         break
+      }
     }
   }
 
@@ -310,7 +314,7 @@ function registerBuiltinActions(handlers: Map<BuiltinAction, BuiltinActionHandle
   })
 
   // 表单
-  handlers.set('submitForm', async (params, context) => {
+  handlers.set('submitForm', async (params, _context) => {
     const { formId } = params
     // 触发表单提交事件
     const form = document.querySelector(`[data-form-id="${formId}"]`)
@@ -319,7 +323,7 @@ function registerBuiltinActions(handlers: Map<BuiltinAction, BuiltinActionHandle
     }
   })
 
-  handlers.set('resetForm', async (params, context) => {
+  handlers.set('resetForm', async (params, _context) => {
     const { formId } = params
     // 重置表单
     const form = document.querySelector(`[data-form-id="${formId}"]`) as HTMLFormElement

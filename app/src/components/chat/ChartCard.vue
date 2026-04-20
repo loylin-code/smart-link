@@ -190,10 +190,6 @@
       }
     })
   })
-
-  const emit = defineEmits<{
-    (e: 'event', data: { type: string; data: any }): void
-  }>()
 </script>
 
 <style scoped lang="scss">

@@ -568,12 +568,11 @@
 
 <script setup lang="ts">
   import { ref, computed, nextTick } from 'vue'
-  import { useRoute, useRouter } from 'vue-router'
+  import { useRouter } from 'vue-router'
   import { useI18n } from 'vue-i18n'
   import ParticleBackground from '@/components/common/ParticleBackground.vue'
 
   const { t } = useI18n()
-  const route = useRoute()
   const router = useRouter()
 
   interface AgentFunction {

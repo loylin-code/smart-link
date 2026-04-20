@@ -5,11 +5,9 @@ import postcss from 'rollup-plugin-postcss'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import { visualizer } from 'rollup-plugin-visualizer'
-import { resolve, dirname } from 'path'
-import { fileURLToPath } from 'url'
+import { resolve } from 'path'
 import fs from 'fs'
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
 const pkgPath = process.cwd()
 const pkgJson = JSON.parse(fs.readFileSync(resolve(pkgPath, 'package.json'), 'utf-8'))
 const pkgName = pkgJson.name.split('/')[1] || pkgJson.name

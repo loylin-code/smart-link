@@ -102,104 +102,9 @@
 
   const isCollapsed = computed(() => appStore.isSidebarCollapsed)
 
-  // 图标组件
-  const ChatIcon = () =>
-    h('svg', { viewBox: '0 0 24 24', fill: 'none' }, [
-      h('path', {
-        d: 'M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z',
-        stroke: 'currentColor',
-        'stroke-width': 2,
-        'stroke-linecap': 'round',
-        'stroke-linejoin': 'round'
-      })
-    ])
+  // 图标组件 - 统一风格：24x24 viewBox，stroke-width: 2，简洁线条
 
-  const AppIcon = () =>
-    h('svg', { viewBox: '0 0 24 24', fill: 'none' }, [
-      h('rect', {
-        x: 3,
-        y: 3,
-        width: 7,
-        height: 7,
-        rx: 1,
-        stroke: 'currentColor',
-        'stroke-width': 2
-      }),
-      h('rect', {
-        x: 14,
-        y: 3,
-        width: 7,
-        height: 7,
-        rx: 1,
-        stroke: 'currentColor',
-        'stroke-width': 2
-      }),
-      h('rect', {
-        x: 3,
-        y: 14,
-        width: 7,
-        height: 7,
-        rx: 1,
-        stroke: 'currentColor',
-        'stroke-width': 2
-      }),
-      h('rect', {
-        x: 14,
-        y: 14,
-        width: 7,
-        height: 7,
-        rx: 1,
-        stroke: 'currentColor',
-        'stroke-width': 2
-      })
-    ])
-
-  const ResourceIcon = () =>
-    h('svg', { viewBox: '0 0 24 24', fill: 'none' }, [
-      h('path', {
-        d: 'M22 19V17C22 15.1362 20.7252 13.5701 19 13.126V12C19 10.3431 17.6569 9 16 9H8C6.34315 9 5 10.3431 5 12V13.126C3.27477 13.5701 2 15.1362 2 17V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19Z',
-        stroke: 'currentColor',
-        'stroke-width': 2
-      }),
-      h('path', {
-        d: 'M8 9V6C8 4.34315 9.34315 3 11 3H13C14.6569 3 16 4.34315 16 6V9',
-        stroke: 'currentColor',
-        'stroke-width': 2
-      })
-    ])
-
-  // Tool icon
-  const ToolIcon = () =>
-    h('svg', { viewBox: '0 0 24 24', fill: 'none' }, [
-      h('path', {
-        d: 'M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z',
-        stroke: 'currentColor',
-        'stroke-width': 2,
-        'stroke-linecap': 'round',
-        'stroke-linejoin': 'round'
-      })
-    ])
-
-  // Settings icon
-  const SettingsIcon = () =>
-    h('svg', { viewBox: '0 0 24 24', fill: 'none' }, [
-      h('circle', {
-        cx: 12,
-        cy: 12,
-        r: 3,
-        stroke: 'currentColor',
-        'stroke-width': 2
-      }),
-      h('path', {
-        d: 'M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z',
-        stroke: 'currentColor',
-        'stroke-width': 2,
-        'stroke-linecap': 'round',
-        'stroke-linejoin': 'round'
-      })
-    ])
-
-  // Dashboard icon
+  // 平台概览：仪表盘 - 数据监控
   const DashboardIcon = () =>
     h('svg', { viewBox: '0 0 24 24', fill: 'none' }, [
       h('rect', {
@@ -240,25 +145,104 @@
       })
     ])
 
-  // Schedule/Task icon
-  const ScheduleIcon = () =>
+  // 探索中心：对话气泡 - AI交互
+  const ChatIcon = () =>
     h('svg', { viewBox: '0 0 24 24', fill: 'none' }, [
-      h('circle', {
-        cx: 12,
-        cy: 12,
-        r: 9,
+      h('path', {
+        d: 'M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z',
+        stroke: 'currentColor',
+        'stroke-width': 2,
+        'stroke-linecap': 'round',
+        'stroke-linejoin': 'round'
+      })
+    ])
+
+  // 数字员工：机器人 - AI Agent
+  const AppIcon = () =>
+    h('svg', { viewBox: '0 0 24 24', fill: 'none' }, [
+      h('rect', {
+        x: 5,
+        y: 7,
+        width: 14,
+        height: 10,
+        rx: 3,
         stroke: 'currentColor',
         'stroke-width': 2
       }),
+      h('circle', { cx: 9, cy: 12, r: 1.5, fill: 'currentColor' }),
+      h('circle', { cx: 15, cy: 12, r: 1.5, fill: 'currentColor' }),
       h('path', {
-        d: 'M12 7V12L16 14',
+        d: 'M9 16H15',
+        stroke: 'currentColor',
+        'stroke-width': 2,
+        'stroke-linecap': 'round'
+      }),
+      h('path', {
+        d: 'M12 3V7',
+        stroke: 'currentColor',
+        'stroke-width': 2,
+        'stroke-linecap': 'round'
+      }),
+      h('circle', { cx: 12, cy: 3, r: 1.5, stroke: 'currentColor', 'stroke-width': 2 })
+    ])
+
+  // 定时任务：时钟 - 周期执行
+  const ScheduleIcon = () =>
+    h('svg', { viewBox: '0 0 24 24', fill: 'none' }, [
+      h('circle', { cx: 12, cy: 12, r: 9, stroke: 'currentColor', 'stroke-width': 2 }),
+      h('path', {
+        d: 'M12 7V12L15 15',
         stroke: 'currentColor',
         'stroke-width': 2,
         'stroke-linecap': 'round'
       })
     ])
 
-  // Semantic/Dictionary icon
+  // 工具管理：扳手 - 工具集
+  const ToolIcon = () =>
+    h('svg', { viewBox: '0 0 24 24', fill: 'none' }, [
+      h('path', {
+        d: 'M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z',
+        stroke: 'currentColor',
+        'stroke-width': 2,
+        'stroke-linecap': 'round',
+        'stroke-linejoin': 'round'
+      })
+    ])
+
+  // 资源管理：堆叠层 - 资源库
+  const ResourceIcon = () =>
+    h('svg', { viewBox: '0 0 24 24', fill: 'none' }, [
+      h('rect', {
+        x: 4,
+        y: 4,
+        width: 16,
+        height: 5,
+        rx: 1,
+        stroke: 'currentColor',
+        'stroke-width': 2
+      }),
+      h('rect', {
+        x: 4,
+        y: 10,
+        width: 16,
+        height: 5,
+        rx: 1,
+        stroke: 'currentColor',
+        'stroke-width': 2
+      }),
+      h('rect', {
+        x: 4,
+        y: 16,
+        width: 16,
+        height: 5,
+        rx: 1,
+        stroke: 'currentColor',
+        'stroke-width': 2
+      })
+    ])
+
+  // 语义管理：词典 - 语义词库
   const SemanticIcon = () =>
     h('svg', { viewBox: '0 0 24 24', fill: 'none' }, [
       h('path', {
@@ -272,33 +256,12 @@
         stroke: 'currentColor',
         'stroke-width': 2
       }),
-      h('line', {
-        x1: 8,
-        y1: 7,
-        x2: 16,
-        y2: 7,
-        stroke: 'currentColor',
-        'stroke-width': 2
-      }),
-      h('line', {
-        x1: 8,
-        y1: 11,
-        x2: 16,
-        y2: 11,
-        stroke: 'currentColor',
-        'stroke-width': 2
-      }),
-      h('line', {
-        x1: 8,
-        y1: 15,
-        x2: 12,
-        y2: 15,
-        stroke: 'currentColor',
-        'stroke-width': 2
-      })
+      h('line', { x1: 8, y1: 7, x2: 16, y2: 7, stroke: 'currentColor', 'stroke-width': 2 }),
+      h('line', { x1: 8, y1: 12, x2: 16, y2: 12, stroke: 'currentColor', 'stroke-width': 2 }),
+      h('line', { x1: 8, y1: 17, x2: 12, y2: 17, stroke: 'currentColor', 'stroke-width': 2 })
     ])
 
-  // Log icon
+  // 日志管理：文档 - 运行记录
   const LogIcon = () =>
     h('svg', { viewBox: '0 0 24 24', fill: 'none' }, [
       h('path', {
@@ -306,26 +269,20 @@
         stroke: 'currentColor',
         'stroke-width': 2
       }),
-      h('polyline', {
-        points: '14,2 14,8 20,8',
+      h('polyline', { points: '14,2 14,8 20,8', stroke: 'currentColor', 'stroke-width': 2 }),
+      h('line', { x1: 8, y1: 13, x2: 16, y2: 13, stroke: 'currentColor', 'stroke-width': 2 }),
+      h('line', { x1: 8, y1: 17, x2: 16, y2: 17, stroke: 'currentColor', 'stroke-width': 2 })
+    ])
+
+  // 系统配置：齿轮 - 参数设置
+  const SettingsIcon = () =>
+    h('svg', { viewBox: '0 0 24 24', fill: 'none' }, [
+      h('circle', { cx: 12, cy: 12, r: 3, stroke: 'currentColor', 'stroke-width': 2 }),
+      h('path', {
+        d: 'M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83',
         stroke: 'currentColor',
-        'stroke-width': 2
-      }),
-      h('line', {
-        x1: 8,
-        y1: 13,
-        x2: 16,
-        y2: 13,
-        stroke: 'currentColor',
-        'stroke-width': 2
-      }),
-      h('line', {
-        x1: 8,
-        y1: 17,
-        x2: 16,
-        y2: 17,
-        stroke: 'currentColor',
-        'stroke-width': 2
+        'stroke-width': 2,
+        'stroke-linecap': 'round'
       })
     ])
 
@@ -370,7 +327,11 @@
       title: t('sidebar.resource'),
       path: '/app/resource',
       children: [
-        { key: 'components', title: t('sidebar.componentManagement'), path: '/app/resource/components' },
+        {
+          key: 'components',
+          title: t('sidebar.componentManagement'),
+          path: '/app/resource/components'
+        },
         { key: 'api', title: t('route.apiManagement'), path: '/app/resource/api' }
       ]
     },

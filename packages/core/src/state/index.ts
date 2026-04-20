@@ -96,9 +96,6 @@ export function createStateManager(initialState: Record<string, any> = {}): Stat
       current = current[key]
     }
 
-    // 记录旧值
-    const oldValue = current[lastKey]
-
     // 设置新值
     current[lastKey] = value
 

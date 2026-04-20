@@ -28,15 +28,10 @@ export function createRenderer(config: Partial<RendererConfig> = {}): Renderer {
   const directives = config.directives || createDirectiveProcessor(evaluator)
   const plugins = config.plugins || []
 
-  // 渲染上下文
-  let currentContext: RuntimeContext | null = null
-
   /**
    * 渲染页面
    */
   function renderPage(schema: PageSchema, context: RuntimeContext): VNode {
-    currentContext = context
-
     let processedSchema = schema
     for (const plugin of plugins) {
       if (plugin.beforeRender) {
@@ -252,9 +247,7 @@ export function createRenderer(config: Partial<RendererConfig> = {}): Renderer {
     )
   }
 
-  function destroy(): void {
-    currentContext = null
-  }
+  function destroy(): void {}
 
   return { renderPage, renderNode, destroy }
 }

@@ -1,21 +1,27 @@
 import { defineStore } from 'pinia'
 
 // Domain definitions
-export type SemanticDomain = 'finance' | 'medical' | 'retail' | 'manufacture' | 'education' | 'other'
+export type SemanticDomain =
+  | 'finance'
+  | 'medical'
+  | 'retail'
+  | 'manufacture'
+  | 'education'
+  | 'other'
 
 export type SemanticCategory = 'noun' | 'verb' | 'adjective' | 'phrase'
 
 // Data models
 export interface SemanticVocabulary {
   id: string
-  word: string                    // 主词汇
-  aliases: string[]               // 别名/同义词
-  domain: SemanticDomain          // 所属领域
-  category: SemanticCategory      // 分类
-  definition: string              // 定义描述
-  relatedWords: string[]          // 相关词 ID
-  examples: string[]              // 使用示例
-  priority: number                // 优先级（1-100）
+  word: string // 主词汇
+  aliases: string[] // 别名/同义词
+  domain: SemanticDomain // 所属领域
+  category: SemanticCategory // 分类
+  definition: string // 定义描述
+  relatedWords: string[] // 相关词 ID
+  examples: string[] // 使用示例
+  priority: number // 优先级（1-100）
   createdAt: number
   updatedAt: number
   version: string
@@ -23,26 +29,26 @@ export interface SemanticVocabulary {
 
 export interface MappingRule {
   id: string
-  name: string                    // 规则名称
-  pattern: string                 // 自然语言模式
-  template: string                // 映射模板
+  name: string // 规则名称
+  pattern: string // 自然语言模式
+  template: string // 映射模板
   variables: {
-    name: string                  // 变量名
-    type: string                  // 变量类型
-    vocabularyRef?: string        // 关联词库 ID
+    name: string // 变量名
+    type: string // 变量类型
+    vocabularyRef?: string // 关联词库 ID
   }[]
-  examples: string[]              // 示例
-  confidence: number              // 置信度阈值
+  examples: string[] // 示例
+  confidence: number // 置信度阈值
   enabled: boolean
 }
 
 export interface SemanticConfig {
   id: string
   domain: string
-  domainName: string              // 领域显示名称
+  domainName: string // 领域显示名称
   description: string
-  priority: number                // 领域优先级权重
-  agentBindings: string[]         // 关联的 Agent IDs
+  priority: number // 领域优先级权重
+  agentBindings: string[] // 关联的 Agent IDs
   mappingRules: MappingRule[]
   enabled: boolean
   createdAt: number

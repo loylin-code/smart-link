@@ -33,7 +33,10 @@
     if (!skillsStore.skills?.length) return 0
     const enabledSkills = skillsStore.skills.filter((s: Skill) => s.stats?.successRate)
     if (!enabledSkills.length) return 0
-    const totalRate = enabledSkills.reduce((sum: number, s: Skill) => sum + (s.stats?.successRate || 0), 0)
+    const totalRate = enabledSkills.reduce(
+      (sum: number, s: Skill) => sum + (s.stats?.successRate || 0),
+      0
+    )
     return (totalRate / enabledSkills.length).toFixed(1)
   })
 
@@ -50,9 +53,15 @@
     const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
     const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)
 
-    const todayCount = conversations.filter((c: ChatConversation) => c.updatedAt >= today.getTime()).length
-    const weekCount = conversations.filter((c: ChatConversation) => c.updatedAt >= weekAgo.getTime()).length
-    const monthCount = conversations.filter((c: ChatConversation) => c.updatedAt >= monthAgo.getTime()).length
+    const todayCount = conversations.filter(
+      (c: ChatConversation) => c.updatedAt >= today.getTime()
+    ).length
+    const weekCount = conversations.filter(
+      (c: ChatConversation) => c.updatedAt >= weekAgo.getTime()
+    ).length
+    const monthCount = conversations.filter(
+      (c: ChatConversation) => c.updatedAt >= monthAgo.getTime()
+    ).length
 
     return {
       today: todayCount,
@@ -64,12 +73,42 @@
 
   // 快捷入口
   const quickActions = [
-    { key: 'createAgent', label: t('overview.quickActions.createAgent'), icon: '🤖', route: '/app/agent/create' },
-    { key: 'createSkill', label: t('overview.quickActions.createSkill'), icon: '🧩', route: '/app/tool/skills' },
-    { key: 'configMcp', label: t('overview.quickActions.configMcp'), icon: '🔌', route: '/app/tool/mcp' },
-    { key: 'addApi', label: t('overview.quickActions.addApi'), icon: '🔌', route: '/app/resource/api' },
-    { key: 'manageSemantic', label: t('overview.quickActions.manageSemantic'), icon: '📚', route: '/app/semantic/vocabulary' },
-    { key: 'viewLogs', label: t('overview.quickActions.viewLogs'), icon: '📋', route: '/app/log/agent' }
+    {
+      key: 'createAgent',
+      label: t('overview.quickActions.createAgent'),
+      icon: '🤖',
+      route: '/app/agent'
+    },
+    {
+      key: 'createSkill',
+      label: t('overview.quickActions.createSkill'),
+      icon: '🧩',
+      route: '/app/tool/skills'
+    },
+    {
+      key: 'configMcp',
+      label: t('overview.quickActions.configMcp'),
+      icon: '🔌',
+      route: '/app/tool/mcp'
+    },
+    {
+      key: 'addApi',
+      label: t('overview.quickActions.addApi'),
+      icon: '🔌',
+      route: '/app/resource/api'
+    },
+    {
+      key: 'manageSemantic',
+      label: t('overview.quickActions.manageSemantic'),
+      icon: '📚',
+      route: '/app/semantic/vocabulary'
+    },
+    {
+      key: 'viewLogs',
+      label: t('overview.quickActions.viewLogs'),
+      icon: '📋',
+      route: '/app/log/operation'
+    }
   ]
 
   // 刷新数据
@@ -122,11 +161,7 @@
         icon="🔌"
         :trend-label="`${mcpConnected} ${t('overview.stats.connected')}`"
       />
-      <StatCard
-        :title="t('overview.stats.components')"
-        :value="componentsCount"
-        icon="🎨"
-      />
+      <StatCard :title="t('overview.stats.components')" :value="componentsCount" icon="🎨" />
       <StatCard
         :title="t('overview.stats.models')"
         :value="modelCount"

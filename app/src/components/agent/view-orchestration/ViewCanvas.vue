@@ -45,7 +45,6 @@
   const dropTargetId = ref<string | null>(null)
   const dragPreviewWidth = ref<WidthPreset>('1/2')
   const showGrid = ref(true)
-  const snapEnabled = ref(true)
 
   // Multi-select state
   const isSelecting = ref(false)
@@ -621,7 +620,7 @@
     <!-- Components Grid -->
     <div v-else class="canvas-content" @click.stop>
       <div class="components-grid" :style="{ gap: `${gridSettings.gap}px` }">
-        <template v-for="(component, index) in components" :key="component.id">
+        <template v-for="component in components" :key="component.id">
           <!-- Component Item -->
           <div
             class="component-item"

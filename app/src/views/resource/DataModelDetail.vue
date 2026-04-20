@@ -42,18 +42,18 @@
 
     <!-- 基本信息 -->
     <section v-if="editableModel" class="info-section">
-      <h2 class="section-title">{{ t('datamodel.basicInfo') }}</h2>
+      <h2 class="section-title">{{ t('configModel.basicInfo') }}</h2>
       <div class="info-grid">
         <div class="form-group">
-          <label>{{ t('datamodel.modelName') }}</label>
+          <label>{{ t('configModel.modelName') }}</label>
           <input v-model="editableModel.name" type="text" />
         </div>
         <div class="form-group">
-          <label>{{ t('datamodel.displayName') }}</label>
+          <label>{{ t('configModel.displayName') }}</label>
           <input v-model="editableModel.displayName" type="text" />
         </div>
         <div class="form-group">
-          <label>{{ t('datamodel.modelType') }}</label>
+          <label>{{ t('configModel.modelType') }}</label>
           <select v-model="editableModel.type">
             <option v-for="type in modelTypes" :key="type.value" :value="type.value">
               {{ type.icon }} {{ type.label }}
@@ -61,7 +61,7 @@
           </select>
         </div>
         <div class="form-group">
-          <label>{{ t('datamodel.category') }}</label>
+          <label>{{ t('configModel.category') }}</label>
           <select v-model="editableModel.category">
             <option v-for="cat in categories" :key="cat.id" :value="cat.id">
               {{ cat.icon }} {{ cat.name }}
@@ -69,7 +69,7 @@
           </select>
         </div>
         <div class="form-group form-group-full">
-          <label>{{ t('datamodel.description') }}</label>
+          <label>{{ t('configModel.description') }}</label>
           <textarea v-model="editableModel.description" rows="2"></textarea>
         </div>
       </div>
@@ -78,7 +78,7 @@
     <!-- 字段定义 -->
     <section class="fields-section">
       <div class="section-header">
-        <h2 class="section-title">{{ t('datamodel.fieldDefinitions') }}</h2>
+        <h2 class="section-title">{{ t('configModel.fieldDefinitions') }}</h2>
         <button class="btn btn-small btn-primary" @click="showAddFieldDialog = true">
           <svg viewBox="0 0 24 24" fill="none">
             <path
@@ -89,7 +89,7 @@
               stroke-linejoin="round"
             />
           </svg>
-          {{ t('datamodel.addField') }}
+          {{ t('configModel.addField') }}
         </button>
       </div>
 
@@ -97,11 +97,11 @@
         <table class="data-table">
           <thead>
             <tr>
-              <th>{{ t('datamodel.fieldName') }}</th>
-              <th>{{ t('datamodel.fieldType') }}</th>
-              <th>{{ t('datamodel.required') }}</th>
-              <th>{{ t('datamodel.defaultValue') }}</th>
-              <th>{{ t('datamodel.description') }}</th>
+              <th>{{ t('configModel.fieldName') }}</th>
+              <th>{{ t('configModel.fieldType') }}</th>
+              <th>{{ t('configModel.required') }}</th>
+              <th>{{ t('configModel.defaultValue') }}</th>
+              <th>{{ t('configModel.description') }}</th>
               <th>{{ t('common.actions') }}</th>
             </tr>
           </thead>
@@ -135,9 +135,9 @@
       </div>
 
       <div v-if="editableModel?.fields.length === 0" class="empty-section">
-        <p>{{ t('datamodel.noFields') }}</p>
+        <p>{{ t('configModel.noFields') }}</p>
         <button class="btn btn-small btn-primary" @click="showAddFieldDialog = true">
-          {{ t('datamodel.addFirstField') }}
+          {{ t('configModel.addFirstField') }}
         </button>
       </div>
     </section>
@@ -145,7 +145,7 @@
     <!-- 关联关系 -->
     <section class="relations-section">
       <div class="section-header">
-        <h2 class="section-title">{{ t('datamodel.relations') }}</h2>
+        <h2 class="section-title">{{ t('configModel.relations') }}</h2>
         <button class="btn btn-small btn-primary" @click="showAddRelationDialog = true">
           <svg viewBox="0 0 24 24" fill="none">
             <path
@@ -156,7 +156,7 @@
               stroke-linejoin="round"
             />
           </svg>
-          {{ t('datamodel.addRelation') }}
+          {{ t('configModel.addRelation') }}
         </button>
       </div>
 
@@ -164,11 +164,11 @@
         <table class="data-table">
           <thead>
             <tr>
-              <th>{{ t('datamodel.targetModel') }}</th>
-              <th>{{ t('datamodel.relationType') }}</th>
-              <th>{{ t('datamodel.foreignKey') }}</th>
-              <th>{{ t('datamodel.targetKey') }}</th>
-              <th>{{ t('datamodel.cascade') }}</th>
+              <th>{{ t('configModel.targetModel') }}</th>
+              <th>{{ t('configModel.relationType') }}</th>
+              <th>{{ t('configModel.foreignKey') }}</th>
+              <th>{{ t('configModel.targetKey') }}</th>
+              <th>{{ t('configModel.cascade') }}</th>
               <th>{{ t('common.actions') }}</th>
             </tr>
           </thead>
@@ -185,10 +185,10 @@
               <td>
                 <div class="cascade-tags">
                   <span v-if="relation.cascadeDelete" class="cascade-tag">{{
-                    t('datamodel.cascadeDelete')
+                    t('configModel.cascadeDelete')
                   }}</span>
                   <span v-if="relation.cascadeUpdate" class="cascade-tag">{{
-                    t('datamodel.cascadeUpdate')
+                    t('configModel.cascadeUpdate')
                   }}</span>
                   <span
                     v-if="!relation.cascadeDelete && !relation.cascadeUpdate"
@@ -213,9 +213,9 @@
       </div>
 
       <div v-if="editableModel?.relations.length === 0" class="empty-section">
-        <p>{{ t('datamodel.noRelations') }}</p>
+        <p>{{ t('configModel.noRelations') }}</p>
         <button class="btn btn-small btn-primary" @click="showAddRelationDialog = true">
-          {{ t('datamodel.addFirstRelation') }}
+          {{ t('configModel.addFirstRelation') }}
         </button>
       </div>
     </section>
@@ -224,29 +224,29 @@
     <div v-if="showAddFieldDialog" class="dialog-overlay" @click.self="closeFieldDialog">
       <div class="dialog">
         <div class="dialog-header">
-          <h3>{{ editingField ? t('datamodel.editField') : t('datamodel.addFieldTitle') }}</h3>
+          <h3>{{ editingField ? t('configModel.editField') : t('configModel.addFieldTitle') }}</h3>
           <button class="close-btn" @click="closeFieldDialog">✕</button>
         </div>
         <div class="dialog-body">
           <div class="form-group">
-            <label>{{ t('datamodel.fieldName') }} <span class="required">*</span></label>
+            <label>{{ t('configModel.fieldName') }} <span class="required">*</span></label>
             <input
               v-model="fieldForm.name"
               type="text"
-              :placeholder="t('datamodel.fieldNamePlaceholder')"
+              :placeholder="t('configModel.fieldNamePlaceholder')"
             />
           </div>
           <div class="form-group">
-            <label>{{ t('datamodel.displayName') }} <span class="required">*</span></label>
+            <label>{{ t('configModel.displayName') }} <span class="required">*</span></label>
             <input
               v-model="fieldForm.displayName"
               type="text"
-              :placeholder="t('datamodel.displayNamePlaceholder')"
+              :placeholder="t('configModel.displayNamePlaceholder')"
             />
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>{{ t('datamodel.fieldType') }} <span class="required">*</span></label>
+              <label>{{ t('configModel.fieldType') }} <span class="required">*</span></label>
               <select v-model="fieldForm.type">
                 <option v-for="type in fieldTypes" :key="type.value" :value="type.value">
                   {{ type.label }}
@@ -256,56 +256,56 @@
             <div class="form-group form-group-checkbox">
               <label class="checkbox-label">
                 <input v-model="fieldForm.required" type="checkbox" />
-                <span>{{ t('datamodel.requiredField') }}</span>
+                <span>{{ t('configModel.requiredField') }}</span>
               </label>
             </div>
           </div>
           <div class="form-group">
-            <label>{{ t('datamodel.defaultValue') }}</label>
+            <label>{{ t('configModel.defaultValue') }}</label>
             <input v-model="fieldForm.defaultValue" type="text" />
           </div>
           <div class="form-group">
-            <label>{{ t('datamodel.description') }}</label>
+            <label>{{ t('configModel.description') }}</label>
             <textarea v-model="fieldForm.description" rows="2"></textarea>
           </div>
 
           <!-- 高级选项 -->
           <div class="advanced-section">
             <button class="advanced-toggle" @click="showAdvanced = !showAdvanced">
-              {{ t('datamodel.advancedOptions') }}
+              {{ t('configModel.advancedOptions') }}
               <span class="toggle-icon" :class="{ open: showAdvanced }">▼</span>
             </button>
             <div v-show="showAdvanced" class="advanced-content">
               <div class="form-row">
                 <div class="form-group">
-                  <label>{{ t('datamodel.minLength') }}</label>
+                  <label>{{ t('configModel.minLength') }}</label>
                   <input v-model.number="fieldForm.validation.minLength" type="number" />
                 </div>
                 <div class="form-group">
-                  <label>{{ t('datamodel.maxLength') }}</label>
+                  <label>{{ t('configModel.maxLength') }}</label>
                   <input v-model.number="fieldForm.validation.maxLength" type="number" />
                 </div>
               </div>
               <div class="form-row">
                 <div class="form-group">
-                  <label>{{ t('datamodel.min') }}</label>
+                  <label>{{ t('configModel.min') }}</label>
                   <input v-model.number="fieldForm.validation.min" type="number" />
                 </div>
                 <div class="form-group">
-                  <label>{{ t('datamodel.max') }}</label>
+                  <label>{{ t('configModel.max') }}</label>
                   <input v-model.number="fieldForm.validation.max" type="number" />
                 </div>
               </div>
               <div class="form-group">
-                <label>{{ t('datamodel.pattern') }}</label>
+                <label>{{ t('configModel.pattern') }}</label>
                 <input v-model="fieldForm.validation.pattern" type="text" />
               </div>
               <div v-if="fieldForm.type === 'enum'" class="form-group">
-                <label>{{ t('datamodel.enumValues') }}</label>
+                <label>{{ t('configModel.enumValues') }}</label>
                 <input
                   v-model="enumValuesInput"
                   type="text"
-                  :placeholder="t('datamodel.enumValuesPlaceholder')"
+                  :placeholder="t('configModel.enumValuesPlaceholder')"
                 />
               </div>
             </div>
@@ -327,22 +327,24 @@
       <div class="dialog">
         <div class="dialog-header">
           <h3>
-            {{ editingRelation ? t('datamodel.editRelation') : t('datamodel.addRelationTitle') }}
+            {{
+              editingRelation ? t('configModel.editRelation') : t('configModel.addRelationTitle')
+            }}
           </h3>
           <button class="close-btn" @click="closeRelationDialog">✕</button>
         </div>
         <div class="dialog-body">
           <div class="form-group">
-            <label>{{ t('datamodel.targetModel') }} <span class="required">*</span></label>
+            <label>{{ t('configModel.targetModel') }} <span class="required">*</span></label>
             <select v-model="relationForm.targetModel">
-              <option value="">{{ t('datamodel.selectModel') }}</option>
+              <option value="">{{ t('configModel.selectModel') }}</option>
               <option v-for="m in availableTargetModels" :key="m.id" :value="m.name">
                 {{ m.displayName }} ({{ m.name }})
               </option>
             </select>
           </div>
           <div class="form-group">
-            <label>{{ t('datamodel.relationType') }} <span class="required">*</span></label>
+            <label>{{ t('configModel.relationType') }} <span class="required">*</span></label>
             <div class="radio-group">
               <label
                 v-for="type in relationTypes"
@@ -358,29 +360,29 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>{{ t('datamodel.foreignKey') }} <span class="required">*</span></label>
+              <label>{{ t('configModel.foreignKey') }} <span class="required">*</span></label>
               <select v-model="relationForm.foreignKey">
-                <option value="">{{ t('datamodel.selectField') }}</option>
+                <option value="">{{ t('configModel.selectField') }}</option>
                 <option v-for="field in editableModel?.fields" :key="field.id" :value="field.name">
                   {{ field.displayName }} ({{ field.name }})
                 </option>
               </select>
             </div>
             <div class="form-group">
-              <label>{{ t('datamodel.targetKey') }} <span class="required">*</span></label>
+              <label>{{ t('configModel.targetKey') }} <span class="required">*</span></label>
               <input v-model="relationForm.targetKey" type="text" />
             </div>
           </div>
           <div class="form-group form-group-checkbox-group">
             <label class="checkbox-label">
               <input v-model="relationForm.cascadeDelete" type="checkbox" />
-              <span>{{ t('datamodel.cascadeDelete') }}</span>
-              <small>{{ t('datamodel.cascadeDeleteDesc') }}</small>
+              <span>{{ t('configModel.cascadeDelete') }}</span>
+              <small>{{ t('configModel.cascadeDeleteDesc') }}</small>
             </label>
             <label class="checkbox-label">
               <input v-model="relationForm.cascadeUpdate" type="checkbox" />
-              <span>{{ t('datamodel.cascadeUpdate') }}</span>
-              <small>{{ t('datamodel.cascadeUpdateDesc') }}</small>
+              <span>{{ t('configModel.cascadeUpdate') }}</span>
+              <small>{{ t('configModel.cascadeUpdateDesc') }}</small>
             </label>
           </div>
         </div>
@@ -401,7 +403,7 @@
       <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
       <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
     </svg>
-    <p>{{ t('datamodel.modelNotFound') }}</p>
+    <p>{{ t('configModel.modelNotFound') }}</p>
     <button class="btn btn-primary" @click="goBack">{{ t('common.backToList') }}</button>
   </div>
 </template>
@@ -465,42 +467,46 @@
 
   // Constants
   const modelTypes = [
-    { value: 'entity' as DataModelType, label: t('datamodel.type.entity'), icon: '📄' },
-    { value: 'input' as DataModelType, label: t('datamodel.type.input'), icon: '📥' },
-    { value: 'output' as DataModelType, label: t('datamodel.type.output'), icon: '📤' },
-    { value: 'intermediate' as DataModelType, label: t('datamodel.type.intermediate'), icon: '🔄' }
+    { value: 'entity' as DataModelType, label: t('configModel.type.entity'), icon: '📄' },
+    { value: 'input' as DataModelType, label: t('configModel.type.input'), icon: '📥' },
+    { value: 'output' as DataModelType, label: t('configModel.type.output'), icon: '📤' },
+    {
+      value: 'intermediate' as DataModelType,
+      label: t('configModel.type.intermediate'),
+      icon: '🔄'
+    }
   ]
 
   const fieldTypes = [
-    { value: 'string' as DataModelFieldType, label: t('datamodel.fieldType.string') },
-    { value: 'number' as DataModelFieldType, label: t('datamodel.fieldType.number') },
-    { value: 'boolean' as DataModelFieldType, label: t('datamodel.fieldType.boolean') },
-    { value: 'date' as DataModelFieldType, label: t('datamodel.fieldType.date') },
-    { value: 'enum' as DataModelFieldType, label: t('datamodel.fieldType.enum') },
-    { value: 'object' as DataModelFieldType, label: t('datamodel.fieldType.object') },
-    { value: 'array' as DataModelFieldType, label: t('datamodel.fieldType.array') }
+    { value: 'string' as DataModelFieldType, label: t('configModel.fieldType.string') },
+    { value: 'number' as DataModelFieldType, label: t('configModel.fieldType.number') },
+    { value: 'boolean' as DataModelFieldType, label: t('configModel.fieldType.boolean') },
+    { value: 'date' as DataModelFieldType, label: t('configModel.fieldType.date') },
+    { value: 'enum' as DataModelFieldType, label: t('configModel.fieldType.enum') },
+    { value: 'object' as DataModelFieldType, label: t('configModel.fieldType.object') },
+    { value: 'array' as DataModelFieldType, label: t('configModel.fieldType.array') }
   ]
 
   const relationTypes = [
     {
       value: '1:N' as DataModelRelationType,
-      label: t('datamodel.relationType.1N'),
-      description: t('datamodel.relationType.1NDesc')
+      label: t('configModel.relationTypes.1N'),
+      description: t('configModel.relationTypes.1NDesc')
     },
     {
       value: 'N:1' as DataModelRelationType,
-      label: t('datamodel.relationType.N1'),
-      description: t('datamodel.relationType.N1Desc')
+      label: t('configModel.relationTypes.N1'),
+      description: t('configModel.relationTypes.N1Desc')
     },
     {
       value: '1:1' as DataModelRelationType,
-      label: t('datamodel.relationType.11'),
-      description: t('datamodel.relationType.11Desc')
+      label: t('configModel.relationTypes.11'),
+      description: t('configModel.relationTypes.11Desc')
     },
     {
       value: 'N:N' as DataModelRelationType,
-      label: t('datamodel.relationType.NN'),
-      description: t('datamodel.relationType.NNDesc')
+      label: t('configModel.relationTypes.NN'),
+      description: t('configModel.relationTypes.NNDesc')
     }
   ]
 
@@ -521,22 +527,7 @@
   }
 
   const goBack = () => {
-    router.push('/app/resource/datamodel')
-  }
-
-  const getModelTypeLabel = (type: DataModelType): string => {
-    const found = modelTypes.find((t) => t.value === type)
-    return found?.label || type
-  }
-
-  const getFieldTypeLabel = (type: DataModelFieldType): string => {
-    const found = fieldTypes.find((t) => t.value === type)
-    return found?.label || type
-  }
-
-  const getRelationTypeLabel = (type: DataModelRelationType): string => {
-    const found = relationTypes.find((t) => t.value === type)
-    return found?.label || type
+    router.push('/app/semantic/configModel')
   }
 
   const resetChanges = () => {
@@ -653,7 +644,7 @@
 
   const deleteField = (fieldId: string) => {
     if (!editableModel.value) return
-    if (confirm(t('datamodel.confirmDeleteField'))) {
+    if (confirm(t('configModel.confirmDeleteField'))) {
       editableModel.value.fields = editableModel.value.fields.filter((f) => f.id !== fieldId)
     }
   }
@@ -720,11 +711,21 @@
 
   const deleteRelation = (relationId: string) => {
     if (!editableModel.value) return
-    if (confirm(t('datamodel.confirmDeleteRelation'))) {
+    if (confirm(t('configModel.confirmDeleteRelation'))) {
       editableModel.value.relations = editableModel.value.relations.filter(
         (r) => r.id !== relationId
       )
     }
+  }
+
+  // Field type label helper
+  const getFieldTypeLabel = (type: DataModelFieldType): string => {
+    return t(`configModel.fieldTypes.${type}`) || type
+  }
+
+  // Relation type label helper
+  const getRelationTypeLabel = (type: DataModelRelationType): string => {
+    return t(`configModel.relationTypes.${type.replace(':', '')}`) || type
   }
 
   onMounted(() => {
