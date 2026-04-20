@@ -1584,14 +1584,67 @@ export default {
   },
   api: {
     title: 'API Management',
+    description: 'Manage and configure external API services',
     addApi: 'Add API',
     testConnection: 'Test Connection',
     endpoint: 'API Endpoint',
-    authType: 'Authentication Type',
-    category: 'Category',
+    authTypeLabel: 'Authentication Type',
+    categoryLabel: 'Category',
     provider: 'Service Provider',
     timeout: 'Timeout',
-    retry: 'Retry Configuration'
+    retry: 'Retry Configuration',
+    lastCall: 'Last Call',
+    listTitle: 'API List',
+    searchPlaceholder: 'Search API name, provider...',
+    stats: {
+      total: 'Total APIs',
+      available: 'Available',
+      degraded: 'Degraded',
+      unavailable: 'Unavailable',
+      totalCalls: 'Total Calls',
+      successRate: 'Success Rate',
+      avgLatency: 'Avg Latency'
+    },
+    categories: {
+      all: 'All Categories',
+      weather: 'Weather',
+      payment: 'Payment',
+      map: 'Map',
+      notification: 'Notification',
+      other: 'Other'
+    },
+    status: {
+      available: 'Available',
+      degraded: 'Degraded',
+      unavailable: 'Unavailable'
+    },
+    authTypes: {
+      none: 'No Auth',
+      apiKey: 'API Key',
+      oauth2: 'OAuth2',
+      basic: 'Basic Auth',
+      jwt: 'JWT'
+    },
+    actions: {
+      test: 'Test',
+      config: 'Config',
+      delete: 'Delete'
+    },
+    test: {
+      success: 'Test Successful',
+      failed: 'Test Failed: {error}'
+    },
+    delete: {
+      confirm: 'Are you sure you want to delete API "{name}"?',
+      success: 'Deleted Successfully'
+    },
+    empty: {
+      title: 'No API Configured',
+      subtitle: 'Click "Add API" to add your first external API'
+    },
+    pagination: {
+      showing: 'Showing {start}-{end} of {total}'
+    }
   },
   log: {
     agent: {

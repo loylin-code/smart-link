@@ -1598,14 +1598,67 @@ export default {
   },
   api: {
     title: 'API 管理',
+    description: '管理和配置外部 API 服务',
     addApi: '添加 API',
     testConnection: '测试连接',
     endpoint: 'API 端点',
-    authType: '认证方式',
-    category: '分类',
+    authTypeLabel: '认证方式',
+    categoryLabel: '分类',
     provider: '服务提供商',
     timeout: '超时时间',
-    retry: '重试配置'
+    retry: '重试配置',
+    lastCall: '最后调用',
+    listTitle: 'API 列表',
+    searchPlaceholder: '搜索 API 名称、提供商...',
+    stats: {
+      total: 'API 总数',
+      available: '可用',
+      degraded: '降级',
+      unavailable: '不可用',
+      totalCalls: '总调用次数',
+      successRate: '成功率',
+      avgLatency: '平均延迟'
+    },
+    categories: {
+      all: '全部分类',
+      weather: '天气服务',
+      payment: '支付服务',
+      map: '地图服务',
+      notification: '通知服务',
+      other: '其他'
+    },
+    status: {
+      available: '可用',
+      degraded: '降级',
+      unavailable: '不可用'
+    },
+    authTypes: {
+      none: '无认证',
+      apiKey: 'API Key',
+      oauth2: 'OAuth2',
+      basic: 'Basic Auth',
+      jwt: 'JWT'
+    },
+    actions: {
+      test: '测试连接',
+      config: '配置',
+      delete: '删除'
+    },
+    test: {
+      success: '测试成功',
+      failed: '测试失败: {error}'
+    },
+    delete: {
+      confirm: '确定要删除 API "{name}" 吗？',
+      success: '删除成功'
+    },
+    empty: {
+      title: '暂无 API 配置',
+      subtitle: '点击"添加 API"按钮添加第一个外部 API'
+    },
+    pagination: {
+      showing: '显示 {start}-{end} / 共 {total} 个'
+    }
   },
   log: {
     agent: {
