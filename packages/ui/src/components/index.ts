@@ -31,3 +31,9 @@ export { default as SlSpace } from './layout/space'
 export { default as SlModal } from './feedback/modal'
 export { default as SlMessage } from './feedback/message'
 export { default as SlTooltip } from './feedback/tooltip'
+
+// Data components
+export { default as SlStatCard } from './data/stat-card'
+export { default as SlChart } from './data/chart'
+export { default as SlTable } from './data/table'
+export { default as SlProgress } from './data/progress'
