@@ -354,7 +354,7 @@
       title: t('sidebar.toolManagement'),
       path: '/app/tool',
       children: [
-        { key: 'skills', title: t('sidebar.skillsManagement'), path: '/app/tool/skills' },
+        { key: 'skills', title: t('sidebar.skillManagement'), path: '/app/tool/skills' },
         { key: 'mcp', title: t('sidebar.mcpManagement'), path: '/app/tool/mcp' }
       ]
     },

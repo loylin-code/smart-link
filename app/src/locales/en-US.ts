@@ -136,7 +136,7 @@ export default {
     agent: 'Digital Worker',
     explore: 'Explore Center',
     componentManagement: 'Component Management',
-    skillsManagement: 'Skills Management',
+    skillManagement: 'Skill Management',
     mcpManagement: 'MCP Management',
     modelManagement: 'Model Management',
     dataModel: 'Data Models',

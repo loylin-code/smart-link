@@ -137,7 +137,7 @@ export default {
     agent: '数字员工',
     explore: '探索中心',
     componentManagement: '组件管理',
-    skillsManagement: 'Skills管理',
+    skillManagement: 'Skill管理',
     mcpManagement: 'MCP管理',
     modelManagement: '模型管理',
     dataModel: '数据模型',
