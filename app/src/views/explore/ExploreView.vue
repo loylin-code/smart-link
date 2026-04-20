@@ -625,6 +625,7 @@
   import { ref, computed, watch, nextTick, onMounted, markRaw } from 'vue'
   import { useExploreStore } from '@/store'
   import { useI18n } from 'vue-i18n'
+  import { useRouter } from 'vue-router'
   import type { ChatTemplate } from '@/types'
 
   // 引入聊天组件
@@ -638,6 +639,7 @@
 
   const { t } = useI18n()
   const exploreStore = useExploreStore()
+  const router = useRouter()
 
   // Refs
   const messageListRef = ref<HTMLElement | null>(null)
@@ -854,8 +856,45 @@
     console.log('Regenerate message:', messageId)
   }
 
-  const handleComponentEvent = (messageId: string, event: any) => {
-    console.log('Component event:', messageId, event)
+  interface ComponentEventPayload {
+    name: string
+    action: 'sendMessage' | 'navigate' | 'callback'
+    payload?: Record<string, any>
+  }
+
+  const handleComponentEvent = (messageId: string, event: ComponentEventPayload) => {
+    const { action, payload } = event
+
+    switch (action) {
+      case 'sendMessage':
+        // 将 payload.template 中的变量替换后发送新消息
+        if (payload?.template) {
+          const template = payload.template
+          const message = template.replace(/\{(\w+)\}/g, (_, key) => payload[key] || '')
+          if (activeConversationId.value) {
+            sendUserMessage(message, activeConversationId.value)
+          }
+        } else if (payload?.message) {
+          if (activeConversationId.value) {
+            sendUserMessage(payload.message, activeConversationId.value)
+          }
+        }
+        break
+
+      case 'navigate':
+        if (payload?.path) {
+          router.push(payload.path)
+        }
+        break
+
+      case 'callback':
+        // 自定义回调（可扩展）
+        console.log('[ExploreView] Component callback:', payload)
+        break
+
+      default:
+        console.warn('[ExploreView] Unknown component action:', action)
+    }
   }
 
   const getComponentRenderer = (type: string) => {
