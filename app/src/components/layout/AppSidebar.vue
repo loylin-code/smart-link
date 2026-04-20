@@ -364,12 +364,7 @@
       title: t('sidebar.resource'),
       path: '/app/resource',
       children: [
-        {
-          key: 'components',
-          title: t('sidebar.componentManagement'),
-          path: '/app/resource/components'
-        },
-        { key: 'datamodel', title: t('sidebar.dataModel'), path: '/app/resource/datamodel' },
+        { key: 'components', title: t('sidebar.componentManagement'), path: '/app/resource/components' },
         { key: 'api', title: t('route.apiManagement'), path: '/app/resource/api' }
       ]
     },
@@ -380,7 +375,7 @@
       path: '/app/semantic',
       children: [
         { key: 'vocabulary', title: t('route.vocabulary'), path: '/app/semantic/vocabulary' },
-        { key: 'semantic-config', title: t('route.semanticConfig'), path: '/app/semantic/config' }
+        { key: 'configModel', title: t('route.configModel'), path: '/app/semantic/configModel' }
       ]
     },
     {
@@ -389,8 +384,8 @@
       title: t('route.log'),
       path: '/app/log',
       children: [
-        { key: 'agent-log', title: t('route.agentLog'), path: '/app/log/agent' },
-        { key: 'system-log', title: t('route.systemLog'), path: '/app/log/system' }
+        { key: 'run-log', title: t('route.runLog'), path: '/app/log/operation' },
+        { key: 'operation-log', title: t('route.operationLog'), path: '/app/log/system' }
       ]
     },
     {

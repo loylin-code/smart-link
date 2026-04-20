@@ -131,27 +131,7 @@ const routes: RouteRecordRaw[] = [
               hidden: true
             } as RouteMeta
           },
-          {
-            path: 'datamodel',
-            name: 'DataModel',
-            component: () => import('@/views/resource/DataModelList.vue'),
-            meta: {
-              title: '数据模型',
-              titleKey: 'route.dataModel',
-              icon: 'data-model'
-            } as RouteMeta
-          },
-          {
-            path: 'datamodel/:id',
-            name: 'DataModelDetail',
-            component: () => import('@/views/resource/DataModelDetail.vue'),
-            meta: {
-              title: '数据模型详情',
-              titleKey: 'route.dataModelDetail',
-              icon: 'data-model',
-              hidden: true
-            } as RouteMeta
-          },
+          
           {
             path: 'api',
             name: 'API',
@@ -220,7 +200,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'semantic',
         name: 'Semantic',
-        redirect: '/app/semantic/model',
+        redirect: '/app/semantic/vocabulary',
         meta: {
           title: '语义管理',
           titleKey: 'route.semantic',
@@ -228,23 +208,34 @@ const routes: RouteRecordRaw[] = [
         } as RouteMeta,
         children: [
           {
-            path: 'model',
-            name: 'SemanticModel',
+            path: 'vocabulary',
+            name: 'Vocabulary',
             component: () => import('@/views/semantic/SemanticModel.vue'),
             meta: {
-              title: '语义模型',
-              titleKey: 'route.semanticModel',
+              title: '语义词库',
+              titleKey: 'route.vocabulary',
+              icon: 'vocabulary'
+            } as RouteMeta
+          },
+          {
+            path: 'configModel',
+            name: 'ConfigModel',
+            component: () => import('@/views/resource/DataModelList.vue'),
+            meta: {
+              title: '配置模型',
+              titleKey: 'route.configModel',
               icon: 'model'
             } as RouteMeta
           },
           {
-            path: 'layer',
-            name: 'SemanticLayer',
-            component: () => import('@/views/semantic/SemanticLayer.vue'),
+            path: 'configModel/:id',
+            name: 'ConfigModelDetail',
+            component: () => import('@/views/resource/DataModelDetail.vue'),
             meta: {
-              title: '语义层',
-              titleKey: 'route.semanticLayer',
-              icon: 'layer'
+              title: '配置模型详情',
+              titleKey: 'route.configModelDetail',
+              icon: 'model',
+              hidden: true
             } as RouteMeta
           }
         ]
@@ -264,8 +255,8 @@ const routes: RouteRecordRaw[] = [
             name: 'OperationLog',
             component: () => import('@/views/log/OperationLog.vue'),
             meta: {
-              title: '操作日志',
-              titleKey: 'route.operationLog',
+              title: '运行日志',
+              titleKey: 'route.runLog',
               icon: 'operation'
             } as RouteMeta
           },
@@ -274,8 +265,8 @@ const routes: RouteRecordRaw[] = [
             name: 'SystemLog',
             component: () => import('@/views/log/SystemLog.vue'),
             meta: {
-              title: '系统日志',
-              titleKey: 'route.systemLog',
+              title: '操作日志',
+              titleKey: 'route.operationLog',
               icon: 'system'
             } as RouteMeta
           }
