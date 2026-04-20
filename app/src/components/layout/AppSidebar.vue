@@ -91,7 +91,14 @@
   const appStore = useAppStore()
   const { t } = useI18n()
 
-  const expandedItems = ref<string[]>(['/app/agent', '/app/resource', '/app/tool', '/app/settings'])
+  const expandedItems = ref<string[]>([
+    '/app/agent',
+    '/app/resource',
+    '/app/tool',
+    '/app/semantic',
+    '/app/log',
+    '/app/settings'
+  ])
 
   const isCollapsed = computed(() => appStore.isSidebarCollapsed)
 
@@ -192,43 +199,226 @@
       })
     ])
 
+  // Dashboard icon
+  const DashboardIcon = () =>
+    h('svg', { viewBox: '0 0 24 24', fill: 'none' }, [
+      h('rect', {
+        x: 3,
+        y: 3,
+        width: 7,
+        height: 7,
+        rx: 1,
+        stroke: 'currentColor',
+        'stroke-width': 2
+      }),
+      h('rect', {
+        x: 14,
+        y: 3,
+        width: 7,
+        height: 7,
+        rx: 1,
+        stroke: 'currentColor',
+        'stroke-width': 2
+      }),
+      h('rect', {
+        x: 3,
+        y: 14,
+        width: 7,
+        height: 7,
+        rx: 1,
+        stroke: 'currentColor',
+        'stroke-width': 2
+      }),
+      h('rect', {
+        x: 14,
+        y: 14,
+        width: 7,
+        height: 4,
+        rx: 1,
+        stroke: 'currentColor',
+        'stroke-width': 2
+      })
+    ])
+
+  // Schedule/Task icon
+  const ScheduleIcon = () =>
+    h('svg', { viewBox: '0 0 24 24', fill: 'none' }, [
+      h('circle', {
+        cx: 12,
+        cy: 12,
+        r: 9,
+        stroke: 'currentColor',
+        'stroke-width': 2
+      }),
+      h('path', {
+        d: 'M12 7V12L16 14',
+        stroke: 'currentColor',
+        'stroke-width': 2,
+        'stroke-linecap': 'round'
+      })
+    ])
+
+  // Semantic/Dictionary icon
+  const SemanticIcon = () =>
+    h('svg', { viewBox: '0 0 24 24', fill: 'none' }, [
+      h('path', {
+        d: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20',
+        stroke: 'currentColor',
+        'stroke-width': 2,
+        'stroke-linecap': 'round'
+      }),
+      h('path', {
+        d: 'M6.5 2H20V22H6.5A2.5 2.5 0 0 1 4 19.5V4.5A2.5 2.5 0 0 1 6.5 2Z',
+        stroke: 'currentColor',
+        'stroke-width': 2
+      }),
+      h('line', {
+        x1: 8,
+        y1: 7,
+        x2: 16,
+        y2: 7,
+        stroke: 'currentColor',
+        'stroke-width': 2
+      }),
+      h('line', {
+        x1: 8,
+        y1: 11,
+        x2: 16,
+        y2: 11,
+        stroke: 'currentColor',
+        'stroke-width': 2
+      }),
+      h('line', {
+        x1: 8,
+        y1: 15,
+        x2: 12,
+        y2: 15,
+        stroke: 'currentColor',
+        'stroke-width': 2
+      })
+    ])
+
+  // Log icon
+  const LogIcon = () =>
+    h('svg', { viewBox: '0 0 24 24', fill: 'none' }, [
+      h('path', {
+        d: 'M14 2H6A2 2 0 0 0 4 4V20A2 2 0 0 0 6 22H18A2 2 0 0 0 20 20V8L14 2Z',
+        stroke: 'currentColor',
+        'stroke-width': 2
+      }),
+      h('polyline', {
+        points: '14,2 14,8 20,8',
+        stroke: 'currentColor',
+        'stroke-width': 2
+      }),
+      h('line', {
+        x1: 8,
+        y1: 13,
+        x2: 16,
+        y2: 13,
+        stroke: 'currentColor',
+        'stroke-width': 2
+      }),
+      h('line', {
+        x1: 8,
+        y1: 17,
+        x2: 16,
+        y2: 17,
+        stroke: 'currentColor',
+        'stroke-width': 2
+      })
+    ])
+
   const menuItems = computed(() => [
     {
-      path: '/app/explore',
-      title: t('sidebar.explore'),
-      icon: ChatIcon
+      key: 'overview',
+      icon: DashboardIcon,
+      label: t('route.overview'),
+      titleKey: 'route.overview',
+      path: '/app/overview'
     },
     {
+      key: 'explore',
+      icon: ChatIcon,
+      label: t('route.explore'),
+      titleKey: 'route.explore',
+      path: '/app/explore'
+    },
+    {
+      key: 'agent',
+      icon: AppIcon,
+      label: t('sidebar.agent'),
+      titleKey: 'route.agent',
       path: '/app/agent',
-      title: t('sidebar.agent'),
-      icon: AppIcon
+      children: [
+        { key: 'agent-management', label: t('sidebar.agentManagement'), path: '/app/agent' }
+      ]
     },
     {
-      path: '/app/tool',
-      title: t('sidebar.toolManagement'),
+      key: 'tool',
       icon: ToolIcon,
+      label: t('sidebar.toolManagement'),
+      titleKey: 'route.tool',
+      path: '/app/tool',
       children: [
-        { path: '/app/tool/mcp', title: t('sidebar.mcpManagement') },
-        { path: '/app/tool/skills', title: t('sidebar.skillsManagement') },
-        { path: '/app/tool/models', title: t('sidebar.modelManagement') }
+        { key: 'skills', label: t('sidebar.skillsManagement'), path: '/app/tool/skills' },
+        { key: 'mcp', label: t('sidebar.mcpManagement'), path: '/app/tool/mcp' }
       ]
     },
     {
-      path: '/app/resource',
-      title: t('sidebar.resource'),
+      key: 'resource',
       icon: ResourceIcon,
+      label: t('sidebar.resource'),
+      titleKey: 'route.resource',
+      path: '/app/resource',
       children: [
-        { path: '/app/resource/components', title: t('sidebar.componentManagement') },
-        { path: '/app/resource/datamodel', title: t('sidebar.dataModel') }
+        {
+          key: 'components',
+          label: t('sidebar.componentManagement'),
+          path: '/app/resource/components'
+        },
+        { key: 'datamodel', label: t('sidebar.dataModel'), path: '/app/resource/datamodel' },
+        { key: 'api', label: t('route.apiManagement'), path: '/app/resource/api' }
       ]
     },
     {
-      path: '/app/settings',
-      title: t('sidebar.settings'),
-      icon: SettingsIcon,
+      key: 'semantic',
+      icon: SemanticIcon,
+      label: t('route.semantic'),
+      titleKey: 'route.semantic',
+      path: '/app/semantic',
       children: [
-        { path: '/app/settings/appearance', title: t('sidebar.appearance') },
-        { path: '/app/settings/providers', title: t('sidebar.providers') }
+        { key: 'vocabulary', label: t('route.vocabulary'), path: '/app/semantic/vocabulary' },
+        { key: 'semantic-config', label: t('route.semanticConfig'), path: '/app/semantic/config' }
+      ]
+    },
+    {
+      key: 'log',
+      icon: LogIcon,
+      label: t('route.log'),
+      titleKey: 'route.log',
+      path: '/app/log',
+      children: [
+        { key: 'agent-log', label: t('route.agentLog'), path: '/app/log/agent' },
+        { key: 'system-log', label: t('route.systemLog'), path: '/app/log/system' }
+      ]
+    },
+    {
+      key: 'task',
+      icon: ScheduleIcon,
+      label: t('route.task'),
+      titleKey: 'route.task',
+      path: '/app/task'
+    },
+    {
+      key: 'settings',
+      icon: SettingsIcon,
+      label: t('sidebar.settings'),
+      titleKey: 'route.settings',
+      path: '/app/settings',
+      children: [
+        { key: 'providers', label: t('sidebar.providers'), path: '/app/settings/providers' },
+        { key: 'models', label: t('sidebar.modelManagement'), path: '/app/settings/models' }
       ]
     }
   ])

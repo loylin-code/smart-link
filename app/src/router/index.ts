@@ -25,8 +25,18 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/app',
     component: () => import('@/components/layout/AppLayout.vue'),
-    redirect: '/app/explore',
+    redirect: '/app/overview',
     children: [
+      {
+        path: 'overview',
+        name: 'Overview',
+        component: () => import('@/views/overview/OverviewView.vue'),
+        meta: {
+          title: '平台概览',
+          titleKey: 'route.overview',
+          icon: 'home'
+        } as RouteMeta
+      },
       {
         path: 'explore',
         name: 'Explore',
@@ -141,6 +151,16 @@ const routes: RouteRecordRaw[] = [
               icon: 'data-model',
               hidden: true
             } as RouteMeta
+          },
+          {
+            path: 'api',
+            name: 'API',
+            component: () => import('@/views/resource/APIManagement.vue'),
+            meta: {
+              title: 'API 管理',
+              titleKey: 'route.api',
+              icon: 'api'
+            } as RouteMeta
           }
         ]
       },
@@ -194,7 +214,93 @@ const routes: RouteRecordRaw[] = [
               icon: 'skill',
               hidden: true
             } as RouteMeta
+          }
+        ]
+      },
+      {
+        path: 'semantic',
+        name: 'Semantic',
+        redirect: '/app/semantic/model',
+        meta: {
+          title: '语义管理',
+          titleKey: 'route.semantic',
+          icon: 'semantic'
+        } as RouteMeta,
+        children: [
+          {
+            path: 'model',
+            name: 'SemanticModel',
+            component: () => import('@/views/semantic/SemanticModel.vue'),
+            meta: {
+              title: '语义模型',
+              titleKey: 'route.semanticModel',
+              icon: 'model'
+            } as RouteMeta
           },
+          {
+            path: 'layer',
+            name: 'SemanticLayer',
+            component: () => import('@/views/semantic/SemanticLayer.vue'),
+            meta: {
+              title: '语义层',
+              titleKey: 'route.semanticLayer',
+              icon: 'layer'
+            } as RouteMeta
+          }
+        ]
+      },
+      {
+        path: 'log',
+        name: 'Log',
+        redirect: '/app/log/operation',
+        meta: {
+          title: '日志管理',
+          titleKey: 'route.log',
+          icon: 'log'
+        } as RouteMeta,
+        children: [
+          {
+            path: 'operation',
+            name: 'OperationLog',
+            component: () => import('@/views/log/OperationLog.vue'),
+            meta: {
+              title: '操作日志',
+              titleKey: 'route.operationLog',
+              icon: 'operation'
+            } as RouteMeta
+          },
+          {
+            path: 'system',
+            name: 'SystemLog',
+            component: () => import('@/views/log/SystemLog.vue'),
+            meta: {
+              title: '系统日志',
+              titleKey: 'route.systemLog',
+              icon: 'system'
+            } as RouteMeta
+          }
+        ]
+      },
+      {
+        path: 'task',
+        name: 'Task',
+        component: () => import('@/views/task/TaskManagement.vue'),
+        meta: {
+          title: '定时任务',
+          titleKey: 'route.task',
+          icon: 'task'
+        } as RouteMeta
+      },
+      {
+        path: 'settings',
+        name: 'Settings',
+        redirect: '/app/settings/models',
+        meta: {
+          title: '系统设置',
+          titleKey: 'route.settings',
+          icon: 'settings'
+        } as RouteMeta,
+        children: [
           {
             path: 'models',
             name: 'Models',
@@ -203,39 +309,6 @@ const routes: RouteRecordRaw[] = [
               title: '模型管理',
               titleKey: 'route.models',
               icon: 'model'
-            } as RouteMeta
-          },
-          {
-            path: 'models/:id',
-            name: 'ModelDetail',
-            component: () => import('@/views/resource/ModelDetailPage.vue'),
-            meta: {
-              title: '模型详情',
-              titleKey: 'route.modelDetail',
-              icon: 'model',
-              hidden: true
-            } as RouteMeta
-          }
-        ]
-      },
-      {
-        path: 'settings',
-        name: 'Settings',
-        redirect: '/app/settings/appearance',
-        meta: {
-          title: '系统设置',
-          titleKey: 'route.settings',
-          icon: 'settings'
-        } as RouteMeta,
-        children: [
-          {
-            path: 'appearance',
-            name: 'Appearance',
-            component: () => import('@/views/settings/AppearanceSettings.vue'),
-            meta: {
-              title: '外观设置',
-              titleKey: 'route.appearance',
-              icon: 'appearance'
             } as RouteMeta
           },
           {

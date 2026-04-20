@@ -39,6 +39,7 @@ export default {
     yesterday: '昨天'
   },
   route: {
+    overview: '平台概览',
     explore: '探索中心',
     agentManagement: '数字员工管理',
     agentList: '数字员工列表',
@@ -65,11 +66,19 @@ export default {
     appearance: '外观设置',
     providers: '模型提供商',
     notFound: '页面未找到',
+    task: '定时任务',
+    semantic: '语义管理',
+    vocabulary: '语义词库',
+    semanticConfig: '配置管理',
+    log: '日志管理',
+    agentLog: 'Agent 运行日志',
+    systemLog: '系统操作日志',
+    apiManagement: 'API 管理',
+    agent: '数字员工',
     // 保留旧的路由键以兼容
     application: '数字员工管理',
     appList: '数字员工列表',
     appDesign: '数字员工设计',
-    appCreate: '新建数字员工',
     appOrchestration: '编排数字员工',
     appEdit: '编辑数字员工',
     appRuntime: '数字员工运行'
@@ -140,6 +149,15 @@ export default {
     agentList: '数字员工列表',
     agentDesign: '数字员工设计',
     collapseSidebar: '收起侧边栏',
+    overview: '平台概览',
+    task: '定时任务',
+    semantic: '语义管理',
+    vocabulary: '语义词库',
+    semanticConfig: '配置管理',
+    log: '日志管理',
+    agentLog: 'Agent 运行日志',
+    systemLog: '系统操作日志',
+    apiManagement: 'API 管理',
     // 保留旧键以兼容
     appManagement: '数字员工管理',
     appList: '数字员工列表',
@@ -1348,7 +1366,7 @@ export default {
   model: {
     management: {
       title: '模型管理',
-      description: '管理和配置AI模型',
+      description: '管理和配置 AI 模型',
       listTitle: '模型列表',
       addModel: '添加模型',
       searchPlaceholder: '搜索模型名称、提供商...',
@@ -1503,6 +1521,181 @@ export default {
       other: '其他',
       tpmLimitReached: 'TPM 限制已达到',
       requestTimeout: '请求超时'
+    }
+  },
+  overview: {
+    title: '平台概览',
+    refresh: '刷新',
+    timeRange: {
+      today: '今日',
+      week: '本周',
+      month: '本月'
+    },
+    stats: {
+      agents: '数字员工',
+      skills: 'Skills',
+      mcp: 'MCP 服务器',
+      components: '组件',
+      models: '模型',
+      sessions: '会话统计',
+      tokens: 'Token 消耗',
+      tasks: '定时任务',
+      systemStatus: '系统状态',
+      todayIncrease: '今日新增',
+      successRate: '成功率',
+      connected: '已连接',
+      available: '可用'
+    },
+    session: {
+      today: '今日会话',
+      week: '本周会话',
+      month: '本月会话'
+    },
+    tokens: {
+      placeholder: 'Token 消耗统计',
+      comingSoon: '即将上线'
+    },
+    tasks: {
+      placeholder: '暂无定时任务',
+      viewAll: '查看全部'
+    },
+    system: {
+      llmProvider: 'LLM 提供商',
+      mcpServers: 'MCP 服务器',
+      skills: 'Skills 状态',
+      normal: '正常',
+      highRisk: '1 项高风险待审批'
+    },
+    quickActions: {
+      title: '快捷入口',
+      createAgent: '创建数字员工',
+      createSkill: '新建 Skill',
+      configMcp: '配置 MCP',
+      addApi: '添加 API',
+      manageSemantic: '管理语义',
+      viewLogs: '查看日志'
+    }
+  },
+  semantic: {
+    vocabulary: {
+      title: '语义词库',
+      addWord: '添加词汇',
+      import: '批量导入',
+      export: '导出词库',
+      domain: '所属领域',
+      aliases: '别名/同义词',
+      definition: '定义',
+      examples: '使用示例',
+      priority: '优先级'
+    },
+    config: {
+      title: '语义配置',
+      domainConfig: '领域配置',
+      priority: '优先级规则',
+      agentBinding: 'Agent 绑定',
+      mappingRules: '映射规则'
+    }
+  },
+  api: {
+    title: 'API 管理',
+    addApi: '添加 API',
+    testConnection: '测试连接',
+    endpoint: 'API 端点',
+    authType: '认证方式',
+    category: '分类',
+    provider: '服务提供商',
+    timeout: '超时时间',
+    retry: '重试配置'
+  },
+  log: {
+    agent: {
+      title: 'Agent 运行日志',
+      executionTime: '执行时间',
+      duration: '执行耗时',
+      callChain: '调用链路',
+      tokenUsage: 'Token 消耗',
+      inputOutput: '输入输出'
+    },
+    system: {
+      title: '系统操作日志',
+      operation: '操作类型',
+      resourceType: '资源类型',
+      operator: '操作人',
+      beforeAfter: '数据对比'
+    },
+    export: '导出日志',
+    filter: '筛选'
+  },
+  task: {
+    title: '定时任务',
+    management: '定时任务管理',
+    create: '新建任务',
+    createFirst: '创建第一个任务',
+    createTask: '创建任务',
+    schedule: '执行周期',
+    nextRun: '下次执行',
+    lastRun: '上次执行',
+    executionHistory: '执行历史',
+    manualExecute: '手动执行',
+    stats: {
+      total: '总任务',
+      running: '运行中',
+      paused: '已暂停',
+      pending: '待执行',
+      times: '次',
+      successRate: '成功率'
+    },
+    status: {
+      all: '全部状态',
+      running: '运行中',
+      paused: '已暂停',
+      pending: '待执行',
+      completed: '已完成',
+      failed: '执行失败'
+    },
+    scheduleType: {
+      cron: '周期执行',
+      once: '一次性',
+      manual: '手动触发'
+    },
+    filter: {
+      status: '状态筛选',
+      searchPlaceholder: '搜索任务名称...'
+    },
+    table: {
+      status: '状态',
+      name: '任务名称',
+      agent: '关联Agent',
+      schedule: '执行周期',
+      nextRun: '下次执行',
+      stats: '执行统计'
+    },
+    actions: {
+      execute: '手动执行',
+      history: '查看历史',
+      start: '启动',
+      pause: '暂停',
+      edit: '编辑'
+    },
+    scheduleDisplay: {
+      once: '一次性',
+      manual: '手动触发',
+      daily: '每天 {hour}:{minute}',
+      weekly: '每周{day} {hour}:{minute}'
+    },
+    nextRunDisplay: {
+      none: '无',
+      overdue: '已过期',
+      days: '{days}天{hours}小时',
+      hours: '{hours}小时{minutes}分钟',
+      minutes: '{minutes}分钟后'
+    },
+    empty: {
+      title: '暂无定时任务',
+      hint: '点击"新建任务"按钮添加第一个定时任务'
+    },
+    delete: {
+      confirm: '确定要删除任务"{name}"吗？'
     }
   }
 }

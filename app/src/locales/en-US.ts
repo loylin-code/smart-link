@@ -39,6 +39,7 @@ export default {
     yesterday: 'Yesterday'
   },
   route: {
+    overview: 'Platform Overview',
     explore: 'Explore Center',
     agentManagement: 'Digital Worker Management',
     agentList: 'Digital Worker List',
@@ -65,6 +66,15 @@ export default {
     appearance: 'Appearance Settings',
     providers: 'Model Providers',
     notFound: 'Page Not Found',
+    task: 'Scheduled Tasks',
+    semantic: 'Semantic Management',
+    vocabulary: 'Vocabulary',
+    semanticConfig: 'Configuration',
+    log: 'Logs',
+    agentLog: 'Agent Execution Logs',
+    systemLog: 'System Operation Logs',
+    apiManagement: 'API Management',
+    agent: 'Digital Worker',
     // Keep old keys for compatibility
     application: 'Digital Worker Management',
     appList: 'Digital Worker List',
@@ -138,6 +148,15 @@ export default {
     agentList: 'Digital Worker List',
     agentDesign: 'Digital Worker Design',
     collapseSidebar: 'Collapse Sidebar',
+    overview: 'Platform Overview',
+    task: 'Scheduled Tasks',
+    semantic: 'Semantic Management',
+    vocabulary: 'Vocabulary',
+    semanticConfig: 'Configuration',
+    log: 'Logs',
+    agentLog: 'Agent Execution Logs',
+    systemLog: 'System Operation Logs',
+    apiManagement: 'API Management',
     // Keep old keys for compatibility
     appManagement: 'Digital Worker Management',
     appList: 'Digital Worker List',
@@ -1488,6 +1507,181 @@ export default {
       other: 'Other',
       tpmLimitReached: 'TPM limit reached',
       requestTimeout: 'Request timeout'
+    }
+  },
+  overview: {
+    title: 'Platform Overview',
+    refresh: 'Refresh',
+    timeRange: {
+      today: 'Today',
+      week: 'This Week',
+      month: 'This Month'
+    },
+    stats: {
+      agents: 'Digital Workers',
+      skills: 'Skills',
+      mcp: 'MCP Servers',
+      components: 'Components',
+      models: 'Models',
+      sessions: 'Session Stats',
+      tokens: 'Token Usage',
+      tasks: 'Scheduled Tasks',
+      systemStatus: 'System Status',
+      todayIncrease: 'New Today',
+      successRate: 'Success Rate',
+      connected: 'Connected',
+      available: 'Available'
+    },
+    session: {
+      today: "Today's Sessions",
+      week: "This Week's Sessions",
+      month: "This Month's Sessions"
+    },
+    tokens: {
+      placeholder: 'Token Usage Statistics',
+      comingSoon: 'Coming Soon'
+    },
+    tasks: {
+      placeholder: 'No scheduled tasks',
+      viewAll: 'View All'
+    },
+    system: {
+      llmProvider: 'LLM Providers',
+      mcpServers: 'MCP Servers',
+      skills: 'Skills Status',
+      normal: 'Normal',
+      highRisk: '1 high risk pending approval'
+    },
+    quickActions: {
+      title: 'Quick Actions',
+      createAgent: 'Create Agent',
+      createSkill: 'Create Skill',
+      configMcp: 'Config MCP',
+      addApi: 'Add API',
+      manageSemantic: 'Manage Semantic',
+      viewLogs: 'View Logs'
+    }
+  },
+  semantic: {
+    vocabulary: {
+      title: 'Vocabulary',
+      addWord: 'Add Word',
+      import: 'Bulk Import',
+      export: 'Export Vocabulary',
+      domain: 'Domain',
+      aliases: 'Aliases/Synonyms',
+      definition: 'Definition',
+      examples: 'Usage Examples',
+      priority: 'Priority'
+    },
+    config: {
+      title: 'Semantic Configuration',
+      domainConfig: 'Domain Configuration',
+      priority: 'Priority Rules',
+      agentBinding: 'Agent Binding',
+      mappingRules: 'Mapping Rules'
+    }
+  },
+  api: {
+    title: 'API Management',
+    addApi: 'Add API',
+    testConnection: 'Test Connection',
+    endpoint: 'API Endpoint',
+    authType: 'Authentication Type',
+    category: 'Category',
+    provider: 'Service Provider',
+    timeout: 'Timeout',
+    retry: 'Retry Configuration'
+  },
+  log: {
+    agent: {
+      title: 'Agent Execution Logs',
+      executionTime: 'Execution Time',
+      duration: 'Duration',
+      callChain: 'Call Chain',
+      tokenUsage: 'Token Usage',
+      inputOutput: 'Input/Output'
+    },
+    system: {
+      title: 'System Operation Logs',
+      operation: 'Operation Type',
+      resourceType: 'Resource Type',
+      operator: 'Operator',
+      beforeAfter: 'Data Comparison'
+    },
+    export: 'Export Logs',
+    filter: 'Filter'
+  },
+  task: {
+    title: 'Scheduled Tasks',
+    management: 'Task Management',
+    create: 'Create Task',
+    createFirst: 'Create First Task',
+    createTask: 'Create Task',
+    schedule: 'Schedule',
+    nextRun: 'Next Run',
+    lastRun: 'Last Run',
+    executionHistory: 'Execution History',
+    manualExecute: 'Manual Execute',
+    stats: {
+      total: 'Total',
+      running: 'Running',
+      paused: 'Paused',
+      pending: 'Pending',
+      times: 'times',
+      successRate: 'Success Rate'
+    },
+    status: {
+      all: 'All Status',
+      running: 'Running',
+      paused: 'Paused',
+      pending: 'Pending',
+      completed: 'Completed',
+      failed: 'Failed'
+    },
+    scheduleType: {
+      cron: 'Periodic',
+      once: 'One-time',
+      manual: 'Manual Trigger'
+    },
+    filter: {
+      status: 'Status Filter',
+      searchPlaceholder: 'Search task name...'
+    },
+    table: {
+      status: 'Status',
+      name: 'Task Name',
+      agent: 'Agent',
+      schedule: 'Schedule',
+      nextRun: 'Next Run',
+      stats: 'Statistics'
+    },
+    actions: {
+      execute: 'Execute',
+      history: 'History',
+      start: 'Start',
+      pause: 'Pause',
+      edit: 'Edit'
+    },
+    scheduleDisplay: {
+      once: 'One-time',
+      manual: 'Manual',
+      daily: 'Daily at {hour}:{minute}',
+      weekly: 'Weekly on {day} at {hour}:{minute}'
+    },
+    nextRunDisplay: {
+      none: 'None',
+      overdue: 'Overdue',
+      days: '{days}d {hours}h',
+      hours: '{hours}h {minutes}m',
+      minutes: 'in {minutes}m'
+    },
+    empty: {
+      title: 'No Scheduled Tasks',
+      hint: 'Click "Create Task" to add your first task'
+    },
+    delete: {
+      confirm: 'Are you sure you want to delete task "{name}"?'
     }
   }
 }
