@@ -521,3 +521,29 @@ pre {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+// ================================
+// 主题切换过渡动画
+// ================================
+.theme-transition,
+.theme-transition *,
+.theme-transition *::before,
+.theme-transition *::after {
+  transition: 
+    background-color 300ms $ease-out,
+    color 300ms $ease-out,
+    border-color 300ms $ease-out,
+    box-shadow 300ms $ease-out,
+    fill 300ms $ease-out,
+    stroke 300ms $ease-out !important;
+}
+
+// 减少动画模式兼容（无障碍支持）
+@media (prefers-reduced-motion: reduce) {
+  .theme-transition,
+  .theme-transition *,
+  .theme-transition *::before,
+  .theme-transition *::after {
+    transition: none !important;
+  }
+}

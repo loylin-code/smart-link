@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router'
 import type { RouteMeta } from '@/types'
 import i18n from '@/locales'
 
@@ -131,7 +131,7 @@ const routes: RouteRecordRaw[] = [
               hidden: true
             } as RouteMeta
           },
-          
+
           {
             path: 'api',
             name: 'API',
@@ -328,7 +328,7 @@ const routes: RouteRecordRaw[] = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes,
   scrollBehavior(_to, _from, savedPosition) {
     if (savedPosition) {

@@ -1,6 +1,10 @@
 <template>
   <div class="language-switcher">
-    <button class="lang-btn" @click="toggleDropdown">
+    <button 
+      class="lang-btn" 
+      :title="currentLangLabel"
+      @click="toggleDropdown"
+    >
       <svg viewBox="0 0 24 24" fill="none" class="lang-icon">
         <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
         <path d="M2 12H22" stroke="currentColor" stroke-width="2" />
@@ -8,16 +12,6 @@
           d="M12 2C14.5 4.7 15.5 7.5 15.5 12C15.5 16.5 14.5 19.3 12 22C9.5 19.3 8.5 16.5 8.5 12C8.5 7.5 9.5 4.7 12 2Z"
           stroke="currentColor"
           stroke-width="2"
-        />
-      </svg>
-      <span class="lang-text">{{ currentLangLabel }}</span>
-      <svg viewBox="0 0 24 24" fill="none" class="arrow-icon" :class="{ rotated: showDropdown }">
-        <path
-          d="M6 9L12 15L18 9"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
         />
       </svg>
     </button>
@@ -68,10 +62,11 @@
     position: relative;
   }
 
+  // 与主题切换按钮保持一致
   .lang-btn {
     display: flex;
     align-items: center;
-    gap: $spacing-xs;
+    justify-content: center;
     padding: $spacing-xs $spacing-sm;
     border-radius: $border-radius-md;
     color: $text-secondary;
@@ -82,24 +77,15 @@
       background: $bg-tertiary;
       color: $text-primary;
     }
-  }
 
-  .lang-icon {
-    width: 18px;
-    height: 18px;
-  }
+    .lang-icon {
+      width: 18px;
+      height: 18px;
+      transition: transform $transition-base ease;
+    }
 
-  .lang-text {
-    font-size: $font-size-sm;
-  }
-
-  .arrow-icon {
-    width: 14px;
-    height: 14px;
-    transition: transform $transition-fast ease;
-
-    &.rotated {
-      transform: rotate(180deg);
+    &:hover .lang-icon {
+      transform: scale(1.05);
     }
   }
 
@@ -109,17 +95,18 @@
     right: 0;
     margin-top: $spacing-xs;
     background: $bg-secondary;
-    border: 1px solid $bg-elevated;
+    border: 1px solid $border-color-base;
     border-radius: $border-radius-md;
     overflow: hidden;
     z-index: 1000;
-    min-width: 120px;
+    min-width: 100px;
+    box-shadow: $shadow-md;
   }
 
   .dropdown-item {
     width: 100%;
     padding: $spacing-sm $spacing-md;
-    text-align: left;
+    text-align: center;
     font-size: $font-size-sm;
     color: $text-secondary;
     cursor: pointer;
@@ -132,7 +119,7 @@
 
     &.active {
       color: $primary-color;
-      background: rgba(0, 212, 255, 0.1);
+      background: $primary-surface;
     }
   }
 </style>

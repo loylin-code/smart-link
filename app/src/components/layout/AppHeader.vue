@@ -54,6 +54,35 @@
     </div>
 
     <div class="app-header__right">
+      <!-- 主题切换按钮 -->
+      <button
+        class="theme-toggle-btn"
+        :title="isDark ? t('common.switchToLight') : t('common.switchToDark')"
+        @click="handleToggleTheme"
+      >
+        <svg class="theme-icon" viewBox="0 0 24 24" fill="none">
+          <!-- 太阳图标 - 亮色模式时显示 -->
+          <template v-if="!isDark">
+            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" />
+            <path
+              d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </template>
+          <!-- 月亮图标 - 暗色模式时显示 -->
+          <template v-else>
+            <path
+              d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.97-4.03-9-9-9z"
+              stroke="currentColor"
+              stroke-width="2"
+              fill="currentColor"
+              fill-opacity="0.1"
+            />
+          </template>
+        </svg>
+      </button>
       <LanguageSwitcher />
       <div class="user-info">
         <div class="user-avatar">
@@ -76,9 +105,18 @@
 <script setup lang="ts">
   import { computed } from 'vue'
   import { useRoute } from 'vue-router'
+  import { useI18n } from 'vue-i18n'
+  import { useSettingsStore } from '@/store/modules/settings'
   import LanguageSwitcher from '@/components/common/LanguageSwitcher.vue'
 
   const route = useRoute()
+  const { t } = useI18n()
+  const settingsStore = useSettingsStore()
+
+  const isDark = computed(() => settingsStore.appearance.theme === 'dark')
+  const handleToggleTheme = () => {
+    settingsStore.toggleTheme()
+  }
 
   const currentTitle = computed(() => {
     return route.meta.title || 'SmartLink'
@@ -155,6 +193,33 @@
       display: flex;
       align-items: center;
       gap: $spacing-md;
+    }
+  }
+
+  // 主题切换按钮样式 - 与语言切换按钮保持一致
+  .theme-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $border-radius-md;
+    color: $text-secondary;
+    cursor: pointer;
+    transition: all $transition-base ease;
+
+    &:hover {
+      background: $bg-tertiary;
+      color: $text-primary;
+    }
+
+    .theme-icon {
+      width: 18px;
+      height: 18px;
+      transition: transform $transition-base ease;
+    }
+
+    &:hover .theme-icon {
+      transform: rotate(15deg);
     }
   }
 

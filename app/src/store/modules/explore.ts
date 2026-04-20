@@ -1,7 +1,15 @@
 import { defineStore } from 'pinia'
 import type { ChatMessage, ChatConversation, ChatTemplate, ConversationGroup } from '@/types'
-import { conversationApi, type ConversationCreateParams } from '@/services/conversation'
+import { conversationApi } from '@/services/conversation'
 import { getWebSocket, type StreamResponseData } from '@/services/websocket'
+import {
+  getChatCompletionsSSE,
+  buildMessages,
+  accumulateToolCalls,
+  type UsageInfo,
+  type ToolCall,
+  type ToolCallDelta
+} from '@/services/chat-completions'
 
 // Mock 数据 - 用于演示
 const MOCK_CONVERSATIONS: ChatConversation[] = [
@@ -421,6 +429,11 @@ interface ExploreState {
   templates: ChatTemplate[]
   wsConnected: boolean
   streamingMessage: string
+  // SSE streaming state
+  isSSEStreaming: boolean
+  currentStreamingMessageId: string | null
+  accumulatedToolCalls: ToolCall[]
+  lastUsage: UsageInfo | null
   pagination: {
     page: number
     pageSize: number
@@ -438,6 +451,11 @@ export const useExploreStore = defineStore('explore', {
     templates: CHAT_TEMPLATES,
     wsConnected: false,
     streamingMessage: '',
+    // SSE streaming state
+    isSSEStreaming: false,
+    currentStreamingMessageId: null,
+    accumulatedToolCalls: [],
+    lastUsage: null,
     pagination: {
       page: 1,
       pageSize: 20,
@@ -756,6 +774,180 @@ export const useExploreStore = defineStore('explore', {
         conversation_id: conversationId,
         attachments
       })
+    },
+
+    /**
+     * 通过 SSE 发送消息（OpenAI兼容流式接口）
+     *
+     * @param content 用户消息内容
+     * @param agentId Agent ID（必须）
+     * @param conversationId 对话ID（可选，用于多轮对话）
+     */
+    async sendSSEMessage(content: string, agentId: string, conversationId?: string): Promise<void> {
+      // 取消之前的流式请求
+      this.cancelSSEStream()
+
+      this.isSSEStreaming = true
+      this.accumulatedToolCalls = []
+      this.error = null
+
+      // 确保有活动对话
+      let activeConvId = conversationId || this.activeConversationId
+
+      if (!activeConvId) {
+        // 创建新对话
+        const newConv = await this.createConversation({ title: content.slice(0, 50) })
+        if (newConv) {
+          activeConvId = newConv.id
+        } else {
+          this.isSSEStreaming = false
+          return
+        }
+      }
+
+      const conversation = this.conversations.find((c) => c.id === activeConvId)
+
+      // 添加用户消息到本地
+      if (conversation) {
+        const userMessage: ChatMessage = {
+          id: `msg-user-${Date.now()}`,
+          conversationId: activeConvId,
+          role: 'user',
+          content,
+          timestamp: Date.now()
+        }
+        if (!conversation.messages) {
+          conversation.messages = []
+        }
+        conversation.messages.push(userMessage)
+        conversation.updatedAt = Date.now()
+      }
+
+      // 创建 AI 消息占位符
+      const aiMessageId = `msg-ai-${Date.now()}`
+      this.currentStreamingMessageId = aiMessageId
+
+      if (conversation) {
+        const aiMessage: ChatMessage = {
+          id: aiMessageId,
+          conversationId: activeConvId,
+          role: 'assistant',
+          content: '',
+          timestamp: Date.now(),
+          isStreaming: true
+        }
+        conversation.messages.push(aiMessage)
+      }
+
+      // 构建消息历史
+      const messages = buildMessages(content, conversation?.messages?.slice(0, -1))
+
+      // 获取 SSE 客户端
+      const sseClient = getChatCompletionsSSE()
+
+      // 发起 SSE 流式请求
+      await sseClient.streamChatCompletion(
+        {
+          model: agentId,
+          messages,
+          conversation_id: activeConvId,
+          stream: true,
+          stream_options: { include_usage: true }
+        },
+        // onChunk - 内容增量回调
+        (deltaContent: string, toolCalls?: ToolCallDelta[]) => {
+          const conv = this.conversations.find((c) => c.id === activeConvId)
+          if (!conv) return
+
+          const aiMsg = conv.messages?.find((m) => m.id === aiMessageId)
+          if (aiMsg) {
+            // 追加内容
+            if (deltaContent) {
+              aiMsg.content += deltaContent
+            }
+
+            // 处理 tool_calls
+            if (toolCalls && toolCalls.length > 0) {
+              this.accumulatedToolCalls = accumulateToolCalls(this.accumulatedToolCalls, toolCalls)
+            }
+          }
+
+          conv.updatedAt = Date.now()
+        },
+        // onUsage - token 统计回调
+        (usage: UsageInfo) => {
+          this.lastUsage = usage
+
+          const conv = this.conversations.find((c) => c.id === activeConvId)
+          if (conv) {
+            const aiMsg = conv.messages?.find((m) => m.id === aiMessageId)
+            if (aiMsg) {
+              aiMsg.tokens = {
+                input: usage.prompt_tokens,
+                output: usage.completion_tokens
+              }
+            }
+          }
+        },
+        // onError - 错误回调
+        (error) => {
+          this.error = error.message
+          this.isSSEStreaming = false
+
+          const conv = this.conversations.find((c) => c.id === activeConvId)
+          if (conv) {
+            const aiMsg = conv.messages?.find((m) => m.id === aiMessageId)
+            if (aiMsg) {
+              aiMsg.isStreaming = false
+              aiMsg.content += `\n\n❌ Error: ${error.message}`
+            }
+          }
+        },
+        // onComplete - 完成回调
+        (_finishReason) => {
+          this.isSSEStreaming = false
+          this.currentStreamingMessageId = null
+
+          const conv = this.conversations.find((c) => c.id === activeConvId)
+          if (conv) {
+            const aiMsg = conv.messages?.find((m) => m.id === aiMessageId)
+            if (aiMsg) {
+              aiMsg.isStreaming = false
+              // 如果有累积的 tool_calls，添加到消息
+              if (this.accumulatedToolCalls.length > 0) {
+                // 可以在这里处理 tool call 结果
+              }
+            }
+            conv.updatedAt = Date.now()
+          }
+        }
+      )
+    },
+
+    /**
+     * 取消 SSE 流式请求
+     */
+    cancelSSEStream() {
+      if (this.isSSEStreaming) {
+        const sseClient = getChatCompletionsSSE()
+        sseClient.cancel()
+        this.isSSEStreaming = false
+        this.currentStreamingMessageId = null
+      }
+    },
+
+    /**
+     * 是否正在 SSE 流式输出
+     */
+    isCurrentlyStreaming(): boolean {
+      return this.isSSEStreaming
+    },
+
+    /**
+     * 获取最后的 usage 信息
+     */
+    getLastUsage(): UsageInfo | null {
+      return this.lastUsage
     },
 
     /**

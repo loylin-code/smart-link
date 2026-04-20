@@ -532,6 +532,27 @@ export interface MCPServer {
 export type SkillCategory = 'analytics' | 'processing' | 'invoker' | 'transform'
 export type SkillStatus = 'enabled' | 'partial' | 'disabled'
 export type SkillRiskLevel = 'low' | 'medium' | 'high'
+export type SkillDomain = 'resource' | 'asset' | 'operation' | 'infrastructure'
+export type SkillVisibility = 'public' | 'private'
+export type SkillVersionStatus = 'draft' | 'reviewing' | 'online' | 'offline'
+
+export interface SkillVersion {
+  id: string
+  version: string
+  status: SkillVersionStatus
+  labels: string[]
+  createdAt: number
+  publishedAt?: number
+}
+
+export interface SkillFileNode {
+  name: string
+  type: 'file' | 'directory'
+  path?: string
+  children?: SkillFileNode[]
+  mimeType?: string
+  size?: number
+}
 
 export interface SkillStats {
   totalCalls: number
@@ -574,11 +595,14 @@ export interface Skill {
   displayName: string
   version: string
   category: SkillCategory
+  domain?: SkillDomain // New field (optional for backward compatibility)
   status: SkillStatus
   author: string
   maintainer?: string
+  license?: string // New field
   description: string
   tags: string[]
+  icon?: string // New field
   riskLevel: SkillRiskLevel
   requiresApproval: boolean
   inputSchema: Record<string, any>
@@ -586,6 +610,8 @@ export interface Skill {
   config: SkillConfig
   dependencies: SkillDependencies
   stats: SkillStats
+  files?: SkillFileNode[] // New field
+  versions?: SkillVersion[] // New field
   lastUpdated: number
   createdAt: number
   updatedAt: number
@@ -759,7 +785,7 @@ export interface DataModel {
 // ============================================================
 
 export interface AppearanceSettings {
-  theme: 'light' | 'dark' | 'system'
+  theme: 'light' | 'dark'
   primaryColor: string
   language: 'zh-CN' | 'en-US'
   fontSize: 'small' | 'medium' | 'large'

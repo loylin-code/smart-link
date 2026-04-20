@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { AppearanceSettings, ModelProviderConfig, Settings } from '@/types'
+import type { AppearanceSettings, ModelProviderConfig } from '@/types'
 
 interface SettingsState {
   appearance: AppearanceSettings
@@ -58,13 +58,6 @@ export const useSettingsStore = defineStore('settings', {
 
   getters: {
     currentTheme(state): 'light' | 'dark' {
-      if (state.appearance.theme === 'system') {
-        // Check system preference
-        if (typeof window !== 'undefined') {
-          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-        }
-        return 'light'
-      }
       return state.appearance.theme
     },
 
@@ -83,6 +76,11 @@ export const useSettingsStore = defineStore('settings', {
       this.applyTheme()
     },
 
+    toggleTheme() {
+      this.appearance.theme = this.appearance.theme === 'light' ? 'dark' : 'light'
+      this.applyTheme()
+    },
+
     setPrimaryColor(color: string) {
       this.appearance.primaryColor = color
     },
@@ -98,7 +96,11 @@ export const useSettingsStore = defineStore('settings', {
     applyTheme() {
       if (typeof document !== 'undefined') {
         const theme = this.currentTheme
+        document.documentElement.classList.add('theme-transition')
         document.documentElement.setAttribute('data-theme', theme)
+        setTimeout(() => {
+          document.documentElement.classList.remove('theme-transition')
+        }, 300)
       }
     },
 

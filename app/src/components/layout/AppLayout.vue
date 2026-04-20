@@ -15,8 +15,17 @@
 </template>
 
 <script setup lang="ts">
+  import { onMounted } from 'vue'
   import AppHeader from './AppHeader.vue'
   import AppSidebar from './AppSidebar.vue'
+  import { useSettingsStore } from '@/store/modules/settings'
+
+  const settingsStore = useSettingsStore()
+
+  // 初始化主题
+  onMounted(() => {
+    settingsStore.applyTheme()
+  })
 </script>
 
 <style scoped lang="scss">
@@ -36,7 +45,8 @@
 
     &__content {
       flex: 1;
-      overflow: hidden;
+      overflow-y: auto;
+      overflow-x: hidden;
       background: $bg-primary;
       position: relative;
     }

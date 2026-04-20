@@ -42,7 +42,9 @@ export default {
     normal: 'Normal',
     today: 'Today',
     thisWeek: 'This Week',
-    thisMonth: 'This Month'
+    thisMonth: 'This Month',
+    switchToLight: 'Switch to light mode',
+    switchToDark: 'Switch to dark mode'
   },
   route: {
     overview: 'Platform Overview',
@@ -80,6 +82,8 @@ export default {
     log: 'Logs',
     runLog: 'Run Logs',
     operationLog: 'Operation Logs',
+    agentLog: 'Run Logs',
+    systemLog: 'Operation Logs',
     apiManagement: 'API Management',
     api: 'API',
     agent: 'Digital Worker',
@@ -1585,7 +1589,13 @@ export default {
       categoryVerb: 'Verb',
       categoryAdjective: 'Adjective',
       categoryPhrase: 'Phrase',
-      description: 'Manage domain vocabulary and semantic definitions'
+      description: 'Manage domain vocabulary and semantic definitions',
+      totalWords: 'Total Words',
+      category: 'Category',
+      wordList: 'Word List',
+      word: 'Word',
+      searchPlaceholder: 'Search words...',
+      empty: 'No vocabulary data'
     },
     config: {
       title: 'Semantic Configuration',
@@ -1594,6 +1604,119 @@ export default {
       agentBinding: 'Agent Binding',
       mappingRules: 'Mapping Rules'
     }
+  },
+  configModel: {
+    title: 'Config Model',
+    pageDesc: 'User-defined configuration model management',
+    modelList: 'Model List',
+    categoryTitle: 'Categories',
+    allModels: 'All Models',
+    newCategory: 'New Category',
+    newCategoryTitle: 'New Category',
+    categoryName: 'Category Name',
+    categoryNamePlaceholder: 'Enter category name',
+    categoryIcon: 'Category Icon',
+    categoryDescription: 'Description',
+    categoryDescriptionPlaceholder: 'Enter category description (optional)',
+    currentCategory: 'Current Category',
+    createModel: 'Create Model',
+    createModelTitle: 'Create Config Model',
+    createAndEdit: 'Create & Edit',
+    searchPlaceholder: 'Search models...',
+    filterByType: 'Filter by Type',
+    modelName: 'Model Name',
+    modelNamePlaceholder: 'e.g., server_info',
+    displayName: 'Display Name',
+    displayNamePlaceholder: 'e.g., Server Information',
+    modelType: 'Model Type',
+    category: 'Category',
+    description: 'Description',
+    descriptionPlaceholder: 'Enter model description',
+    showing: 'Showing',
+    total: 'Total',
+    items: 'items',
+    noModels: 'No config models found',
+    fieldCount: 'Fields',
+    relationCount: 'Relations',
+    fields: '',
+    models: 'models',
+    updated: 'Updated',
+    // Model types
+    type: {
+      entity: 'Entity Model',
+      entityDesc: 'Business entities like user, order, etc.',
+      input: 'Input Model',
+      inputDesc: 'API input parameters',
+      output: 'Output Model',
+      outputDesc: 'API output data structure',
+      intermediate: 'Intermediate Model',
+      intermediateDesc: 'Temporary models for internal processing'
+    },
+    // Detail page
+    basicInfo: 'Basic Information',
+    fieldDefinitions: 'Field Definitions',
+    addField: 'Add Field',
+    addFieldTitle: 'Add Field',
+    editField: 'Edit Field',
+    fieldName: 'Field Name',
+    fieldNamePlaceholder: 'e.g., userId',
+    fieldType: 'Field Type',
+    fieldTypes: {
+      string: 'String',
+      number: 'Number',
+      boolean: 'Boolean',
+      date: 'Date',
+      enum: 'Enum',
+      object: 'Object',
+      array: 'Array'
+    },
+    required: 'Required',
+    requiredField: 'Required Field',
+    defaultValue: 'Default Value',
+    noFields: 'No fields defined',
+    addFirstField: 'Add First Field',
+    // Relations
+    relations: 'Relations',
+    addRelation: 'Add Relation',
+    addRelationTitle: 'Add Relation',
+    editRelation: 'Edit Relation',
+    targetModel: 'Target Model',
+    selectModel: 'Select Model',
+    relationType: 'Relation Type',
+    relationTypes: {
+      '1N': 'One-to-Many (1:N)',
+      '1NDesc': 'One user has many orders',
+      N1: 'Many-to-One (N:1)',
+      N1Desc: 'Many orders belong to one user',
+      '11': 'One-to-One (1:1)',
+      '11Desc': 'One-to-one correspondence',
+      NN: 'Many-to-Many (N:N)',
+      NNDesc: 'Many-to-many relation'
+    },
+    foreignKey: 'Foreign Key',
+    targetKey: 'Target Key',
+    selectField: 'Select Field',
+    cascade: 'Cascade',
+    cascadeDelete: 'Cascade Delete',
+    cascadeDeleteDesc: 'Delete related records when deleting current record',
+    cascadeUpdate: 'Cascade Update',
+    cascadeUpdateDesc: 'Update related records when updating current record',
+    noRelations: 'No relations defined',
+    addFirstRelation: 'Add First Relation',
+    // Advanced options
+    advancedOptions: 'Advanced Options',
+    minLength: 'Min Length',
+    maxLength: 'Max Length',
+    min: 'Min Value',
+    max: 'Max Value',
+    pattern: 'Pattern (Regex)',
+    enumValues: 'Enum Values',
+    enumValuesPlaceholder: 'Comma separated, e.g., active,inactive,suspended',
+    // Confirmations
+    confirmDeleteField: 'Are you sure you want to delete this field?',
+    confirmDeleteRelation: 'Are you sure you want to delete this relation?',
+    modelNotFound: 'Model not found',
+    backToList: 'Back to List'
   },
   api: {
     title: 'API Management',
@@ -1662,6 +1785,7 @@ export default {
   log: {
     agent: {
       title: 'Agent Execution Logs',
+      description: 'View digital worker execution records, call chains and token usage',
       executionTime: 'Execution Time',
       duration: 'Duration',
       callChain: 'Call Chain',
@@ -1670,19 +1794,130 @@ export default {
     },
     system: {
       title: 'System Operation Logs',
+      description: 'View user operation records and audit logs',
       operation: 'Operation Type',
       resourceType: 'Resource Type',
       operator: 'Operator',
       beforeAfter: 'Data Comparison'
     },
-    export: 'Export Logs',
-    filter: 'Filter',
+    status: {
+      success: 'Success',
+      failed: 'Failed',
+      timeout: 'Timeout',
+      cancelled: 'Cancelled'
+    },
+    source: {
+      web: 'Web',
+      api: 'API',
+      schedule: 'Scheduled Task'
+    },
+    operation: {
+      login: 'Login',
+      logout: 'Logout',
+      create: 'Create',
+      update: 'Update',
+      delete: 'Delete',
+      publish: 'Publish',
+      config: 'Config Change'
+    },
+    resourceType: {
+      agent: 'Digital Worker',
+      skill: 'Skill',
+      mcp: 'MCP',
+      model: 'Model',
+      api: 'API',
+      semantic: 'Semantic',
+      task: 'Scheduled Task',
+      settings: 'System Settings'
+    },
+    result: {
+      success: 'Success',
+      failed: 'Failed'
+    },
+    export: {
+      csv: 'Export CSV',
+      json: 'Export JSON'
+    },
+    stats: {
+      totalLogs: 'Total Logs',
+      successRate: 'Success Rate',
+      avgDuration: 'Avg Duration',
+      totalTokens: 'Total Tokens',
+      todayOperations: 'Today Operations',
+      failedOperations: 'Failed Operations'
+    },
+    filter: {
+      agent: 'Agent',
+      status: 'Status',
+      source: 'Source',
+      timeRange: 'Time Range',
+      searchPlaceholder: 'Search keywords...',
+      user: 'User',
+      operation: 'Operation Type',
+      resourceType: 'Resource Type',
+      result: 'Result'
+    },
+    timeRange: {
+      lastHour: 'Last Hour',
+      last24h: 'Last 24 Hours',
+      last7d: 'Last 7 Days',
+      last30d: 'Last 30 Days'
+    },
+    table: {
+      time: 'Time',
+      agent: 'Agent',
+      status: 'Status',
+      io: 'Input/Output',
+      duration: 'Duration',
+      tokens: 'Tokens',
+      source: 'Source',
+      input: 'Input',
+      output: 'Output',
+      user: 'User',
+      operation: 'Operation',
+      resource: 'Resource',
+      result: 'Result'
+    },
     pagination: {
       perPage: 'Per Page',
       showing: 'Showing',
       total: 'Total',
-      items: 'items'
-    }
+      items: 'items',
+      prev: 'Previous',
+      next: 'Next'
+    },
+    detail: {
+      title: 'Log Details',
+      basicInfo: 'Basic Information',
+      sessionId: 'Session ID',
+      agent: 'Agent',
+      status: 'Status',
+      model: 'Model',
+      duration: 'Duration',
+      tokens: 'Tokens',
+      io: 'Input/Output',
+      input: 'Input',
+      output: 'Output',
+      callChain: 'Call Chain',
+      error: 'Error',
+      metadata: 'Metadata',
+      source: 'Source',
+      ip: 'IP Address',
+      userAgent: 'Browser',
+      logId: 'Log ID',
+      timestamp: 'Timestamp',
+      user: 'User',
+      resourceType: 'Resource Type',
+      resource: 'Resource Info',
+      resourceId: 'Resource ID',
+      resourceName: 'Resource Name',
+      dataComparison: 'Data Comparison',
+      before: 'Before',
+      after: 'After',
+      requestInfo: 'Request Info'
+    },
+    noData: 'No log data available',
+    viewDetail: 'View Details'
   },
   task: {
     title: 'Scheduled Tasks',

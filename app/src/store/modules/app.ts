@@ -9,7 +9,6 @@ interface AppState {
     height: number
     activeTab: string
   }
-  theme: 'dark' | 'light'
 }
 
 export const useAppStore = defineStore('app', {
@@ -21,8 +20,7 @@ export const useAppStore = defineStore('app', {
       visible: true,
       height: 200,
       activeTab: 'console'
-    },
-    theme: 'dark'
+    }
   }),
 
   getters: {
@@ -55,15 +53,11 @@ export const useAppStore = defineStore('app', {
 
     setConsoleTab(tab: string) {
       this.console.activeTab = tab
-    },
-
-    setTheme(theme: 'dark' | 'light') {
-      this.theme = theme
     }
   },
 
   persist: {
     key: 'smart-link-app',
-    paths: ['sidebar.collapsed', 'console.visible', 'console.height', 'theme']
+    paths: ['sidebar.collapsed', 'console.visible', 'console.height']
   }
 })

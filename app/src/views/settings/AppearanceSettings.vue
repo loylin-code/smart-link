@@ -12,11 +12,7 @@
             <div class="section-header">
               <h3 class="section-title">{{ t('settings.themeMode') }}</h3>
               <span class="section-badge">{{
-                localAppearance.theme === 'light'
-                  ? t('settings.lightMode')
-                  : localAppearance.theme === 'dark'
-                    ? t('settings.darkMode')
-                    : t('settings.followSystem')
+                localAppearance.theme === 'light' ? t('settings.lightMode') : t('settings.darkMode')
               }}</span>
             </div>
             <div class="theme-cards">
@@ -51,27 +47,6 @@
                 </div>
                 <span class="theme-card__label">{{ t('settings.darkMode') }}</span>
                 <span v-if="localAppearance.theme === 'dark'" class="theme-card__check">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M5 12L10 17L19 8"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              </button>
-              <button
-                class="theme-card"
-                :class="{ 'theme-card--active': localAppearance.theme === 'system' }"
-                @click="localAppearance.theme = 'system'"
-              >
-                <div class="theme-card__preview theme-card__preview--system">
-                  <div class="preview-system"></div>
-                </div>
-                <span class="theme-card__label">{{ t('settings.followSystem') }}</span>
-                <span v-if="localAppearance.theme === 'system'" class="theme-card__check">
                   <svg viewBox="0 0 24 24" fill="none">
                     <path
                       d="M5 12L10 17L19 8"
@@ -351,7 +326,7 @@
   // ================================
   .theme-cards {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: $spacing-md;
 
     @include respond-below(md) {

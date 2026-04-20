@@ -42,7 +42,12 @@ export default {
     normal: '正常',
     today: '今天',
     thisWeek: '本周',
-    thisMonth: '本月'
+    thisMonth: '本月',
+    showing: '显示',
+    total: '共',
+    items: '条',
+    switchToLight: '切换到亮色模式',
+    switchToDark: '切换到暗色模式'
   },
   route: {
     overview: '平台概览',
@@ -80,6 +85,8 @@ export default {
     log: '日志管理',
     runLog: '运行日志',
     operationLog: '操作日志',
+    agentLog: '运行日志',
+    systemLog: '操作日志',
     apiManagement: 'API 管理',
     api: 'API 管理',
     agent: '数字员工',
@@ -1599,7 +1606,13 @@ export default {
       categoryVerb: '动词',
       categoryAdjective: '形容词',
       categoryPhrase: '短语',
-      description: '管理业务领域词汇和语义定义'
+      description: '管理业务领域词汇和语义定义',
+      totalWords: '词汇总数',
+      category: '分类',
+      wordList: '词汇列表',
+      word: '词汇',
+      searchPlaceholder: '搜索词汇...',
+      empty: '暂无词汇数据'
     },
     config: {
       title: '语义配置',
@@ -1608,6 +1621,119 @@ export default {
       agentBinding: 'Agent 绑定',
       mappingRules: '映射规则'
     }
+  },
+  configModel: {
+    title: '配置模型',
+    pageDesc: '用户自定义配置模型管理',
+    modelList: '模型列表',
+    categoryTitle: '分类目录',
+    allModels: '全部模型',
+    newCategory: '新建分类',
+    newCategoryTitle: '新建分类',
+    categoryName: '分类名称',
+    categoryNamePlaceholder: '请输入分类名称',
+    categoryIcon: '分类图标',
+    categoryDescription: '分类描述',
+    categoryDescriptionPlaceholder: '请输入分类描述（可选）',
+    currentCategory: '当前分类',
+    createModel: '创建模型',
+    createModelTitle: '新建配置模型',
+    createAndEdit: '创建并编辑',
+    searchPlaceholder: '搜索模型名称...',
+    filterByType: '按类型筛选',
+    modelName: '模型名称',
+    modelNamePlaceholder: '例如：server_info',
+    displayName: '显示名称',
+    displayNamePlaceholder: '例如：服务器信息',
+    modelType: '模型类型',
+    category: '所属分类',
+    description: '描述',
+    descriptionPlaceholder: '请输入模型描述',
+    showing: '显示',
+    total: '共',
+    items: '条',
+    noModels: '暂无配置模型',
+    fieldCount: '字段',
+    relationCount: '关联',
+    fields: '个',
+    models: '个模型',
+    updated: '更新',
+    // Model types
+    type: {
+      entity: '实体模型',
+      entityDesc: '业务实体，如用户、订单等',
+      input: '输入模型',
+      inputDesc: 'API输入参数',
+      output: '输出模型',
+      outputDesc: 'API输出结果',
+      intermediate: '中间模型',
+      intermediateDesc: '内部处理用临时模型'
+    },
+    // Detail page
+    basicInfo: '基本信息',
+    fieldDefinitions: '字段定义',
+    addField: '添加字段',
+    addFieldTitle: '添加字段',
+    editField: '编辑字段',
+    fieldName: '字段名称',
+    fieldNamePlaceholder: '例如：userId',
+    fieldType: '字段类型',
+    fieldTypes: {
+      string: '字符串',
+      number: '数字',
+      boolean: '布尔值',
+      date: '日期',
+      enum: '枚举',
+      object: '对象',
+      array: '数组'
+    },
+    required: '必填',
+    requiredField: '必填字段',
+    defaultValue: '默认值',
+    noFields: '暂无字段定义',
+    addFirstField: '添加第一个字段',
+    // Relations
+    relations: '关联关系',
+    addRelation: '添加关联',
+    addRelationTitle: '添加关联关系',
+    editRelation: '编辑关联',
+    targetModel: '关联模型',
+    selectModel: '选择模型',
+    relationType: '关系类型',
+    relationTypes: {
+      '1N': '一对多 (1:N)',
+      '1NDesc': '一个用户对应多个订单',
+      N1: '多对一 (N:1)',
+      N1Desc: '多个订单对应一个用户',
+      '11': '一对一 (1:1)',
+      '11Desc': '一一对应',
+      NN: '多对多 (N:N)',
+      NNDesc: '多对多关联'
+    },
+    foreignKey: '外键字段',
+    targetKey: '关联字段',
+    selectField: '选择字段',
+    cascade: '级联操作',
+    cascadeDelete: '级联删除',
+    cascadeDeleteDesc: '删除当前记录时删除关联记录',
+    cascadeUpdate: '级联更新',
+    cascadeUpdateDesc: '更新当前记录时更新关联记录',
+    noRelations: '暂无关联关系',
+    addFirstRelation: '添加第一个关联',
+    // Advanced options
+    advancedOptions: '高级选项',
+    minLength: '最小长度',
+    maxLength: '最大长度',
+    min: '最小值',
+    max: '最大值',
+    pattern: '正则表达式',
+    enumValues: '枚举值',
+    enumValuesPlaceholder: '用逗号分隔，如：active,inactive,suspended',
+    // Confirmations
+    confirmDeleteField: '确定要删除此字段吗？',
+    confirmDeleteRelation: '确定要删除此关联吗？',
+    modelNotFound: '模型不存在',
+    backToList: '返回列表'
   },
   api: {
     title: 'API 管理',
@@ -1676,6 +1802,7 @@ export default {
   log: {
     agent: {
       title: 'Agent 运行日志',
+      description: '查看数字员工的执行记录、调用链路和 Token 消耗',
       executionTime: '执行时间',
       duration: '执行耗时',
       callChain: '调用链路',
@@ -1684,19 +1811,130 @@ export default {
     },
     system: {
       title: '系统操作日志',
+      description: '查看用户操作记录和审计日志',
       operation: '操作类型',
       resourceType: '资源类型',
       operator: '操作人',
       beforeAfter: '数据对比'
     },
-    export: '导出日志',
-    filter: '筛选',
+    status: {
+      success: '成功',
+      failed: '失败',
+      timeout: '超时',
+      cancelled: '已取消'
+    },
+    source: {
+      web: '网页',
+      api: 'API',
+      schedule: '定时任务'
+    },
+    operation: {
+      login: '登录',
+      logout: '登出',
+      create: '创建',
+      update: '更新',
+      delete: '删除',
+      publish: '发布',
+      config: '配置变更'
+    },
+    resourceType: {
+      agent: '数字员工',
+      skill: 'Skill',
+      mcp: 'MCP',
+      model: '模型',
+      api: 'API',
+      semantic: '语义',
+      task: '定时任务',
+      settings: '系统设置'
+    },
+    result: {
+      success: '成功',
+      failed: '失败'
+    },
+    export: {
+      csv: '导出 CSV',
+      json: '导出 JSON'
+    },
+    stats: {
+      totalLogs: '日志总数',
+      successRate: '成功率',
+      avgDuration: '平均耗时',
+      totalTokens: 'Token 总消耗',
+      todayOperations: '今日操作',
+      failedOperations: '失败操作'
+    },
+    filter: {
+      agent: 'Agent',
+      status: '状态',
+      source: '来源',
+      timeRange: '时间范围',
+      searchPlaceholder: '搜索关键词...',
+      user: '用户',
+      operation: '操作类型',
+      resourceType: '资源类型',
+      result: '结果'
+    },
+    timeRange: {
+      lastHour: '最近1小时',
+      last24h: '最近24小时',
+      last7d: '最近7天',
+      last30d: '最近30天'
+    },
+    table: {
+      time: '时间',
+      agent: 'Agent',
+      status: '状态',
+      io: '输入输出',
+      duration: '耗时',
+      tokens: 'Tokens',
+      source: '来源',
+      input: '输入',
+      output: '输出',
+      user: '用户',
+      operation: '操作',
+      resource: '资源',
+      result: '结果'
+    },
     pagination: {
-      perPage: '每页显示',
+      perPage: '每页',
       showing: '显示',
       total: '共',
-      items: '条'
-    }
+      items: '条',
+      prev: '上一页',
+      next: '下一页'
+    },
+    detail: {
+      title: '日志详情',
+      basicInfo: '基本信息',
+      sessionId: '会话ID',
+      agent: 'Agent',
+      status: '状态',
+      model: '模型',
+      duration: '耗时',
+      tokens: 'Tokens',
+      io: '输入输出',
+      input: '输入',
+      output: '输出',
+      callChain: '调用链路',
+      error: '错误信息',
+      metadata: '元数据',
+      source: '来源',
+      ip: 'IP地址',
+      userAgent: '浏览器',
+      logId: '日志ID',
+      timestamp: '时间',
+      user: '用户',
+      resourceType: '资源类型',
+      resource: '资源信息',
+      resourceId: '资源ID',
+      resourceName: '资源名称',
+      dataComparison: '数据对比',
+      before: '修改前',
+      after: '修改后',
+      requestInfo: '请求信息'
+    },
+    noData: '暂无日志数据',
+    viewDetail: '查看详情'
   },
   task: {
     title: '定时任务',
