@@ -10,6 +10,7 @@ import {
   type ToolCall,
   type ToolCallDelta
 } from '@/services/chat-completions'
+import { parseAIComponentOutput, createChatComponents } from '@/services/component-parser'
 
 // Mock 数据 - 用于演示
 const MOCK_CONVERSATIONS: ChatConversation[] = [
@@ -913,6 +914,19 @@ export const useExploreStore = defineStore('explore', {
             const aiMsg = conv.messages?.find((m) => m.id === aiMessageId)
             if (aiMsg) {
               aiMsg.isStreaming = false
+
+              // 解析 AI 输出的组件描述
+              try {
+                const parsed = parseAIComponentOutput(aiMsg.content)
+                if (parsed.components && parsed.components.length > 0) {
+                  aiMsg.components = createChatComponents(parsed.components)
+                  aiMsg.content = parsed.content || aiMsg.content // 更新为纯文本内容
+                }
+              } catch (e) {
+                console.warn('[explore] Failed to parse AI components:', e)
+                // 解析失败不影响文本显示
+              }
+
               // 如果有累积的 tool_calls，添加到消息
               if (this.accumulatedToolCalls.length > 0) {
                 // 可以在这里处理 tool call 结果
