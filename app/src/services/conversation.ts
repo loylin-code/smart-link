@@ -57,7 +57,7 @@ export const conversationApi = {
 
     const data = response.data.data
     return {
-      list: data.list.map(this.transformConversationFromApi),
+      list: data.list.map((item) => this.transformConversationFromApi(item)),
       total: data.total,
       page: data.page,
       page_size: data.page_size
@@ -133,7 +133,7 @@ export const conversationApi = {
         }
       }
     )
-    return response.data.data.map(this.transformMessageFromApi)
+    return response.data.data.map((item) => this.transformMessageFromApi(item))
   },
 
   /**
@@ -169,6 +169,26 @@ export const conversationApi = {
    */
   async renameConversation(id: string, title: string): Promise<ChatConversation | null> {
     return this.updateConversation(id, { title })
+  },
+
+  /**
+   * 添加消息到对话（保存到后端）
+   */
+  async addMessage(
+    conversationId: string,
+    role: 'user' | 'assistant' | 'system' | 'tool',
+    content: string | Record<string, unknown>
+  ): Promise<ChatMessage | null> {
+    try {
+      const response = await http.post<ApiResponse<ChatMessage>>(
+        `/conversations/${conversationId}/messages`,
+        { role, content }
+      )
+      return this.transformMessageFromApi(response.data.data)
+    } catch (error) {
+      console.error('Failed to add message:', error)
+      return null
+    }
   },
 
   /**

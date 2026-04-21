@@ -112,7 +112,7 @@
                   <div class="conv-meta">
                     <span>{{ formatTime(conv.updatedAt) }}</span>
                     <span class="dot">·</span>
-                    <span>{{ conv.messages.length }} {{ t('explore.messages') }}</span>
+                    <span>{{ conv.messageCount || conv.messages.length }} {{ t('explore.messages') }}</span>
                   </div>
                 </div>
                 <button class="conv-delete" @click.stop="deleteConversation(conv.id)">
@@ -253,7 +253,7 @@
                 {{ activeConversation.title || t('explore.newChat') }}
               </h2>
               <span class="message-count">
-                {{ activeConversation.messages.length }} {{ t('explore.messages') }}
+                {{ activeConversation.messageCount || activeConversation.messages.length }} {{ t('explore.messages') }}
               </span>
             </div>
             <div class="header-actions">
@@ -964,6 +964,8 @@
 
   onMounted(() => {
     autoResize()
+    // 从后端加载对话列表
+    exploreStore.fetchConversations()
   })
 </script>
 

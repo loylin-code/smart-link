@@ -170,6 +170,9 @@ export class ChatCompletionsSSE {
       headers['Authorization'] = `Bearer ${token}`
     }
 
+    // 防止 onComplete 多次调用
+    let completed = false
+
     try {
       const response = await fetch(url, {
         method: 'POST',
@@ -229,7 +232,10 @@ export class ChatCompletionsSSE {
 
             // [DONE] 标记
             if (data === '[DONE]') {
-              onComplete?.('stop')
+              if (!completed) {
+                completed = true
+                onComplete?.('stop')
+              }
               return
             }
 
@@ -251,8 +257,9 @@ export class ChatCompletionsSSE {
                   onChunk('', delta.tool_calls)
                 }
 
-                // 完成原因
-                if (choice.finish_reason) {
+                // 完成原因（只调用一次）
+                if (choice.finish_reason && !completed) {
+                  completed = true
                   onComplete?.(choice.finish_reason)
                 }
               }
@@ -278,7 +285,10 @@ export class ChatCompletionsSSE {
     } catch (error: unknown) {
       if (error instanceof Error && error.name === 'AbortError') {
         // 用户取消，不报错
-        onComplete?.('cancelled')
+        if (!completed) {
+          completed = true
+          onComplete?.('cancelled')
+        }
       } else {
         const err = error as Error
         onError?.({
