@@ -1,12 +1,12 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-03-05
-**Commit:** ffbaead
+**Generated:** 2026-04-21
+**Commit:** 7423f72
 **Branch:** main
 
 ## OVERVIEW
 
-AI-powered page orchestration platform. Vue 3.4 + TypeScript monorepo using pnpm workspaces + Turborepo. Natural language → Schema-driven pages → Vue/React/HTML export.
+AI-powered page orchestration platform. Vue 3.4 + TypeScript monorepo using pnpm workspaces + Turborepo. Natural language → Schema-driven pages → Vue/React/HTML export. Backend service: `smart-link-service` (FastAPI, separate repo).
 
 ## STRUCTURE
 
@@ -21,6 +21,7 @@ smart-link/
 ├── app/                # Main application (orchestrator UI)
 ├── docs/               # VitePress documentation
 ├── play/               # Component playground
+├── design/             # Architecture & UX design docs (undocumented)
 └── internal/build/     # Shared Rollup configs
 ```
 
@@ -28,12 +29,15 @@ smart-link/
 
 | Task               | Location                                          | Notes                                   |
 | ------------------ | ------------------------------------------------- | --------------------------------------- |
-| Add UI component   | `packages/ui/src/components/{category}/`          | Category: basic, form, layout, feedback |
+| Add UI component   | `packages/ui/src/components/{category}/`          | Category: basic, form, layout, feedback, data |
 | Modify renderer    | `packages/core/src/renderer/`                     | Schema → VNode conversion               |
 | Add store module   | `app/src/store/modules/`                          | Pinia + persistedstate                  |
 | AI integration     | `app/src/services/ai.ts`                          | OpenAI/Claude/Ollama                    |
+| SSE streaming      | `app/src/services/chat-completions.ts`            | OpenAI-compatible streaming API         |
+| Conversation API   | `app/src/services/conversation.ts`                | REST API for chat history               |
 | Code export        | `app/src/services/code-export.ts`                 | Vue SFC/React/HTML                      |
 | Orchestrator UI    | `app/src/components/orchestrator/`                | Drag-drop editor                        |
+| Explore center     | `app/src/views/explore/ExploreView.vue`           | Chat conversation UI                    |
 | Component metadata | `packages/shared/src/constants/component-meta.ts` | Registry definitions                    |
 | Shared types       | `packages/shared/src/types/`                      | Core type definitions                   |
 
@@ -73,6 +77,16 @@ smart-link/
 
 - No test runner configured
 - Testing is roadmap item, not implemented
+
+**SSE onComplete Multiple Calls:**
+
+- `chat-completions.ts` onComplete can fire multiple times per stream
+- Must use `completed` flag to prevent duplicate message saves
+
+**this Binding in Array.map:**
+
+- `transformConversationFromApi` used in `.map(this.method)` loses `this` context
+- Always use arrow functions: `.map((item) => this.method(item))`
 
 ## UNIQUE STYLES
 

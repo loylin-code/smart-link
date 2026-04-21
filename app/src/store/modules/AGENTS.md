@@ -9,7 +9,7 @@ Pinia state management for the main application. Uses pinia-plugin-persistedstat
 | `app.ts`          | 69    | UI state (sidebar, theme, console)                 | No                                     |
 | `ai.ts`           | 287   | AI config, conversation history, async LLM calls   | `config`, `panelVisible`, `panelWidth` |
 | `application.ts`  | 175   | Application CRUD, filtering, pagination            | `filter`, `pagination`                 |
-| `explore.ts`      | 93    | Chat conversation management                       | `explores`, `activeExploreId`          |
+| `explore.ts`      | 828   | Chat conversation management, SSE streaming        | `activeConversationId`, `pagination`   |
 | `orchestrator.ts` | 752   | Design canvas state, selection, history, drag/drop | Panel layout, grid settings            |
 
 ## WHERE TO LOOK
