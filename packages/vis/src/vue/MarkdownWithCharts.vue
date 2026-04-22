@@ -217,11 +217,27 @@
   .markdown-with-charts {
     position: relative;
     width: 100%;
+    color: inherit;
   }
 
   .markdown-content {
     width: 100%;
-    /* Deep selector for v-html content */
+    color: inherit;
+  }
+
+  /* Main text elements inherit parent color */
+  .markdown-content :deep(p),
+  .markdown-content :deep(h1),
+  .markdown-content :deep(h2),
+  .markdown-content :deep(h3),
+  .markdown-content :deep(h4),
+  .markdown-content :deep(h5),
+  .markdown-content :deep(h6),
+  .markdown-content :deep(li),
+  .markdown-content :deep(span),
+  .markdown-content :deep(strong),
+  .markdown-content :deep(em) {
+    color: inherit;
   }
 
   .markdown-content :deep(h1),
