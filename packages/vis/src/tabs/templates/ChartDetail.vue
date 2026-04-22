@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { computed, ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { Chart } from '@antv/g2'
 import type { VisConfig } from '../../types'
 
@@ -15,20 +15,17 @@ const props = withDefaults(defineProps<Props>(), {
 // Refs
 const chartContainerRef = ref<HTMLElement | null>(null)
 const chartInstance = ref<Chart | null>(null)
+const isInitialized = ref(false)
 
 // Computed
 const chartTitle = computed(() => props.data.title ?? 'Chart Detail')
-
 const chartType = computed(() => props.data.type)
-
 const dataCount = computed(() => props.data.data.length)
 
 // Calculate statistics summary
 const statistics = computed(() => {
   const data = props.data.data
-  if (!data.length) {
-    return null
-  }
+  if (!data.length) return null
 
   const yField = props.data.yField ?? props.data.valueField ?? 'value'
   const values = data.map((item: Record<string, unknown>) => {
@@ -41,82 +38,53 @@ const statistics = computed(() => {
   const max = Math.max(...values)
   const min = Math.min(...values)
 
-  return {
-    sum,
-    avg: Math.round(avg * 100) / 100,
-    max,
-    min,
-    count: values.length
-  }
+  return { sum, avg: Math.round(avg * 100) / 100, max, min, count: values.length }
 })
 
-// Table columns based on data structure
+// Table columns
 const tableColumns = computed(() => {
-  if (!props.data.data.length) {
-    return []
-  }
-
-  const firstItem = props.data.data[0]
-  return Object.keys(firstItem).map((key) => ({
+  if (!props.data.data.length) return []
+  return Object.keys(props.data.data[0]).map((key) => ({
     key,
     label: key.charAt(0).toUpperCase() + key.slice(1)
   }))
 })
 
-// Initialize chart
+// Initialize chart - only once
 const initChart = async () => {
-  await nextTick()
-
-  if (!chartContainerRef.value) {
-    console.log('[ChartDetail] chartContainerRef not ready, skipping init')
+  if (isInitialized.value) {
+    console.log('[ChartDetail] Already initialized, skipping')
     return
   }
 
-  // Check if container has valid dimensions
-  const container = chartContainerRef.value
-  if (container.clientWidth === 0) {
-    console.log('[ChartDetail] container has no width, setting default')
-    container.style.width = '100%'
-    container.style.minWidth = '400px'
+  await nextTick()
+
+  if (!chartContainerRef.value) {
+    console.log('[ChartDetail] Container not ready')
+    return
   }
 
-  // Destroy existing chart
-  if (chartInstance.value) {
-    try {
-      chartInstance.value.destroy()
-    } catch (e) {
-      console.warn('[ChartDetail] Error destroying chart:', e)
-    }
-    chartInstance.value = null
-  }
+  const container = chartContainerRef.value
+  const width = container.clientWidth || 400
+
+  console.log('[ChartDetail] Initializing chart, width:', width, 'type:', props.data.type)
 
   const theme = props.theme === 'dark' ? 'classicDark' : 'classic'
   const config = props.data
 
   try {
-    // Create chart based on type
     chartInstance.value = new Chart({
       container,
-      width: container.clientWidth || 400,
-      height: 500,
+      width,
+      height: 400,
       theme,
       autoFit: true
     })
 
-    // ... rest of chart configuration
-  } catch (e) {
-    console.error('[ChartDetail] Error creating chart:', e)
-    return
-  }
+    const xField = config.xField ?? 'category'
+    const yField = config.yField ?? 'value'
+    const colorField = config.colorField ?? config.categoryField
 
-  // Common field mappings
-  const xField = config.xField ?? 'category'
-  const yField = config.yField ?? 'value'
-  const categoryField = config.categoryField ?? config.colorField ?? undefined
-  const valueField = config.yField ?? config.valueField ?? 'value'
-
-  try {
-    // Render chart by type
     switch (config.type) {
       case 'line':
         chartInstance.value
@@ -134,43 +102,37 @@ const initChart = async () => {
           .encode('y', yField)
           .style('r', 3)
 
-        if (categoryField) {
-          chartInstance.value.line().encode('color', categoryField).legend(true)
-          chartInstance.value.point().encode('color', categoryField)
+        if (colorField) {
+          chartInstance.value.line().encode('color', colorField)
+          chartInstance.value.point().encode('color', colorField)
         }
         break
 
       case 'pie':
-        chartInstance.value.coordinate({ type: 'polar', innerRadius: config.innerRadius ?? 0 })
+        chartInstance.value.coordinate({ type: 'polar', innerRadius: 0.6 })
         chartInstance.value
           .interval()
           .data(config.data)
-          .encode('y', valueField)
-          .encode('color', categoryField ?? config.angleField ?? 'category')
+          .encode('y', config.angleField ?? 'value')
+          .encode('color', colorField ?? 'category')
           .transform({ type: 'stackY' })
           .legend(true)
-          .style('radius', 10)
         break
 
       case 'bar':
-        const barInterval = chartInstance.value
+        chartInstance.value
           .interval()
           .data(config.data)
           .encode('x', xField)
           .encode('y', yField)
           .style('radius', 4)
 
-        if (categoryField) {
-          barInterval.encode('color', categoryField).legend(true)
-        }
-
-        if (config.stack) {
-          barInterval.transform({ type: 'stackY' })
+        if (colorField) {
+          chartInstance.value.interval().encode('color', colorField)
         }
         break
 
       default:
-        // Default to bar
         chartInstance.value
           .interval()
           .data(config.data)
@@ -179,61 +141,42 @@ const initChart = async () => {
     }
 
     chartInstance.value.render()
-    console.log('[ChartDetail] Chart initialized successfully:', config.type)
+    isInitialized.value = true
+    console.log('[ChartDetail] Chart rendered successfully')
   } catch (e) {
-    console.error('[ChartDetail] Error rendering chart:', e)
+    console.error('[ChartDetail] Error:', e)
   }
 }
 
-// Watch for data changes - flush: 'post' ensures DOM is ready
-watch(
-  () => props.data,
-  () => {
-    initChart()
-  },
-  { deep: true, flush: 'post' }
-)
-
-// Watch for theme changes
-watch(
-  () => props.theme,
-  () => {
-    initChart()
-  },
-  { flush: 'post' }
-)
-
-// Lifecycle
+// Lifecycle - only init on mount, no watch
 onMounted(() => {
+  console.log('[ChartDetail] onMounted')
   initChart()
 })
 
 onUnmounted(() => {
+  console.log('[ChartDetail] onUnmounted')
   if (chartInstance.value) {
     chartInstance.value.destroy()
     chartInstance.value = null
   }
+  isInitialized.value = false
 })
 
-// Export image
+// Export
 const exportImage = () => {
-  if (chartInstance.value) {
-    const context = chartInstance.value.getContext()
-    const nativeCanvas = context?.canvas?.getConfig?.()?.canvas as unknown as HTMLCanvasElement | undefined
-    if (nativeCanvas) {
-      const dataUrl = nativeCanvas.toDataURL('image/png')
-      const link = document.createElement('a')
-      link.download = `${chartTitle.value}.png`
-      link.href = dataUrl
-      link.click()
-    }
+  if (!chartInstance.value) return
+  const context = chartInstance.value.getContext()
+  const canvas = context?.canvas?.getConfig?.()?.canvas as unknown as HTMLCanvasElement | undefined
+  if (canvas) {
+    const link = document.createElement('a')
+    link.download = `${chartTitle.value}.png`
+    link.href = canvas.toDataURL('image/png')
+    link.click()
   }
 }
 
-defineExpose({
-  exportImage,
-  refresh: initChart
-})
+defineExpose({ exportImage })
 </script>
 
 <template>

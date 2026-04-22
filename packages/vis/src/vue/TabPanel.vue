@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, type Component } from 'vue'
+import { computed, ref, watch, onMounted, onUnmounted, type Component } from 'vue'
 import type { TabItem, VisConfig } from '../types'
 import type { TabManager } from '../tabs/TabManager'
 import ChartDetail from '../tabs/templates/ChartDetail.vue'
@@ -23,14 +23,13 @@ const emit = defineEmits<{
 // Internal state
 const tabs = ref<TabItem[]>([])
 const activeTabId = ref<string | null>(null)
+const isReady = ref(false)
 
 // Computed
 const hasTabs = computed(() => tabs.value.length > 0)
 
 const activeTab = computed(() => {
-  if (!activeTabId.value) {
-    return null
-  }
+  if (!activeTabId.value) return null
   return tabs.value.find((tab) => tab.id === activeTabId.value) ?? null
 })
 
@@ -44,15 +43,19 @@ const templateComponents: Record<string, Component> = {
   'chart-detail': ChartDetail
 }
 
-// Get component for a template
 const getTemplateComponent = (templateId: string): Component => {
   return templateComponents[templateId] ?? ChartDetail
 }
 
 // Sync with manager state
 const syncWithManager = () => {
-  tabs.value = props.manager.getAllTabs()
-  activeTabId.value = props.manager.getActiveTabId()
+  const newTabs = props.manager.getAllTabs()
+  const newActiveId = props.manager.getActiveTabId()
+
+  console.log('[TabPanel] syncWithManager, tabs:', newTabs.length, 'active:', newActiveId)
+
+  tabs.value = newTabs
+  activeTabId.value = newActiveId
 }
 
 // Handle tab click
@@ -65,44 +68,45 @@ const handleTabClick = (tab: TabItem) => {
 const handleTabClose = (tab: TabItem) => {
   props.manager.closeTab(tab.id)
   emit('tab-close', tab)
+  syncWithManager()
 }
 
-// Subscribe to manager events
-const unsubscribeCallbacks: Array<() => void> = []
-
-const subscribeToManager = () => {
-  const onOpen = () => syncWithManager()
-  const onClose = () => syncWithManager()
-  const onSwitch = () => syncWithManager()
-
-  props.manager.on('open', onOpen)
-  props.manager.on('close', onClose)
-  props.manager.on('switch', onSwitch)
-
-  unsubscribeCallbacks.push(() => {
-    props.manager.off('open', onOpen)
-    props.manager.off('close', onClose)
-    props.manager.off('switch', onSwitch)
-  })
+// Event handlers
+const handleOpen = () => {
+  console.log('[TabPanel] handleOpen event')
+  syncWithManager()
+  isReady.value = true
 }
 
-// Initialize
-syncWithManager()
-subscribeToManager()
+const handleClose = () => {
+  console.log('[TabPanel] handleClose event')
+  syncWithManager()
+}
 
-// Watch for manager changes
-watch(
-  () => props.manager,
-  (newManager) => {
-    // Unsubscribe from old manager
-    unsubscribeCallbacks.forEach((cb) => cb())
-    unsubscribeCallbacks.length = 0
+const handleSwitch = () => {
+  console.log('[TabPanel] handleSwitch event')
+  syncWithManager()
+}
 
-    // Sync and subscribe to new manager
-    syncWithManager()
-    subscribeToManager()
-  }
-)
+// Initialize on mount
+onMounted(() => {
+  console.log('[TabPanel] onMounted')
+  syncWithManager()
+
+  props.manager.on('open', handleOpen)
+  props.manager.on('close', handleClose)
+  props.manager.on('switch', handleSwitch)
+
+  isReady.value = hasTabs.value
+})
+
+// Cleanup
+onUnmounted(() => {
+  console.log('[TabPanel] onUnmounted')
+  props.manager.off('open', handleOpen)
+  props.manager.off('close', handleClose)
+  props.manager.off('switch', handleSwitch)
+})
 </script>
 
 <template>
