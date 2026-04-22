@@ -37,6 +37,8 @@
   const smartVisInstances = ref<Map<string, SmartVis>>(new Map())
   const streamingDetector = ref<StreamingDetector | null>(null)
   const contentRef = ref<HTMLElement | null>(null)
+  const lastRenderedContent = ref<string>('')
+  const isRendering = ref(false)
 
   // Computed - now safe to use props after definition
   const hasChartBlocks = computed(() => {
@@ -137,9 +139,23 @@
     { immediate: true }
   )
 
-  // Mount charts after render
-  const onContentMounted = async (container: HTMLElement) => {
+  // Mount charts after render - with protection against re-entry
+  const onContentMounted = (container: HTMLElement) => {
     if (!container || !props.content) return
+
+    // Prevent re-entry while rendering
+    if (isRendering.value) {
+      console.log('[MarkdownWithCharts] Already rendering, skipping')
+      return
+    }
+
+    // Skip if content hasn't changed
+    if (lastRenderedContent.value === props.content) {
+      console.log('[MarkdownWithCharts] Content unchanged, skipping')
+      return
+    }
+
+    isRendering.value = true
 
     // Clean up existing instances
     smartVisInstances.value.forEach((instance) => instance.destroy())
@@ -152,9 +168,13 @@
     console.log('[MarkdownWithCharts] Found chart containers:', chartContainers.length)
 
     if (chartContainers.length === 0) {
-      console.log('[MarkdownWithCharts] No chart containers found. Content:', props.content.substring(0, 200))
+      console.log('[MarkdownWithCharts] No chart containers found')
+      isRendering.value = false
       return
     }
+
+    // Mark content as rendered
+    lastRenderedContent.value = props.content
 
     chartContainers.forEach((el, index) => {
       const htmlEl = el as HTMLElement
@@ -163,17 +183,15 @@
 
       // Extract chart config from original content
       const blocks = parseChartBlocks(props.content)
-      console.log('[MarkdownWithCharts] Parsed blocks:', blocks.length, 'Block', index, blocks[index]?.config)
+      console.log('[MarkdownWithCharts] Parsed blocks:', blocks.length, 'Block', index, blocks[index]?.config?.type)
 
       if (blocks[index]) {
         const config = blocks[index].config
         chartBlocks.value.push({ id: chartId, config, element: htmlEl })
 
-        // Ensure container has dimensions
-        if (htmlEl.clientWidth === 0) {
-          htmlEl.style.width = '100%'
-          htmlEl.style.minHeight = '300px'
-        }
+        // Set fixed dimensions
+        htmlEl.style.width = '100%'
+        htmlEl.style.minHeight = '280px'
 
         // Create SmartVis instance
         const smartVis = new SmartVis({
@@ -187,70 +205,61 @@
 
         smartVisInstances.value.set(chartId, smartVis)
 
-        // Render chart with delay to ensure DOM is ready
-        setTimeout(() => {
-          try {
-            smartVis.render(config)
-            console.log('[MarkdownWithCharts] Chart rendered:', chartId, config.type)
-          } catch (err) {
-            console.error('[MarkdownWithCharts] Render error:', err)
-          }
-        }, 100)
+        // Render chart
+        try {
+          smartVis.render(config)
+          console.log('[MarkdownWithCharts] Chart rendered:', chartId, config.type)
+        } catch (err) {
+          console.error('[MarkdownWithCharts] Render error:', err)
+        }
       }
     })
+
+    isRendering.value = false
   }
 
-  // Watch for rendered HTML changes - flush: 'post' ensures DOM is updated first
+  // Watch for rendered HTML changes - with debounce protection
   watch(
     renderedHtml,
-    async (newHtml) => {
-      console.log('[MarkdownWithCharts] renderedHtml watch triggered (post), contentRef:', contentRef.value ? 'exists' : 'null')
-      console.log('[MarkdownWithCharts] newHtml has chart-container:', newHtml?.includes('chart-container'))
+    (newHtml) => {
+      // Skip if content unchanged or already rendering
+      if (lastRenderedContent.value === props.content || isRendering.value) {
+        return
+      }
 
-      if (contentRef.value) {
-        // DOM is already updated because flush: 'post'
-        console.log('[MarkdownWithCharts] contentRef children:', contentRef.value.children.length)
-        const containers = contentRef.value.querySelectorAll('.chart-container')
-        console.log('[MarkdownWithCharts] Direct query found containers:', containers.length)
-        onContentMounted(contentRef.value)
-      } else {
-        console.log('[MarkdownWithCharts] contentRef is null, skipping onContentMounted')
+      if (contentRef.value && newHtml?.includes('chart-container')) {
+        console.log('[MarkdownWithCharts] renderedHtml changed, mounting charts')
+        requestAnimationFrame(() => {
+          if (contentRef.value) {
+            onContentMounted(contentRef.value)
+          }
+        })
       }
     },
     { flush: 'post' }
   )
 
-  // Also handle initial mount with onMounted
+  // Handle initial mount
   onMounted(() => {
-    console.log('[MarkdownWithCharts] onMounted, contentRef:', contentRef.value ? 'exists' : 'null')
-    if (contentRef.value) {
-      const containers = contentRef.value.querySelectorAll('.chart-container')
-      console.log('[MarkdownWithCharts] onMounted found containers:', containers.length)
-      if (containers.length > 0) {
+    console.log('[MarkdownWithCharts] onMounted')
+    requestAnimationFrame(() => {
+      if (contentRef.value && renderedHtml.value?.includes('chart-container')) {
         onContentMounted(contentRef.value)
       }
-    }
+    })
   })
-
-  // Also watch content changes directly for non-chart content
-  watch(
-    () => props.content,
-    (newContent) => {
-      console.log('[MarkdownWithCharts] Content changed, hasChartBlocks:', hasChartBlocks.value)
-      if (newContent && hasChartBlocks.value) {
-        console.log('[MarkdownWithCharts] Chart blocks detected in content')
-      }
-    },
-    { immediate: true }
-  )
 
   // Clean up on unmount
   onUnmounted(() => {
+    console.log('[MarkdownWithCharts] onUnmounted')
     smartVisInstances.value.forEach((instance) => instance.destroy())
     smartVisInstances.value.clear()
+    chartBlocks.value = []
     if (streamingDetector.value) {
       streamingDetector.value.reset()
     }
+    isRendering.value = false
+    lastRenderedContent.value = ''
   })
 
   defineExpose({
