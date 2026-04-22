@@ -58,6 +58,8 @@ const initChart = async () => {
   }
 
   await nextTick()
+  // Wait for next animation frame to ensure layout is complete
+  await new Promise(resolve => requestAnimationFrame(resolve))
 
   if (!chartContainerRef.value) {
     console.log('[ChartDetail] Container not ready')
@@ -65,7 +67,21 @@ const initChart = async () => {
   }
 
   const container = chartContainerRef.value
-  const width = container.clientWidth || 400
+  const width = container.clientWidth
+
+  // If container width is 0, retry after layout
+  if (width === 0) {
+    console.log('[ChartDetail] Container width is 0, waiting for layout')
+    const retry = () => {
+      if (chartContainerRef.value && chartContainerRef.value.clientWidth > 0) {
+        initChart()
+      } else {
+        requestAnimationFrame(retry)
+      }
+    }
+    requestAnimationFrame(retry)
+    return
+  }
 
   console.log('[ChartDetail] Initializing chart, width:', width, 'type:', props.data.type)
 
@@ -78,7 +94,7 @@ const initChart = async () => {
       width,
       height: 300,
       theme,
-      autoFit: true
+      autoFit: false  // Disable autoFit to prevent ResizeObserver loop
     })
 
     const xField = config.xField ?? 'category'
@@ -87,7 +103,7 @@ const initChart = async () => {
 
     switch (config.type) {
       case 'line':
-        chartInstance.value
+        const line = chartInstance.value
           .line()
           .data(config.data)
           .encode('x', xField)
@@ -95,7 +111,11 @@ const initChart = async () => {
           .style('smooth', config.smooth ?? false)
           .style('lineWidth', 2)
 
-        chartInstance.value
+        if (colorField) {
+          line.encode('color', colorField)
+        }
+
+        const point = chartInstance.value
           .point()
           .data(config.data)
           .encode('x', xField)
@@ -103,24 +123,26 @@ const initChart = async () => {
           .style('r', 3)
 
         if (colorField) {
-          chartInstance.value.line().encode('color', colorField)
-          chartInstance.value.point().encode('color', colorField)
+          point.encode('color', colorField)
         }
         break
 
       case 'pie':
         chartInstance.value.coordinate({ type: 'polar', innerRadius: 0.6 })
-        chartInstance.value
+        const pieInterval = chartInstance.value
           .interval()
           .data(config.data)
           .encode('y', config.angleField ?? 'value')
-          .encode('color', colorField ?? 'category')
           .transform({ type: 'stackY' })
           .legend(true)
+
+        if (colorField) {
+          pieInterval.encode('color', colorField)
+        }
         break
 
       case 'bar':
-        chartInstance.value
+        const barInterval = chartInstance.value
           .interval()
           .data(config.data)
           .encode('x', xField)
@@ -128,7 +150,7 @@ const initChart = async () => {
           .style('radius', 4)
 
         if (colorField) {
-          chartInstance.value.interval().encode('color', colorField)
+          barInterval.encode('color', colorField)
         }
         break
 

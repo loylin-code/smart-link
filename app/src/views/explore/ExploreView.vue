@@ -636,7 +636,7 @@
     </main>
 
     <!-- 右侧 Tab 面板 -->
-    <aside v-if="tabManager.getTabCount() > 0" class="explore-tabs">
+    <aside v-if="tabCount > 0" class="explore-tabs">
       <TabPanel :manager="tabManager" @tab-close="handleTabClose" />
     </aside>
   </div>
@@ -678,13 +678,26 @@
   // TabManager instance
   const tabManager = ref<TabManager>(new TabManager())
 
-  // Register chart-detail template on mount
+  // Reactive tab count for v-if
+  const tabCount = ref(0)
+
+  // Update tab count when tabs change
+  const updateTabCount = () => {
+    tabCount.value = tabManager.value.getTabCount()
+  }
+
+  // Register chart-detail template and set up event listener
   onMounted(() => {
     tabManager.value.registerTemplate({
       id: 'chart-detail',
       name: '图表详情',
       component: markRaw(ChartDetail)
     })
+
+    // Listen to tab changes to update count reactively
+    tabManager.value.on('open', updateTabCount)
+    tabManager.value.on('close', updateTabCount)
+
     autoResize()
     // 从后端加载对话列表
     exploreStore.fetchConversations()

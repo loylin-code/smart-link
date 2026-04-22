@@ -57,7 +57,7 @@ export const PieChart: ChartFactory = (options: ChartOptions): ChartInstance => 
       width: options.width ?? container.clientWidth,
       height: options.height ?? 400,
       theme,
-      autoFit: true,
+      autoFit: false,  // Disable autoFit to prevent ResizeObserver loop
     })
 
     // Determine field mappings
