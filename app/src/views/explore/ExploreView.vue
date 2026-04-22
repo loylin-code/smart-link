@@ -359,6 +359,7 @@
                 <!-- 消息内容 - 使用 MarkdownWithCharts 组件 -->
                 <div class="message-content">
                   <MarkdownWithCharts
+                    :key="`md-${message.id}`"
                     :content="message.content"
                     :streaming="message.isStreaming"
                     @chart-click="handleChartClick"

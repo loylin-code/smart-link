@@ -180,25 +180,37 @@ const destroyCharts = () => {
   isInitialized.value = false
 }
 
-// Watch content changes - debounced with 100ms delay
+// Watch content changes - debounced with 150ms delay
 watch(
   () => props.content,
   (newContent, oldContent) => {
     // Skip if same content
     if (newContent === oldContent) return
 
-    console.log('[MarkdownWithCharts] content changed')
+    console.log('[MarkdownWithCharts] content changed, resetting state')
 
-    // Update HTML immediately (cheap operation)
+    // Reset state for new content
+    isInitialized.value = false
+    lastContent.value = ''
+
+    // Destroy existing charts first
+    destroyCharts()
+
+    // Update HTML immediately
     updateRenderedHtml()
 
-    // Debounce chart initialization
+    // Debounce chart initialization - wait for DOM update
     if (initTimeoutId.value !== null) {
       clearTimeout(initTimeoutId.value)
     }
 
     initTimeoutId.value = window.setTimeout(() => {
-      initCharts()
+      // Double RAF to ensure DOM is ready
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          initCharts()
+        })
+      })
     }, 150)
   },
   { flush: 'post' }
@@ -211,9 +223,23 @@ onMounted(() => {
   // Initial HTML render
   updateRenderedHtml()
 
-  // Delayed chart init
+  // Wait for DOM to be fully rendered before initializing charts
+  // Use multiple requestAnimationFrame to ensure layout is complete
   requestAnimationFrame(() => {
-    initCharts()
+    requestAnimationFrame(() => {
+      // Check if containers exist
+      if (contentRef.value) {
+        const containers = contentRef.value.querySelectorAll('.chart-container')
+        console.log('[MarkdownWithCharts] containers after RAF:', containers.length)
+
+        if (containers.length > 0) {
+          initCharts()
+        } else {
+          // If no containers yet, wait a bit more
+          initTimeoutId.value = window.setTimeout(() => initCharts(), 50)
+        }
+      }
+    })
   })
 })
 
