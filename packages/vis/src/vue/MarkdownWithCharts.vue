@@ -86,6 +86,8 @@ const updateRenderedHtml = () => {
 
 // Initialize charts - with debounce and protection
 const initCharts = () => {
+  console.log('[MarkdownWithCharts] initCharts called')
+
   // Clear pending timeout
   if (initTimeoutId.value !== null) {
     clearTimeout(initTimeoutId.value)
@@ -106,9 +108,14 @@ const initCharts = () => {
   const containers = contentRef.value.querySelectorAll('.chart-container')
   console.log('[MarkdownWithCharts] initCharts, containers:', containers.length)
 
-  if (containers.length === 0) return
+  if (containers.length === 0) {
+    isInitialized.value = true
+    lastContent.value = props.content
+    return
+  }
 
   // Destroy existing instances first
+  console.log('[MarkdownWithCharts] destroying old instances...')
   destroyCharts()
 
   // Mark as initializing
@@ -116,32 +123,45 @@ const initCharts = () => {
   lastContent.value = props.content
 
   const blocks = parseChartBlocks(props.content)
+  console.log('[MarkdownWithCharts] parsed blocks:', blocks.length)
 
   containers.forEach((container, index) => {
     const htmlEl = container as HTMLElement
     const block = blocks[index]
 
-    if (!block) return
+    if (!block) {
+      console.log('[MarkdownWithCharts] no block for index', index)
+      return
+    }
 
     const chartId = `chart-${index}-${Date.now()}`
     htmlEl.style.width = '100%'
     htmlEl.style.minHeight = '280px'
+
+    console.log('[MarkdownWithCharts] creating SmartVis for', chartId, block.config.type)
 
     try {
       const smartVis = new SmartVis({
         container: htmlEl,
         theme: 'light',
         streaming: false,
-        onChartClick: (_, cfg) => emit('chart-click', cfg)
+        onChartClick: (_, cfg) => {
+          console.log('[MarkdownWithCharts] chart clicked')
+          emit('chart-click', cfg)
+        }
       })
 
       smartVisInstances.set(chartId, smartVis)
+
+      console.log('[MarkdownWithCharts] calling render for', chartId)
       smartVis.render(block.config)
       console.log('[MarkdownWithCharts] chart rendered:', chartId)
     } catch (e) {
       console.error('[MarkdownWithCharts] render error:', e)
     }
   })
+
+  console.log('[MarkdownWithCharts] initCharts completed')
 }
 
 // Destroy all charts

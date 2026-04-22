@@ -60,6 +60,7 @@ export class SmartVis {
   private options: SmartVisOptions
   private placeholderCallbacks: PlaceholderCallbacks | null = null
   private isStreaming: boolean = false
+  private clickHandler: (() => void) | null = null  // Store handler for cleanup
 
   constructor(options: SmartVisOptions) {
     // Resolve container
@@ -194,6 +195,12 @@ export class SmartVis {
    * Destroy the engine and cleanup resources.
    */
   destroy(): void {
+    // Remove click handler
+    if (this.clickHandler) {
+      this.container.removeEventListener('click', this.clickHandler)
+      this.clickHandler = null
+    }
+
     this.destroyCurrentChart()
     this.registry.clear()
     this.detector.reset()
@@ -344,13 +351,19 @@ export class SmartVis {
    * Bind click handler to container for chart interaction.
    */
   private bindClickHandler(config: VisConfig): void {
-    const handler = () => {
+    // Remove previous handler if exists
+    if (this.clickHandler) {
+      this.container.removeEventListener('click', this.clickHandler)
+    }
+
+    // Create and store new handler
+    this.clickHandler = () => {
       if (this.currentChart && this.options.onChartClick) {
         this.options.onChartClick(this.currentChart, config)
       }
     }
 
-    this.container.addEventListener('click', handler)
+    this.container.addEventListener('click', this.clickHandler)
   }
 
   /**
