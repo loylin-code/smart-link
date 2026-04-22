@@ -234,18 +234,17 @@
     margin-bottom: 16px;
     font-weight: 600;
     line-height: 1.25;
-    color: #1f2937;
   }
 
   .markdown-content :deep(h1) {
     font-size: 2em;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     padding-bottom: 0.3em;
   }
 
   .markdown-content :deep(h2) {
     font-size: 1.5em;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     padding-bottom: 0.3em;
   }
 
@@ -260,7 +259,6 @@
   .markdown-content :deep(p) {
     margin-bottom: 16px;
     line-height: 1.6;
-    color: #374151;
   }
 
   .markdown-content :deep(ul),
@@ -274,7 +272,7 @@
   }
 
   .markdown-content :deep(pre) {
-    background: #f3f4f6;
+    background: rgba(0, 0, 0, 0.04);
     border-radius: 8px;
     padding: 16px;
     overflow-x: auto;
@@ -289,28 +287,28 @@
   }
 
   .markdown-content :deep(code) {
-    background: #f3f4f6;
+    background: rgba(0, 0, 0, 0.05);
     padding: 2px 6px;
     border-radius: 4px;
     font-size: 0.9em;
-    color: #ef4444;
   }
 
   .markdown-content :deep(a) {
-    color: #3b82f6;
-    text-decoration: none;
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 255, 255, 0.5);
   }
 
   .markdown-content :deep(a:hover) {
-    text-decoration: underline;
+    text-decoration-color: currentColor;
   }
 
   .markdown-content :deep(blockquote) {
-    border-left: 4px solid #e5e7eb;
+    border-left: 4px solid currentColor;
+    opacity: 0.7;
     padding-left: 16px;
     margin-left: 0;
     margin-bottom: 16px;
-    color: #6b7280;
   }
 
   .markdown-content :deep(table) {
@@ -321,23 +319,23 @@
 
   .markdown-content :deep(th),
   .markdown-content :deep(td) {
-    border: 1px solid #e5e7eb;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     padding: 8px 12px;
     text-align: left;
   }
 
   .markdown-content :deep(th) {
-    background: #f9fafb;
+    background: rgba(0, 0, 0, 0.1);
     font-weight: 600;
   }
 
   .markdown-content :deep(tr:nth-child(even)) {
-    background: #f9fafb;
+    background: rgba(0, 0, 0, 0.05);
   }
 
   .markdown-content :deep(hr) {
     border: none;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
     margin: 24px 0;
   }
 
@@ -345,7 +343,8 @@
     margin: 24px 0;
     min-height: 300px;
     border-radius: 12px;
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #374151;
   }
 </style>
