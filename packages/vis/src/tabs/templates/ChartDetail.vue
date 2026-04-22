@@ -331,9 +331,8 @@ defineExpose({ exportImage })
 }
 
 .chart-container {
-  width: 100%;
-  height: 300px;
-  max-height: 300px;
+  width: 580px;
+  height: 280px;
   background: #f9fafb;
 }
 
