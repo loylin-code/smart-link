@@ -1,0 +1,67 @@
+{
+  "name": "@smart-link/chat-vis",
+  "version": "1.0.0",
+  "description": "SmartLink chat visualization engine for LLM-driven charts and data components",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./vue": {
+      "import": "./dist/vue/index.mjs",
+      "require": "./dist/vue/index.js",
+      "types": "./dist/vue/index.d.ts"
+    },
+    "./tabs/templates/ChartDetail.vue": {
+      "import": "./src/tabs/templates/ChartDetail.vue",
+      "types": "./src/tabs/templates/ChartDetail.vue"
+    },
+    "./types": {
+      "import": "./dist/types/index.mjs",
+      "require": "./dist/types/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./core": {
+      "import": "./dist/core/index.mjs",
+      "require": "./dist/core/index.js",
+      "types": "./dist/core/index.d.ts"
+    },
+    "./charts": {
+      "import": "./dist/charts/index.mjs",
+      "require": "./dist/charts/index.js",
+      "types": "./dist/charts/index.d.ts"
+    },
+    "./tabs": {
+      "import": "./dist/tabs/index.mjs",
+      "require": "./dist/tabs/index.js",
+      "types": "./dist/tabs/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src/tabs/templates"
+  ],
+  "scripts": {
+    "build": "rollup -c ../../internal/build/rollup.config.js"
+  },
+  "peerDependencies": {
+    "vue": "^3.4.0"
+  },
+  "dependencies": {
+    "@antv/g2": "^5.0.0",
+    "markdown-it": "^14.0.0"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "loylin",
+  "license": "MIT"
+}

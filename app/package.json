@@ -16,6 +16,7 @@
     "@smart-link/hooks": "workspace:*",
     "@smart-link/shared": "workspace:*",
     "@smart-link/ui": "workspace:*",
+    "@smart-link/chat-vis": "workspace:*",
     "@types/markdown-it": "^14.1.2",
     "@vueuse/core": "^10.9.0",
     "@vueuse/motion": "^2.1.0",
