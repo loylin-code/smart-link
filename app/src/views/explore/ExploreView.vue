@@ -244,8 +244,8 @@
     <main class="explore-main">
       <!-- 有活动对话时显示消息 -->
       <template v-if="activeConversation">
-        <!-- 聊天视图 -->
-        <div class="chat-view">
+        <!-- 聊天视图 - key ensures stable rendering -->
+        <div class="chat-view" :key="activeConversationId">
           <!-- 对话头部 -->
           <header class="chat-header">
             <div class="header-info">
@@ -282,14 +282,13 @@
             </div>
           </header>
 
-          <!-- 消息列表 -->
-          <div class="message-list" ref="messageListRef">
+          <!-- 消息列表 - key prevents remount on conversation switch -->
+          <div class="message-list" ref="messageListRef" :key="activeConversationId">
             <div
               v-for="(message, index) in activeConversation.messages"
               :key="message.id"
               class="message-item"
               :class="`message-${message.role}`"
-              :style="{ animationDelay: `${index * 0.1}s` }"
             >
               <div class="message-avatar">
                 <div v-if="message.role === 'user'" class="avatar user-avatar">
