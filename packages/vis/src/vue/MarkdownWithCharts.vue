@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, computed, watch, nextTick, onUnmounted } from 'vue'
+  import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
   import MarkdownIt from 'markdown-it'
   import { SmartVis } from '../core/SmartVis'
   import { StreamingDetector } from '../syntax/streaming-detector'
@@ -95,8 +95,20 @@
   // Render markdown HTML
   const renderedHtml = computed(() => {
     const content = props.content || ''
+    console.log('[MarkdownWithCharts] Computing renderedHtml, content length:', content.length)
+
+    if (hasChartBlocks.value) {
+      const blocks = parseChartBlocks(content)
+      console.log('[MarkdownWithCharts] parseChartBlocks result:', blocks.length, 'blocks')
+    }
+
     const processed = processMarkdownContent(content)
-    return md.render(processed)
+    console.log('[MarkdownWithCharts] processed content includes chart-container:', processed.includes('chart-container'))
+
+    const html = md.render(processed)
+    console.log('[MarkdownWithCharts] Final HTML includes chart-container:', html.includes('chart-container'))
+
+    return html
   })
 
   // Handle streaming updates
@@ -188,13 +200,49 @@
     })
   }
 
-  // Watch for rendered HTML changes
-  watch(renderedHtml, async () => {
+  // Watch for rendered HTML changes - flush: 'post' ensures DOM is updated first
+  watch(
+    renderedHtml,
+    async (newHtml) => {
+      console.log('[MarkdownWithCharts] renderedHtml watch triggered (post), contentRef:', contentRef.value ? 'exists' : 'null')
+      console.log('[MarkdownWithCharts] newHtml has chart-container:', newHtml?.includes('chart-container'))
+
+      if (contentRef.value) {
+        // DOM is already updated because flush: 'post'
+        console.log('[MarkdownWithCharts] contentRef children:', contentRef.value.children.length)
+        const containers = contentRef.value.querySelectorAll('.chart-container')
+        console.log('[MarkdownWithCharts] Direct query found containers:', containers.length)
+        onContentMounted(contentRef.value)
+      } else {
+        console.log('[MarkdownWithCharts] contentRef is null, skipping onContentMounted')
+      }
+    },
+    { flush: 'post' }
+  )
+
+  // Also handle initial mount with onMounted
+  onMounted(() => {
+    console.log('[MarkdownWithCharts] onMounted, contentRef:', contentRef.value ? 'exists' : 'null')
     if (contentRef.value) {
-      await nextTick()
-      onContentMounted(contentRef.value)
+      const containers = contentRef.value.querySelectorAll('.chart-container')
+      console.log('[MarkdownWithCharts] onMounted found containers:', containers.length)
+      if (containers.length > 0) {
+        onContentMounted(contentRef.value)
+      }
     }
   })
+
+  // Also watch content changes directly for non-chart content
+  watch(
+    () => props.content,
+    (newContent) => {
+      console.log('[MarkdownWithCharts] Content changed, hasChartBlocks:', hasChartBlocks.value)
+      if (newContent && hasChartBlocks.value) {
+        console.log('[MarkdownWithCharts] Chart blocks detected in content')
+      }
+    },
+    { immediate: true }
+  )
 
   // Clean up on unmount
   onUnmounted(() => {

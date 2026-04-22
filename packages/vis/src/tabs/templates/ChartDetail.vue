@@ -68,106 +68,130 @@ const initChart = async () => {
   await nextTick()
 
   if (!chartContainerRef.value) {
+    console.log('[ChartDetail] chartContainerRef not ready, skipping init')
     return
+  }
+
+  // Check if container has valid dimensions
+  const container = chartContainerRef.value
+  if (container.clientWidth === 0) {
+    console.log('[ChartDetail] container has no width, setting default')
+    container.style.width = '100%'
+    container.style.minWidth = '400px'
   }
 
   // Destroy existing chart
   if (chartInstance.value) {
-    chartInstance.value.destroy()
+    try {
+      chartInstance.value.destroy()
+    } catch (e) {
+      console.warn('[ChartDetail] Error destroying chart:', e)
+    }
     chartInstance.value = null
   }
 
-  const container = chartContainerRef.value
   const theme = props.theme === 'dark' ? 'classicDark' : 'classic'
   const config = props.data
 
-  // Create chart based on type
-  chartInstance.value = new Chart({
-    container,
-    width: container.clientWidth,
-    height: 500,
-    theme,
-    autoFit: true
-  })
+  try {
+    // Create chart based on type
+    chartInstance.value = new Chart({
+      container,
+      width: container.clientWidth || 400,
+      height: 500,
+      theme,
+      autoFit: true
+    })
+
+    // ... rest of chart configuration
+  } catch (e) {
+    console.error('[ChartDetail] Error creating chart:', e)
+    return
+  }
 
   // Common field mappings
   const xField = config.xField ?? 'category'
   const yField = config.yField ?? 'value'
-  const categoryField = config.categoryField ?? undefined
-  const valueField = config.valueField ?? 'value'
+  const categoryField = config.categoryField ?? config.colorField ?? undefined
+  const valueField = config.yField ?? config.valueField ?? 'value'
 
-  // Render chart by type
-  switch (config.type) {
-    case 'line':
-      chartInstance.value
-        .line()
-        .data(config.data)
-        .encode('x', xField)
-        .encode('y', yField)
-        .style('smooth', config.smooth ?? false)
-        .style('lineWidth', 2)
+  try {
+    // Render chart by type
+    switch (config.type) {
+      case 'line':
+        chartInstance.value
+          .line()
+          .data(config.data)
+          .encode('x', xField)
+          .encode('y', yField)
+          .style('smooth', config.smooth ?? false)
+          .style('lineWidth', 2)
 
-      chartInstance.value
-        .point()
-        .data(config.data)
-        .encode('x', xField)
-        .encode('y', yField)
-        .style('r', 3)
+        chartInstance.value
+          .point()
+          .data(config.data)
+          .encode('x', xField)
+          .encode('y', yField)
+          .style('r', 3)
 
-      if (categoryField) {
-        chartInstance.value.line().encode('color', categoryField).legend(true)
-        chartInstance.value.point().encode('color', categoryField)
-      }
-      break
+        if (categoryField) {
+          chartInstance.value.line().encode('color', categoryField).legend(true)
+          chartInstance.value.point().encode('color', categoryField)
+        }
+        break
 
-    case 'pie':
-      chartInstance.value.coordinate({ type: 'polar', innerRadius: config.innerRadius ?? 0 })
-      chartInstance.value
-        .interval()
-        .data(config.data)
-        .encode('y', valueField)
-        .encode('color', categoryField)
-        .transform({ type: 'stackY' })
-        .legend(true)
-        .style('radius', 10)
-      break
+      case 'pie':
+        chartInstance.value.coordinate({ type: 'polar', innerRadius: config.innerRadius ?? 0 })
+        chartInstance.value
+          .interval()
+          .data(config.data)
+          .encode('y', valueField)
+          .encode('color', categoryField ?? config.angleField ?? 'category')
+          .transform({ type: 'stackY' })
+          .legend(true)
+          .style('radius', 10)
+        break
 
-    case 'bar':
-      const barInterval = chartInstance.value
-        .interval()
-        .data(config.data)
-        .encode('x', xField)
-        .encode('y', yField)
-        .style('radius', 4)
+      case 'bar':
+        const barInterval = chartInstance.value
+          .interval()
+          .data(config.data)
+          .encode('x', xField)
+          .encode('y', yField)
+          .style('radius', 4)
 
-      if (categoryField) {
-        barInterval.encode('color', categoryField).legend(true)
-      }
+        if (categoryField) {
+          barInterval.encode('color', categoryField).legend(true)
+        }
 
-      if (config.stack) {
-        barInterval.transform({ type: 'stackY' })
-      }
-      break
+        if (config.stack) {
+          barInterval.transform({ type: 'stackY' })
+        }
+        break
 
-    default:
-      // Default to bar
-      chartInstance.value
-        .interval()
-        .data(config.data)
-        .encode('x', xField)
-        .encode('y', yField)
+      default:
+        // Default to bar
+        chartInstance.value
+          .interval()
+          .data(config.data)
+          .encode('x', xField)
+          .encode('y', yField)
+    }
+
+    chartInstance.value.render()
+    console.log('[ChartDetail] Chart initialized successfully:', config.type)
+  } catch (e) {
+    console.error('[ChartDetail] Error rendering chart:', e)
   }
-
-  chartInstance.value.render()
 }
 
-// Watch for data changes
+// Watch for data changes - flush: 'post' ensures DOM is ready
 watch(
   () => props.data,
   () => {
     initChart()
   },
-  { deep: true }
+  { deep: true, flush: 'post' }
 )
 
 // Watch for theme changes
@@ -175,7 +199,8 @@ watch(
   () => props.theme,
   () => {
     initChart()
-  }
+  },
+  { flush: 'post' }
 )
 
 // Lifecycle

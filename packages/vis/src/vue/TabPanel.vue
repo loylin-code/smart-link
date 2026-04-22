@@ -129,20 +129,15 @@ watch(
       </div>
     </header>
 
-    <!-- Tab Content -->
+    <!-- Tab Content - Only render active tab to avoid performance issues -->
     <div class="tab-panel-content">
-      <div
-        v-for="tab in tabs"
-        :key="tab.id"
-        class="tab-content-item"
-        :class="{ visible: tab.id === activeTabId }"
-      >
+      <template v-if="activeTab">
         <component
-          :is="getTemplateComponent(tab.template.id)"
-          :data="tab.data"
+          :is="getTemplateComponent(activeTab.template.id)"
+          :data="activeTab.data"
           :theme="theme"
         />
-      </div>
+      </template>
     </div>
 
     <!-- Empty State -->
@@ -235,15 +230,6 @@ watch(
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-}
-
-.tab-content-item {
-  display: none;
-  height: 100%;
-}
-
-.tab-content-item.visible {
-  display: block;
 }
 
 .tab-panel-empty {
