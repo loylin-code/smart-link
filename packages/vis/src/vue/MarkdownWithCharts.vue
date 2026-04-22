@@ -216,9 +216,11 @@
 <style scoped>
   .markdown-with-charts {
     position: relative;
+    width: 100%;
   }
 
   .markdown-content {
+    width: 100%;
     /* Deep selector for v-html content */
   }
 

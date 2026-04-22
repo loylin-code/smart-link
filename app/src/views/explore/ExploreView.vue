@@ -356,8 +356,14 @@
                   </div>
                 </div>
 
-                <!-- 消息内容 -->
-                <div class="message-content" v-html="renderMarkdown(message.content)"></div>
+                <!-- 消息内容 - 使用 MarkdownWithCharts 组件 -->
+                <div class="message-content">
+                  <MarkdownWithCharts
+                    :content="message.content"
+                    :streaming="message.isStreaming"
+                    @chart-click="handleChartClick"
+                  />
+                </div>
 
                 <!-- 动态组件 -->
                 <div
@@ -618,6 +624,11 @@
         </div>
       </template>
     </main>
+
+    <!-- 右侧 Tab 面板 -->
+    <aside v-if="tabManager.getTabCount() > 0" class="explore-tabs">
+      <TabPanel :manager="tabManager" @tab-close="handleTabClose" />
+    </aside>
   </div>
 </template>
 
@@ -637,6 +648,11 @@
   // 引入 UI 组件库
   import { SlStatCard, SlChart, SlTable, SlProgress } from '@smart-link/ui'
 
+  // 引入 chat-vis 组件
+  import { MarkdownWithCharts, TabPanel, TabManager } from '@smart-link/chat-vis'
+  import type { VisConfig } from '@smart-link/chat-vis'
+  import ChartDetail from '@smart-link/chat-vis/tabs/templates/ChartDetail.vue'
+
   const { t } = useI18n()
   const exploreStore = useExploreStore()
   const router = useRouter()
@@ -645,6 +661,21 @@
   const messageListRef = ref<HTMLElement | null>(null)
   const textareaRef = ref<HTMLTextAreaElement | null>(null)
   const fileInputRef = ref<HTMLInputElement | null>(null)
+
+  // TabManager instance
+  const tabManager = ref<TabManager>(new TabManager())
+
+  // Register chart-detail template on mount
+  onMounted(() => {
+    tabManager.value.registerTemplate({
+      id: 'chart-detail',
+      name: '图表详情',
+      component: markRaw(ChartDetail)
+    })
+    autoResize()
+    // 从后端加载对话列表
+    exploreStore.fetchConversations()
+  })
 
   // State
   const inputMessage = ref('')
@@ -926,9 +957,20 @@
     return chatComponents[type] || uiComponents[type] || uiComponents[`Sl${type}`] || 'div'
   }
 
-  const renderMarkdown = (content: string): string => {
-    // TODO: 实现 Markdown 渲染
-    return content.replace(/\n/g, '<br>')
+  const handleChartClick = (config: VisConfig) => {
+    // Open tab with chart detail view
+    tabManager.value.openTab(
+      config.detailTemplate || 'chart-detail',
+      config,
+      { title: config.title || '图表详情' }
+    )
+  }
+
+  const handleTabClose = () => {
+    // Tab closed, update view if needed
+    nextTick(() => {
+      // Re-evaluate tab count for v-if condition
+    })
   }
 
   const scrollToBottom = () => {
@@ -960,12 +1002,6 @@
 
   watch(inputMessage, () => {
     nextTick(autoResize)
-  })
-
-  onMounted(() => {
-    autoResize()
-    // 从后端加载对话列表
-    exploreStore.fetchConversations()
   })
 </script>
 
