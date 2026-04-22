@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, shallowRef, computed, onMounted, onUnmounted, watch } from 'vue'
 import MarkdownIt from 'markdown-it'
 import { SmartVis } from '../core/SmartVis'
 import { StreamingDetector } from '../syntax/streaming-detector'
@@ -20,11 +20,14 @@ const md = new MarkdownIt({
   typographer: true
 })
 
-// Refs
-const contentRef = ref<HTMLElement | null>(null)
+// Refs - use shallowRef to avoid deep reactivity
+const contentRef = shallowRef<HTMLElement | null>(null)
 const smartVisInstances = new Map<string, SmartVis>()
+const isInitialized = ref(false)
+const lastContent = ref('')
+const initTimeoutId = ref<number | null>(null)
 
-// Computed
+// Computed - check if content has charts
 const hasChartBlocks = computed(() => {
   if (!props.content) return false
   return StreamingDetector.hasChartMarker(props.content)
@@ -55,7 +58,7 @@ const parseChartBlocks = (content: string): ChartBlockConfig[] => {
   return blocks
 }
 
-// Replace chart blocks with placeholders
+// Replace chart blocks with placeholders - cached
 const processMarkdownContent = (content: string): string => {
   if (!content || !hasChartBlocks.value) return content || ''
 
@@ -71,21 +74,46 @@ const processMarkdownContent = (content: string): string => {
   return processed
 }
 
-// Computed HTML
-const renderedHtml = computed(() => {
+// Rendered HTML - use shallowRef to avoid deep watching
+const renderedHtml = shallowRef('')
+
+// Update rendered HTML - debounced
+const updateRenderedHtml = () => {
   const content = props.content || ''
   const processed = processMarkdownContent(content)
-  return md.render(processed)
-})
+  renderedHtml.value = md.render(processed)
+}
 
-// Initialize charts - only once per mount
+// Initialize charts - with debounce and protection
 const initCharts = () => {
-  if (!contentRef.value) return
+  // Clear pending timeout
+  if (initTimeoutId.value !== null) {
+    clearTimeout(initTimeoutId.value)
+    initTimeoutId.value = null
+  }
+
+  // Skip if already initialized with same content
+  if (isInitialized.value && lastContent.value === props.content) {
+    console.log('[MarkdownWithCharts] Skip init - same content')
+    return
+  }
+
+  if (!contentRef.value) {
+    console.log('[MarkdownWithCharts] Skip init - no ref')
+    return
+  }
 
   const containers = contentRef.value.querySelectorAll('.chart-container')
   console.log('[MarkdownWithCharts] initCharts, containers:', containers.length)
 
   if (containers.length === 0) return
+
+  // Destroy existing instances first
+  destroyCharts()
+
+  // Mark as initializing
+  isInitialized.value = true
+  lastContent.value = props.content
 
   const blocks = parseChartBlocks(props.content)
 
@@ -118,6 +146,8 @@ const initCharts = () => {
 
 // Destroy all charts
 const destroyCharts = () => {
+  if (smartVisInstances.size === 0) return
+
   console.log('[MarkdownWithCharts] destroyCharts, count:', smartVisInstances.size)
   smartVisInstances.forEach((instance) => {
     try {
@@ -127,12 +157,41 @@ const destroyCharts = () => {
     }
   })
   smartVisInstances.clear()
+  isInitialized.value = false
 }
 
-// Lifecycle - single mount/unmount, no watch
+// Watch content changes - debounced with 100ms delay
+watch(
+  () => props.content,
+  (newContent, oldContent) => {
+    // Skip if same content
+    if (newContent === oldContent) return
+
+    console.log('[MarkdownWithCharts] content changed')
+
+    // Update HTML immediately (cheap operation)
+    updateRenderedHtml()
+
+    // Debounce chart initialization
+    if (initTimeoutId.value !== null) {
+      clearTimeout(initTimeoutId.value)
+    }
+
+    initTimeoutId.value = window.setTimeout(() => {
+      initCharts()
+    }, 150)
+  },
+  { flush: 'post' }
+)
+
+// Lifecycle
 onMounted(() => {
   console.log('[MarkdownWithCharts] onMounted')
-  // Wait for next frame then init
+
+  // Initial HTML render
+  updateRenderedHtml()
+
+  // Delayed chart init
   requestAnimationFrame(() => {
     initCharts()
   })
@@ -140,7 +199,19 @@ onMounted(() => {
 
 onUnmounted(() => {
   console.log('[MarkdownWithCharts] onUnmounted')
+
+  // Clear timeout
+  if (initTimeoutId.value !== null) {
+    clearTimeout(initTimeoutId.value)
+    initTimeoutId.value = null
+  }
+
+  // Destroy charts
   destroyCharts()
+
+  // Reset state
+  lastContent.value = ''
+  renderedHtml.value = ''
 })
 </script>
 
