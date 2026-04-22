@@ -137,6 +137,13 @@
     // Find all chart containers
     const chartContainers = container.querySelectorAll('.chart-container')
 
+    console.log('[MarkdownWithCharts] Found chart containers:', chartContainers.length)
+
+    if (chartContainers.length === 0) {
+      console.log('[MarkdownWithCharts] No chart containers found. Content:', props.content.substring(0, 200))
+      return
+    }
+
     chartContainers.forEach((el, index) => {
       const htmlEl = el as HTMLElement
       const chartId = `chart-${index}`
@@ -144,9 +151,17 @@
 
       // Extract chart config from original content
       const blocks = parseChartBlocks(props.content)
+      console.log('[MarkdownWithCharts] Parsed blocks:', blocks.length, 'Block', index, blocks[index]?.config)
+
       if (blocks[index]) {
         const config = blocks[index].config
         chartBlocks.value.push({ id: chartId, config, element: htmlEl })
+
+        // Ensure container has dimensions
+        if (htmlEl.clientWidth === 0) {
+          htmlEl.style.width = '100%'
+          htmlEl.style.minHeight = '300px'
+        }
 
         // Create SmartVis instance
         const smartVis = new SmartVis({
@@ -160,10 +175,15 @@
 
         smartVisInstances.value.set(chartId, smartVis)
 
-        // Render chart
-        nextTick(() => {
-          smartVis.render(config)
-        })
+        // Render chart with delay to ensure DOM is ready
+        setTimeout(() => {
+          try {
+            smartVis.render(config)
+            console.log('[MarkdownWithCharts] Chart rendered:', chartId, config.type)
+          } catch (err) {
+            console.error('[MarkdownWithCharts] Render error:', err)
+          }
+        }, 100)
       }
     })
   }
@@ -358,6 +378,7 @@
   .markdown-content :deep(.chart-container) {
     margin: 24px 0;
     min-height: 300px;
+    width: 100%;
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.95);
     border: 1px solid rgba(255, 255, 255, 0.3);
