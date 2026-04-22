@@ -789,6 +789,24 @@
       color: $text-inverse;
       border-radius: 16px 16px 4px 16px;
       box-shadow: $shadow-primary;
+
+      // 强制所有子元素继承白色文字
+      * {
+        color: inherit;
+      }
+
+      p,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      li,
+      span,
+      div:not(.chart-container) {
+        color: $text-inverse;
+      }
     }
   }
 
