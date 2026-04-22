@@ -246,11 +246,19 @@ export const useExploreStore = defineStore('explore', {
         if (conversation) {
           const index = this.conversations.findIndex((c) => c.id === id)
           if (index !== -1) {
-            this.conversations[index] = conversation
+            // Patch existing conversation in-place to preserve reactive reference
+            const existing = this.conversations[index]
+            existing.title = conversation.title
+            existing.messageCount = conversation.messageCount
+            existing.updatedAt = conversation.updatedAt
+            // Only update messages if they were empty or changed
+            if (existing.messages.length === 0 || conversation.messages.length > 0) {
+              existing.messages = conversation.messages
+            }
           } else {
             this.conversations.unshift(conversation)
           }
-          return conversation
+          return this.conversations[index] ?? conversation
         }
         return null
       } catch (error: unknown) {

@@ -99,12 +99,15 @@ onUnmounted(() => {
 
     <!-- Tab Content -->
     <div class="tab-panel-content">
-      <component
-        v-if="activeTab"
-        :is="getTemplateComponent(activeTab.template.id)"
-        :data="activeTab.data"
-        :theme="theme"
-      />
+      <template v-if="activeTab">
+        <KeepAlive>
+          <component
+            :is="getTemplateComponent(activeTab.template.id)"
+            :data="activeTab.data"
+            :theme="theme"
+          />
+        </KeepAlive>
+      </template>
       <div v-else class="tab-panel-empty">
         <span class="empty-text">No tab selected</span>
       </div>
