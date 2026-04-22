@@ -1154,6 +1154,28 @@
   }
 }
 
+// 测试按钮（仅开发环境）
+.test-btn {
+  width: 36px;
+  height: 36px;
+  background: $bg-tertiary;
+  border: 1px solid $border-color-base;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  font-size: 18px;
+
+  &:hover {
+    background: $primary-surface;
+    border-color: $primary-color;
+    transform: translateY(-1px);
+  }
+}
+
 .input-hint {
   margin-top: 10px;
   font-size: 12px;

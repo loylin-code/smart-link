@@ -522,6 +522,16 @@
                   />
                 </svg>
               </button>
+
+              <!-- 测试按钮：仅开发环境显示 -->
+              <button
+                v-if="import.meta.env.DEV"
+                class="test-btn"
+                @click="injectTestChartMessage"
+                title="注入测试图表消息"
+              >
+                📊
+              </button>
             </div>
 
             <div class="input-hint">
@@ -964,6 +974,73 @@
       config,
       { title: config.title || '图表详情' }
     )
+  }
+
+  // 测试：注入包含图表配置的消息（仅开发环境）
+  const injectTestChartMessage = async () => {
+    let convId = activeConversationId.value
+
+    if (!convId) {
+      // 如果没有活跃对话，先创建一个
+      const newConv = await exploreStore.createConversation({ title: '测试图表渲染' })
+      convId = newConv?.id
+    }
+
+    if (!convId) return
+
+    // 添加用户消息
+    exploreStore.addMessage(convId, {
+      role: 'user',
+      content: '请帮我分析销售数据'
+    })
+
+    // 添加包含图表的AI回复
+    const chartContent = `根据您提供的销售数据，我生成了以下分析图表：
+
+\`\`\`chart-json
+{
+  "type": "line",
+  "title": "月度销售趋势",
+  "data": [
+    { "month": "1月", "sales": 12000 },
+    { "month": "2月", "sales": 15000 },
+    { "month": "3月", "sales": 18000 },
+    { "month": "4月", "sales": 22000 },
+    { "month": "5月", "sales": 25000 },
+    { "month": "6月", "sales": 28000 }
+  ],
+  "xField": "month",
+  "yField": "sales",
+  "smooth": true
+}
+\`\`\`
+
+从图表可以看出，销售额呈现持续上升趋势，6月达到峰值28000元。
+
+\`\`\`chart-json
+{
+  "type": "pie",
+  "title": "产品类别占比",
+  "data": [
+    { "category": "电子产品", "value": 35 },
+    { "category": "服装", "value": 25 },
+    { "category": "食品", "value": 20 },
+    { "category": "家居", "value": 15 },
+    { "category": "其他", "value": 5 }
+  ],
+  "angleField": "value",
+  "colorField": "category"
+}
+\`\`\`
+
+电子产品占比最高，建议重点关注该品类的库存管理。`
+
+    exploreStore.addMessage(convId, {
+      role: 'assistant',
+      content: chartContent
+    })
+
+    scrollToBottom()
   }
 
   const handleTabClose = () => {
