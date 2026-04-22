@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { Chart } from '@antv/g2'
 import type { VisConfig } from '../../types'
 
@@ -51,18 +51,14 @@ const tableColumns = computed(() => {
   }))
 })
 
-// Initialize chart - only once
-const initChart = async () => {
+// Initialize chart - only once, with fixed dimensions to prevent resize loops
+const initChart = () => {
   if (isInitialized.value) {
     console.log('[ChartDetail] Already initialized, skipping')
     return
   }
 
-  // Mark as initialized immediately to prevent re-entry
   isInitialized.value = true
-
-  await nextTick()
-  await new Promise(resolve => requestAnimationFrame(resolve))
 
   if (!chartContainerRef.value) {
     console.log('[ChartDetail] Container not ready')
@@ -71,10 +67,12 @@ const initChart = async () => {
   }
 
   const container = chartContainerRef.value
-  // Use a fallback width if container is not yet sized
-  const width = container.clientWidth || 400
 
-  console.log('[ChartDetail] Initializing chart, width:', width, 'type:', props.data.type)
+  // Use fixed dimensions - DO NOT use autoFit or clientWidth
+  const width = 580
+  const height = 280
+
+  console.log('[ChartDetail] Initializing chart with fixed size:', width, 'x', height)
 
   const theme = props.theme === 'dark' ? 'classicDark' : 'classic'
   const config = props.data
@@ -83,7 +81,7 @@ const initChart = async () => {
     chartInstance.value = new Chart({
       container,
       width,
-      height: 300,
+      height,
       theme,
       autoFit: false
     })
@@ -94,7 +92,7 @@ const initChart = async () => {
 
     switch (config.type) {
       case 'line':
-        const line = chartInstance.value
+        chartInstance.value
           .line()
           .data(config.data)
           .encode('x', xField)
@@ -102,11 +100,7 @@ const initChart = async () => {
           .style('smooth', config.smooth ?? false)
           .style('lineWidth', 2)
 
-        if (colorField) {
-          line.encode('color', colorField)
-        }
-
-        const point = chartInstance.value
+        chartInstance.value
           .point()
           .data(config.data)
           .encode('x', xField)
@@ -114,26 +108,24 @@ const initChart = async () => {
           .style('r', 3)
 
         if (colorField) {
-          point.encode('color', colorField)
+          chartInstance.value.line().encode('color', colorField)
+          chartInstance.value.point().encode('color', colorField)
         }
         break
 
       case 'pie':
         chartInstance.value.coordinate({ type: 'polar', innerRadius: 0.6 })
-        const pieInterval = chartInstance.value
+        chartInstance.value
           .interval()
           .data(config.data)
           .encode('y', config.angleField ?? 'value')
+          .encode('color', colorField ?? 'category')
           .transform({ type: 'stackY' })
           .legend(true)
-
-        if (colorField) {
-          pieInterval.encode('color', colorField)
-        }
         break
 
       case 'bar':
-        const barInterval = chartInstance.value
+        chartInstance.value
           .interval()
           .data(config.data)
           .encode('x', xField)
@@ -141,7 +133,7 @@ const initChart = async () => {
           .style('radius', 4)
 
         if (colorField) {
-          barInterval.encode('color', colorField)
+          chartInstance.value.interval().encode('color', colorField)
         }
         break
 
@@ -161,16 +153,23 @@ const initChart = async () => {
   }
 }
 
-// Lifecycle - only init on mount, no watch
+// Lifecycle - simple mount, no async
 onMounted(() => {
   console.log('[ChartDetail] onMounted')
-  initChart()
+  // Use requestAnimationFrame to ensure container is in DOM
+  requestAnimationFrame(() => {
+    initChart()
+  })
 })
 
 onUnmounted(() => {
   console.log('[ChartDetail] onUnmounted')
   if (chartInstance.value) {
-    chartInstance.value.destroy()
+    try {
+      chartInstance.value.destroy()
+    } catch (e) {
+      console.warn('[ChartDetail] destroy error:', e)
+    }
     chartInstance.value = null
   }
   isInitialized.value = false

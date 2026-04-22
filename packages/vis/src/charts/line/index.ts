@@ -51,13 +51,14 @@ export const LineChart: ChartFactory = (options: ChartOptions): ChartInstance =>
     const container = resolveContainer()
     const theme = getThemeConfig()
 
-    // Create G2 chart instance
+    // Create G2 chart instance - fixed width, canvas renderer
+    const fixedWidth = options.width ?? 400
     chart = new Chart({
       container,
-      width: options.width ?? container.clientWidth,
-      height: options.height ?? 400,
+      width: fixedWidth,
+      height: options.height ?? 280,
       theme,
-      autoFit: false,  // Disable autoFit to prevent ResizeObserver loop
+      autoFit: false
     })
 
     // Determine field mappings
