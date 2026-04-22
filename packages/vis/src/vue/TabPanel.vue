@@ -158,6 +158,7 @@ onUnmounted(() => {
   background: #f9fafb;
   border-left: 1px solid #e5e7eb;
   height: 100%;
+  max-height: 100%;
   overflow: hidden;
 }
 
@@ -168,6 +169,7 @@ onUnmounted(() => {
   background: #ffffff;
   border-bottom: 1px solid #e5e7eb;
   overflow-x: auto;
+  flex-shrink: 0;
 }
 
 .tab-list {
@@ -232,6 +234,7 @@ onUnmounted(() => {
 
 .tab-panel-content {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
 }

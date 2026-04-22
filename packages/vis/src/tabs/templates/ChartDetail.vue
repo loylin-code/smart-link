@@ -76,7 +76,7 @@ const initChart = async () => {
     chartInstance.value = new Chart({
       container,
       width,
-      height: 400,
+      height: 300,
       theme,
       autoFit: true
     })
@@ -252,23 +252,25 @@ defineExpose({ exportImage })
 .chart-detail {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 24px;
+  gap: 16px;
+  padding: 16px;
   background: #ffffff;
-  border-radius: 12px;
-  overflow: hidden;
+  height: auto;
+  max-height: 100%;
+  overflow: visible;
 }
 
 .chart-detail-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 16px;
+  padding-bottom: 12px;
   border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
 }
 
 .chart-title {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
   color: #111827;
   margin: 0;
@@ -277,11 +279,11 @@ defineExpose({ exportImage })
 .chart-meta {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .chart-type-badge {
-  padding: 4px 12px;
+  padding: 3px 10px;
   background: #eff6ff;
   color: #1d4ed8;
   border-radius: 999px;
@@ -291,16 +293,16 @@ defineExpose({ exportImage })
 
 .data-count {
   color: #6b7280;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .export-btn {
-  padding: 8px 16px;
+  padding: 6px 12px;
   background: #3b82f6;
   color: white;
   border: none;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: 4px;
+  font-size: 12px;
   cursor: pointer;
   transition: background 0.2s ease;
 }
@@ -311,73 +313,76 @@ defineExpose({ exportImage })
 
 .chart-section {
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .chart-container {
   width: 100%;
-  height: 500px;
+  height: 300px;
+  max-height: 300px;
   background: #f9fafb;
 }
 
 .section-title {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #374151;
-  margin: 0 0 12px 0;
+  margin: 0 0 8px 0;
 }
 
 .statistics-section {
-  padding: 16px;
+  padding: 12px;
   background: #f9fafb;
-  border-radius: 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
 }
 
 .statistics-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
+  gap: 12px;
 }
 
 .stat-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 }
 
 .stat-label {
-  font-size: 12px;
+  font-size: 11px;
   color: #6b7280;
   text-transform: uppercase;
 }
 
 .stat-value {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 600;
   color: #111827;
 }
 
 .data-table-section {
-  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .data-table-wrapper {
-  max-height: 300px;
+  max-height: 200px;
   overflow-y: auto;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .data-table th {
-  padding: 12px 16px;
+  padding: 8px 12px;
   background: #f9fafb;
   text-align: left;
   font-weight: 600;
@@ -386,7 +391,7 @@ defineExpose({ exportImage })
 }
 
 .data-table td {
-  padding: 10px 16px;
+  padding: 6px 12px;
   border-bottom: 1px solid #f3f4f6;
   color: #111827;
 }

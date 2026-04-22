@@ -443,6 +443,20 @@
 }
 
 // ================================
+// 右侧 Tab 面板
+// ================================
+.explore-tabs {
+  width: 600px;
+  max-width: 600px;
+  min-width: 400px;
+  height: 100%;
+  flex-shrink: 0;
+  border-left: 1px solid $border-color-base;
+  background: $bg-primary;
+  overflow: hidden;
+}
+
+// ================================
 // 欢迎视图
 // ================================
 .welcome-view {
