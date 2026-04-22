@@ -20,11 +20,12 @@ const isInitialized = ref(false)
 // Computed
 const chartTitle = computed(() => props.data.title ?? 'Chart Detail')
 const chartType = computed(() => props.data.type)
-const dataCount = computed(() => props.data.data.length)
+const chartData = computed(() => props.data.data)
+const dataCount = computed(() => chartData.value.length)
 
 // Calculate statistics summary
 const statistics = computed(() => {
-  const data = props.data.data
+  const data = chartData.value
   if (!data.length) return null
 
   const yField = props.data.yField ?? props.data.valueField ?? 'value'
@@ -43,8 +44,8 @@ const statistics = computed(() => {
 
 // Table columns
 const tableColumns = computed(() => {
-  if (!props.data.data.length) return []
-  return Object.keys(props.data.data[0]).map((key) => ({
+  if (!chartData.value.length) return []
+  return Object.keys(chartData.value[0]).map((key) => ({
     key,
     label: key.charAt(0).toUpperCase() + key.slice(1)
   }))
@@ -57,31 +58,21 @@ const initChart = async () => {
     return
   }
 
+  // Mark as initialized immediately to prevent re-entry
+  isInitialized.value = true
+
   await nextTick()
-  // Wait for next animation frame to ensure layout is complete
   await new Promise(resolve => requestAnimationFrame(resolve))
 
   if (!chartContainerRef.value) {
     console.log('[ChartDetail] Container not ready')
+    isInitialized.value = false
     return
   }
 
   const container = chartContainerRef.value
-  const width = container.clientWidth
-
-  // If container width is 0, retry after layout
-  if (width === 0) {
-    console.log('[ChartDetail] Container width is 0, waiting for layout')
-    const retry = () => {
-      if (chartContainerRef.value && chartContainerRef.value.clientWidth > 0) {
-        initChart()
-      } else {
-        requestAnimationFrame(retry)
-      }
-    }
-    requestAnimationFrame(retry)
-    return
-  }
+  // Use a fallback width if container is not yet sized
+  const width = container.clientWidth || 400
 
   console.log('[ChartDetail] Initializing chart, width:', width, 'type:', props.data.type)
 
@@ -94,7 +85,7 @@ const initChart = async () => {
       width,
       height: 300,
       theme,
-      autoFit: false  // Disable autoFit to prevent ResizeObserver loop
+      autoFit: false
     })
 
     const xField = config.xField ?? 'category'
@@ -163,10 +154,10 @@ const initChart = async () => {
     }
 
     chartInstance.value.render()
-    isInitialized.value = true
     console.log('[ChartDetail] Chart rendered successfully')
   } catch (e) {
     console.error('[ChartDetail] Error:', e)
+    isInitialized.value = false
   }
 }
 
@@ -258,7 +249,7 @@ defineExpose({ exportImage })
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(row, rowIndex) in data.data" :key="rowIndex">
+            <tr v-for="(row, rowIndex) in chartData" :key="rowIndex">
               <td v-for="col in tableColumns" :key="col.key">
                 {{ row[col.key] }}
               </td>

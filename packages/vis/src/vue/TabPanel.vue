@@ -1,42 +1,31 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted, onUnmounted, type Component } from 'vue'
-import type { TabItem, VisConfig } from '../types'
+import { computed, ref, onMounted, onUnmounted, type Component } from 'vue'
+import type { TabItem } from '../types'
 import type { TabManager } from '../tabs/TabManager'
 import ChartDetail from '../tabs/templates/ChartDetail.vue'
 
 interface Props {
   manager: TabManager
   theme?: 'light' | 'dark'
-  width?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  theme: 'light',
-  width: 600
+  theme: 'light'
 })
 
 const emit = defineEmits<{
   (e: 'tab-close', tab: TabItem): void
-  (e: 'tab-switch', tab: TabItem): void
 }>()
 
 // Internal state
 const tabs = ref<TabItem[]>([])
 const activeTabId = ref<string | null>(null)
-const isReady = ref(false)
 
 // Computed
-const hasTabs = computed(() => tabs.value.length > 0)
-
 const activeTab = computed(() => {
   if (!activeTabId.value) return null
   return tabs.value.find((tab) => tab.id === activeTabId.value) ?? null
 })
-
-const panelStyle = computed(() => ({
-  width: `${props.width}px`,
-  maxWidth: `${props.width}px`
-}))
 
 // Template component map
 const templateComponents: Record<string, Component> = {
@@ -49,19 +38,9 @@ const getTemplateComponent = (templateId: string): Component => {
 
 // Sync with manager state
 const syncWithManager = () => {
-  const newTabs = props.manager.getAllTabs()
-  const newActiveId = props.manager.getActiveTabId()
-
-  console.log('[TabPanel] syncWithManager, tabs:', newTabs.length, 'active:', newActiveId)
-
-  tabs.value = newTabs
-  activeTabId.value = newActiveId
-}
-
-// Handle tab click
-const handleTabClick = (tab: TabItem) => {
-  props.manager.switchTab(tab.id)
-  emit('tab-switch', tab)
+  tabs.value = props.manager.getAllTabs()
+  activeTabId.value = props.manager.getActiveTabId()
+  console.log('[TabPanel] syncWithManager, tabs:', tabs.value.length)
 }
 
 // Handle tab close
@@ -72,45 +51,30 @@ const handleTabClose = (tab: TabItem) => {
 }
 
 // Event handlers
-const handleOpen = () => {
-  console.log('[TabPanel] handleOpen event')
-  syncWithManager()
-  isReady.value = true
-}
-
-const handleClose = () => {
-  console.log('[TabPanel] handleClose event')
-  syncWithManager()
-}
-
-const handleSwitch = () => {
-  console.log('[TabPanel] handleSwitch event')
-  syncWithManager()
-}
+const onManagerOpen = () => syncWithManager()
+const onManagerClose = () => syncWithManager()
+const onManagerSwitch = () => syncWithManager()
 
 // Initialize on mount
 onMounted(() => {
   console.log('[TabPanel] onMounted')
   syncWithManager()
-
-  props.manager.on('open', handleOpen)
-  props.manager.on('close', handleClose)
-  props.manager.on('switch', handleSwitch)
-
-  isReady.value = hasTabs.value
+  props.manager.on('open', onManagerOpen)
+  props.manager.on('close', onManagerClose)
+  props.manager.on('switch', onManagerSwitch)
 })
 
 // Cleanup
 onUnmounted(() => {
   console.log('[TabPanel] onUnmounted')
-  props.manager.off('open', handleOpen)
-  props.manager.off('close', handleClose)
-  props.manager.off('switch', handleSwitch)
+  props.manager.off('open', onManagerOpen)
+  props.manager.off('close', onManagerClose)
+  props.manager.off('switch', onManagerSwitch)
 })
 </script>
 
 <template>
-  <aside v-if="hasTabs" class="tab-panel" :class="`theme-${theme}`" :style="panelStyle">
+  <aside class="tab-panel" :class="`theme-${theme}`">
     <!-- Tab Headers -->
     <header class="tab-panel-header">
       <div class="tab-list">
@@ -119,7 +83,7 @@ onUnmounted(() => {
           :key="tab.id"
           class="tab-item"
           :class="{ active: tab.id === activeTabId }"
-          @click="handleTabClick(tab)"
+          @click="manager.switchTab(tab.id)"
         >
           <span class="tab-title">{{ tab.title }}</span>
           <button
@@ -133,20 +97,17 @@ onUnmounted(() => {
       </div>
     </header>
 
-    <!-- Tab Content - Only render active tab to avoid performance issues -->
+    <!-- Tab Content -->
     <div class="tab-panel-content">
-      <template v-if="activeTab">
-        <component
-          :is="getTemplateComponent(activeTab.template.id)"
-          :data="activeTab.data"
-          :theme="theme"
-        />
-      </template>
-    </div>
-
-    <!-- Empty State -->
-    <div v-if="!activeTab" class="tab-panel-empty">
-      <span class="empty-text">No tab selected</span>
+      <component
+        v-if="activeTab"
+        :is="getTemplateComponent(activeTab.template.id)"
+        :data="activeTab.data"
+        :theme="theme"
+      />
+      <div v-else class="tab-panel-empty">
+        <span class="empty-text">No tab selected</span>
+      </div>
     </div>
   </aside>
 </template>
@@ -158,6 +119,7 @@ onUnmounted(() => {
   background: #f9fafb;
   border-left: 1px solid #e5e7eb;
   height: 100%;
+  width: 100%;
   max-height: 100%;
   overflow: hidden;
 }
@@ -184,7 +146,6 @@ onUnmounted(() => {
   gap: 8px;
   padding: 8px 12px;
   background: #f3f4f6;
-  border: 1px solid transparent;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -203,8 +164,6 @@ onUnmounted(() => {
 .tab-title {
   font-size: 14px;
   font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .tab-close-btn {
@@ -220,7 +179,6 @@ onUnmounted(() => {
   font-size: 14px;
   cursor: pointer;
   opacity: 0.7;
-  transition: opacity 0.2s ease;
 }
 
 .tab-close-btn:hover {
@@ -274,10 +232,6 @@ onUnmounted(() => {
 .theme-dark .tab-item.active {
   background: #3b82f6;
   color: white;
-}
-
-.theme-dark .tab-close-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
 }
 
 .theme-dark .tab-panel-empty {
