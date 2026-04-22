@@ -525,7 +525,7 @@
 
               <!-- 测试按钮：仅开发环境显示 -->
               <button
-                v-if="import.meta.env.DEV"
+                v-if="isDev"
                 class="test-btn"
                 @click="injectTestChartMessage"
                 title="注入测试图表消息"
@@ -666,6 +666,9 @@
   const { t } = useI18n()
   const exploreStore = useExploreStore()
   const router = useRouter()
+
+  // 开发环境标识
+  const isDev = import.meta.env.DEV
 
   // Refs
   const messageListRef = ref<HTMLElement | null>(null)
