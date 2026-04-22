@@ -825,8 +825,9 @@ export const useExploreStore = defineStore('explore', {
             userMsg.content
           )
           if (savedMsg) {
-            // 更新本地消息 ID 为后端返回的真实 ID
-            userMsg.id = savedMsg.id
+            // Store backend ID separately - DO NOT change the local ID
+            // Changing the ID would cause v-for key mismatch → component remount → chart destroy/recreate
+            userMsg.serverId = savedMsg.id
           }
         } catch (error) {
           console.error('[explore] Failed to save user message:', error)
@@ -842,8 +843,8 @@ export const useExploreStore = defineStore('explore', {
             aiMsg.content
           )
           if (savedMsg) {
-            // 更新本地消息 ID 为后端返回的真实 ID
-            aiMsg.id = savedMsg.id
+            // Store backend ID separately - DO NOT change the local ID
+            aiMsg.serverId = savedMsg.id
           }
         } catch (error) {
           console.error('[explore] Failed to save AI message:', error)

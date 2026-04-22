@@ -736,12 +736,27 @@
     exploreStore.setSearchQuery(query)
   })
 
+  // Scroll to bottom - only when user is near bottom (not reading old messages)
+  let scrollDebounceTimer: number | null = null
   watch(
     () => activeConversation.value?.messages.length,
     () => {
-      nextTick(() => {
-        scrollToBottom()
-      })
+      // Debounce to avoid rapid scroll calls
+      if (scrollDebounceTimer) clearTimeout(scrollDebounceTimer)
+      scrollDebounceTimer = window.setTimeout(() => {
+        nextTick(() => {
+          if (messageListRef.value) {
+            // Only scroll if user is near bottom (within 100px)
+            const isNearBottom =
+              messageListRef.value.scrollHeight - messageListRef.value.scrollTop <
+              messageListRef.value.clientHeight + 100
+            if (isNearBottom) {
+              scrollToBottom()
+            }
+          }
+        })
+        scrollDebounceTimer = null
+      }, 100)
     }
   )
 

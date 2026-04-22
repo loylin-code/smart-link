@@ -59,6 +59,8 @@ export interface ChatMessage {
   timestamp: number
   // 所属对话ID
   conversationId?: string
+  // Backend server ID (different from local stable ID)
+  serverId?: string
   // 动态组件
   components?: ChatComponent[]
   // 组件交互状态
