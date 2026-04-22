@@ -9,6 +9,7 @@ import type {
 } from '../types'
 import { ChartRegistry } from './registry'
 import { StreamingDetector } from '../syntax/streaming-detector'
+import { chartFactories } from '../charts'
 
 /**
  * Placeholder render callback types
@@ -76,6 +77,9 @@ export class SmartVis {
     this.registry = new ChartRegistry()
     this.detector = new StreamingDetector()
     this.isStreaming = options.streaming ?? false
+
+    // Register built-in chart factories
+    this.registry.registerBatch(chartFactories)
   }
 
   /**
