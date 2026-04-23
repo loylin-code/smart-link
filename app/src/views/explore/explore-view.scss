@@ -435,17 +435,15 @@
   min-width: 0;
   transition: backdrop-filter 0.3s ease;
 
-  // 面板展开时模糊主内容
+  // 面板展开时模糊主内容（视觉效果，不影响交互）
   &.main-content-blurred {
     backdrop-filter: blur(8px);
+    transition: backdrop-filter 0.3s ease;
 
     // 兼容 Safari
     @supports (-webkit-backdrop-filter: blur(8px)) {
       -webkit-backdrop-filter: blur(8px);
     }
-
-    pointer-events: none;
-    user-select: none;
   }
 }
 
