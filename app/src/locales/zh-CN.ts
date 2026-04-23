@@ -99,11 +99,12 @@ export default {
     appRuntime: '数字员工运行'
   },
   welcome: {
+    title: 'SmartAgent 管理平台',
     slogan: '智能企业级 Agent 应用管理平台',
     description: '自然语言驱动 · 智能编排 · 动态渲染',
     startExplore: '开始探索',
     experienceOpenClaw: '体验 OpenClaw',
-    poweredBy: 'Powered by SmartLink'
+    poweredBy: 'Powered by SmartAgent'
   },
   header: {
     explore: '探索中心',

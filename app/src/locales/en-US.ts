@@ -97,11 +97,12 @@ export default {
     appRuntime: 'Agent Runtime'
   },
   welcome: {
+    title: 'SmartAgent Platform',
     slogan: 'Intelligent Enterprise Agent Platform',
     description: 'Natural Language Driven · Intelligent Orchestration · Dynamic Rendering',
     startExplore: 'Start Exploring',
     experienceOpenClaw: 'Experience OpenClaw',
-    poweredBy: 'Powered by SmartLink'
+    poweredBy: 'Powered by SmartAgent'
   },
   header: {
     explore: 'Explore Center',

@@ -42,6 +42,7 @@
           </svg>
         </div>
         <h1 class="logo-text">SmartAgent</h1>
+        <p class="welcome-platform-title">{{ t('welcome.title') }}</p>
       </div>
 
       <!-- 标语 -->
@@ -210,6 +211,21 @@
 
     @include respond-below(md) {
       font-size: $font-size-4xl;
+    }
+  }
+
+  // 平台标题（Logo下方）
+  .welcome-platform-title {
+    font-family: $font-family;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-medium;
+    color: $text-secondary;
+    margin-top: $spacing-xs;
+    margin-bottom: 0;
+    animation: fadeUp 0.6s $ease-out 0.1s both;
+
+    @include respond-below(md) {
+      font-size: $font-size-base;
     }
   }
 
