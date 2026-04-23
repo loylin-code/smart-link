@@ -1,26 +1,39 @@
 // 探索视图样式 - 优化后的现代化设计
+// 使用 CSS Grid 避免 flexbox 在 Tab 显示时导致的宽度变化循环
 .explore-view {
   height: 100%;
-  display: flex;
+  display: grid;
+  // sidebar 280px, main 自动填充, tabs 600px (或 0 如果隐藏)
+  grid-template-columns: 280px 1fr 0px;
   background: $bg-primary;
   overflow: hidden;
+  
+  // 当 tabs 显示时，调整 grid
+  &.has-tabs {
+    grid-template-columns: 280px 1fr 600px;
+  }
+  
+  // 当 sidebar 收起时
+  &.sidebar-collapsed {
+    grid-template-columns: 48px 1fr 0px;
+    
+    &.has-tabs {
+      grid-template-columns: 48px 1fr 600px;
+    }
+  }
 }
 
 // ================================
 // 左侧边栏
 // ================================
 .explore-sidebar {
-  width: 280px;
   background: $bg-primary;
   border-right: 1px solid $border-color-base;
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
   position: relative;
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &.collapsed {
-    width: 48px;
     align-items: center;
 
     .sidebar-content {
@@ -29,10 +42,9 @@
   }
 
   @include respond-below(md) {
-    width: 240px;
+    // 小屏幕保持相同布局但调整 grid-template-columns
 
     &.collapsed {
-      width: 44px;
     }
   }
 
@@ -431,10 +443,9 @@
 }
 
 // ================================
-// 主内容区
+// 主内容区 - grid implicit placement (第2列)
 // ================================
 .explore-main {
-  flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -443,14 +454,10 @@
 }
 
 // ================================
-// 右侧 Tab 面板
+// 右侧 Tab 面板 - grid implicit placement (第3列)
 // ================================
 .explore-tabs {
-  width: 600px;
-  max-width: 600px;
-  min-width: 400px;
   height: 100%;
-  flex-shrink: 0;
   border-left: 1px solid $border-color-base;
   background: $bg-primary;
   overflow: hidden;

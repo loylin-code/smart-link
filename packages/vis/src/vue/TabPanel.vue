@@ -40,7 +40,6 @@ const getTemplateComponent = (templateId: string): Component => {
 const syncWithManager = () => {
   tabs.value = props.manager.getAllTabs()
   activeTabId.value = props.manager.getActiveTabId()
-  console.log('[TabPanel] syncWithManager, tabs:', tabs.value.length)
 }
 
 // Handle tab close
@@ -57,7 +56,6 @@ const onManagerSwitch = () => syncWithManager()
 
 // Initialize on mount
 onMounted(() => {
-  console.log('[TabPanel] onMounted')
   syncWithManager()
   props.manager.on('open', onManagerOpen)
   props.manager.on('close', onManagerClose)
@@ -66,7 +64,6 @@ onMounted(() => {
 
 // Cleanup
 onUnmounted(() => {
-  console.log('[TabPanel] onUnmounted')
   props.manager.off('open', onManagerOpen)
   props.manager.off('close', onManagerClose)
   props.manager.off('switch', onManagerSwitch)
@@ -99,16 +96,15 @@ onUnmounted(() => {
 
     <!-- Tab Content -->
     <div class="tab-panel-content">
-      <template v-if="activeTab">
-        <KeepAlive>
-          <component
-            :is="getTemplateComponent(activeTab.template.id)"
-            :data="activeTab.data"
-            :theme="theme"
-          />
-        </KeepAlive>
-      </template>
-      <div v-else class="tab-panel-empty">
+      <KeepAlive :include="['ChartDetail']">
+        <component
+          v-if="activeTab"
+          :is="getTemplateComponent(activeTab.template.id)"
+          :data="activeTab.data"
+          :theme="theme"
+        />
+      </KeepAlive>
+      <div v-if="!activeTab" class="tab-panel-empty">
         <span class="empty-text">No tab selected</span>
       </div>
     </div>

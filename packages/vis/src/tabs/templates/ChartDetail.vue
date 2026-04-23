@@ -53,27 +53,18 @@ const tableColumns = computed(() => {
 
 // Initialize chart - only once, with fixed dimensions to prevent resize loops
 const initChart = () => {
-  if (isInitialized.value) {
-    console.log('[ChartDetail] Already initialized, skipping')
-    return
-  }
+  if (isInitialized.value) return
 
   isInitialized.value = true
 
   if (!chartContainerRef.value) {
-    console.log('[ChartDetail] Container not ready')
     isInitialized.value = false
     return
   }
 
   const container = chartContainerRef.value
-
-  // Use fixed dimensions - DO NOT use autoFit or clientWidth
   const width = 580
   const height = 280
-
-  console.log('[ChartDetail] Initializing chart with fixed size:', width, 'x', height)
-
   const theme = props.theme === 'dark' ? 'classicDark' : 'classic'
   const config = props.data
 
@@ -145,21 +136,19 @@ const initChart = () => {
           .encode('y', yField)
     }
 
-    chartInstance.value.render()
-    console.log('[ChartDetail] Chart rendered successfully')
+    // Delay render to break synchronous chain and prevent freeze
+    setTimeout(() => {
+      chartInstance.value?.render()
+    }, 50)
   } catch (e) {
     console.error('[ChartDetail] Error:', e)
     isInitialized.value = false
   }
 }
 
-// Lifecycle - simple mount, no async
+// Lifecycle
 onMounted(() => {
-  console.log('[ChartDetail] onMounted')
-  // Use requestAnimationFrame to ensure container is in DOM
-  requestAnimationFrame(() => {
-    initChart()
-  })
+  setTimeout(() => initChart(), 100)
 })
 
 onUnmounted(() => {

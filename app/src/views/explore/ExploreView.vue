@@ -1,5 +1,11 @@
 <template>
-  <div class="explore-view">
+  <div
+    class="explore-view"
+    :class="{
+      'has-tabs': tabCount > 0,
+      'sidebar-collapsed': isSidebarCollapsed
+    }"
+  >
     <!-- 左侧边栏 -->
     <aside class="explore-sidebar" :class="{ collapsed: isSidebarCollapsed }">
       <!-- 侧边栏内容 -->
@@ -635,8 +641,8 @@
       </template>
     </main>
 
-    <!-- 右侧 Tab 面板 -->
-    <aside v-if="tabCount > 0" class="explore-tabs">
+    <!-- 右侧 Tab 面板 - use v-show instead of v-if to prevent remount -->
+    <aside v-show="tabCount > 0" class="explore-tabs">
       <TabPanel :manager="tabManager" @tab-close="handleTabClose" />
     </aside>
   </div>
@@ -999,7 +1005,6 @@
   }
 
   const handleChartClick = (config: VisConfig) => {
-    // Open tab with chart detail view
     tabManager.value.openTab(
       config.detailTemplate || 'chart-detail',
       config,

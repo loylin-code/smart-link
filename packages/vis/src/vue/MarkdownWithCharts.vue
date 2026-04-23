@@ -76,13 +76,10 @@ const processMarkdownContent = (content: string): string => {
 const destroyCharts = () => {
   if (smartVisInstances.size === 0) return
 
-  console.log('[MarkdownWithCharts] destroyCharts, count:', smartVisInstances.size)
   smartVisInstances.forEach((instance) => {
     try {
       instance.destroy()
-    } catch (e) {
-      console.warn('[MarkdownWithCharts] destroy error:', e)
-    }
+    } catch { /* ignore */ }
   })
   smartVisInstances.clear()
   isInitialized.value = false
@@ -90,65 +87,42 @@ const destroyCharts = () => {
 
 // Initialize charts - called once per mount
 const initCharts = () => {
-  if (isInitialized.value) {
-    console.log('[MarkdownWithCharts] already initialized, skip')
-    return
-  }
+  if (isInitialized.value) return
 
-  if (!contentRef.value) {
-    console.log('[MarkdownWithCharts] no ref, skip')
-    return
-  }
+  if (!contentRef.value) return
 
   const containers = contentRef.value.querySelectorAll('.chart-container')
-  console.log('[MarkdownWithCharts] initCharts, containers:', containers.length)
 
   if (containers.length === 0) {
     isInitialized.value = true
     return
   }
 
-  // Mark as initialized immediately to prevent re-entry
   isInitialized.value = true
 
   const blocks = parseChartBlocks(props.content)
-  console.log('[MarkdownWithCharts] parsed blocks:', blocks.length)
 
   containers.forEach((container, index) => {
     const htmlEl = container as HTMLElement
     const block = blocks[index]
 
-    if (!block) {
-      console.log('[MarkdownWithCharts] no block for index', index)
-      return
-    }
+    if (!block) return
 
-    const chartId = `chart-${index}-${Date.now()}`
     htmlEl.style.width = '580px'
     htmlEl.style.height = '280px'
-
-    console.log('[MarkdownWithCharts] creating SmartVis for', chartId, block.config.type)
 
     try {
       const smartVis = new SmartVis({
         container: htmlEl,
         theme: 'light',
         streaming: false,
-        onChartClick: (_, cfg) => {
-          console.log('[MarkdownWithCharts] chart clicked')
-          emit('chart-click', cfg)
-        }
+        onChartClick: (_, cfg) => emit('chart-click', cfg)
       })
 
-      smartVisInstances.set(chartId, smartVis)
+      smartVisInstances.set(`chart-${index}`, smartVis)
       smartVis.render(block.config)
-      console.log('[MarkdownWithCharts] chart rendered:', chartId)
-    } catch (e) {
-      console.error('[MarkdownWithCharts] render error:', e)
-    }
+    } catch { /* ignore */ }
   })
-
-  console.log('[MarkdownWithCharts] initCharts completed')
 }
 
 // Expose method for parent to call when content changes
@@ -163,8 +137,6 @@ defineExpose({ refreshCharts })
 
 // Lifecycle - minimal, no watch
 onMounted(() => {
-  console.log('[MarkdownWithCharts] onMounted')
-
   // Render HTML to DOM
   const processed = processMarkdownContent(props.content)
   const html = md.render(processed)
@@ -180,7 +152,6 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  console.log('[MarkdownWithCharts] onUnmounted')
   destroyCharts()
 })
 </script>
