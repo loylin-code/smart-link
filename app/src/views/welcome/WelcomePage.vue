@@ -41,7 +41,7 @@
             />
           </svg>
         </div>
-        <h1 class="logo-text">SmartLink</h1>
+        <h1 class="logo-text">SmartAgent</h1>
       </div>
 
       <!-- 标语 -->

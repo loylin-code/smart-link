@@ -46,7 +46,7 @@
             />
           </svg>
         </div>
-        <span class="logo-text">SmartLink</span>
+        <span class="logo-text">SmartAgent</span>
       </router-link>
       <div class="app-header__breadcrumb">
         <span class="breadcrumb-item">{{ currentTitle }}</span>
