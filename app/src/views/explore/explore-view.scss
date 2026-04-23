@@ -97,34 +97,30 @@
   }
 }
 
-// 收起状态下的展开按钮（在窄条中居中显示）
+// 收起状态下的展开按钮（与右侧 Tab Panel 风格一致）
 .expand-btn {
   width: 36px;
   height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: $bg-secondary;
-  border: 1px solid $border-color-base;
-  border-radius: 10px;
-  color: $text-secondary;
+  background: $primary-surface;
+  border: none;
+  border-radius: 6px;
+  color: $primary-color;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: $shadow-sm;
+  transition: all 0.15s ease;
   flex-shrink: 0;
 
   svg {
-    width: 18px;
-    height: 18px;
-    transition: all 0.2s ease;
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
   }
 
   &:hover {
     background: $primary-color;
-    border-color: transparent;
     color: $text-inverse;
-    box-shadow: $shadow-primary;
-    transform: scale(1.05);
 
     svg {
       transform: scale(1.1);
