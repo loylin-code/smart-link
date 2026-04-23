@@ -211,7 +211,7 @@ export const conversationApi = {
       updatedAt: apiConversation.updated_at
         ? new Date(apiConversation.updated_at).getTime()
         : Date.now(),
-      messages: apiConversation.messages?.map((m) => this.transformMessageFromApi(m)) || []
+      messages: apiConversation.messages?.map((m: any) => this.transformMessageFromApi(m)) || []
     }
   },
 

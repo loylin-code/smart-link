@@ -245,7 +245,7 @@
       <!-- 有活动对话时显示消息 -->
       <template v-if="activeConversation">
         <!-- 聊天视图 - key ensures stable rendering -->
-        <div class="chat-view" :key="activeConversationId">
+        <div class="chat-view" :key="activeConversationId || 'chat'">
           <!-- 对话头部 -->
           <header class="chat-header">
             <div class="header-info">
@@ -283,7 +283,7 @@
           </header>
 
           <!-- 消息列表 - key prevents remount on conversation switch -->
-          <div class="message-list" ref="messageListRef" :key="activeConversationId">
+          <div class="message-list" ref="messageListRef" :key="activeConversationId || 'messages'">
             <div
               v-for="(message, index) in activeConversation.messages"
               :key="message.id"
@@ -1042,7 +1042,7 @@
     if (!convId) {
       // 如果没有活跃对话，先创建一个
       const newConv = await exploreStore.createConversation({ title: '测试图表渲染' })
-      convId = newConv?.id
+      convId = newConv?.id ?? null
     }
 
     if (!convId) return
