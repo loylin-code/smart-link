@@ -61,6 +61,11 @@ export const PieChart: ChartFactory = (options: ChartOptions): ChartInstance => 
       autoFit: false
     })
 
+    // Disable interactions to prevent potential render loops
+    try {
+      chart.interaction(false)
+    } catch { /* ignore if not supported */ }
+
     // Determine field mappings
     const valueField = config.valueField ?? 'value'
     const categoryField = config.categoryField ?? 'category'

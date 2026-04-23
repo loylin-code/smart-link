@@ -17,6 +17,8 @@ export interface VisConfig {
   type: ChartType
   data: any[]
   title?: string
+  messageId?: string // 消息ID，用于标识图表来源
+  chartId?: string // 图表唯一标识 (chart-${messageId}-${index})，用于 TAB 去重
   // Common chart config
   xField?: string
   yField?: string

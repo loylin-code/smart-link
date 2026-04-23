@@ -61,6 +61,11 @@ export const LineChart: ChartFactory = (options: ChartOptions): ChartInstance =>
       autoFit: false
     })
 
+    // Disable interactions to prevent potential render loops
+    try {
+      chart.interaction(false)
+    } catch { /* ignore if not supported */ }
+
     // Determine field mappings
     const xField = config.xField ?? 'category'
     const yField = config.yField ?? 'value'

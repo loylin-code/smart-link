@@ -10,7 +10,8 @@ export default defineConfig({
       '@smart-link/shared': resolve(__dirname, '../packages/shared/src'),
       '@smart-link/ui': resolve(__dirname, '../packages/ui/src'),
       '@smart-link/hooks': resolve(__dirname, '../packages/hooks/src'),
-      '@smart-link/core': resolve(__dirname, '../packages/core/src')
+      '@smart-link/core': resolve(__dirname, '../packages/core/src'),
+      '@smart-link/chat-vis': resolve(__dirname, '../packages/vis/src')
     }
   },
   css: {

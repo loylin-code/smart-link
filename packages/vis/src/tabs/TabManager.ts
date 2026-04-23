@@ -118,6 +118,24 @@ export class TabManager {
     // Generate title
     const title = options?.title ?? data.title ?? template.name
 
+    // 优先按 chartId 查找已有 TAB（同一消息的多个图表可分别打开）
+    // chartId = chart-${messageId}-${index}，精确匹配到具体图表
+    if (data.chartId) {
+      const existingTab = this.findTabByChartId(data.chartId)
+      if (existingTab) {
+        this.switchTab(existingTab.id)
+        return existingTab
+      }
+    }
+    // 兼容旧调用方：无 chartId 时按 messageId 去重
+    else if (data.messageId) {
+      const existingTab = this.findTabByMessageId(data.messageId)
+      if (existingTab) {
+        this.switchTab(existingTab.id)
+        return existingTab
+      }
+    }
+
     // Check if should replace existing tab with same template
     if (options?.replaceExisting) {
       const existingTab = this.findTabByTemplate(templateId)
@@ -310,6 +328,37 @@ export class TabManager {
   private findTabByTemplate(templateId: string): TabItem | undefined {
     for (const tab of this.tabs.values()) {
       if (tab.template.id === templateId) {
+        return tab
+      }
+    }
+    return undefined
+  }
+
+  /**
+   * Find a tab by messageId.
+   *
+   * @param messageId - Message ID
+   * @returns TabItem or undefined
+   */
+  private findTabByMessageId(messageId: string): TabItem | undefined {
+    for (const tab of this.tabs.values()) {
+      if (tab.data.messageId === messageId) {
+        return tab
+      }
+    }
+    return undefined
+  }
+
+  /**
+   * Find a tab by chartId.
+   * chartId = chart-${messageId}-${index}，用于同一消息内多图表的精确匹配。
+   *
+   * @param chartId - Chart unique ID
+   * @returns TabItem or undefined
+   */
+  private findTabByChartId(chartId: string): TabItem | undefined {
+    for (const tab of this.tabs.values()) {
+      if (tab.data.chartId === chartId) {
         return tab
       }
     }

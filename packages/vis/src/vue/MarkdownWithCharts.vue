@@ -8,6 +8,7 @@ import type { VisConfig, ChartBlockConfig } from '../types'
 const props = defineProps<{
   content: string
   streaming?: boolean
+  messageId?: string // 消息ID，用于避免重复创建TAB
 }>()
 
 const emit = defineEmits<{
@@ -108,7 +109,9 @@ const initCharts = () => {
 
     if (!block) return
 
-    htmlEl.style.width = '580px'
+    // 自适应宽度：最大 580px，小容器自动收缩
+    htmlEl.style.width = '100%'
+    htmlEl.style.maxWidth = '580px'
     htmlEl.style.height = '280px'
 
     try {
@@ -116,7 +119,13 @@ const initCharts = () => {
         container: htmlEl,
         theme: 'light',
         streaming: false,
-        onChartClick: (_, cfg) => emit('chart-click', cfg)
+        onChartClick: (_, cfg) => {
+            // 生成图表唯一标识：chart-${messageId}-${index}
+            // 同一消息的多个图表可分别打开不同的 TAB
+            const chartId = `chart-${props.messageId}-${index}`
+            const configWithId = { ...cfg, messageId: props.messageId, chartId }
+            emit('chart-click', configWithId)
+          }
       })
 
       smartVisInstances.set(`chart-${index}`, smartVis)
@@ -300,7 +309,8 @@ onUnmounted(() => {
 
 .markdown-content :deep(.chart-container) {
   margin: 16px 0;
-  width: 580px;
+  width: 100%;
+  max-width: 580px;
   height: 280px;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.95);
