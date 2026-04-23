@@ -1,15 +1,24 @@
-// 探索视图样式 - 固定三列布局，避免动态变化
+// 探索视图样式 - 动态三列布局，使用 CSS Custom Properties
+// 右侧 Tab Panel 默认隐藏（0px），点击图表后展开（600px）
 .explore-view {
   height: 100%;
   display: grid;
-  // 固定列宽度，不动态调整
-  grid-template-columns: 280px 1fr 600px;
+
+  // CSS Custom Properties 控制列宽
+  // --sidebar-width: 280px (折叠时 0px)
+  // --tab-panel-width: 0px (展开时 600px)
+  --sidebar-width: 280px;
+  --tab-panel-width: 0px;
+
+  grid-template-columns: var(--sidebar-width) 1fr var(--tab-panel-width);
+  transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: $bg-primary;
   overflow: hidden;
 }
 
 // ================================
 // 左侧边栏
+// Grid 控制宽度：默认 280px，折叠时 0px
 // ================================
 .explore-sidebar {
   background: $bg-primary;
@@ -18,12 +27,11 @@
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  min-width: 0; // 允许 Grid 收缩到 0
 
   &.collapsed {
-    // 不改变 grid，只隐藏内容
-    .sidebar-content {
-      display: none;
-    }
+    // Grid 已经将宽度设为 0px，边框也随之隐藏
+    border-right-width: 0;
   }
 }
 
@@ -425,16 +433,46 @@
   overflow: hidden;
   background: $bg-secondary;
   min-width: 0;
+  transition: backdrop-filter 0.3s ease;
+
+  // 面板展开时模糊主内容
+  &.main-content-blurred {
+    backdrop-filter: blur(8px);
+
+    // 兼容 Safari
+    @supports (-webkit-backdrop-filter: blur(8px)) {
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    pointer-events: none;
+    user-select: none;
+  }
 }
 
 // ================================
-// 右侧 Tab 面板 - grid implicit placement (第3列)
+// 右侧 Tab 面板容器 - grid implicit placement (第3列)
+// Grid 控制宽度：默认 0px，展开时 600px
+// TabPanel 子组件样式在 explore-tabs.scss 中定义
 // ================================
 .explore-tabs {
   height: 100%;
-  border-left: 1px solid $border-color-base;
   background: $bg-primary;
   overflow: hidden;
+  min-width: 0; // 允许 Grid 收缩到 0
+  border-left: 1px solid transparent; // 默认无边框
+  transition: 
+    border-left-color 0.3s ease,
+    width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // 当有 Tab 时显示边框
+  &.visible {
+    border-left-color: $border-color-base;
+  }
+
+  // 收起状态样式（迷你条）
+  &.collapsed {
+    background: $bg-secondary;
+  }
 }
 
 // ================================

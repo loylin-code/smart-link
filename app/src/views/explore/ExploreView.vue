@@ -1,5 +1,5 @@
 <template>
-  <div class="explore-view">
+  <div class="explore-view" :style="gridStyle">
     <!-- 左侧边栏 -->
     <aside class="explore-sidebar" :class="{ collapsed: isSidebarCollapsed }">
       <!-- 侧边栏内容 -->
@@ -241,7 +241,7 @@
     </aside>
 
     <!-- 主内容区 -->
-    <main class="explore-main">
+    <main class="explore-main" :class="{ 'main-content-blurred': tabCount > 0 && !isPanelCollapsed }">
       <!-- 有活动对话时显示消息 -->
       <template v-if="activeConversation">
         <!-- 聊天视图 - key ensures stable rendering -->
@@ -361,6 +361,7 @@
                     :key="`md-${message.id}`"
                     :content="message.content"
                     :streaming="message.isStreaming"
+                    :message-id="message.id"
                     @chart-click="handleChartClick"
                   />
                 </div>
@@ -635,9 +636,14 @@
       </template>
     </main>
 
-    <!-- 右侧 Tab 面板 - use v-show instead of v-if to prevent remount -->
-    <aside v-show="tabCount > 0" class="explore-tabs">
-      <TabPanel :manager="tabManager" @tab-close="handleTabClose" />
+    <!-- 右侧 Tab 面板 - Grid 控制宽度，0px 时自动隐藏 -->
+    <aside class="explore-tabs" :class="{ visible: tabCount > 0, collapsed: isPanelCollapsed && tabCount > 0 }">
+      <TabPanel 
+        :manager="tabManager" 
+        :collapsed="isPanelCollapsed"
+        @tab-close="handleTabClose" 
+        @toggle-panel="togglePanel"
+      />
     </aside>
   </div>
 </template>
@@ -680,6 +686,7 @@
 
   // Reactive tab count for v-if
   const tabCount = ref(0)
+  const isPanelCollapsed = ref(false)  // 面板是否收起为迷你条
 
   // Update tab count when tabs change
   const updateTabCount = () => {
@@ -729,6 +736,17 @@
   const archivedConversations = computed(() => exploreStore.archivedConversations)
   const templates = computed(() => exploreStore.allTemplates)
   const canSend = computed(() => inputMessage.value.trim() || pendingAttachments.value.length > 0)
+
+  // Dynamic grid style - right panel with three states: hidden/collapsed/expanded
+  const gridStyle = computed(() => ({
+    '--sidebar-width': isSidebarCollapsed.value ? '0px' : '280px',
+    '--tab-panel-width': tabCount.value === 0 
+      ? '0px' 
+      : isPanelCollapsed.value 
+        ? '40px' 
+        : '600px',
+    '--main-content-blur': tabCount.value > 0 && !isPanelCollapsed.value ? 'blur(8px)' : 'blur(0px)'
+  }))
 
   // Watchers
   watch(searchQuery, (query) => {
@@ -998,7 +1016,18 @@
     return chatComponents[type] || uiComponents[type] || uiComponents[`Sl${type}`] || 'div'
   }
 
+  // 切换面板展开/收起
+  const togglePanel = () => {
+    if (tabCount.value > 0) {
+      isPanelCollapsed.value = !isPanelCollapsed.value
+    }
+  }
+
   const handleChartClick = (config: VisConfig) => {
+    // 点击图表时自动展开（如果已收起）
+    if (isPanelCollapsed.value) {
+      isPanelCollapsed.value = false
+    }
     tabManager.value.openTab(
       config.detailTemplate || 'chart-detail',
       config,
@@ -1074,9 +1103,11 @@
   }
 
   const handleTabClose = () => {
-    // Tab closed, update view if needed
+    // 关闭最后一个 Tab 时，重置收起状态
     nextTick(() => {
-      // Re-evaluate tab count for v-if condition
+      if (tabManager.value.getTabCount() === 0) {
+        isPanelCollapsed.value = false
+      }
     })
   }
 
@@ -1114,4 +1145,9 @@
 
 <style scoped lang="scss">
   @import './explore-view.scss';
+</style>
+
+<!-- 非 scoped 样式用于 TabPanel 子组件 -->
+<style lang="scss">
+  @import './explore-tabs.scss';
 </style>
