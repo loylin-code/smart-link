@@ -214,12 +214,12 @@
         </div>
       </div>
 
-      <!-- 收起状态下的展开按钮 -->
+      <!-- 收起状态下的展开按钮（在窄条中显示） -->
       <button
         v-if="isSidebarCollapsed"
         class="expand-btn"
         @click="toggleSidebar"
-        :title="t('sidebar.collapseSidebar')"
+        :title="t('sidebar.expandSidebar')"
       >
         <svg viewBox="0 0 24 24" fill="none">
           <path
@@ -739,7 +739,7 @@
 
   // Dynamic grid style - right panel with three states: hidden/collapsed/expanded
   const gridStyle = computed(() => ({
-    '--sidebar-width': isSidebarCollapsed.value ? '0px' : '280px',
+    '--sidebar-width': isSidebarCollapsed.value ? '48px' : '280px',
     '--tab-panel-width': tabCount.value === 0 
       ? '0px' 
       : isPanelCollapsed.value 

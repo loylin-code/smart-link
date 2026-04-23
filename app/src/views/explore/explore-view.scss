@@ -1,12 +1,12 @@
 // 探索视图样式 - 动态三列布局，使用 CSS Custom Properties
-// 右侧 Tab Panel 默认隐藏（0px），点击图表后展开（600px）
+// 左侧边栏：展开 280px，收起 48px（窄条）
+// 右侧 Tab Panel：展开 600px，收起 40px（迷你条），隐藏 0px
 .explore-view {
   height: 100%;
   display: grid;
+  position: relative; // 为绝对定位元素提供参照
 
   // CSS Custom Properties 控制列宽
-  // --sidebar-width: 280px (折叠时 0px)
-  // --tab-panel-width: 0px (展开时 600px)
   --sidebar-width: 280px;
   --tab-panel-width: 0px;
 
@@ -18,20 +18,23 @@
 
 // ================================
 // 左侧边栏
-// Grid 控制宽度：默认 280px，折叠时 0px
+// Grid 控制宽度：默认 280px，折叠时 48px（窄条）
 // ================================
 .explore-sidebar {
   background: $bg-primary;
   border-right: 1px solid $border-color-base;
   display: flex;
   flex-direction: column;
+  align-items: center;
   position: relative;
   overflow: hidden;
-  min-width: 0; // 允许 Grid 收缩到 0
+  min-width: 0; // 允许 Grid 收缩
 
   &.collapsed {
-    // Grid 已经将宽度设为 0px，边框也随之隐藏
-    border-right-width: 0;
+    // 窄条模式：居中显示展开按钮
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 16px;
   }
 }
 
@@ -94,7 +97,7 @@
   }
 }
 
-// 收起状态下的展开按钮
+// 收起状态下的展开按钮（在窄条中居中显示）
 .expand-btn {
   width: 36px;
   height: 36px;
@@ -108,7 +111,6 @@
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: $shadow-sm;
-  margin-top: 12px;
   flex-shrink: 0;
 
   svg {
