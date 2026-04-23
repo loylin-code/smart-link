@@ -129,21 +129,20 @@ onUnmounted(() => {
 
 <template>
   <div class="tab-panel">
-    <!-- Normal mode: collapse button + tab header -->
-    <button
-      v-if="!collapsed"
-      class="panel-collapse-btn"
-      @click="handleToggle"
-      type="button"
-      title="收起面板"
-    >
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-
-    <!-- Normal mode: tab header bar -->
+    <!-- Normal mode: Tab Header Bar with collapse button -->
     <header v-if="!collapsed" class="tab-header-bar">
+      <!-- Collapse button at left edge -->
+      <button
+        class="panel-collapse-btn"
+        @click="handleToggle"
+        type="button"
+        title="收起面板"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
       <!-- Scroll left arrow -->
       <button
         v-if="canScrollLeft"
@@ -190,7 +189,7 @@ onUnmounted(() => {
       </button>
     </header>
 
-    <!-- Collapsed mode: mini tab strip -->
+    <!-- Collapsed mode: Mini Tab Strip -->
     <div v-if="collapsed" class="mini-tab-strip">
       <!-- Expand button -->
       <button
@@ -217,7 +216,7 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- Normal mode: tab content -->
+    <!-- Normal mode: Tab Content -->
     <div v-if="!collapsed" class="tab-content">
       <KeepAlive :include="['ChartDetail']">
         <component
