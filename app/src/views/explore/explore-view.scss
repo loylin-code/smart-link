@@ -1,26 +1,11 @@
-// 探索视图样式 - 优化后的现代化设计
-// 使用 CSS Grid 避免 flexbox 在 Tab 显示时导致的宽度变化循环
+// 探索视图样式 - 固定三列布局，避免动态变化
 .explore-view {
   height: 100%;
   display: grid;
-  // sidebar 280px, main 自动填充, tabs 600px (或 0 如果隐藏)
-  grid-template-columns: 280px 1fr 0px;
+  // 固定列宽度，不动态调整
+  grid-template-columns: 280px 1fr 600px;
   background: $bg-primary;
   overflow: hidden;
-  
-  // 当 tabs 显示时，调整 grid
-  &.has-tabs {
-    grid-template-columns: 280px 1fr 600px;
-  }
-  
-  // 当 sidebar 收起时
-  &.sidebar-collapsed {
-    grid-template-columns: 48px 1fr 0px;
-    
-    &.has-tabs {
-      grid-template-columns: 48px 1fr 600px;
-    }
-  }
 }
 
 // ================================
@@ -32,24 +17,13 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  overflow: hidden;
 
   &.collapsed {
-    align-items: center;
-
+    // 不改变 grid，只隐藏内容
     .sidebar-content {
       display: none;
     }
-  }
-
-  @include respond-below(md) {
-    // 小屏幕保持相同布局但调整 grid-template-columns
-
-    &.collapsed {
-    }
-  }
-
-  @include respond-below(sm) {
-    display: none;
   }
 }
 

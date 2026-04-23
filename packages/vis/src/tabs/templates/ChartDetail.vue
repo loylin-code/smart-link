@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from 'vue'
-import { Chart } from '@antv/g2'
+import { computed } from 'vue'
 import type { VisConfig } from '../../types'
 
 interface Props {
@@ -12,29 +11,29 @@ const props = withDefaults(defineProps<Props>(), {
   theme: 'light'
 })
 
-// Refs
-const chartContainerRef = ref<HTMLElement | null>(null)
-const chartInstance = ref<Chart | null>(null)
-const isInitialized = ref(false)
-
-// Computed
-const chartTitle = computed(() => props.data.title ?? 'Chart Detail')
+// Chart metadata
+const chartTitle = computed(() => props.data.title ?? '图表详情')
 const chartType = computed(() => props.data.type)
-const chartData = computed(() => props.data.data)
+const chartData = computed<Record<string, unknown>[]>(() => (props.data.data as Record<string, unknown>[]) ?? [])
 const dataCount = computed(() => chartData.value.length)
 
-// Calculate statistics summary
+// Field names
+const xField = computed(() => props.data.xField ?? 'category')
+const yField = computed(() => props.data.yField ?? 'value')
+
+// Get value helper
+const getYValue = (item: Record<string, unknown>): number => {
+  const val = item[yField.value]
+  return typeof val === 'number' ? val : 0
+}
+
+// Statistics
 const statistics = computed(() => {
   const data = chartData.value
   if (!data.length) return null
 
-  const yField = props.data.yField ?? props.data.valueField ?? 'value'
-  const values = data.map((item: Record<string, unknown>) => {
-    const val = item[yField] as number | undefined
-    return typeof val === 'number' ? val : 0
-  })
-
-  const sum = values.reduce((a: number, b: number) => a + b, 0)
+  const values: number[] = data.map(getYValue)
+  const sum = values.reduce((a: number, b: number): number => a + b, 0)
   const avg = sum / values.length
   const max = Math.max(...values)
   const min = Math.min(...values)
@@ -42,430 +41,288 @@ const statistics = computed(() => {
   return { sum, avg: Math.round(avg * 100) / 100, max, min, count: values.length }
 })
 
+// Max value for scaling
+const maxValue = computed(() => {
+  const values: number[] = chartData.value.map(getYValue)
+  return Math.max(...values, 1)
+})
+
 // Table columns
 const tableColumns = computed(() => {
   if (!chartData.value.length) return []
-  return Object.keys(chartData.value[0]).map((key) => ({
-    key,
-    label: key.charAt(0).toUpperCase() + key.slice(1)
-  }))
+  const keys = Object.keys(chartData.value[0])
+  return keys.map(key => ({ key, label: key.charAt(0).toUpperCase() + key.slice(1) }))
 })
-
-// Initialize chart - only once, with fixed dimensions to prevent resize loops
-const initChart = () => {
-  if (isInitialized.value) return
-
-  isInitialized.value = true
-
-  if (!chartContainerRef.value) {
-    isInitialized.value = false
-    return
-  }
-
-  const container = chartContainerRef.value
-  const width = 580
-  const height = 280
-  const theme = props.theme === 'dark' ? 'classicDark' : 'classic'
-  const config = props.data
-
-  try {
-    chartInstance.value = new Chart({
-      container,
-      width,
-      height,
-      theme,
-      autoFit: false
-    })
-
-    const xField = config.xField ?? 'category'
-    const yField = config.yField ?? 'value'
-    const colorField = config.colorField ?? config.categoryField
-
-    switch (config.type) {
-      case 'line':
-        chartInstance.value
-          .line()
-          .data(config.data)
-          .encode('x', xField)
-          .encode('y', yField)
-          .style('smooth', config.smooth ?? false)
-          .style('lineWidth', 2)
-
-        chartInstance.value
-          .point()
-          .data(config.data)
-          .encode('x', xField)
-          .encode('y', yField)
-          .style('r', 3)
-
-        if (colorField) {
-          chartInstance.value.line().encode('color', colorField)
-          chartInstance.value.point().encode('color', colorField)
-        }
-        break
-
-      case 'pie':
-        chartInstance.value.coordinate({ type: 'polar', innerRadius: 0.6 })
-        chartInstance.value
-          .interval()
-          .data(config.data)
-          .encode('y', config.angleField ?? 'value')
-          .encode('color', colorField ?? 'category')
-          .transform({ type: 'stackY' })
-          .legend(true)
-        break
-
-      case 'bar':
-        chartInstance.value
-          .interval()
-          .data(config.data)
-          .encode('x', xField)
-          .encode('y', yField)
-          .style('radius', 4)
-
-        if (colorField) {
-          chartInstance.value.interval().encode('color', colorField)
-        }
-        break
-
-      default:
-        chartInstance.value
-          .interval()
-          .data(config.data)
-          .encode('x', xField)
-          .encode('y', yField)
-    }
-
-    // Delay render to break synchronous chain and prevent freeze
-    setTimeout(() => {
-      chartInstance.value?.render()
-    }, 50)
-  } catch (e) {
-    console.error('[ChartDetail] Error:', e)
-    isInitialized.value = false
-  }
-}
-
-// Lifecycle
-onMounted(() => {
-  setTimeout(() => initChart(), 100)
-})
-
-onUnmounted(() => {
-  console.log('[ChartDetail] onUnmounted')
-  if (chartInstance.value) {
-    try {
-      chartInstance.value.destroy()
-    } catch (e) {
-      console.warn('[ChartDetail] destroy error:', e)
-    }
-    chartInstance.value = null
-  }
-  isInitialized.value = false
-})
-
-// Export
-const exportImage = () => {
-  if (!chartInstance.value) return
-  const context = chartInstance.value.getContext()
-  const canvas = context?.canvas?.getConfig?.()?.canvas as unknown as HTMLCanvasElement | undefined
-  if (canvas) {
-    const link = document.createElement('a')
-    link.download = `${chartTitle.value}.png`
-    link.href = canvas.toDataURL('image/png')
-    link.click()
-  }
-}
-
-defineExpose({ exportImage })
 </script>
 
 <template>
   <div class="chart-detail" :class="`theme-${theme}`">
     <!-- Header -->
-    <header class="chart-detail-header">
+    <header class="chart-header">
       <h2 class="chart-title">{{ chartTitle }}</h2>
       <div class="chart-meta">
-        <span class="chart-type-badge">{{ chartType }}</span>
-        <span class="data-count">{{ dataCount }} items</span>
+        <span class="type-badge">{{ chartType }}</span>
+        <span class="count-badge">{{ dataCount }} 条数据</span>
       </div>
-      <button class="export-btn" @click="exportImage">
-        Export PNG
-      </button>
     </header>
 
-    <!-- Large Chart -->
+    <!-- Chart Visualization -->
     <section class="chart-section">
-      <div ref="chartContainerRef" class="chart-container"></div>
+      <!-- Line Chart -->
+      <div v-if="chartType === 'line'" class="line-chart">
+        <svg viewBox="0 0 580 280">
+          <!-- Grid -->
+          <line v-for="i in 5" :key="i" x1="40" :y1="i * 48" x2="560" :y2="i * 48" stroke="#e5e7eb" />
+          <!-- Line -->
+          <polyline
+            :points="chartData.map((item: Record<string, unknown>, idx: number) => 
+              `${40 + idx * (520 / Math.max(chartData.length - 1, 1))},${280 - getYValue(item) * 200 / maxValue}`
+            ).join(' ')"
+            fill="none" stroke="#3b82f6" stroke-width="2"
+          />
+          <!-- Points -->
+          <circle
+            v-for="(item, idx) in chartData"
+            :key="idx"
+            :cx="40 + idx * (520 / Math.max(chartData.length - 1, 1))"
+            :cy="280 - getYValue(item) * 200 / maxValue"
+            r="4" fill="#3b82f6"
+          />
+        </svg>
+      </div>
+
+      <!-- Bar Chart -->
+      <div v-else-if="chartType === 'bar'" class="bar-chart">
+        <div v-for="(item, idx) in chartData" :key="idx" class="bar-row">
+          <span class="bar-label">{{ item[xField] }}</span>
+          <div class="bar-track">
+            <div 
+              class="bar-fill"
+              :style="{ width: `${getYValue(item) / maxValue * 100}%` }"
+            >
+              <span>{{ getYValue(item) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pie Chart -->
+      <div v-else-if="chartType === 'pie'" class="pie-chart">
+        <div v-for="(item, idx) in chartData" :key="idx" class="pie-row">
+          <span class="pie-label">{{ item[xField] || item.category }}</span>
+          <span class="pie-value">{{ Math.round(getYValue(item) / (statistics?.sum ?? 1) * 100) }}%</span>
+        </div>
+      </div>
+
+      <!-- Fallback -->
+      <div v-else class="fallback">
+        <p>图表类型: {{ chartType }}</p>
+        <p>数据条数: {{ dataCount }}</p>
+      </div>
     </section>
 
-    <!-- Statistics Summary -->
-    <section v-if="statistics" class="statistics-section">
-      <h3 class="section-title">Statistics Summary</h3>
-      <div class="statistics-grid">
-        <div class="stat-item">
-          <span class="stat-label">Sum</span>
-          <span class="stat-value">{{ statistics.sum }}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Average</span>
-          <span class="stat-value">{{ statistics.avg }}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Max</span>
-          <span class="stat-value">{{ statistics.max }}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Min</span>
-          <span class="stat-value">{{ statistics.min }}</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-label">Count</span>
-          <span class="stat-value">{{ statistics.count }}</span>
-        </div>
+    <!-- Statistics -->
+    <section v-if="statistics" class="stats-section">
+      <h3>统计摘要</h3>
+      <div class="stats-grid">
+        <div><span class="label">总和</span><span class="value">{{ statistics.sum }}</span></div>
+        <div><span class="label">平均</span><span class="value">{{ statistics.avg }}</span></div>
+        <div><span class="label">最大</span><span class="value">{{ statistics.max }}</span></div>
+        <div><span class="label">最小</span><span class="value">{{ statistics.min }}</span></div>
+        <div><span class="label">数量</span><span class="value">{{ statistics.count }}</span></div>
       </div>
     </section>
 
     <!-- Data Table -->
-    <section class="data-table-section">
-      <h3 class="section-title">Data Table</h3>
-      <div class="data-table-wrapper">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th v-for="col in tableColumns" :key="col.key">{{ col.label }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(row, rowIndex) in chartData" :key="rowIndex">
-              <td v-for="col in tableColumns" :key="col.key">
-                {{ row[col.key] }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <section class="table-section">
+      <h3>数据表格</h3>
+      <table>
+        <thead>
+          <tr>
+            <th v-for="col in tableColumns" :key="col.key">{{ col.label }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(row, idx) in chartData" :key="idx">
+            <td v-for="col in tableColumns" :key="col.key">{{ row[col.key] }}</td>
+          </tr>
+        </tbody>
+      </table>
     </section>
   </div>
 </template>
 
 <style scoped>
 .chart-detail {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
   padding: 16px;
-  background: #ffffff;
-  height: auto;
-  max-height: 100%;
-  overflow: visible;
+  background: #fff;
+  overflow-y: auto;
 }
 
-.chart-detail-header {
+.chart-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
   padding-bottom: 12px;
   border-bottom: 1px solid #e5e7eb;
-  flex-shrink: 0;
 }
 
 .chart-title {
   font-size: 16px;
   font-weight: 600;
-  color: #111827;
   margin: 0;
 }
 
 .chart-meta {
   display: flex;
-  align-items: center;
   gap: 8px;
 }
 
-.chart-type-badge {
-  padding: 3px 10px;
+.type-badge {
+  padding: 2px 8px;
   background: #eff6ff;
   color: #1d4ed8;
   border-radius: 999px;
   font-size: 12px;
-  font-weight: 500;
 }
 
-.data-count {
+.count-badge {
   color: #6b7280;
   font-size: 12px;
 }
 
-.export-btn {
-  padding: 6px 12px;
+.chart-section {
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.line-chart svg {
+  width: 100%;
+  height: 280px;
+}
+
+.bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bar-label {
+  width: 80px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.bar-track {
+  flex: 1;
+  height: 24px;
+  background: #f3f4f6;
+  border-radius: 4px;
+}
+
+.bar-fill {
+  height: 100%;
+  background: #3b82f6;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding-left: 8px;
+  color: white;
+  font-size: 12px;
+}
+
+.pie-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pie-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
   background: #3b82f6;
   color: white;
-  border: none;
   border-radius: 4px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: background 0.2s ease;
 }
 
-.export-btn:hover {
-  background: #2563eb;
+.fallback {
+  text-align: center;
+  color: #6b7280;
 }
 
-.chart-section {
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.chart-container {
-  width: 580px;
-  height: 280px;
-  background: #f9fafb;
-}
-
-.section-title {
+.stats-section h3 {
   font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-  margin: 0 0 8px 0;
+  margin: 0 0 12px;
 }
 
-.statistics-section {
-  padding: 12px;
-  background: #f9fafb;
-  border-radius: 6px;
-  flex-shrink: 0;
-}
-
-.statistics-grid {
+.stats-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 12px;
 }
 
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
+.stats-grid div {
+  text-align: center;
 }
 
-.stat-label {
+.label {
+  display: block;
   font-size: 11px;
   color: #6b7280;
-  text-transform: uppercase;
 }
 
-.stat-value {
+.value {
+  display: block;
   font-size: 14px;
   font-weight: 600;
-  color: #111827;
 }
 
-.data-table-section {
-  flex-shrink: 0;
+.table-section h3 {
+  font-size: 14px;
+  margin: 0 0 12px;
 }
 
-.data-table-wrapper {
-  max-height: 200px;
-  overflow-y: auto;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-}
-
-.data-table {
+table {
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
 }
 
-.data-table th {
-  padding: 8px 12px;
+th {
+  padding: 8px;
   background: #f9fafb;
   text-align: left;
-  font-weight: 600;
-  color: #374151;
   border-bottom: 1px solid #e5e7eb;
 }
 
-.data-table td {
-  padding: 6px 12px;
+td {
+  padding: 6px 8px;
   border-bottom: 1px solid #f3f4f6;
-  color: #111827;
 }
 
-.data-table tr:last-child td {
-  border-bottom: none;
-}
-
-.data-table tr:hover td {
-  background: #f9fafb;
-}
-
-/* Dark theme */
-.chart-detail.theme-dark {
+.theme-dark {
   background: #1f2937;
-}
-
-.theme-dark .chart-detail-header {
-  border-bottom-color: #374151;
-}
-
-.theme-dark .chart-title {
   color: #f9fafb;
 }
 
-.theme-dark .chart-type-badge {
-  background: #1e3a5f;
-  color: #60a5fa;
-}
-
-.theme-dark .data-count {
-  color: #9ca3af;
+.theme-dark .chart-header {
+  border-bottom-color: #374151;
 }
 
 .theme-dark .chart-section {
-  border-color: #374151;
-}
-
-.theme-dark .chart-container {
   background: #111827;
 }
 
-.theme-dark .section-title {
-  color: #e5e7eb;
-}
-
-.theme-dark .statistics-section {
-  background: #111827;
-}
-
-.theme-dark .stat-label {
-  color: #9ca3af;
-}
-
-.theme-dark .stat-value {
-  color: #f9fafb;
-}
-
-.theme-dark .data-table-wrapper {
-  border-color: #374151;
-}
-
-.theme-dark .data-table th {
-  background: #374151;
-  color: #e5e7eb;
-  border-bottom-color: #4b5563;
-}
-
-.theme-dark .data-table td {
-  border-bottom-color: #374151;
-  color: #f9fafb;
-}
-
-.theme-dark .data-table tr:hover td {
+.theme-dark th {
   background: #374151;
 }
 </style>

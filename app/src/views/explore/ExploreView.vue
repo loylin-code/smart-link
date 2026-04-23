@@ -1,11 +1,5 @@
 <template>
-  <div
-    class="explore-view"
-    :class="{
-      'has-tabs': tabCount > 0,
-      'sidebar-collapsed': isSidebarCollapsed
-    }"
-  >
+  <div class="explore-view">
     <!-- 左侧边栏 -->
     <aside class="explore-sidebar" :class="{ collapsed: isSidebarCollapsed }">
       <!-- 侧边栏内容 -->
