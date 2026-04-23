@@ -146,6 +146,7 @@
   cursor: pointer;
   transition: all 0.15s ease;
   margin-bottom: 8px;
+  flex-shrink: 0;
   
   svg {
     width: 16px;
@@ -162,6 +163,12 @@
       transform: scale(1.1);
     }
   }
+}
+
+// 非收起状态：隐藏迷你相关元素
+.explore-tabs:not(.collapsed) .mini-tab-strip,
+.explore-tabs:not(.collapsed) .panel-expand-btn {
+  display: none !important;
 }
 
 // 迷你图标项
