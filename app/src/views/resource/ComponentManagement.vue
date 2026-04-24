@@ -56,12 +56,18 @@
     </div>
 
     <div v-if="filteredComponents.length" class="component-grid">
-      <ComponentCard
-        v-for="component in filteredComponents"
-        :key="component.type"
-        :component="component"
-        @click="openDetail(component)"
-      />
+      <template v-for="component in filteredComponents" :key="component.type">
+        <VISComponentCard
+          v-if="component.category === 'visual'"
+          :component="component"
+          @click="openDetail(component)"
+        />
+        <ComponentCard
+          v-else
+          :component="component"
+          @click="openDetail(component)"
+        />
+      </template>
     </div>
 
     <div v-else class="empty-state">
@@ -83,6 +89,7 @@
   import { useComponentsStore } from '@/store/modules/components'
   import type { ComponentMeta } from '@smart-link/core'
   import ComponentCard from '@/components/component/ComponentCard.vue'
+  import VISComponentCard from '@/components/component/VISComponentCard.vue'
 
   const router = useRouter()
   const { t } = useI18n()
