@@ -44,3 +44,4 @@ packages/**/src/**/*.js.map
 # Build stats reports
 **/stats/
 *.stats.html
+.worktrees/
