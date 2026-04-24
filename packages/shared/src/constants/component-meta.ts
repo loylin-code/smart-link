@@ -1576,5 +1576,6 @@ export const COMPONENT_CATEGORIES = [
   { value: 'form', label: '表单组件' },
   { value: 'layout', label: '布局组件' },
   { value: 'data', label: '数据组件' },
+  { value: 'visual', label: '可视化' },
   { value: 'business', label: '业务组件' }
 ] as const
