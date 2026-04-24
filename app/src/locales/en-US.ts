@@ -193,6 +193,7 @@ export default {
       form: 'Form Components',
       layout: 'Layout Components',
       data: 'Data Display',
+      visual: 'Visual',
       feedback: 'Feedback Components',
       business: 'Business Components'
     },
@@ -340,6 +341,7 @@ export default {
       form: 'Form Components',
       layout: 'Layout Components',
       data: 'Data Display',
+      visual: 'Visual',
       feedback: 'Feedback Components',
       business: 'Business Components'
     },
@@ -1170,6 +1172,7 @@ export default {
         widgets: 'Data',
         basic: 'Basic',
         data: 'Data Display',
+        visual: 'Visual',
         business: 'Digital Worker Components',
         noResults: 'No matching components found',
 

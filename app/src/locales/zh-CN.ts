@@ -197,6 +197,7 @@ export default {
       form: '表单组件',
       layout: '布局组件',
       data: '数据展示',
+      visual: '可视化',
       feedback: '反馈组件',
       business: '业务组件'
     },
@@ -344,6 +345,7 @@ export default {
       form: '表单组件',
       layout: '布局组件',
       data: '数据展示',
+      visual: '可视化',
       feedback: '反馈组件',
       business: '业务组件'
     },
@@ -1182,6 +1184,7 @@ export default {
         widgets: '数据',
         basic: '基础组件',
         data: '数据展示',
+        visual: '可视化',
         business: '数字员工组件',
         noResults: '未找到匹配的组件',
 
