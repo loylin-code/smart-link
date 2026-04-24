@@ -1580,6 +1580,78 @@ SlMessage.info('提示信息')`
         code: `<SlDashboardPanel :layout="dashboardLayout" />`
       }
     ]
+  },
+  // ============================================
+  // 可视化组件 (Visual Components)
+  // ============================================
+  {
+    type: 'VisLineChart',
+    name: '折线图',
+    category: 'visual',
+    description: '展示数据随时间或有序类别的变化趋势',
+    icon: 'chart-line',
+    props: [
+      { name: 'data', type: 'array', description: '图表数据，格式为 [{ category, value }]' },
+      { name: 'xField', type: 'string', default: 'category', description: 'X轴字段名' },
+      { name: 'yField', type: 'string', default: 'value', description: 'Y轴字段名' },
+      { name: 'smooth', type: 'boolean', default: false, description: '是否平滑曲线' },
+      { name: 'title', type: 'string', description: '图表标题' }
+    ],
+    events: [],
+    slots: [],
+    examples: [
+      {
+        title: '温度变化趋势',
+        description: '展示全球平均温度距平变化',
+        code: `<VisLineChart :data="[{ year: '1880', value: -0.12 }, { year: '1900', value: -0.08 }, { year: '1920', value: -0.25 }, { year: '1940', value: 0.12 }, { year: '1960', value: 0.03 }, { year: '1980', value: 0.26 }, { year: '2000', value: 0.42 }, { year: '2020', value: 1.02 }]" xField="year" yField="value" smooth />`
+      }
+    ]
+  },
+  {
+    type: 'VisBarChart',
+    name: '柱状图',
+    category: 'visual',
+    description: '用于不同类别之间的数据对比展示',
+    icon: 'chart-bar',
+    props: [
+      { name: 'data', type: 'array', description: '图表数据，格式为 [{ category, value }]' },
+      { name: 'xField', type: 'string', default: 'category', description: 'X轴字段名' },
+      { name: 'yField', type: 'string', default: 'value', description: 'Y轴字段名' },
+      { name: 'stack', type: 'boolean', default: false, description: '是否堆叠' },
+      { name: 'title', type: 'string', description: '图表标题' }
+    ],
+    events: [],
+    slots: [],
+    examples: [
+      {
+        title: '季度销售额对比',
+        description: '展示各季度销售额对比',
+        code: `<VisBarChart :data="[{ quarter: 'Q1', sales: 12500 }, { quarter: 'Q2', sales: 18200 }, { quarter: 'Q3', sales: 15600 }, { quarter: 'Q4', sales: 22800 }]" xField="quarter" yField="sales" />`
+      }
+    ]
+  },
+  {
+    type: 'VisPieChart',
+    name: '饼图',
+    category: 'visual',
+    description: '展示各部分在整体中的占比分布',
+    icon: 'chart-pie',
+    props: [
+      { name: 'data', type: 'array', description: '图表数据，格式为 [{ name, value }]' },
+      { name: 'valueField', type: 'string', default: 'value', description: '值字段名' },
+      { name: 'categoryField', type: 'string', default: 'name', description: '分类字段名' },
+      { name: 'innerRadius', type: 'number', default: 0, description: '内半径（0-1），大于0为环形图' },
+      { name: 'title', type: 'string', description: '图表标题' }
+    ],
+    events: [],
+    slots: [],
+    examples: [
+      {
+        title: '市场份额分布',
+        description: '展示各产品市场份额占比',
+        code: `<VisPieChart :data="[{ name: '产品A', value: 35 }, { name: '产品B', value: 25 }, { name: '产品C', value: 20 }, { name: '其他', value: 20 }]" :innerRadius="0.4" />`
+      }
+    ]
   }
 ]
 
