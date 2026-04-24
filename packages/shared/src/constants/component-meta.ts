@@ -183,6 +183,19 @@ export const COMPONENT_LAYOUT_PRESETS: Record<string, ComponentLayoutPreset> = {
   SlDashboardPanel: {
     width: { preset: 'full', desktop: 12, tablet: 12, mobile: 12 },
     height: { mode: 'auto', value: 400, minHeight: 300 }
+  },
+  // 可视化组件布局预设
+  VisLineChart: {
+    width: { preset: '2/3', desktop: 8, tablet: 12, mobile: 12 },
+    height: { mode: 'fixed', value: 320, minHeight: 250 }
+  },
+  VisBarChart: {
+    width: { preset: '2/3', desktop: 8, tablet: 12, mobile: 12 },
+    height: { mode: 'fixed', value: 320, minHeight: 250 }
+  },
+  VisPieChart: {
+    width: { preset: '1/2', desktop: 6, tablet: 6, mobile: 12 },
+    height: { mode: 'fixed', value: 320, minHeight: 250 }
   }
 }
 
