@@ -20,7 +20,7 @@
     PieChart,
     type ChartInstance,
     type VisConfig
-  } from '@smart-link/vis'
+  } from '@smart-link/chat-vis'
 
   const props = defineProps<{
     component: ComponentMeta
